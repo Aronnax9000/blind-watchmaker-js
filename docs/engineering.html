@@ -1,0 +1,170 @@
+<html>
+<head>
+<title>Biomorph Engineering</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script src="watchmaker_geom.js"></script>
+<script src="html_canvas.js"></script>
+<script src="drawing_context.js"></script>
+<script src="drawing_context_canvas2d.js"></script>
+<script src="biomorph_genotype.js"></script>
+<script src="biomorph_pic.js"></script>
+<script src="biomorph_develop.js"></script>
+<script src="app.js"></script>
+<script src="engineering.js"></script>
+<script type="text/javascript">
+    function doCanvasClicked(canvasId) {
+        if (autoRunning) {
+            document.getElementById("autoReproduce").checked = false;
+            autoRunning = false;
+        } else {
+            genotype = doReproduce(canvasId, canvasId);
+        }
+    }
+
+    var canvas;
+
+    function initializeEngineering(biomorphType, canvasId) {
+        var canvas = make_canvas(canvasId);
+        $("#box0").append(canvas);
+        doPerson(biomorphType, canvasId);
+    }
+</script>
+</head>
+<body onload="initializeEngineering('BasicTree', 'myCanvas');">
+	<h2>Testing Biomorph Embryology</h2>
+	<p>Let's try rendering the three hard-coded biomorph genotypes in
+		human readable form. Click one of the buttons below to generate a
+		biomorph genotype and display it in the demo box. The one shown by
+		default is "BasicTree", the startup biomorph in the original 1986
+		version of Blind Watchmaker.</p>
+	<p>If you click or tap the biomorph, it will be replaced by a
+		mutant offspring.</p>
+	<p>If you check the "Crosshairs" checkbox, crosshairs indicating
+		the centre of the drawing area will be shown, together with the margin
+		box calculated for the biomorph. This is being used to debug the
+		centring algorithm.</p>
+	<p>Checking the "Auto Reproduce" checkbox will cause the
+		application to breed biomorphs as fast as it possibly can. You can
+		stop this behavior by unchecking the Auto Reproduce checkbox, or by
+		clicking the biomorph display area. You can set the delay between
+		generations in the box to the right of the checkbox. 0 means "breed as
+		fast as possible". A delay of 1000 milliseconds means that the
+		biomorph will reproduce once per second, which might be a useful
+		interval for demonstrating biomorph reproduction while explaining it
+		conversationally.</p>
+	<p>Below the biomorph is a display of the genes which control its
+		embryology. You can adjust the value of these genes, and see the
+		result in real time. In the case of the fields where numbers are input
+		directly, you will need to click or tap away from the field after you
+		change it, in order to trigger the update of the displayed biomorph as
+		the HTML input loses focus.</p>
+	<div>
+		<div style="white-space: normal;">
+			<button onClick='doPerson("Chess", "myCanvas");'>Chess</button>
+			<button onClick='doPerson("BasicTree", "myCanvas");'>BasicTree</button>
+			<button onClick='doPerson("Insect", "myCanvas");'>Insect</button>
+			<a href='index.html'>Breeding</a>
+			<br> <input type="checkbox" id="crosshairs"
+				onchange="formChanged('myCanvas');" />Crosshairs
+			<button id="autoReproduce"
+				onclick="startAutoReproduce('myCanvas','myCanvas');">Auto
+				Reproduce</button>
+			with delay of <input type="text" id="autoReproduceInterval" size="5"
+				maxlength="10" value="0" /> milliseconds. 
+		</div>
+		<div>
+			Generation: <input type="number" value="0" id="generations" />
+			Generations per second: <input type="number" value="0"
+				id="generationRate" />
+		</div>
+		<div id='box0'></div>
+	</div>
+	<div>
+		<form id="engineering">
+			Genes: <input name="gene1" type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene2"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene3"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene4"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene5"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene6"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene7"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene8"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <input name="gene9"
+				type="text" size="3" maxlength="3"
+				onchange="formChanged('myCanvas');" /> <br> Gradient Genes: <select
+				name="dGene1" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene2" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene3" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene4" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene5" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene6" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene7" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene8" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene9" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <select name="dGene10" onchange="formChanged('myCanvas');">
+				<option value="Swell">Swell</option>
+				<option value="Shrink">Shrink</option>
+				<option value="Same">Same</option>
+			</select> <br> Segment Number: <input name="segNoGene" type="text"
+				size="3" maxlength="3" onchange="formChanged('myCanvas');" /><br>
+			Segment Distance: <input name="segDistGene" type="text" size="3"
+				maxlength="3" onchange="formChanged('myCanvas');" /><br>
+			Completeness: <select name="completenessGene"
+				onchange="formChanged('myCanvas');">
+				<option value="Single">Single</option>
+				<option value="Double">Double</option>
+			</select><br> Spokes: <select name="spokesGene"
+				onchange="formChanged('myCanvas');">
+				<option value="NorthOnly">NorthOnly</option>
+				<option value="NSouth">NSouth</option>
+				<option value="Double">Radial</option>
+			</select><br> Trickle: <input name="trickleGene" type="text" size="3"
+				maxlength="3" onchange="formChanged('myCanvas');" /><br>
+			Mutation Size: <input name="mutSizeGene" type="text" size="3"
+				maxlength="3" onchange="formChanged('myCanvas');" /><br>
+			Mutation Probability: <input name="mutProbGene" type="text" size="3"
+				maxlength="3" onchange="formChanged('myCanvas');" /><br>
+		</form>
+	</div>
+	<div>
+		<a href="watchmaker_breeding.html">Breeding Biomorphs</a>
+	</div>
+</body>
+</html>
