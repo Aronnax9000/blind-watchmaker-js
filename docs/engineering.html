@@ -2,13 +2,16 @@
 <head>
 <title>Biomorph Engineering</title>
 <link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" type="text/css" href="css/watchmaker_boxes.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script src="js/watchmaker_geom.js"></script>
+<script src="js/watchmaker_boxes.js"></script>
 <script src="js/html_canvas.js"></script>
 <script src="js/drawing_context.js"></script>
-<script src="js/drawing_context_canvas2d.js"></script>
+<script src="js/drawing_context_canvas2d.js"></script><link rel="stylesheet" type="text/css" href="css/style.css">
+
 <script src="js/biomorph_genotype.js"></script>
 <script src="js/biomorph_pic.js"></script>
 <script src="js/biomorph_develop.js"></script>
@@ -79,6 +82,30 @@
 			Generation: <input type="number" value="0" id="generations" />
 			Generations per second: <input type="number" value="0"
 				id="generationRate" />
+		</div>
+		<div class="monochromeGeneboxes">
+          <div id="gene1" class="monochromeGenebox monoChromeGradientGenebox">
+				<img src="img/swellcircle.png"
+					style="position: absolute; bottom: 0;" />
+					<span class='geneValue'>4</span>
+			</div>
+          <div id="gene2" class="monochromeGenebox monoChromeGradientGenebox">
+            <img src="img/swellcircle.png" style="position:absolute;top:0;">
+            <span class='geneValue'">5</span></div>
+          <div id="gene3" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene4" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene5" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene6" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene7" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene8" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div id="gene9" class="monochromeGenebox monoChromeGradientGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
+          <div class="monochromeGenebox"></div>
 		</div>
 		<div id='box0'></div>
 	</div>

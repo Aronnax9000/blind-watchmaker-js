@@ -1,54 +1,86 @@
 .boxesHoriz {
-    width: 1000px;
-    height: 600px;
-  display: grid;
-  grid-template-columns: 200px 200px 200px 200px 200px;
-  grid-gap: 0px;
-  background-color: #fff;
-  color: #000;
+	width: 1000px;
+	height: 600px;
+	display: grid;
+	grid-template-columns: 200px 200px 200px 200px 200px;
+	grid-gap: 0px;
+	background-color: #fff;
+	color: #000;
 }
 
 .boxesVert {
-    width: 1000px;
-    height: 600px;
-  display: grid;
-  grid-template-columns: 200px 200px 200px;
-  grid-gap: 0px;
-  background-color: #fff;
-  color: #000;
+	width: 1000px;
+	height: 600px;
+	display: grid;
+	grid-template-columns: 200px 200px 200px;
+	grid-gap: 0px;
+	background-color: #fff;
+	color: #000;
 }
-
 
 .boxes {
 	width: 1000px;
 	height: 600px;
-  display: grid;
-  grid-template-columns: 200px 200px 200px 200px 200px;
-  grid-gap: 0px;
-  background-color: #fff;
-  color: #000;
+	display: grid;
+	grid-template-columns: 200px 200px 200px 200px 200px;
+	grid-gap: 0px;
+	background-color: #fff;
+	color: #000;
 }
 
 .box {
-    background-color: #fff;
-    color: #000;
-	
+	background-color: #fff;
+	color: #000;
 	border-style: solid;
 	border-width: 1px;
 	border-color: black;
-	
-    padding: 0px;
-  	font-size: 150%;
+	padding: 0px;
+	font-size: 150%;
 }
 
 .midBox {
 	border-width: 2px;
 }
 
-.breedingCanvas {
-	//height: 100%;
-	//width: 100%;
-//	border-style: solid;
-//	border-width: 1px;
-	//border-color: blue;
+.breedingCanvas { //
+	height: 100%; //
+	width: 100%; //
+	border-style: solid; //
+	border-width: 1px; //
+	border-color: blue;
+}
+
+.monochromeGeneboxes {
+	width: 1000px;
+	height: 20px;
+	display: grid;
+	grid-template-columns: 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%
+		6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%;
+	grid-gap: 0px;
+	background-color: #fff;
+	color: #000;
+}
+
+.geneValue {
+	width: 100%; text-align:center;  display:table;
+}
+
+.monochromeGenebox {
+	position: relative;
+	background-color: #fff;
+	color: #000;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	padding: 0px;
+}
+
+monochromeGradientGenebox {
+	position: relative;
+	background-color: #fff;
+	color: #000;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	padding: 0px;
 }
