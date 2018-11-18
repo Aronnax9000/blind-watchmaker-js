@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script>
+
+
     function doit() {
 
         $.widget("dawk.monochrome_geneboxes", {
@@ -38,6 +40,7 @@
                         value : 100
                     });
                 }
+
             },
             _constrain : function(value) {
                 if (value > 100) {
@@ -55,7 +58,7 @@
 
         var bar = $("<div></div>")
                 .appendTo("body")
-                .progressbar({
+                .monochrome_geneboxes({
                     complete : function(event, data) {
                         console.log("Callbacks are great!");
                     }
@@ -69,12 +72,12 @@
         var value = 0;
         function incBar() {
             value += 10;
-            bar.progressbar("option", "value", value);
+            bar.monochrome_geneboxes("option", "value", value);
             if(value < 100) {
                 setTimeout( function() { incBar(); }, 1000);
             }
         }
-        bar.progressbar("option", "value", 0);
+        bar.monochrome_geneboxes("option", "value", 0);
         incBar();
     }
 </script>
