@@ -50,37 +50,3 @@
 	border-color: blue;
 }
 
-.monochromeGeneboxes {
-	width: 1000px;
-	height: 20px;
-	display: grid;
-	grid-template-columns: 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%
-		6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%;
-	grid-gap: 0px;
-	background-color: #fff;
-	color: #000;
-}
-
-.geneValue {
-	width: 100%; text-align:center;  display:table;
-}
-
-.monochromeGenebox {
-	position: relative;
-	background-color: #fff;
-	color: #000;
-	border-style: solid;
-	border-width: 1px;
-	border-color: black;
-	padding: 0px;
-}
-
-monochromeGradientGenebox {
-	position: relative;
-	background-color: #fff;
-	color: #000;
-	border-style: solid;
-	border-width: 1px;
-	border-color: black;
-	padding: 0px;
-}

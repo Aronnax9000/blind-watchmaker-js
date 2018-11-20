@@ -1,0 +1,91 @@
+.monochromeGeneboxes {
+    width: 1000px;
+    height: 20px;
+    display: grid;
+    grid-template-columns: 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%
+        6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25% 6.25%;
+    grid-gap: 0px;
+    background-color: #fff;
+    color: #000;
+}
+
+.geneValue {
+    width: 100%; text-align:center;  display:table;
+}
+
+.monochromeGenebox {
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 0px;
+}
+
+monochromeGradientGenebox {
+    position: relative;
+    background-color: #fff;
+    color: #000;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 0px;
+}
+
+.geneboxNavi, .geneboxInfo {
+    width: 100%;
+    height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.geneboxInfo {
+    
+}
+
+.geneboxNavi {
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-gap: 0px;
+}
+
+.geneboxMid {
+    display: grid;
+    grid-template-rows: 33% 33% 33%;
+    grid-gap: 0px;
+}
+
+.geneboxLeft {
+    cursor: url(cursor/leftArrow.png), auto;
+}
+
+.geneboxRight {
+    cursor: url(cursor/rightArrow.png), auto;
+}
+
+.geneboxUp {
+    cursor: url(cursor/upArrow.png), auto;
+}
+
+.geneboxDown {
+    cursor: url(cursor/downArrow.png), auto;
+}
+
+.geneboxEquals {
+    cursor: url(cursor/upperEquals.png), auto;
+}
+
+.gradientSwell {
+    position: absolute;
+    top: 0;
+}
+.gradientSame {
+    display: none;
+}
+.gradientShrink {
+    position: absolute;
+    bottom: 0;
+}
+

@@ -1,87 +1,102 @@
 <html>
 <head>
-<title>Widget Example</title>
+<title>Geneboxes</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet"
+	href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<script src="js/biomorph_genotype.js"></script>
+<script src="js/geneboxes.js"></script>
+<link rel="stylesheet" type="text/css" href="css/geneboxes.css">
+
 <script>
+ 
 
-
-    function doit() {
-
-        $.widget("dawk.monochrome_geneboxes", {
-            options : {
-                value: 0,
-                biomorph : null,
-                index: 0,
-                geneboxtype: "gene"
-            },
-            _create : function() {
-                this.options.value = this._constrain(this.options.value);
-                this.element.addClass("monochrome_geneboxes");
-                this.refresh();
-            },
-            _setOption : function(key, value) {
-                if (key === "value") {
-                    value = this._constrain(value);
-                }
-                this._super(key, value);
-            },
-            _setOptions : function(options) {
-                this._super(options);
-                this.refresh();
-            },
-            refresh : function() {
-                var progress = this.options.value + "%";
-                this.element.text(progress);
-                if (this.options.value == 100) {
-                    this._trigger("complete", null, {
-                        value : 100
-                    });
-                }
-
-            },
-            _constrain : function(value) {
-                if (value > 100) {
-                    value = 100;
-                }
-                if (value < 0) {
-                    value = 0;
-                }
-                return value;
-            },
-            _destroy : function() {
-                this.element.removeClass("monochrome_geneboxes").text("");
-            }
-        });
-
-        var bar = $("<div></div>")
-                .appendTo("body")
-                .monochrome_geneboxes({
-                    complete : function(event, data) {
-                        console.log("Callbacks are great!");
-                    }
-                })
-                .bind(
-                        "progressbarcomplete",
-                        function(event, data) {
-                            console.log("Events bubble and support many handlers for extreme flexibility.");
-                            console.log("The progress bar value is " + data.value);
-                        });
-        var value = 0;
-        function incBar() {
-            value += 10;
-            bar.monochrome_geneboxes("option", "value", value);
-            if(value < 100) {
-                setTimeout( function() { incBar(); }, 1000);
-            }
-        }
-        bar.monochrome_geneboxes("option", "value", 0);
-        incBar();
+function doit() {
+            var geneboxes = $("<div></div>").monochrome_geneboxes({});
+            $("#geneboxesDemo").append(geneboxes);
+            var geneboxes2 = $("<div></div>").monochrome_geneboxes({});
+            $("#geneboxesDemo2").append(geneboxes2);
     }
 </script>
 </head>
 <body onload="doit();">
+
+	<h1>Monochrome Geneboxes</h1>
+	<p>In JavaScript, each genebox is represented as a separate object,
+		collected into an ordered collection called "geneboxes" in the code. A
+		genebox collection keeps track of a single biomorph genome. Each child
+		genebox shares access to the genome for purposes of displaying and
+		modifying the genome's values. Each genebox keeps track of its order
+		within the genebox collection. The collection is 0-indexed, unlike
+		Pascal arrays, which are 1-indexed, so genebox 0 in the Monochrome
+		Biomorph is assigned to Gene 1, etc.</p>
+	<ul>
+		<li>geneboxIndex: which genebox this is, in display order from
+			0-whatever.</li>
+		<ul>
+			<li>0: Gene 1, Gradient Gene 1</li>
+			<li>1: Gene 2, Gradient Gene 2</li>
+			<li>2: Gene 3, Gradient Gene 3</li>
+			<li>3: Gene 4, Gradient Gene 4</li>
+			<li>4: Gene 5, Gradient Gene 5</li>
+			<li>5: Gene 6, Gradient Gene 6</li>
+			<li>6: Gene 7, Gradient Gene 7</li>
+			<li>7: Gene 8, Gradient Gene 8</li>
+			<li>8: Gene 9, Gradient Gene 9</li>
+			<li>9: SegNoGene</li>
+			<li>10: SegDistGene, Gradient Gene 10</li>
+			<li>11: CompletenessType</li>
+			<li>12: SpokesType</li>
+			<li>13: TrickleGene</li>
+			<li>14: MutProbGene</li>
+			<li>15: MutSizeGene</li>
+		</ul>
+	</ul>
+	<p>Here are a couple of mocked up geneboxes. The numerical values
+		are hard-coded HTML, as are the position of the gradient gene dots.
+		There is one slight bit of interactivity: on a device with a visible
+		pointer, the pointer should change to a left arrow if one hovers over
+		the left third of a genebox, and a right arrow if over the right
+		third. In the middle, a further division occurs into top, middle, and
+		bottom for up arrow, equals, and down arrow cursors respectively. This
+		is done using a stylesheet, with no code required.</p>
+	<div class="monochromeGeneboxes">
+		<div class="monochromeGenebox">
+			<div class="geneboxInfo">
+				<img src="img/swellcircle.png" class="gradientGene gradientShrink" />
+				<span class='geneValue'>4</span>
+			</div>
+			<div class="geneboxNavi">
+				<div class='geneboxLeft'></div>
+				<div class='geneboxMid'>
+					<div class='geneboxUp'></div>
+					<div class='geneboxEquals'></div>
+					<div class='geneboxDown'></div>
+				</div>
+				<div class='geneboxRight'></div>
+			</div>
+		</div>
+		<div class="monochromeGenebox">
+			<div class="geneboxInfo">
+				<img class='gradientGene' src="img/swellcircle.png"
+					style="position: absolute; top: 0;" /> <span class='geneValue'>+150</span>
+			</div>
+			<div class="geneboxNavi">
+				<div class='geneboxLeft'></div>
+				<div class='geneboxMid'>
+					<div class='geneboxUp'></div>
+					<div class='geneboxEquals'></div>
+					<div class='geneboxDown'></div>
+				</div>
+				<div class='geneboxRight'></div>
+			</div>
+		</div>
+	</div>
+	<h1>Generating a Genebox Programatically</h1>
+    <div id='geneboxesDemo'></div>
+    <div id='geneboxesDemo2'></div>
 </body>
 </html>
