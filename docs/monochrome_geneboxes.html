@@ -12,14 +12,16 @@
 <link rel="stylesheet" type="text/css" href="css/geneboxes.css">
 
 <script>
- 
-
 function doit() {
-            var geneboxes = $("<div></div>").monochrome_geneboxes({});
-            $("#geneboxesDemo").append(geneboxes);
-            var geneboxes2 = $("<div></div>").monochrome_geneboxes({});
-            $("#geneboxesDemo2").append(geneboxes2);
+    var geneboxes;
+    var accumulator = $("<div></div>");
+    for(i = 0; i < 10; i++) {
+	    geneboxes = $("<div></div>").monochrome_geneboxes({});
+	    accumulator.append(geneboxes);
+	    console.log("bottom " + i);
     }
+    $("body").append(accumulator);
+}
 </script>
 </head>
 <body onload="doit();">
@@ -96,7 +98,7 @@ function doit() {
 		</div>
 	</div>
 	<h1>Generating a Genebox Programatically</h1>
-    <div id='geneboxesDemo'></div>
-    <div id='geneboxesDemo2'></div>
+	<div id='geneboxesDemo'></div>
+	<div id='geneboxesDemo2'></div>
 </body>
 </html>

@@ -87,6 +87,7 @@ $.widget('dawk.monochrome_geneboxes', {
     },
     _create : function() {
         this.element.addClass("monochromeGeneboxes");
+        var i;
         for (i = 0; i < this.options.numGeneBoxes; i++) {
             var geneBox = $("<div></div>").monochrome_genebox({});
             geneBox.monochrome_genebox("option", "value", Math.trunc(Math
