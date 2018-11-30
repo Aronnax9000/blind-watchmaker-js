@@ -33,11 +33,13 @@
         $('body').append(boxes);
 
         var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
-        var cols = boxes.breedingBoxes("option", 'cols');
         var midCanvasId = 'canvas' + Math.trunc(numBoxes / 2);
+        var cols = boxes.breedingBoxes("option", 'cols');
         
         initialize("BasicTree", midCanvasId);
 
+        $('#' + midCanvasId).trigger('mouseover');
+        $('#' + midCanvasId).trigger('click');
     });
 </script>
 </head>
