@@ -22,22 +22,8 @@ $( function() {
         // The constructor
         _create: function() {
             var boxes = this.element;
-            var gridTemplateColumns = '';
-            var cols = this.options.cols;
-            var individualTemplate = (100/cols) + "%";
-            for(i = 0; i < cols; i++) {
-                gridTemplateColumns += individualTemplate;
-                if(i + 1 < cols) {
-                    gridTemplateColumns += " ";
-                }
-            }
-            // Won't work, not yet part of DOM
-            $('.boxes').css('grid-template-columns' , gridTemplateColumns);
-            console.log("Template " + gridTemplateColumns);
-            $(boxes).attr('id', 'boxes').addClass('boxes');
-            
 
-//          
+            $(boxes).attr('id', 'boxes').addClass('boxes');
             this.element.append(boxes);
             var numBoxes = this.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);

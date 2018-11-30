@@ -4,9 +4,9 @@
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link rel="stylesheet"
-    href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+	href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script
-    src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/style.css">
 <link rel="stylesheet" type="text/css" href="css/watchmaker_boxes.css">
 <link rel="stylesheet" type="text/css" href="css/geneboxes.css">
@@ -25,18 +25,16 @@
 <script src="js/breeding.js"></script>
 <script src="js/engineering.js"></script>
 <script type="text/javascript">
-    function doCanvasClicked(canvasId) {
-        if (autoRunning) {
-            document.getElementById("autoReproduce").checked = false;
-            autoRunning = false;
-        } else {
-            genotype = doReproduce(canvasId, canvasId);
-        }
-    }
 
-    $(document).ready(function() { 
-        var geneboxes = initGeneboxes($('body'), {engineering: true});
-        var boxes = $("<div></div>").breedingBoxes({numBoxes: 1, cols: 1}).appendTo('body');
+
+    $(document).ready(function() {
+        var geneboxes = initGeneboxes($('body'), {
+            engineering : true
+        });
+        var boxes = $("<div></div>").breedingBoxes({
+            numBoxes : 1,
+            cols : 1
+        }).appendTo('body');
         doPerson("BasicTree", 'canvas0');
     });
 </script>
@@ -45,10 +43,15 @@
 	<h2>Biomorph Engieering</h2>
 	<p>Let's try rendering the three hard-coded biomorph genotypes in
 		human readable form. Click one of the buttons below to generate a
-		biomorph genotype and display it in the demo box, or "Saltation" to generate
-		a biomorph at random. The one shown by
-		default is "BasicTree", the startup biomorph in the original 1986
-		version of Blind Watchmaker.</p>
-
+		biomorph genotype and display it in the demo box, or "Saltation" to
+		generate a biomorph at random. The one shown by default is
+		"BasicTree", the startup biomorph in the original 1986 version of
+		Blind Watchmaker.</p>
+	<div>
+		<button onclick="doPerson('BasicTree', 'canvas0');">BasicTree</button>
+		<button onclick="doPerson('Chess', 'canvas0');">Chess</button>
+		<button onclick="doPerson('Insect', 'canvas0');">Insect</button>
+		<button onclick="doPerson('Saltation', 'canvas0');">Saltation</button>
+	</div>
 </body>
 </html>

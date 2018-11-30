@@ -267,16 +267,14 @@ function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
     genotype.gene[8] = i;
 }
 
-function randint(max) {
-    return Math.trunc(Math.random() * max + 1);
-}
+
 
 function randSwell (indGene) {
     switch(indGene) {
     case SwellType.Shrink:
         return SwellType.Same;
     case SwellType.Same:
-        if(randint(2) == 1) {
+        if(randInt(2) == 1) {
             return SwellType.Shrink;
         } else {
             return SwellType.Swell;
@@ -290,20 +288,20 @@ function randSwell (indGene) {
 function doSaltation(genotype) {
     // {bomb 5, range check failed, here after killing top Adam}
     if(mut[0]) {
-        genotype.segNoGene = randint(6);
-        genotype.segDistGene = randint(20);
+        genotype.segNoGene = randInt(6);
+        genotype.segDistGene = randInt(20);
     } else {
         genotype.segNoGene = 1;
         genotype.segDistGene = 1;
     }
-    var r = randint(100);
+    var r = randInt(100);
     genotype.completenessGene = CompletenessType.Double;
     if(mut[2]) {
         if(r < 50) {
             genotype.completenessGene = CompletenessType.Single;
         } 
     }
-    r = randint(100);
+    r = randInt(100);
     if(mut[3]) {
         if(r < 33) {
             genotype.spokesGene = SpokesType.Radial;
@@ -316,7 +314,7 @@ function doSaltation(genotype) {
         genotype.spokesGene = SpokesType.NorthOnly;
     }
     if(mut[4]) {
-        genotype.trickleGene = randint(10);
+        genotype.trickleGene = randInt(10);
         if(genotype.trickleGene > 1) {
             genotype.mutSizeGene = Math.trunc(genotype.trickleGene / 2);
         }
@@ -324,8 +322,7 @@ function doSaltation(genotype) {
     for(j = 0; j < 8; j++) {
         var maxGene;
         do {
-            genotype.gene[j] = Math.trunc(genotype.mutSizeGene * (randint(19) - 10));
-            console.log('Gene ' + (j+1) + ":" + genotype.gene[j]);
+            genotype.gene[j] = Math.trunc(genotype.mutSizeGene * (randInt(19) - 10));
             if(mut[1]) {
                 genotype.dGene[j] = randSwell(genotype.dGene[j]);
             } else {
@@ -344,9 +341,10 @@ function doSaltation(genotype) {
                 break;
             }
             maxgene = genotype.gene[j] * genotype.segNoGene * factor;
-        } while(maxgene > 9 * genotype.trickleGene || maxgene < -9 * genotype.tricklegene);
+        } while(maxgene > 9 * genotype.trickleGene || maxgene < -9 * genotype.trickleGene);
     }
     do {
+        console.log("doSaltation2 trickleGene " + genotype.trickleGene);
         if(mut[7]) {
             genotype.dGene[8] = randSwell(genotype.dGene[8]);
         } else {
@@ -358,7 +356,15 @@ function doSaltation(genotype) {
             genotype.dGene[9] = Same;
         }
         var factor;
-        switch(genotype.dGene[7]) {
+        // In the Pascal, the index of the previous for loop, j, is used.
+        // the loop ran from 1 to 8.
+        // I don't know if the value of the counter in a Pascal for...do loop
+        // should
+        // to be 9 or 8. I'm guessing 9, and since we use 0-based arrays,
+        // using 8 below. Best inform for the guess is that dGene[7] isn't
+        // altered within the routine, and using dGene[8] seems to cause endless
+        // loops
+        switch(genotype.dGene[8]) {
         case SwellType.Shrink:
             factor = 1;
             break;
@@ -370,10 +376,9 @@ function doSaltation(genotype) {
             break;
         }
         maxgene = genotype.segDistGene * genotype.segNoGene * factor;
+        console.log("mut1 and 7 maxgene " + maxgene);
     } while (maxgene > 100 || maxgene < -100);
-    do {
-        genotype.gene[8] = randint(6);
-    } while (genotype.gene[8] < 1);
+    genotype.gene[8] = randInt(6);
 }
 
 function chess (genotype) {
