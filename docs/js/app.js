@@ -76,7 +76,7 @@ function formChanged(canvasId) {
 
 
 
-
+ 
 
 function doReproduce(canvasId, targetCanvasId) {
 //    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
