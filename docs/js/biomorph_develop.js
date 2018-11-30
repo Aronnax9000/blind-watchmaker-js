@@ -131,7 +131,7 @@ function develop(biomorph, drawingObject, drawMargin) {
     for(seg = 1; seg < segNoGeneLimit; seg++) {
         var oddOne = (seg % 2) == 1;
         // // console.log("oddOne " + oddOne + " seg" + seg);
-        if(seg > 0) {
+        if(seg > 1) {
             oldHere = here.copy();
             here.v += (biomorph.segDistGene + incDistance)/biomorph.trickleGene>>0;
             incDistance += extraDistance;
