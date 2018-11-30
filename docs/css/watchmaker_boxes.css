@@ -9,6 +9,17 @@
 	color: #000;
 }
 
+.engineering {
+    width: 1000px;
+    height: 600px;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-gap: 0px;
+    background-color: #fff;
+    color: #000;
+}
+
+
 .box {
 	background-color: #fff;
 	color: #000;

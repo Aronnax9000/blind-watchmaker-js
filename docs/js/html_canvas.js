@@ -4,13 +4,15 @@ $( function() {
             boxIndex: null,
             isMidBox: false,
             breedingBoxes: null,
+            width: 200,
+            height: 200,
         },
         _create: function() {
             var canvasId = "canvas" + this.options.boxIndex;
             var canvas = this.element;
             canvas.attr("id", canvasId);
-            canvas.attr('width', 200);
-            canvas.attr('height', 200);
+            canvas.attr('width', this.options.width);
+            canvas.attr('height', this.options.height);
             canvas.addClass('box');
 
             if (this.options.isMidBox) {

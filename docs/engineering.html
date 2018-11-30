@@ -15,7 +15,6 @@
 <script src="js/drawing_context_nop.js"></script>
 <script src="js/drawing_context_svg.js"></script>
 <script src="js/html_canvas.js"></script>
-
 <script src="js/biomorph_genotype.js"></script>
 <script src="js/watchmaker_geom.js"></script>
 <script src="js/biomorph_pic.js"></script>
@@ -25,13 +24,11 @@
 <script src="js/breeding.js"></script>
 <script src="js/engineering.js"></script>
 <script type="text/javascript">
-
-
     $(document).ready(function() {
         var geneboxes = initGeneboxes($('body'), {
             engineering : true
         });
-        var boxes = $("<div></div>").breedingBoxes({
+        var boxes = $("<div></div>").engineeringBoxes({
             numBoxes : 1,
             cols : 1
         }).appendTo('body');
@@ -52,6 +49,7 @@
 		<button onclick="doPerson('Chess', 'canvas0');">Chess</button>
 		<button onclick="doPerson('Insect', 'canvas0');">Insect</button>
 		<button onclick="doPerson('Saltation', 'canvas0');">Saltation</button>
+		<a href="index.html">Breeding</a>
 	</div>
 </body>
 </html>
