@@ -1,28 +1,9 @@
-.boxesHoriz {
-	width: 1000px;
-	height: 600px;
-	display: grid;
-	grid-template-columns: 200px 200px 200px 200px 200px;
-	grid-gap: 0px;
-	background-color: #fff;
-	color: #000;
-}
-
-.boxesVert {
-	width: 1000px;
-	height: 600px;
-	display: grid;
-	grid-template-columns: 200px 200px 200px;
-	grid-gap: 0px;
-	background-color: #fff;
-	color: #000;
-}
 
 .boxes {
 	width: 1000px;
 	height: 600px;
 	display: grid;
-	grid-template-columns: 200px 200px 200px 200px 200px;
+    grid-template-columns: 20% 20% 20% 20% 20% ;
 	grid-gap: 0px;
 	background-color: #fff;
 	color: #000;

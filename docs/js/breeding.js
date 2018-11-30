@@ -1,6 +1,6 @@
 
-function initGeneboxes(container) {
-    var geneboxes = $("<div></div>").monochrome_geneboxes({engineering: false});
+function initGeneboxes(container, options) {
+    var geneboxes = $("<div></div>").monochrome_geneboxes(options);
     container.append(geneboxes);
     return geneboxes;
 }
@@ -11,8 +11,8 @@ $( function() {
     $.widget( "dawk.breedingBoxes", {
         // default options
         options: {
-            rows: 5,
             cols: 3,
+            numBoxes: 15,
 
             // Callbacks
 //          change: null,
@@ -22,14 +22,27 @@ $( function() {
         // The constructor
         _create: function() {
             var boxes = this.element;
+            var gridTemplateColumns = '';
+            var cols = this.options.cols;
+            var individualTemplate = (100/cols) + "%";
+            for(i = 0; i < cols; i++) {
+                gridTemplateColumns += individualTemplate;
+                if(i + 1 < cols) {
+                    gridTemplateColumns += " ";
+                }
+            }
+            // Won't work, not yet part of DOM
+            $('.boxes').css('grid-template-columns' , gridTemplateColumns);
+            console.log("Template " + gridTemplateColumns);
             $(boxes).attr('id', 'boxes').addClass('boxes');
+            
+
 //          
             this.element.append(boxes);
-            var numberOfBoxes = this.options.rows * this.options.cols;
-            this.options.numBoxes = numberOfBoxes;
-            var midBox = Math.trunc(numberOfBoxes / 2);
-            console.log("numberOfBoxes: " + numberOfBoxes + " MidBox: " + midBox);
-            for (j = 0; j < numberOfBoxes; j++) {
+            var numBoxes = this.options.numBoxes;
+            var midBox = Math.trunc(numBoxes / 2);
+            console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
+            for (j = 0; j < numBoxes; j++) {
                 var isMidBox = j == midBox;
                 var canvas = $("<canvas></canvas>").breedingBox({ 
                     boxIndex: j, 

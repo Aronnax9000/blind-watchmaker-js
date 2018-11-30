@@ -61,7 +61,8 @@ $( function() {
                 }
             } else {
                 console.log("Genetype was null");
-            }
+            } 
+            // Update the geneboxes with the genes of the new parent.
             $(midCanvas).trigger("mouseover");
             return false;
         },

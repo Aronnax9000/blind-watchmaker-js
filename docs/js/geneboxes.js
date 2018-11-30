@@ -19,7 +19,6 @@ $.widget("dawk.monochrome_genebox", {
     },
     _create : function(options) {
         this._setOptions(options);
-//        this.options.value = this._constrain(this.options.value);
         
         this.element.addClass("monochromeGenebox");
         
@@ -146,11 +145,13 @@ $.widget("dawk.monochrome_genebox", {
         }
         
         if(target.hasClass('geneboxUp')) {
+            leftRightPos = HorizPos.MidThird;
             rung = VertPos.TopRung;
         } else if(target.hasClass('geneboxEquals')) {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.MidRung;
         } else if(target.hasClass('geneboxDown')) {
+            leftRightPos = HorizPos.MidThird;
             rung = VertPos.BottomRung;
         }
         this.options.geneboxCollection.manipulate(this.options.geneboxIndex, leftRightPos, rung)
@@ -258,7 +259,8 @@ $.widget( "dawk.spokesGenebox", $.dawk.monochrome_genebox, {
 $.widget('dawk.monochrome_geneboxes', {
     options : {
         engineering: true,
-        numGeneBoxes : 16
+        numGeneBoxes : 16,
+        genotype: null,
     },
 
     updateFromCanvas: function(id) {
@@ -267,6 +269,7 @@ $.widget('dawk.monochrome_geneboxes', {
         if(biomorph === undefined) {
             return;
         }
+        this.options.genotype = biomorph;
 //        console.log('update from ' + id + ' biomorph ' + biomorph);
         geneboxes = $(this.element).find('.monochromeGenebox');
 //        console.log('update from ' + id + ' nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
@@ -360,18 +363,11 @@ $.widget('dawk.monochrome_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-        var str = geneboxIndex + " h:" + leftRightPos;
-        
-        var leftRightPosProperties = HorizPos.properties[leftRightPos];
-        if(leftRightPosProperties != null) {
-            str += ',' + leftRightPosProperties.name;
-        }
-        str += ' v:' + rung
-        var rungProperties = VertPos.properties[rung];
-        if(rungProperties != null) {
-            str += ',' + rungProperties.name;
-        }
-      // console.log(str);
+       this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
+       this.updateFromCanvas('canvas0');
+       var midCanvas = document.getElementById('canvas0');
+       develop(this.options.genotype, midCanvas,
+               drawCrossHairs);
     },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");

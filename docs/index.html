@@ -28,15 +28,13 @@
 
     
     $(document).ready(function() { 
-        var geneboxes = initGeneboxes($('body'));
-
+        var geneboxes = initGeneboxes($('body'), {numBoxes: 15, cols: 5, engineering: false});
         var boxes = $("<div></div>").breedingBoxes();
         $('body').append(boxes);
-        var rows = boxes.breedingBoxes("option", 'rows');
+
+        var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
         var cols = boxes.breedingBoxes("option", 'cols');
-        
-        var midCanvasId = 'canvas' + Math.trunc(cols * rows / 2);
-        console.log("index.html breeding: " + cols + 'x' + rows + ' midCanvasId ' + midCanvasId);
+        var midCanvasId = 'canvas' + Math.trunc(numBoxes / 2);
         
         initialize("BasicTree", midCanvasId);
 

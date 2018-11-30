@@ -519,6 +519,18 @@ var VertPos = {
 };
 
 function manipulation(geneboxIndex, leftRightPos, rung) {
+    var str = geneboxIndex;
+
+    var leftRightPosProperties = HorizPos.properties[leftRightPos];
+    if(leftRightPosProperties != null) {
+        str += ',' + leftRightPosProperties.name;
+    }
+    str += ' v:' + rung
+    var rungProperties = VertPos.properties[rung];
+    if(rungProperties != null) {
+        str += ',' + rungProperties.name;
+    }
+    console.log(str);
     switch(geneboxIndex) {
     case 1:
     case 2:
@@ -538,13 +550,13 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
         case HorizPos.MidThird: 
             switch(rung) {
             case VertPos.TopRung: 
-                dGene[geneboxIndex - 1] = SwellType.Swell;
+                this.dGene[geneboxIndex - 1] = SwellType.Swell;
                 break;
             case VertPos.MidRung: 
-                dGene[geneboxIndex - 1] = SwellType.Same;
+                this.dGene[geneboxIndex - 1] = SwellType.Same;
                 break;
             case VertPos.BottomRung: 
-                dGene[geneboxIndex - 1] = SwellType.Shrink;
+                this.dGene[geneboxIndex - 1] = SwellType.Shrink;
                 break;
             }
             break;
@@ -682,7 +694,7 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
     if(this.gene[8] < 1) {
         this.gene[8] = 1;
     }
-    
+
     if(this.segNoGene < 1) {
         this.segNoGene = 1;
     }
