@@ -126,7 +126,9 @@ function develop(biomorph, drawingObject, drawMargin) {
     // // // console.log("biomorph.gene " + biomorph.gene + "running:" + running);
     var incDistance = 0;
     // // console.log("biomorph.segNoGene " + biomorph.segNoGene);
-    for(seg = 0; seg < biomorph.segNoGene; seg++) {
+    // { FOR seg := 1 TO SegNoGene DO}
+    var segNoGeneLimit = biomorph.segNoGene + 1;
+    for(seg = 1; seg < segNoGeneLimit; seg++) {
         var oddOne = (seg % 2) == 1;
         // // console.log("oddOne " + oddOne + " seg" + seg);
         if(seg > 0) {

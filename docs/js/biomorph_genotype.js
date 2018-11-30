@@ -245,8 +245,37 @@ function Person() {
     this.manipulation = manipulation;
 }
 
+/*
+ * PROCEDURE MakeGenes (VAR genotype: person; a, b, c, d, e, f, g, h, i: Integer);
+        VAR
+                j: Integer;
+        BEGIN
+                WITH genotype DO
+                        BEGIN
+                                FOR j := 1 TO 10 DO
+                                        dgene[j] := same;
+                                SegNoGene := 1;
+                                SegDistGene := 150;
+                                CompletenessGene := Double;
+                                SpokesGene := NorthOnly;
+                                TrickleGene := Trickle;
+                                MutSizeGene := Trickle DIV 2;
+                                MutProbGene := 10;
+                                gene[1] := a;
+                                gene[2] := b;
+                                gene[3] := c;
+                                gene[4] := d;
+                                gene[5] := e;
+                                gene[6] := f;
+                                gene[7] := g;
+                                gene[8] := h;
+                                gene[9] := i;
+                        END;
+        END; {makegenes}
+
+ */
 function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
-    for(j = 0; j<10; j++) {
+    for(j = 0; j < 10; j++) {
         genotype.dGene[j] = SwellType.Same;
     }
     genotype.segNoGene = 1;
@@ -254,7 +283,7 @@ function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
     genotype.completenessGene = CompletenessType.Double;
     genotype.spokesGene = SpokesType.NorthOnly;
     genotype.trickleGene = TRICKLE;
-    genotype.mutSizeGene = (TRICKLE/2>>0) // Trickle div 2;
+    genotype.mutSizeGene = Math.trunc(TRICKLE/2); // Trickle div 2;
     genotype.mutProbGene = 10;
     genotype.gene[0] = a;
     genotype.gene[1] = b;
@@ -393,7 +422,25 @@ function chess (genotype) {
             -5 * TRICKLE, 
             7);
 }
-
+/**
+ * PROCEDURE BasicTree (VAR genotype: person);
+        VAR
+                j: Integer;
+        BEGIN
+                makegenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
+                WITH genotype DO
+                        BEGIN
+                                SegNoGene := 2;
+                                SegDistGene := 150;
+                                CompletenessGene := single;
+                                dgene[4] := shrink;
+                                dgene[5] := shrink;
+                                dgene[6] := shrink;
+                                dgene[9] := shrink;
+                                tricklegene := 9;
+                        END;
+        END; {root}
+ */
 function basicTree(genotype) {
     makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
     genotype.segNoGene = 2;
