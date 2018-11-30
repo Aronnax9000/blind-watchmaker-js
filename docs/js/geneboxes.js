@@ -1,69 +1,125 @@
+// Globals, lines 205-206
+// TYPE
+//        HorizPos = (LeftThird, MidThird, RightThird);
+//        VertPos = (TopRung, MidRung, BottomRung);
+
+
+
 $.widget("dawk.monochrome_genebox", {
     options : {
+        geneboxCollection: null,
         geneboxIndex : 0,
         value : 0,
         gradientValue : SwellType.Same,
+        hasMid: true,
+        hasGradient: true,
+        hasLeftRight: true,
+        hasColor: false,
+        showSign: false
     },
-    _create : function() {
-        this.options.value = this._constrain(this.options.value);
+    _create : function(options) {
+        this._setOptions(options);
+//        this.options.value = this._constrain(this.options.value);
+        
         this.element.addClass("monochromeGenebox");
-        var geneboxInfo = $("<div></div>").addClass("geneboxInfo");
-
-        var geneValueSpan = geneboxInfo.append(
-                $("<img>").attr("src", "img/swellcircle.png").addClass(
-                "gradientGene")).append(
-                        $("<span></span>").addClass('geneValue'));
-
-        var geneboxNavi = $("<div></div>").addClass('geneboxNavi');
-        var geneboxLeft = $("<div></div>").addClass('geneboxLeft');
-        var geneboxMid = $("<div></div>").addClass('geneboxMid')
-        .append($("<div></div>").addClass('geneboxUp')).append(
-                $("<div></div>").addClass('geneboxEquals'))
-                .append($("<div></div>").addClass('geneboxDown'));
-        var geneboxRight = $("<div></div>").addClass('geneboxRight');
-
-        geneboxNavi.append(geneboxLeft).append(geneboxMid).append(
-                geneboxRight);
-
-        this.element.append(geneboxInfo).append(geneboxNavi);
-
+        
+    },
+    _init: function() {
+        // HTML template for the manipulation areas of the genebox.
+        var str =  '\
+            <div class="geneboxInfo"> \
+                <img src="img/swellcircle.png" class="gradientGene gradientSame" /> \
+                <span class="geneValue"></span> \
+            </div>';
+        var engineering = this.options.geneboxCollection.options.engineering;
+        if(engineering) {
+            str += '<div class="geneboxNavi">';
+                if(this.options.hasLeftRight) {
+                    str += '<div class="geneboxLeft"></div>';
+                }
+                str += '<div class="geneboxMid"> ';
+                if(this.options.hasGradient) {
+                    str += 
+                        '<div class="geneboxUp"></div> \
+                        <div class="geneboxEquals"></div> \
+                        <div class="geneboxDown"></div>';
+                }
+                else {
+                    str += '<div class="geneboxEquals"></div>';
+                }
+                str += '</div>';
+            
+                if(this.options.hasLeftRight) {
+                    str += '<div class="geneboxRight"></div>';
+                 }
+            str +='</div>';
+        }
+        this.element.append($.parseHTML(str));
+        if(engineering) this._on( $(this.element).find('.geneboxLeft, .geneboxMid, .geneboxUp, .geneboxEquals, .geneboxDown, .geneboxRight'), {
+            click: "_manipulate"
+          });
+        
         this.refresh();
     },
     _setOption : function(key, value) {
-//        console.log('setOption ' + key + ": " + value);
-        if (key === "value") {
-            value = this._constrain(value);
-        }
         this._super(key, value);
     },
     _setOptions : function(options) {
         this._super(options);
+//        console.log('genebox set options' + options);
         this.refresh();
     },
-    refresh : function() {
-        this.element.find('.geneValue').text(this.options.value);
-        var gradientImg = this.element.find('.gradientGene');
-//        console.log("gradientValue " + this.options.gradientValue);
-        switch (this.options.gradientValue) {
-        case SwellType.Swell:
-//            console.log('refresh finds Swell');
-            gradientImg.removeClass('gradientSame gradientShrink');
-            gradientImg.addClass('gradientSwell');
-            break;
-        case SwellType.Shrink:
-//            console.log('refresh finds Shrink');
-            gradientImg.removeClass('gradientSame gradientSwell');
-            gradientImg.addClass('gradientShrink');
-            break;
-        case SwellType.Same:
-//            console.log('refresh finds Same');
-            gradientImg.removeClass('gradientShrink gradientSwell');
-            gradientImg.addClass('gradientSame');
-            break;
-        default:
-            console.log('Illegal gradientValue: '
-                    + this.options.gradientValue);
+
+    refreshValue: function() {
+        var str = this.options.value;
+        if(this.options.showSign) {
+            // console.log("Showsign " + this.options.showSign);
+            str = "+s+" + String(str);
+            // console.log(str);
         }
+        // console.log(str);
+        this.element.find('.geneValue').text(str);
+        
+    },
+    
+    refreshColor: function() {
+        this.element.find('.geneValue').text(this.options.value);
+        if(this.options.hasColor) {
+            $(this.element).css('background-color', str);
+        }
+        
+    },
+    
+    refreshGradient: function() {
+        if(this.options.hasGradient) {
+            var gradientImg = this.element.find('.gradientGene');
+    //        // console.log("gradientValue " + this.options.gradientValue);
+            switch (this.options.gradientValue) {
+            case SwellType.Swell:
+    //            // console.log('refresh finds Swell');
+                gradientImg.removeClass('gradientSame gradientShrink');
+                gradientImg.addClass('gradientSwell');
+                break;
+            case SwellType.Shrink:
+    //            // console.log('refresh finds Shrink');
+                gradientImg.removeClass('gradientSame gradientSwell');
+                gradientImg.addClass('gradientShrink');
+                break;
+            case SwellType.Same:
+    //            // console.log('refresh finds Same');
+                gradientImg.removeClass('gradientShrink gradientSwell');
+                gradientImg.addClass('gradientSame');
+                break;
+            default:
+                // console.log('Illegal gradientValue: '+ this.options.gradientValue);
+            }
+        }
+    },
+    
+    refresh : function() {
+        this.refreshValue();
+        this.refreshColor();
+        this.refreshGradient();
     },
     _constrain : function(value) {
         if (value > 100) {
@@ -74,53 +130,251 @@ $.widget("dawk.monochrome_genebox", {
         }
         return value;
     },
-    _destroy : function() {
-        this.element.removeClass("monochromeGenebox").text("");
+    _manipulate: function(event) {
+//        HorizPos = (LeftThird, MidThird, RightThird);
+//        VertPos = (TopRung, MidRung, BottomRung);
+        var target = $(event.target);
+        var leftRightPos;
+        var rung;
+        // console.log(target.attr('class'));
+        if(target.hasClass('geneboxLeft')) {
+            leftRightPos = HorizPos.LeftThird;
+        } else if(target.hasClass('geneboxRight')) {
+            leftRightPos = HorizPos.RightThird;
+        } else if(target.hasClass('geneboxMid')) {
+            leftRightPos = HorizPos.MidThird;
+        }
+        
+        if(target.hasClass('geneboxUp')) {
+            rung = VertPos.TopRung;
+        } else if(target.hasClass('geneboxEquals')) {
+            leftRightPos = HorizPos.MidThird;
+            rung = VertPos.MidRung;
+        } else if(target.hasClass('geneboxDown')) {
+            rung = VertPos.BottomRung;
+        }
+        this.options.geneboxCollection.manipulate(this.options.geneboxIndex, leftRightPos, rung)
+        return false;
     }
+    
 });
 
+$.widget( "dawk.gene1to9box", $.dawk.monochrome_genebox, {
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = true;
+        this.options.hasColor = false;
+        this._super();
+    },
+    _setOption : function(key, value) {
+        this._super(key, value);
+    }
+
+} );
+
+$.widget( "dawk.segNoGenebox", $.dawk.monochrome_genebox, {
+    _init : function() {
+        this.options.showSign = true;
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasColor = false;
+        this.options.hasGradient = false;
+        this._super();
+    },
+    refresh: function() {
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+} );
+
+$.widget( "dawk.segDistGenebox", $.dawk.monochrome_genebox, {
+    _init : function() {
+        this.options.showSign = true;
+        this.options.hasLeftRight = true;
+        this.options.hasMid = true;
+        this.options.hasGradient = true;
+        this.options.hasColor = false;
+        this._super();
+    },
+    refresh: function() {
+        this.refreshGradient();
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+} );
+
+
+$.widget( "dawk.completenessGenebox", $.dawk.monochrome_genebox, {
+    _init : function() {
+        this.options.showSign = true;
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    refresh: function() {
+        this.refreshGradient();
+        var str = this.options.value;
+        // console.log(str);
+        var properties = CompletenessType.properties[str];
+        if(properties != null) {
+            this.element.find('.geneValue').text(properties.geneboxName);
+        }
+    },
+} );
+
+
+$.widget( "dawk.spokesGenebox", $.dawk.monochrome_genebox, {
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = true;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    refresh: function() {
+        this.refreshGradient();
+        var str = this.options.value;
+        // console.log(str);
+        var properties = SpokesType.properties[str];
+        if(properties != null) {
+            this.element.find('.geneValue').text(properties.geneboxName);
+        }
+    },
+} );
 
 
 $.widget('dawk.monochrome_geneboxes', {
     options : {
+        engineering: true,
         numGeneBoxes : 16
     },
-    _create : function() {
+
+    updateFromCanvas: function(id) {
+        var canvas = $("#" + id);
+        var biomorph = $(canvas).data('genotype');
+        if(biomorph === undefined) {
+            return;
+        }
+//        console.log('update from ' + id + ' biomorph ' + biomorph);
+        geneboxes = $(this.element).find('.monochromeGenebox');
+//        console.log('update from ' + id + ' nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
+        var genebox;
+        for(i = 0; i < 9; i++) {
+            genebox = geneboxes.eq(i);
+            genebox.gene1to9box("option", "value", biomorph.gene[i]);
+            genebox.gene1to9box("option", "gradientValue", biomorph.dGene[i]);
+            genebox.gene1to9box("refresh");
+        }
+        genebox = geneboxes.eq(9);
+        genebox.segNoGenebox("option", "value", biomorph.segNoGene);
+        genebox.segNoGenebox("refresh");
+        genebox = geneboxes.eq(10);
+        genebox.segDistGenebox("option", "value", biomorph.segDistGene);
+        genebox.segDistGenebox("option", "gradientValue", biomorph.dGene[9]);
+        genebox.segDistGenebox("refresh");
+        genebox = geneboxes.eq(11);
+        genebox.completenessGenebox("option", "value", biomorph.completenessGene);
+        genebox.completenessGenebox("refresh");
+        genebox = geneboxes.eq(12);
+        genebox.spokesGenebox("option", "value", biomorph.spokesGene);
+        genebox.spokesGenebox("refresh");
+        genebox = geneboxes.eq(13);
+        genebox.segNoGenebox("option", "value", biomorph.trickleGene);
+        genebox.segNoGenebox("refresh");
+        genebox = geneboxes.eq(14);
+        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
+        genebox.segNoGenebox("refresh");
+        genebox = geneboxes.eq(15);
+        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
+        genebox.segNoGenebox("refresh");
+        
+    },
+    _create : function(options) {
+        this._setOptions(options);
+//        for (var k in this.options){
+//            if (typeof this.options[k] !== 'function') {
+//                 console.log("Key is " + k + ", value is" + this.options[k]);
+//            }
+//        }
         this.element.addClass("monochromeGeneboxes");
         var i;
-        for (i = 0; i < this.options.numGeneBoxes; i++) {
-            var geneBox = $("<div></div>").monochrome_genebox({});
-            geneBox.monochrome_genebox("option", "value", Math.trunc(Math
-                    .random() * 10));
-            switch (Math.trunc(Math.random() * 3)) {
-            case 0:
-                geneBox.monochrome_genebox("option", "gradientValue",
-                        SwellType.Swell);
-                break;
-            case 1:
-                geneBox.monochrome_genebox("option", "gradientValue",
-                        SwellType.Shrink);
-                break;
-            case 2:
-                geneBox.monochrome_genebox("option", "gradientValue",
-                        SwellType.Same);
-                break;
-            }
+        for (i = 0; i < 9; i++) {
+            var geneBox = $("<div></div>").gene1to9box({geneboxCollection: this});
+            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
             this.element.append(geneBox);
         }
+        var geneBox;
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox.segNoGenebox("option", "geneboxCollection", this);
+        geneBox.segNoGenebox("option", "geneboxIndex", 10);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").segDistGenebox({geneboxCollection: this});
+        geneBox.segDistGenebox("option", "geneboxCollection", this);
+        geneBox.segDistGenebox("option", "geneboxIndex", 11);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").completenessGenebox({geneboxCollection: this});
+        geneBox.completenessGenebox("option", "geneboxCollection", this);
+        geneBox.completenessGenebox("option", "geneboxIndex", 12);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").spokesGenebox({geneboxCollection: this});
+        geneBox.spokesGenebox("option", "geneboxCollection", this);
+        geneBox.spokesGenebox("option", "geneboxIndex", 13);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox.segNoGenebox("option", "geneboxCollection", this);
+        geneBox.segNoGenebox("option", "geneboxIndex", 14);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox.segNoGenebox("option", "geneboxCollection", this);
+        geneBox.segNoGenebox("option", "geneboxIndex", 15);
+        this.element.append(geneBox);
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox.segNoGenebox("option", "geneboxCollection", this);
+        geneBox.segNoGenebox("option", "geneboxIndex", 16);
+        this.element.append(geneBox);
+        
         this.refresh();
     },
     _setOption : function(key, value) {
-//        console.log('setOption ' + key + ": " + value);
+//        // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {
+        console.log('geneboxes setting options');
         this._super(options);
+        console.log('geneboxCollection:' + this.options.geneboxCollection);
         this.refresh();
     },
     refresh : function() {
     },
+    manipulate: function(geneboxIndex, leftRightPos, rung) {
+        var str = geneboxIndex + " h:" + leftRightPos;
+        
+        var leftRightPosProperties = HorizPos.properties[leftRightPos];
+        if(leftRightPosProperties != null) {
+            str += ',' + leftRightPosProperties.name;
+        }
+        str += ' v:' + rung
+        var rungProperties = VertPos.properties[rung];
+        if(rungProperties != null) {
+            str += ',' + rungProperties.name;
+        }
+      // console.log(str);
+    },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");
     }
+    
 });

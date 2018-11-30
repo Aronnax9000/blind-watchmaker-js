@@ -82,12 +82,12 @@ var Mode = {
 
 var theMode = Mode.Breeding;
 function develop(biomorph, drawingObject, drawMargin) {
-//    var drawingContext = drawingObject.getContext("2d");
-    var drawer = jQuery.data(drawingObject, 'drawer');
+    var drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
+
     // Use the identity matrix while clearing the canvas
     drawer.setTransform(1, 0, 0, 1, 0, 0);
     drawer.clearRect(0, 0, drawingObject.width, drawingObject.height);
-    drawer.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
+    drawer.translate(drawingObject.width / 2 + 0.5, drawingObject.height / 2 + 0.5);
     var myPic = new Pic();
     // console.log("Develop here:" + here.toString() + " Margin:" + margin.toString() + " Delayed:" + delayedDrawing);
     var dx = [0,0,0,0,0,0,0,0];

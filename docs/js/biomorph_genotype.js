@@ -30,16 +30,19 @@ var SwellType = {
 
 
 
-function Chromosome() {
-    return new Array(9); // indexed 0-8, unlike Pascal 1-based arrays.
+function chromosome() {
+    var chrome = new Array(9);
+    for(i = 0; i < 9; i++)
+        chrome[i] = 0; // indexed 0-8, unlike Pascal 1-based arrays.
+    return chrome;
 }
 
 var CompletenessType = {
         Single: 1,
         Double: 2,
         properties: {
-            1: {name: "Single"},
-            2: {name: "Double"}
+            1: {name: "Single", geneboxName: "Asym"},
+            2: {name: "Double", geneboxName: "Bilat"}
         }
 };
 
@@ -48,9 +51,9 @@ var SpokesType = {
         NSouth: 2,
         Radial: 3,
         properties: {
-            1: {name: "NorthOnly"},
-            2: {name: "NSouth"},
-            3: {name: "Radial"}
+            1: {name: "NorthOnly", geneboxName: "Single"},
+            2: {name: "NSouth", geneboxName: "UpDn"},
+            3: {name: "Radial", geneboxName: "Radial"}
         }
 };
 
@@ -222,8 +225,11 @@ function personFromForm(form) {
 }
 
 function Person() {
-    this.gene = new Chromosome();
+    this.gene = chromosome();
     this.dGene = new Array(10);
+    for(i = 0; i < 10; i++) {
+        this.dGene[i] = SwellType.Same;
+    }
     this.segNoGene = 0;
     this.segDistGene = 0;
     this.completenessGene = CompletenessType.Single;
@@ -236,6 +242,7 @@ function Person() {
     this.setForm = personSetForm;
     this.fromForm = personFromForm;
     this.pic = null;
+    this.manipulation = manipulation;
 }
 
 function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
@@ -258,6 +265,115 @@ function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
     genotype.gene[6] = g;
     genotype.gene[7] = h;
     genotype.gene[8] = i;
+}
+
+function randint(max) {
+    return Math.trunc(Math.random() * max + 1);
+}
+
+function randSwell (indGene) {
+    switch(indGene) {
+    case SwellType.Shrink:
+        return SwellType.Same;
+    case SwellType.Same:
+        if(randint(2) == 1) {
+            return SwellType.Shrink;
+        } else {
+            return SwellType.Swell;
+        }
+    case SwellType.Swell:
+        return SwellType.Same;
+    }
+}
+
+
+function doSaltation(genotype) {
+    // {bomb 5, range check failed, here after killing top Adam}
+    if(mut[0]) {
+        genotype.segNoGene = randint(6);
+        genotype.segDistGene = randint(20);
+    } else {
+        genotype.segNoGene = 1;
+        genotype.segDistGene = 1;
+    }
+    var r = randint(100);
+    genotype.completenessGene = CompletenessType.Double;
+    if(mut[2]) {
+        if(r < 50) {
+            genotype.completenessGene = CompletenessType.Single;
+        } 
+    }
+    r = randint(100);
+    if(mut[3]) {
+        if(r < 33) {
+            genotype.spokesGene = SpokesType.Radial;
+        } else if(r < 66) {
+            genotype.spokesGene = SpokesType.NSouth;
+        } else {
+            genotype.spokesGene = SpokesType.NorthOnly;
+        }
+    } else {
+        genotype.spokesGene = SpokesType.NorthOnly;
+    }
+    if(mut[4]) {
+        genotype.trickleGene = randint(10);
+        if(genotype.trickleGene > 1) {
+            genotype.mutSizeGene = Math.trunc(genotype.trickleGene / 2);
+        }
+    }
+    for(j = 0; j < 8; j++) {
+        var maxGene;
+        do {
+            genotype.gene[j] = Math.trunc(genotype.mutSizeGene * (randint(19) - 10));
+            console.log('Gene ' + (j+1) + ":" + genotype.gene[j]);
+            if(mut[1]) {
+                genotype.dGene[j] = randSwell(genotype.dGene[j]);
+            } else {
+                genotype.dGene[j] = SwellType.Same;
+            }
+            var factor;
+            switch(genotype.dGene[j]) {
+            case SwellType.Shrink:
+                factor = 1;
+                break;
+            case SwellType.Same:
+                factor = 0;
+                break;
+            case SwellType.Swell:
+                factor = 1;
+                break;
+            }
+            maxgene = genotype.gene[j] * genotype.segNoGene * factor;
+        } while(maxgene > 9 * genotype.trickleGene || maxgene < -9 * genotype.tricklegene);
+    }
+    do {
+        if(mut[7]) {
+            genotype.dGene[8] = randSwell(genotype.dGene[8]);
+        } else {
+            genotype.dGene[8] = SwellType.Same;
+        }
+        if(mut[1]) {
+            genotype.dGene[9] = randSwell(genotype.dGene[8])
+        } else {
+            genotype.dGene[9] = Same;
+        }
+        var factor;
+        switch(genotype.dGene[7]) {
+        case SwellType.Shrink:
+            factor = 1;
+            break;
+        case SwellType.Same:
+            factor = 0;
+            break;
+        case SwellType.Swell:
+            factor = 1;
+            break;
+        }
+        maxgene = genotype.segDistGene * genotype.segNoGene * factor;
+    } while (maxgene > 100 || maxgene < -100);
+    do {
+        genotype.gene[8] = randint(6);
+    } while (genotype.gene[8] < 1);
 }
 
 function chess (genotype) {
@@ -380,6 +496,198 @@ function randSwell(indGene) {
     }
 }
 
+var HorizPos = {
+        LeftThird: 1,
+        MidThird: 2,
+        RightThird: 3,
+        properties: {
+            1: {name: "LeftThird"},
+            2: {name: "MidThird"},
+            3: {name: "RightThird"}
+        }
+};
+
+var VertPos = {
+        TopRung: 1,
+        MidRung: 2,
+        BottomRung: 3,
+        properties: {
+            1: {name: "TopRung"},
+            2: {name: "MidRung"},
+            3: {name: "BottomRung"}
+        }
+};
+
+function manipulation(geneboxIndex, leftRightPos, rung) {
+    switch(geneboxIndex) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.gene[geneboxIndex - 1] -= this.mutSizeGene;
+            break;
+        case HorizPos.RightThird: 
+            this.gene[geneboxIndex - 1] += this.mutSizeGene;
+            break;
+        case HorizPos.MidThird: 
+            switch(rung) {
+            case VertPos.TopRung: 
+                dGene[geneboxIndex - 1] = SwellType.Swell;
+                break;
+            case VertPos.MidRung: 
+                dGene[geneboxIndex - 1] = SwellType.Same;
+                break;
+            case VertPos.BottomRung: 
+                dGene[geneboxIndex - 1] = SwellType.Shrink;
+                break;
+            }
+            break;
+        }
+        break;
+    case 9:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.gene[8]--;
+            break;
+        case HorizPos.RightThird: 
+            this.gene[8]++;
+            var sizeWorry = this.segNoGene * twoToThe(this.gene[8]);
+            if(sizeWorry > WORRYMAX)
+                this.gene[8]--;
+            break;
+        case HorizPos.MidThird:
+            switch(rung) {
+            case VertPos.TopRung: 
+                this.dGene[8] = SwellType.Swell;
+                break;
+            case VertPos.MidRung: 
+                this.dGene[8] = SwellType.Same;
+                break;
+            case VertPos.BottomRung: 
+                this.dGene[8] = SwellType.Shrink;
+                break;
+            }
+            break;
+        }
+        break;
+    case 10: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.SegNoGene--;
+            break;
+        case HorizPos.MidThird: 
+            break; //{No Action}
+        case HorizPos.RightThird: 
+            this.SegNoGene++;
+            var sizeWorry = this.segNoGene * twoToThe(this.gene[10]);
+            if(sizeWorry > WORRYMAX)
+                this.segNoGene--;
+            break;
+        }
+        break;
+    case 11: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.segDistGene -= this.trickleGene;
+            break;
+        case HorizPos.MidThird:
+            switch(rung) {
+            case VertPos.TopRung: 
+                this.dGene[9] = SwellType.Swell;
+                break;
+            case VertPos.MidRung: 
+                this.dGene[9] = SwellType.Same;
+            case VertPos.BottomRung: 
+                this.dGene[9] = SwellType.Shrink;
+            }
+            break;
+        case HorizPos.RightThird: 
+            this.segDistGene += this.trickleGene;
+            break;
+        }
+        break;
+    case 12: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.completenessGene = CompletenessType.Single;
+            break;
+        case HorizPos.MidThird: 
+            break; // {No Action}
+        case HorizPos.RightThird: 
+            this.completenessGene = CompletenessType.Double;
+            break;
+        }
+        break;
+    case 13: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            this.spokesGene = SpokesType.NorthOnly;
+            break;
+        case HorizPos.MidThird: 
+            this.spokesGene = SpokesType.NSouth;
+            break;
+        case HorizPos.RightThird: 
+            this.spokesGene = SpokesType.Radial;
+            break;
+        }
+        break;
+    case 14: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(this.trickleGene > 1)
+                this.trickleGene--;
+            break;
+        case HorizPos.RightThird: 
+            this.trickleGene++;
+            break;
+        case HorizPos.MidThird: 
+            break;// {No action}
+        }
+        break;
+    case 15: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(this.mutSizeGene > 1)
+                this.mutSizeGene--;
+            break;
+        case HorizPos.RightThird: 
+            this.mutSizeGene++;
+            break;
+        case HorizPos.MidThird: 
+            break; // {No action}
+
+        case 16: 
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                if(this.mutProbGene > 1) {
+                    this.mutProbGene--;
+                }
+                break;
+            case HorizPos.RightThird: 
+                if(this.mutProbGene < 100)
+                    this.mutProbGene++;
+                break;
+            case HorizPos.MidThird: 
+                break; // {No action}
+            }
+            break;
+        }
+    }
+    if(this.gene[8] < 1) {
+        this.gene[8] = 1;
+    }
+    
+    if(this.segNoGene < 1) {
+        this.segNoGene = 1;
+    }
+    // Alert subscribers that the genome has changed here.
+}
 
 function reproduce(parent) {
     // // console.log("Reproduce");
@@ -464,3 +772,5 @@ function reproduce(parent) {
         }
     return child;
 } // reproduce
+
+

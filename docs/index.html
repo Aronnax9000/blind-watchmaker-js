@@ -5,126 +5,47 @@
 <link rel="stylesheet" type="text/css" href="css/watchmaker_boxes.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="js/html_canvas.js"></script>
+<link rel="stylesheet"
+    href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script
+    src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/geneboxes.css">
+
 <script src="js/drawing_context.js"></script>
 <script src="js/drawing_context_canvas2d.js"></script>
 <script src="js/drawing_context_nop.js"></script>
 <script src="js/drawing_context_svg.js"></script>
+<script src="js/html_canvas.js"></script>
+
 <script src="js/biomorph_genotype.js"></script>
 <script src="js/watchmaker_geom.js"></script>
 <script src="js/biomorph_pic.js"></script>
 <script src="js/biomorph_develop.js"></script>
+<script src="js/geneboxes.js"></script>
 <script src="js/app.js"></script>
+<script src="js/breeding.js"></script>
 <script type="text/javascript">
-    var numBoxes = 15;
-    function doCanvasClicked(canvasId) {
-        var midBox = Math.trunc(numBoxes / 2);
-        var midCanvasId = 'canvas' + midBox;
-        var midCanvas = document.getElementById(midCanvasId);
-        var clickedCanvas = document.getElementById(canvasId);
-        if (jQuery.data(clickedCanvas, 'genotype') != null) {
-            if (midCanvas != clickedCanvas) {
-                jQuery.data(midCanvas, 'genotype', jQuery.data(clickedCanvas,
-                        "genotype"));
-                develop(jQuery.data(midCanvas, 'genotype'), midCanvas,
-                        drawCrossHairs);
-            }
-            for (i = 0; i < numBoxes; i++) {
-                if (i != midBox) {
-                    doReproduce(midCanvasId, 'canvas' + i);
-                }
-            }
-        }
-    }
+
     
-    function addBoxes(numberOfBoxes) {
-        var midBox = Math.trunc(numberOfBoxes / 2);
-        console.log("MidBox: " + midBox);
-        var midCanvas;
-        for (j = 0; j < numberOfBoxes; j++) {
-            var div = document.createElement("div");
-            var boxId = 'box' + j;
-            div.id = boxId;
-            div.className = 'box';
+    $(document).ready(function() { 
+        var geneboxes = initGeneboxes($('body'));
 
-            if (j == midBox) {
-                div.className += ' midBox';
-                console.log("added midbox");
-            }
-            canvas = make_canvas("canvas" + j);
-            if (j == midBox) {
-                div.className += ' midBox';
-                midCanvas = canvas;
-                console.log("added midbox");
-            }
-            $("#boxes").append(div);
-            $("#" + boxId).append(canvas);
-            console.log(div.className);
+        var boxes = $("<div></div>").breedingBoxes();
+        $('body').append(boxes);
+        var rows = boxes.breedingBoxes("option", 'rows');
+        var cols = boxes.breedingBoxes("option", 'cols');
+        
+        var midCanvasId = 'canvas' + Math.trunc(cols * rows / 2);
+        console.log("index.html breeding: " + cols + 'x' + rows + ' midCanvasId ' + midCanvasId);
+        
+        initialize("BasicTree", midCanvasId);
 
-        }
-        console.log(midCanvas.id + " wxh " + midCanvas.width + "x"
-                + midCanvas.height);
-        initialize("BasicTree", 'canvas' + midBox);
-        midCanvas.click();
-    }
-
-    function startAutoBreeding(numberOfBoxes) {
-        autoRunning = true;
-        autoBreed(numberOfBoxes);
-        measureGenerationRate(Number(document.getElementById('generations').value));
-    }
-
-    function fitness(biomorph, targetWidth, targetHeight) {
-        var margin = biomorph.pic.margin;
-        var marginWidth = margin.right - margin.left;
-        var marginHeight = margin.bottom - margin.top;
-        var widthError = Math.abs(targetWidth - marginWidth) / targetWidth;
-        var heightError = Math.abs(targetHeight - marginHeight) / targetHeight;
-        var averageError = (widthError + heightError) / 2;
-        return averageError;
-    }
-
-    function getBiomorphFromCanvas(canvas) {
-
-        var biomorph = jQuery.data(canvas, 'genotype');
-        return biomorph;
-    }
-
-    function autoBreed(numberOfBoxes) {
-        if (autoRunning) {
-            var useFitness = document.getElementById('useFitness').checked;
-            if (useFitness) {
-                var canvasId = 'canvas0';
-                var canvas = document.getElementById(canvasId);
-                var biomorph = getBiomorphFromCanvas(canvas);
-                var bestSoFar = canvasId;
-                var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
-                for (i = 1; i < numberOfBoxes; i++) {
-                    canvasId = 'canvas' + i;
-                    canvas = document.getElementById(canvasId);
-                    var currentError = fitness(getBiomorphFromCanvas(canvas),
-                            canvas.width, canvas.height);
-                    if (currentError < errorToBeat) {
-                        bestSoFar = canvasId;
-                        errorToBeat = currentError;
-                    }
-                }
-                document.getElementById(bestSoFar).click();
-            } else {
-                var luckyParent = Math.trunc(Math.random() * numberOfBoxes);
-                document.getElementById('canvas' + luckyParent).click();
-            }
-            setTimeout(function() {
-                autoBreed(numberOfBoxes)
-            }, Number(document.getElementById("autoReproduceInterval").value));
-        }
-
-    }
+    });
 </script>
 </head>
-<body onload="addBoxes(numBoxes);">
+<body>
 	<div>
-		<button id="autoReproduce" onclick="startAutoBreeding(numBoxes);">Auto
+		<button id="autoReproduce" onclick="startAutoBreeding();">Auto
 			Reproduce</button>
 		<span> with delay of</span> <input type="text"
 			id="autoReproduceInterval" size="5" maxlength="10" value="0" />
@@ -137,7 +58,6 @@
 			(Breed based on how well biomorph fits its box)
 		<a href="engineering.html">Engineering</a>	
 		</span>
-	   
 	</div>
 
 	<div>
@@ -145,7 +65,5 @@
 		Generations per second: <input type="number" value="0"
 			id="generationRate" />
 	</div>
-
-	<div id="boxes" class="boxes"></div>
 </body>
 </html>

@@ -5,17 +5,23 @@
 <link rel="stylesheet" type="text/css" href="css/watchmaker_boxes.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
-<script src="js/watchmaker_geom.js"></script>
-<script src="js/watchmaker_boxes.js"></script>
-<script src="js/html_canvas.js"></script>
+<link rel="stylesheet"
+    href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script
+    src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="js/drawing_context.js"></script>
-<script src="js/drawing_context_canvas2d.js"></script><link rel="stylesheet" type="text/css" href="css/style.css">
+<script src="js/drawing_context_canvas2d.js"></script>
+<script src="js/drawing_context_nop.js"></script>
+<script src="js/drawing_context_svg.js"></script>
+<script src="js/html_canvas.js"></script>
 
 <script src="js/biomorph_genotype.js"></script>
+<script src="js/watchmaker_geom.js"></script>
 <script src="js/biomorph_pic.js"></script>
 <script src="js/biomorph_develop.js"></script>
+<script src="js/geneboxes.js"></script>
 <script src="js/app.js"></script>
+<script src="js/breeding.js"></script>
 <script src="js/engineering.js"></script>
 <script type="text/javascript">
     function doCanvasClicked(canvasId) {
@@ -68,7 +74,8 @@
 		<div style="white-space: normal;">
 			<button onClick='doPerson("Chess", "myCanvas");'>Chess</button>
 			<button onClick='doPerson("BasicTree", "myCanvas");'>BasicTree</button>
-			<button onClick='doPerson("Insect", "myCanvas");'>Insect</button>
+            <button onClick='doPerson("Insect", "myCanvas");'>Insect</button>
+            <button onClick='doPerson("Saltation", "myCanvas");'>Saltation</button>
 			<a href='index.html'>Breeding</a>
 			<br> <input type="checkbox" id="crosshairs"
 				onchange="formChanged('myCanvas');" />Crosshairs

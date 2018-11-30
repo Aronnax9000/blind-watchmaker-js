@@ -13,6 +13,7 @@ function doPerson(biomorphType, canvasId) {
     case "Chess": chess(genotype); break;
     case "BasicTree": basicTree(genotype); break;
     case "Insect": insect(genotype); break;
+    case "Saltation": doSaltation(genotype); break;
     }
     develop(genotype, canvas, drawCrossHairs); 
     genotype.setForm(document.getElementById('engineering'));
@@ -78,6 +79,7 @@ function formChanged(canvasId) {
 
 
 function doReproduce(canvasId, targetCanvasId) {
+//    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
     var generationCounter = document.getElementById('generations');
     generationCounter.value = Number(generationCounter.value) + 1;
     var canvas = document.getElementById(canvasId);
