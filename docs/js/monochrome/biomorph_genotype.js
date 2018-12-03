@@ -643,15 +643,17 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
     case 10: 
         switch(leftRightPos) {
         case HorizPos.LeftThird:
-            this.SegNoGene--;
+            this.segNoGene--;
             break;
         case HorizPos.MidThird: 
             break; //{No Action}
         case HorizPos.RightThird: 
-            this.SegNoGene++;
-            var sizeWorry = this.segNoGene * twoToThe(this.gene[10]);
-            if(sizeWorry > WORRYMAX)
+            this.segNoGene++;
+            var sizeWorry = this.segNoGene * twoToThe(this.gene[8]);
+            if(sizeWorry > WORRYMAX) {
+                console.log("SizeWorry: " + sizeWorry + " WORRYMAX " + WORRYMAX);
                 this.segNoGene--;
+            }
             break;
         }
         break;
@@ -725,21 +727,21 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
             break;
         case HorizPos.MidThird: 
             break; // {No action}
-
-        case 16: 
-            switch(leftRightPos) {
-            case HorizPos.LeftThird:
-                if(this.mutProbGene > 1) {
-                    this.mutProbGene--;
-                }
-                break;
-            case HorizPos.RightThird: 
-                if(this.mutProbGene < 100)
-                    this.mutProbGene++;
-                break;
-            case HorizPos.MidThird: 
-                break; // {No action}
+        }
+        break;
+    case 16: 
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(this.mutProbGene > 1) {
+                this.mutProbGene--;
             }
+            break;
+        case HorizPos.RightThird: 
+            if(this.mutProbGene < 100)
+                this.mutProbGene++;
+            break;
+        case HorizPos.MidThird: 
+            break; // {No action}
             break;
         }
     }
@@ -750,7 +752,7 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
     if(this.segNoGene < 1) {
         this.segNoGene = 1;
     }
-    // Alert subscribers that the genome has changed here.
+//  Alert subscribers that the genome has changed here.
 }
 
 function reproduce(parent) {

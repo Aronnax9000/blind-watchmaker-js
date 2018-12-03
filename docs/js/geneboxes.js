@@ -297,7 +297,7 @@ $.widget('dawk.monochrome_geneboxes', {
         genebox.segNoGenebox("option", "value", biomorph.trickleGene);
         genebox.segNoGenebox("refresh");
         genebox = geneboxes.eq(14);
-        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
+        genebox.segNoGenebox("option", "value", biomorph.mutSizeGene);
         genebox.segNoGenebox("refresh");
         genebox = geneboxes.eq(15);
         genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
