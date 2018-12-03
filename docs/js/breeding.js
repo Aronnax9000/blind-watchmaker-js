@@ -4,7 +4,9 @@ function initGeneboxes(container, options) {
     container.append(geneboxes);
     return geneboxes;
 }
-
+/*
+ * breedingBoxes widget definition
+ */
 $( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
@@ -13,10 +15,6 @@ $( function() {
         options: {
             cols: 3,
             numBoxes: 15,
-
-            // Callbacks
-//          change: null,
-//          random: null
         },
 
         // The constructor
@@ -39,7 +37,6 @@ $( function() {
                 }
             }
 
-            console.log("return from initialize");
             this._refresh();
         },
 
