@@ -15,13 +15,15 @@ $.widget("dawk.monochrome_genebox", {
         hasGradient: true,
         hasLeftRight: true,
         hasColor: false,
-        showSign: false
+        showSign: false,
+        title: ''
     },
     _create : function(options) {
         this._setOptions(options);
         
         this.element.addClass("monochromeGenebox");
-        
+        $(this.element).tooltip();
+        this.element.attr('title', this.options.title);
     },
     _init: function() {
         // HTML template for the manipulation areas of the genebox.
@@ -162,6 +164,7 @@ $.widget("dawk.monochrome_genebox", {
 
 $.widget( "dawk.gene1to9box", $.dawk.monochrome_genebox, {
     _init : function() {
+        
         this.options.hasLeftRight = true;
         this.options.hasMid = true;
         this.options.hasColor = false;
@@ -217,6 +220,8 @@ $.widget( "dawk.segDistGenebox", $.dawk.monochrome_genebox, {
 
 $.widget( "dawk.completenessGenebox", $.dawk.monochrome_genebox, {
     _init : function() {
+        this.element.attr('title', 'Completeness');
+
         this.options.showSign = true;
         this.options.hasLeftRight = true;
         this.options.hasMid = false;
@@ -238,6 +243,7 @@ $.widget( "dawk.completenessGenebox", $.dawk.monochrome_genebox, {
 
 $.widget( "dawk.spokesGenebox", $.dawk.monochrome_genebox, {
     _init : function() {
+        this.element.attr('title', 'Spokes');
         this.options.hasLeftRight = true;
         this.options.hasMid = true;
         this.options.hasGradient = false;
@@ -314,16 +320,22 @@ $.widget('dawk.monochrome_geneboxes', {
         this.element.addClass("monochromeGeneboxes");
         var i;
         for (i = 0; i < 9; i++) {
-            var geneBox = $("<div></div>").gene1to9box({geneboxCollection: this});
+            var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
+            if(i == 8) {
+                geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
+            }
+            var geneBox = $("<div></div>").gene1to9box({
+                geneboxCollection: this, 
+                title: geneBoxTitle});
             geneBox.gene1to9box("option", "geneboxIndex", i + 1);
             this.element.append(geneBox);
         }
         var geneBox;
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096'});
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 10);
         this.element.append(geneBox);
-        geneBox = $("<div></div>").segDistGenebox({geneboxCollection: this});
+        geneBox = $("<div></div>").segDistGenebox({geneboxCollection: this, title: 'Segment Distance and Gradient Gene 10'});
         geneBox.segDistGenebox("option", "geneboxCollection", this);
         geneBox.segDistGenebox("option", "geneboxIndex", 11);
         this.element.append(geneBox);
@@ -335,15 +347,15 @@ $.widget('dawk.monochrome_geneboxes', {
         geneBox.spokesGenebox("option", "geneboxCollection", this);
         geneBox.spokesGenebox("option", "geneboxIndex", 13);
         this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Trickle'});
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 14);
         this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Size'});
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 15);
         this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this});
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Probability'});
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 16);
         this.element.append(geneBox);

@@ -498,6 +498,12 @@ function copyBiomorph(child, parent) {
     return child;
 }
 
+/*
+ * Globals, line 29:
+ * 
+ * CONST
+ *     WorryMax = 4095;
+ */
 const WORRYMAX = 4095;
 
 function twoToThe(n) {
@@ -620,10 +626,14 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
             this.gene[8]--;
             break;
         case HorizPos.RightThird: 
-            this.gene[8]++;
-            var sizeWorry = this.segNoGene * twoToThe(this.gene[8]);
-            if(sizeWorry > WORRYMAX)
-                this.gene[8]--;
+            // The Pascal original incremented gene 9 unconditionally,
+            // then backed off the change if the 2^gene9 times the segment
+            // number gene value exceeded 4095.
+            // This version does the test first, then increments gene 9 only
+            // if it is safe to do so.
+            var sizeWorry = this.segNoGene * twoToThe(this.gene[8] + 1);
+            if(sizeWorry <= WORRYMAX)
+                this.gene[8]++;
             break;
         case HorizPos.MidThird:
             switch(rung) {
@@ -648,11 +658,9 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
         case HorizPos.MidThird: 
             break; //{No Action}
         case HorizPos.RightThird: 
-            this.segNoGene++;
-            var sizeWorry = this.segNoGene * twoToThe(this.gene[8]);
-            if(sizeWorry > WORRYMAX) {
-                console.log("SizeWorry: " + sizeWorry + " WORRYMAX " + WORRYMAX);
-                this.segNoGene--;
+            var sizeWorry = (this.segNoGene + 1) * twoToThe(this.gene[8]);
+            if(sizeWorry <= WORRYMAX) {
+                this.segNoGene++;
             }
             break;
         }
