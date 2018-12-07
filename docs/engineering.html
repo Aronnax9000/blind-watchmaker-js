@@ -36,12 +36,43 @@
 </head>
 <body>
 	<h2>Biomorph Engineering</h2>
-	<p>Let's try rendering the three hard-coded biomorph genotypes in
-		human readable form. Click one of the buttons below to generate a
-		biomorph genotype and display it in the demo box, or "Saltation" to
-		generate a biomorph at random. The one shown by default is
+    <p>
+    Using Engineering Mode, you can manipulate the values of a biomorph's genes, 
+    and see the result of the change in the body of the biomorph (its 'phenotype') in real time. 
+    </p>
+    <p>The row of values above the biomorph represent the biomorph's 'genes'.
+    Some genes have purely numeric values. Other genes, such as Completeness and
+    Spokes, have a limited range of possible non-numeric values.
+    </p>
+	<p>The biomorph shown by default is
 		"BasicTree", the startup biomorph in the original 1986 version of
-		Blind Watchmaker.</p>
+		Blind Watchmaker. You can choose one of the buttons below to generate either BasicTree,
+		Chess, or Insect (the three hard-coded biomorph genotypes in Dawkins' original version).
+		You can choose the "Saltation" button to
+        generate a biomorph genotype at random. 
+        </p>
+	<p>
+	You can manipulate the primary value of a gene by clicking on the left third or right
+	third of the gene box. For numeric genes, the size of the change in value will be the
+	value of the Mutation Size gene, the next-to-rightmost gene shown. 
+	If Mutation Size is set to zero,
+	you will notice no effect when you attempt to modify a numerical gene value. If that happens,
+	increase Mutation Size to a non-zero value, and you will once again be able to manipulate
+	the value of numeric genes.
+	</p>
+	<p>
+	Some of the genes, namely, Gene 1 through Gene 9, and Segment Distance, also
+	have 'gradient' genes. A gradient gene may take on one of three different values:
+	Shrink (indicated by a dot at the lower left of the gene box), Swell (the dot moves to the
+	top left), or Same (no dot at all). Gradient genes affect how the effect of the corresponding
+	numerical gene value is increased, decreased, or kept the same as the biomorph is grown from
+	the trunk to the leaves.
+	</p>
+	<p>
+	You can manipulate gradient genes by clicking the
+	upper, middle, or lower portion of the middle third (horizontally) of the gene box.
+	
+	</p>
 	<div>
 		<button onclick="doPerson('BasicTree', 'canvas0');">BasicTree</button>
 		<button onclick="doPerson('Chess', 'canvas0');">Chess</button>
