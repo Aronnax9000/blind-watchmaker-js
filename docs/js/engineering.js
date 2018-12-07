@@ -17,7 +17,7 @@ $( function() {
                 height: 600,
                 width: 1000,
                 breedingBoxes: this}).appendTo(boxes);
-            this.options.midCanvas = canvas;
+            this.options.midCanvasDiv = canvas;
         
             this._refresh();
         },

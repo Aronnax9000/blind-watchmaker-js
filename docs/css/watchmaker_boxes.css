@@ -1,5 +1,6 @@
 
 .boxes {
+	position: relative;
 	width: 1000px;
 	height: 600px;
 	display: grid;
@@ -15,17 +16,22 @@
     display: grid;
     grid-template-columns: 100%;
     grid-gap: 0px;
-    background-color: #fff;
     color: #000;
 }
 
+.boxDiv {
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    color: #000;
+	
+}
 
 .box {
-	background-color: #fff;
-	color: #000;
-	border-style: solid;
-	border-width: 1px;
-	border-color: black;
+    position: relative;
+    left: 0px;
+    top: 0px;
 	padding: 0px;
 	font-size: 150%;
 }

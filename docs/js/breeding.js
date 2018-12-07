@@ -17,6 +17,20 @@ $( function() {
             numBoxes: 15,
         },
 
+        produceLitter: function(numBoxes, midBox) {
+            for (k = 0; k < numBoxes; k++) {
+                var sourceId = 'canvas' + midBox;
+                var targetId = 'canvas' + k; 
+                var targetCanvas = $("#" + targetId);
+                targetCanvas.css({ left: "0px", top: "0px" });
+                if (k != midBox) {
+//                    console.log("calling doReproduce " + k);
+                    doReproduce(sourceId, targetId);
+                }
+            }
+
+        },
+        
         // The constructor
         _create: function() {
             var boxes = this.element;
@@ -28,12 +42,12 @@ $( function() {
             console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
             for (j = 0; j < numBoxes; j++) {
                 var isMidBox = j == midBox;
-                var canvas = $("<canvas></canvas>").breedingBox({ 
+                var canvasDiv = $("<div></div>").breedingBox({ 
                     boxIndex: j, 
                     isMidBox: isMidBox, 
                     breedingBoxes: this}).appendTo(boxes);
                 if(isMidBox) {
-                    this.options.midCanvas = canvas;
+                    this.options.midCanvasDiv = canvasDiv;
                 }
             }
 

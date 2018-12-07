@@ -12,7 +12,7 @@
 <script src="js/drawing_context_canvas2d.js"></script>
 <script src="js/drawing_context_nop.js"></script>
 <script src="js/drawing_context_svg.js"></script>
-<script src="js/html_canvas.js"></script>
+<script src="js/breeding_box.js"></script>
 
 <script src="js/monochrome/biomorph_genotype.js"></script>
 <script src="js/watchmaker_geom.js"></script>
@@ -30,13 +30,13 @@
         $('body').append(boxes);
 
         var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
-        var midCanvasId = 'canvas' + Math.trunc(numBoxes / 2);
+        var midCanvasDivId = 'canvas' + Math.trunc(numBoxes / 2);
         var cols = boxes.breedingBoxes("option", 'cols');
         
-        initialize("BasicTree", midCanvasId);
+        initialize("BasicTree", midCanvasDivId);
 
-        $('#' + midCanvasId).trigger('mouseover');
-        $('#' + midCanvasId).trigger('click');
+        $('#' + midCanvasDivId).trigger('mouseover');
+        $('#' + midCanvasDivId).trigger('click');
     });
 </script>
 </head>

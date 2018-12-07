@@ -377,8 +377,8 @@ $.widget('dawk.monochrome_geneboxes', {
     manipulate: function(geneboxIndex, leftRightPos, rung) {
        this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
        this.updateFromCanvas('canvas0');
-       var midCanvas = document.getElementById('canvas0');
-       develop(this.options.genotype, midCanvas,
+       var midCanvasDiv = document.getElementById('canvas0');
+       develop(this.options.genotype, midCanvasDiv,
                drawCrossHairs);
     },
     _destroy : function() {
