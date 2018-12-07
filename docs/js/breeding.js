@@ -25,7 +25,22 @@ $( function() {
                 targetCanvas.css({ left: "0px", top: "0px" });
                 if (k != midBox) {
 //                    console.log("calling doReproduce " + k);
+                    var position = targetCanvas.parent().position();
+                    var midCanvasDiv = this.options.midCanvasDiv;
+                    var midCanvasDivPosition = midCanvasDiv.position();
+                    var deltaX = midCanvasDivPosition.left - position.left;
+                    var deltaY = midCanvasDivPosition.top - position.top;
+                    console.log('offspring offSet ' + deltaX + ',' + deltaY);
+                    targetCanvas.css({ left: deltaX, top: deltaY });
+                                        
                     doReproduce(sourceId, targetId);
+                    $( targetCanvas ).animate({
+                        left: 0,
+                        top: 0
+                      }, { queue: true, duration: 1000, complete: function() {
+                          console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                      }});
+
                 }
             }
 
