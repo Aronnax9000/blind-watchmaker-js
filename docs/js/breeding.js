@@ -17,30 +17,57 @@ $( function() {
             numBoxes: 15,
         },
 
-        produceLitter: function(numBoxes, midBox) {
-            for (k = 0; k < numBoxes; k++) {
+        produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
+            if(k < numBoxes) {
                 var sourceId = 'canvas' + midBox;
                 var targetId = 'canvas' + k; 
                 var targetCanvas = $("#" + targetId);
                 targetCanvas.css({ left: "0px", top: "0px" });
                 if (k != midBox) {
-//                    console.log("calling doReproduce " + k);
                     var position = targetCanvas.parent().position();
-                    var midCanvasDiv = this.options.midCanvasDiv;
-                    var midCanvasDivPosition = midCanvasDiv.position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-                    console.log('offspring offSet ' + deltaX + ',' + deltaY);
-                    targetCanvas.css({ left: deltaX, top: deltaY });
+                    console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+                    targetCanvas.css({ left: deltaX, top: deltaY});
                                         
                     doReproduce(sourceId, targetId);
-                    $( targetCanvas ).animate({
-                        left: 0,
-                        top: 0
-                      }, { queue: true, duration: 1000, complete: function() {
-                          console.log('finished animate Offspring ' + targetCanvas.attr('id'));
-                      }});
-
+                    if(recursive) {
+                        $( targetCanvas ).animate({
+                            left: 0,
+                            top: 0,
+                          }, { queue: true, duration: 200, 
+                              complete: function() {
+                                  var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
+                                  breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
+                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                          }});
+                        
+                    } else {
+                        $( targetCanvas ).animate({
+                            left: 0,
+                            top: 0,
+                          }, { queue: true, duration: 1000, 
+                              complete: function() {
+                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                          }});
+                    }
+                } else { // midbox
+                    if(recursive) {
+                        this.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
+                    }
+                }
+            }
+        },
+        
+        produceLitter: function(numBoxes, midBox) {
+            var midCanvasDiv = this.options.midCanvasDiv;
+            var midCanvasDivPosition = midCanvasDiv.position();
+            var recursive = ! document.getElementById('explosiveBreeding').checked;
+            if(recursive) {
+                this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
+            } else {
+                for (k = 0; k < numBoxes; k++) {
+                    this.produceKthOffspring(numBoxes, midBox, k, midCanvasDivPosition, recursive);
                 }
             }
 

@@ -78,12 +78,16 @@ $( function() {
                       }, 1000, function() {
                           jQuery.data(midCanvas, 'genotype', genotype);
                           console.log('develop midcanvas ' + midCanvas.id);
+                          $(midCanvas).css({left:0,top:0});
+                          var midCanvasPos = $(midCanvas).position();
+                          console.log('midcanvas position ' + midCanvasPos.left + "," + midCanvasPos.top);
+                          
                           develop(genotype, midCanvas,
                                   drawCrossHairs);
                           breedingBoxes.produceLitter(numBoxes, midBox);
                       });
                 } else {
-                    this.options.breedingBoxes.produceLitter(numBoxes, midBox);
+                    breedingBoxes.produceLitter(numBoxes, midBox);
                 }
             } else {
                 console.log("Genotype was null");
