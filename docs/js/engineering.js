@@ -11,7 +11,7 @@ $( function() {
             var boxes = this.element;
 
             $(boxes).attr('id', 'boxes').addClass('engineering');
-            var canvas = $("<canvas></canvas>").breedingBox({ 
+            var canvas = $("<div></div>").breedingBox({ 
                 boxIndex: 0, 
                 isMidBox: true,
                 height: 600,

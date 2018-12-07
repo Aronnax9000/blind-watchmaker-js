@@ -18,6 +18,8 @@ function doPerson(biomorphType, canvasId) {
     develop(genotype, canvas, drawCrossHairs); 
     genotype.setForm(document.getElementById('engineering'));
     jQuery.data(canvas, "genotype", genotype);
+    $('#' + canvasId).trigger('mouseover');
+
     return genotype;
 }
 function startAutoReproduce(canvasId, targetCanvasId) {
