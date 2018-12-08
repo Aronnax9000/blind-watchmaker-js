@@ -17,6 +17,28 @@ $( function() {
             numBoxes: 15,
         },
 
+        sparkLine: function(destinationId) {
+            var canvas = document.getElementById('overlayCanvas');
+            var context = canvas.getContext('2d');
+            var midBox = Math.trunc(this.options.numBoxes / 2);
+            var midDiv = $('#canvas' + midBox).parent();
+            var midPos = $(midDiv).position();
+            var destDiv = $('#' + destinationId).parent();
+            var destPos = $(destDiv).position();
+            var x0 = Math.trunc(midPos.left + midDiv.width() / 2);
+            var y0 = Math.trunc(midPos.top + midDiv.height() / 2);
+            var x1 = Math.trunc(destPos.left + destDiv.width() / 2);
+            var y1 = Math.trunc(destPos.top + destDiv.height() / 2);
+            context.strokeStyle = '#000000';
+            context.beginPath();
+            context.moveTo(x0, y0);
+            context.lineTo(x1, y1);
+            context.closePath();
+            context.stroke();
+//            console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
+        },
+
+        
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
                 var sourceId = 'canvas' + midBox;
@@ -27,28 +49,39 @@ $( function() {
                     var position = targetCanvas.parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-                    console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+//                    console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+                    // Move the target canvas to the centre
                     targetCanvas.css({ left: deltaX, top: deltaY});
-                                        
+                    // Grow the offspring on the target canvas
                     doReproduce(sourceId, targetId);
-                    if(recursive) {
+                    if(recursive) { // one at a time
+                        this.sparkLine(targetId);
+                        // Move the target canvas back into its home position
                         $( targetCanvas ).animate({
                             left: 0,
-                            top: 0,
-                          }, { queue: true, duration: 200, 
+                            top: 0
+                          }, { duration: 100, 
+                              easing: 'easeOutExpo',
+                              progress: function(animation, progress, msRemaining) {
+                                  var context = $(targetCanvas)[0].getContext("2d");
+                                  
+//                                  $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
+                              },
                               complete: function() {
+                                  eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
                                   var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                   breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                                  console.log('finished recursive animate Offspring ' + targetCanvas.attr('id'));
                           }});
-                        
-                    } else {
+                    } else { // Explosive breeding
                         $( targetCanvas ).animate({
                             left: 0,
                             top: 0,
-                          }, { queue: true, duration: 1000, 
+                          }, { queue: true, duration: 1000,
+                              easing: 'easeOutExpo',
                               complete: function() {
-                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+//                                  eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+//                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
                           }});
                     }
                 } else { // midbox
@@ -56,6 +89,8 @@ $( function() {
                         this.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
                     }
                 }
+            } else {
+                stillBreeding = false;
             }
         },
         
@@ -75,6 +110,8 @@ $( function() {
         
         // The constructor
         _create: function() {
+            
+            
             var boxes = this.element;
 
             $(boxes).attr('id', 'boxes').addClass('boxes');

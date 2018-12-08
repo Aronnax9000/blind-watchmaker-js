@@ -44,6 +44,16 @@ function doRepro(canvasId, targetCanvasId) {
         setTimeout(function() { doRepro(canvasId, targetCanvasId)}, Number(document.getElementById("autoReproduceInterval").value));
 
 }
+
+function eraseCanvasNoCenter(canvas) {
+//    console.log("eraseCanvasNoCenter");
+    var drawingContext = canvas.getContext("2d");
+    // Use the identity matrix while clearing the canvas
+    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    
+    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function eraseCanvas(canvas) {
     // Store the current transformation matrix
     //drawingContext.save();

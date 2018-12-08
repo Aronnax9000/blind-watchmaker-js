@@ -6,9 +6,10 @@
 	display: grid;
     grid-template-columns: 20% 20% 20% 20% 20% ;
 	grid-gap: 0px;
-	background-color: #fff;
 	color: #000;
 }
+
+
 
 .engineering {
     width: 1000px;
@@ -17,6 +18,21 @@
     grid-template-columns: 100%;
     grid-gap: 0px;
     color: #000;
+}
+.container {
+  width: 1000px;
+  height: 600px;
+  position: relative;
+}
+.boxes, .overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#infoi {
+  z-index: 10;
 }
 
 .boxDiv {

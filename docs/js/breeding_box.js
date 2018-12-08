@@ -1,3 +1,5 @@
+var stillBreeding = false;
+
 $( function() {
     $.widget('dawk.breedingBox', {
         options: {
@@ -32,11 +34,11 @@ $( function() {
             var position = this.element.position();
             var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
-//            console.log('mouseover ' + id + " " + position.left + ',' + position.top);
-//            console.log('midBox ' + midCanvasDivPosition.left + ',' + midCanvasDivPosition.top);
+//          console.log('mouseover ' + id + " " + position.left + ',' + position.top);
+//          console.log('midBox ' + midCanvasDivPosition.left + ',' + midCanvasDivPosition.top);
             var deltaX = midCanvasDivPosition.left - position.left;
             var deltaY = midCanvasDivPosition.top - position.top;
-//            console.log('offSet ' + deltaX + ',' + deltaY);
+//          console.log('offSet ' + deltaX + ',' + deltaY);
             var geneboxes = $('body').find('.monochromeGeneboxes');
             geneboxes.monochrome_geneboxes('updateFromCanvas', id);
         },
@@ -51,41 +53,43 @@ $( function() {
             var deltaY = midCanvasDivPosition.top - position.top;
             console.log('offSet ' + deltaX + ',' + deltaY);
             var boxes = this.options.breedingBoxes;
-//            console.log("boxes " + boxes);
+//          console.log("boxes " + boxes);
             var numBoxes = boxes.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
-            
-//            console.log("numBoxes "+ numBoxes + " midBox " + midBox);
+
+//          console.log("numBoxes "+ numBoxes + " midBox " + midBox);
             var midCanvas = document.getElementById('canvas' + midBox);
             var genotype = jQuery.data(event.target, 'genotype');
             var breedingBoxes = this.options.breedingBoxes;
-            
+
             if (genotype != null) {
                 // erase the other canvases
                 for(k = 0; k < numBoxes; k++) {
                     var candidateIdForErasure = "canvas" + k;
                     if(candidateIdForErasure != id) {
-                        console.log('id is ' + id + ' erasing ' + candidateIdForErasure);
+//                      console.log('id is ' + id + ' erasing ' + candidateIdForErasure);
                         eraseCanvas(document.getElementById(candidateIdForErasure));
                         $("#" + candidateIdForErasure).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
                 }
-                
+
                 if (! this.options.isMidBox) {
                     $( canvas ).animate({
                         left: "+=" + deltaX,
                         top: "+=" + deltaY
-                      }, 1000, function() {
-                          jQuery.data(midCanvas, 'genotype', genotype);
-                          console.log('develop midcanvas ' + midCanvas.id);
-                          $(midCanvas).css({left:0,top:0});
-                          var midCanvasPos = $(midCanvas).position();
-                          console.log('midcanvas position ' + midCanvasPos.left + "," + midCanvasPos.top);
-                          
-                          develop(genotype, midCanvas,
-                                  drawCrossHairs);
-                          breedingBoxes.produceLitter(numBoxes, midBox);
-                      });
+                    }, { duration: 1000,                               
+                        easing: 'easeOutExpo',
+                        complete: function() {
+                            jQuery.data(midCanvas, 'genotype', genotype);
+//                          console.log('develop midcanvas ' + midCanvas.id);
+                            $(midCanvas).css({left:0,top:0});
+                            var midCanvasPos = $(midCanvas).position();
+//                          console.log('midcanvas position ' + midCanvasPos.left + "," + midCanvasPos.top);
+
+                            develop(genotype, midCanvas,
+                                    drawCrossHairs);
+                            breedingBoxes.produceLitter(numBoxes, midBox);
+                        } });
                 } else {
                     breedingBoxes.produceLitter(numBoxes, midBox);
                 }
