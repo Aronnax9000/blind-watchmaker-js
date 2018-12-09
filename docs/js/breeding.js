@@ -60,7 +60,7 @@ $( function() {
                         $( targetCanvas ).animate({
                             left: 0,
                             top: 0
-                          }, { duration: 100, 
+                          }, { duration: 200, 
                               easing: 'easeOutExpo',
                               progress: function(animation, progress, msRemaining) {
                                   var context = $(targetCanvas)[0].getContext("2d");
@@ -77,7 +77,7 @@ $( function() {
                         $( targetCanvas ).animate({
                             left: 0,
                             top: 0,
-                          }, { queue: true, duration: 1000,
+                          }, { queue: true, duration: 2000,
                               easing: 'easeOutExpo',
                               complete: function() {
 //                                  eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
