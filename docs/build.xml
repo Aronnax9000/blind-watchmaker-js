@@ -24,6 +24,7 @@
          - - - - - - - - - - - - - - - - - -->
     <target name="depends">
         <concat destfile="js/watchmaker.js">
+            <fileset file="jquery/jquery.easing.1.3.js" />
         	<fileset file="js/drawing_context.js" />
         	<fileset file="js/drawing_context_canvas2d.js" />
         	<fileset file="js/drawing_context_nop.js" />
@@ -35,7 +36,8 @@
         	<fileset file="js/monochrome/biomorph_develop.js" />
         	<fileset file="js/geneboxes.js" />
         	<fileset file="js/app.js" />
-        	<fileset file="js/breeding.js" />
+            <fileset file="js/breeding.js" />
+            <fileset file="js/engineering.js" />
         </concat>
         <concat destfile="css/watchmaker.css">
             <fileset file="css/watchmaker_boxes.css" />

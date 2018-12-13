@@ -35,10 +35,10 @@ $( function() {
             context.lineTo(x1, y1);
             context.closePath();
             context.stroke();
-//            console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
+//          console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
         },
 
-        
+
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
                 var sourceId = 'canvas' + midBox;
@@ -49,7 +49,7 @@ $( function() {
                     var position = targetCanvas.parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-//                    console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+//                  console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
                     // Move the target canvas to the centre
                     targetCanvas.css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
@@ -60,29 +60,29 @@ $( function() {
                         $( targetCanvas ).animate({
                             left: 0,
                             top: 0
-                          }, { duration: 200, 
-                              easing: 'easeOutExpo',
-                              progress: function(animation, progress, msRemaining) {
-                                  var context = $(targetCanvas)[0].getContext("2d");
-                                  
-//                                  $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
-                              },
-                              complete: function() {
-                                  eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-                                  var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
-                                  breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                                  console.log('finished recursive animate Offspring ' + targetCanvas.attr('id'));
-                          }});
+                        }, { duration: 200, 
+                            easing: 'easeOutExpo',
+                            progress: function(animation, progress, msRemaining) {
+                                var context = $(targetCanvas)[0].getContext("2d");
+
+//                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
+                            },
+                            complete: function() {
+                                eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+                                var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
+                                breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
+                                console.log('finished recursive animate Offspring ' + targetCanvas.attr('id'));
+                            }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
                             left: 0,
                             top: 0,
-                          }, { queue: true, duration: 2000,
-                              easing: 'easeOutExpo',
-                              complete: function() {
-//                                  eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                                  console.log('finished animate Offspring ' + targetCanvas.attr('id'));
-                          }});
+                        }, { queue: true, duration: 2000,
+                            easing: 'easeOutExpo',
+                            complete: function() {
+//                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+//                              console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                            }});
                     }
                 } else { // midbox
                     if(recursive) {
@@ -93,7 +93,7 @@ $( function() {
                 stillBreeding = false;
             }
         },
-        
+
         produceLitter: function(numBoxes, midBox) {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
@@ -107,11 +107,11 @@ $( function() {
             }
 
         },
-        
+
         // The constructor
         _create: function() {
-            
-            
+
+
             var boxes = this.element;
 
             $(boxes).attr('id', 'boxes').addClass('boxes');
@@ -212,5 +212,89 @@ function autoBreed() {
             autoBreed()
         }, Number(document.getElementById("autoReproduceInterval").value));
     }
-
 }
+
+$( function() { 
+    $.widget( "dawk.breedingAutoReproduceControl", {
+        _create: function() {
+            var string = '<div><button onclick="startAutoBreeding();">AutoReproduce</button>\
+                <span> with delay of</span> <input type="text"\
+                id="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
+                milliseconds.\
+                <button id="stopAutoReproduce" onclick="autoRunning = false;">Stop</button>\
+                </div>'
+                var div = $($.parseHTML(string));
+            this.element.append(div);
+        }
+    });
+});
+
+$( function() {
+    $.widget( "dawk.breedingControl", {
+        _create: function() {
+            var string = '<div>\
+                <input type="checkbox" id="useFitness" /> <span>Use Fitness\
+                (Breed based on how well biomorph fits its box) <a\
+                href="engineering.html">Engineering</a>\
+                </span> <input type="checkbox" id="explosiveBreeding" /> <span>Explosive\
+                Breeding </span>\
+                </div>';
+            var div = $($.parseHTML(string));
+            this.element.append(div);
+        }
+    });
+});
+$( function() {
+    $.widget( "dawk.breedingOffspringCounter", {
+        _create: function() {
+            var string = '<div>\
+                Offspring count: <input type="number" value="0" id="generations" />\
+                Offspring per second: <input type="number" value="0"\
+                id="generationRate" />\
+                </div>'
+                var div = $.parseHTML(string);
+            this.element.append(div);
+        }
+    });
+});
+
+
+$( function() {
+    // the widget definition, where "custom" is the namespace,
+    // "colorize" the widget name
+    $.widget( "dawk.breedingWindow", {
+        _create: function () {
+            $(this.element).breedingAutoReproduceControl();
+            $(this.element).breedingControl();
+            $(this.element).breedingOffspringCounter();
+            var geneboxes = initGeneboxes(this.element, {
+                numBoxes : 15,
+                cols : 5,
+                engineering : false
+            });
+            var container = $("<div></div>");
+            container.addClass('container');
+            var boxes = $("<div></div>").breedingBoxes();
+            var overlay = $("<div></div>");
+            overlay.addClass("overlay");
+            container.append(overlay);
+            container.append(boxes);
+            var overlayCanvas = $('<canvas></canvas>');
+            overlayCanvas.attr('id', 'overlayCanvas');
+            overlayCanvas.attr('width', 1000);
+            overlayCanvas.attr('height', 600);
+            overlayCanvas.addClass('overlayCanvas');
+            overlay.append(overlayCanvas);
+            this.element.append(container);
+            var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
+            var midCanvasDivId = 'canvas' + Math.trunc(numBoxes / 2);
+            var cols = boxes.breedingBoxes("option", 'cols');
+
+
+            initialize("BasicTree", midCanvasDivId);
+
+
+            $('#' + midCanvasDivId).trigger('mouseover');
+            $('#' + midCanvasDivId).trigger('click');
+        }})});
+
