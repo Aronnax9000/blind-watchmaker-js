@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Dec 12, 2018 10:46:21 PM                                                        
+
+     project    
+     description
+                   
+     alan                                                                
+     ====================================================================== -->
+<project name="project" default="default">
+    <description>
+            description
+    </description>
+
+    <!-- ================================= 
+          target: default              
+         ================================= -->
+    <target name="default" depends="depends" description="description">
+        
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="depends">
+        <concat destfile="js/watchmaker.js">
+        	<fileset file="js/drawing_context.js" />
+        	<fileset file="js/drawing_context_canvas2d.js" />
+        	<fileset file="js/drawing_context_nop.js" />
+        	<fileset file="js/drawing_context_svg.js" />
+        	<fileset file="js/breeding_box.js" />
+        	<fileset file="js/monochrome/biomorph_genotype.js" />
+        	<fileset file="js/watchmaker_geom.js" />
+        	<fileset file="js/monochrome/biomorph_pic.js" />
+        	<fileset file="js/monochrome/biomorph_develop.js" />
+        	<fileset file="js/geneboxes.js" />
+        	<fileset file="js/app.js" />
+        	<fileset file="js/breeding.js" />
+        </concat>
+        <concat destfile="css/watchmaker.css">
+            <fileset file="css/watchmaker_boxes.css" />
+            <fileset file="css/style.css" />
+            <fileset file="css/geneboxes.css" />
+        </concat>
+    </target>
+
+</project>
