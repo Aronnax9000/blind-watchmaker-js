@@ -40,6 +40,7 @@
             <fileset file="js/watchmaker_session.js" />
             <fileset file="js/breeding.js" />
             <fileset file="js/engineering.js" />
+            <fileset file="js/engineering_boxes.js" />
         </concat>
         <concat destfile="docs/css/watchmaker.css">
             <fileset file="css/watchmaker_boxes.css" />

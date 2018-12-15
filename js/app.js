@@ -3,11 +3,11 @@ initializeMut();
 var drawCrossHairs = false;
 var autoRunning = false;
 function initialize(biomorphType, canvasId) {
-    doPerson(biomorphType, canvasId);
+    doPerson(biomorphType, document.getElementById(canvasId));
 }
 
-function doPerson(biomorphType, canvasId) {
-    var canvas = document.getElementById(canvasId);
+function doPerson(biomorphType, canvas) {
+    
     var genotype = new Person();
     switch(biomorphType) {
     case "Chess": chess(genotype); break;
@@ -18,7 +18,7 @@ function doPerson(biomorphType, canvasId) {
     develop(genotype, canvas, drawCrossHairs); 
     genotype.setForm(document.getElementById('engineering'));
     jQuery.data(canvas, "genotype", genotype);
-    $('#' + canvasId).trigger('mouseover');
+    $(canvas).trigger('mouseover');
 
     return genotype;
 }

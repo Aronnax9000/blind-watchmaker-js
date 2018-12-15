@@ -2554,11 +2554,11 @@ initializeMut();
 var drawCrossHairs = false;
 var autoRunning = false;
 function initialize(biomorphType, canvasId) {
-    doPerson(biomorphType, canvasId);
+    doPerson(biomorphType, document.getElementById(canvasId));
 }
 
-function doPerson(biomorphType, canvasId) {
-    var canvas = document.getElementById(canvasId);
+function doPerson(biomorphType, canvas) {
+    
     var genotype = new Person();
     switch(biomorphType) {
     case "Chess": chess(genotype); break;
@@ -2569,7 +2569,7 @@ function doPerson(biomorphType, canvasId) {
     develop(genotype, canvas, drawCrossHairs); 
     genotype.setForm(document.getElementById('engineering'));
     jQuery.data(canvas, "genotype", genotype);
-    $('#' + canvasId).trigger('mouseover');
+    $(canvas).trigger('mouseover');
 
     return genotype;
 }
@@ -2662,7 +2662,49 @@ function doReproduce(canvasId, targetCanvasId) {
 
 
 
-
+$.widget('dawk.blindWatchmaker', {
+   options: {
+       
+   } ,
+   _create: function () {
+     var ul = $('<ul></ul>');
+     this.element.append(ul);
+     this.element.tabs();
+     var newTabLi = $('<li><a href="#monochrome">Monochrome</a></li>');
+     ul.append(newTabLi);
+     var div = $('<div id="#monochrome"></div>');
+     this.element.append(div);
+     div.watchmakerSession();
+     this.element.tabs("refresh");
+   },
+});$.widget('dawk.watchmakerSession', {
+   options: {
+       
+   },
+   _create: function () {
+       var ul = $('<ul></ul>');
+       this.element.append(ul);
+       this.element.tabs();
+       this.newBreedingWindow();
+       this.newEngineeringWindow();
+  },
+  newBreedingWindow: function() {
+      var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
+      this.element.find('ul').append(newTabLi);
+      var div = $('<div id="#breeding"></div>');
+      this.element.append(div);
+      div.breedingWindow();
+      this.element.tabs("refresh");
+  },
+  newEngineeringWindow: function() {
+      var newTabLi = $('<li><a href="#engineering">Engineering</a></li>');
+      this.element.find('ul').append(newTabLi);
+      var div = $('<div id="#engineering"></div>');
+      this.element.append(div);
+      div.engineeringWindow();
+      this.element.tabs("refresh");
+  }
+});
 function initGeneboxes(container, options) {
     var geneboxes = $("<div></div>").monochrome_geneboxes(options);
     container.append(geneboxes);
@@ -2962,7 +3004,27 @@ $( function() {
             $('#' + midCanvasDivId).trigger('click');
         }})});
 
-$( function() {
+
+$.widget('dawk.engineeringWindow', {
+    options: {},
+    _create: function() {
+        var div = $("<div></div>")
+        var geneboxes = initGeneboxes(div, {
+            engineering : true
+        });
+        var boxes = $("<div></div>").engineeringBoxes({
+            numBoxes : 1,
+            cols : 1
+        }).appendTo(div);
+        this.element.append(div);
+        var midCanvasDiv = $(boxes).engineeringBoxes("option", "midCanvasDiv");
+        console.log(midCanvasDiv);
+        var canvas = $(midCanvasDiv).find('canvas').get(0);
+        console.log(canvas);
+        console.log(canvas.height);
+        doPerson("BasicTree", canvas);
+    }
+});$( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
     $.widget( "dawk.engineeringBoxes", {
@@ -3007,4 +3069,3 @@ $( function() {
         }
     });
 } );
-
