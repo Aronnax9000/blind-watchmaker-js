@@ -25,15 +25,7 @@ function startAutoReproduce(canvasId, targetCanvasId) {
     measureGenerationRate(Number(document.getElementById('generations').value));
 }
 
-function measureGenerationRate(generationsPreviousSecond) {
-    var generationCounter = document.getElementById('generations');
-    var newGenerationValue = Number(generationCounter.value) + 1;
-    generationCounter.value = newGenerationValue;
-    document.getElementById('generationRate').value = newGenerationValue - generationsPreviousSecond;
-    if(autoRunning)
-        setTimeout(function() { measureGenerationRate(newGenerationValue)}, 1000);
-    
-}
+
 
 function doRepro(sourceCanvas, targetCanvas) {
     doReproduce(sourceCanvas, targetCanvas);
@@ -84,26 +76,3 @@ function formChanged(canvasId) {
     drawCrossHairs = document.getElementById('crosshairs').checked;
     develop(genotype, canvas, drawCrossHairs); 
 }
-
-
-
- 
-
-function doReproduce(sourceCanvas, targetCanvas) {
-//    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
-    var generationCounter = document.getElementById('generations');
-    generationCounter.value = Number(generationCounter.value) + 1;
-    
-    var genotype = jQuery.data(sourceCanvas, "genotype");
-    if(genotype != null) {
-        var childGenotype = reproduce(genotype);
-        jQuery.data(targetCanvas, 'genotype', childGenotype);
-        develop(childGenotype, targetCanvas, drawCrossHairs); 
-    }
-    else  
-        alert("Genotype is null");
-    return genotype;
-}
-
-
-

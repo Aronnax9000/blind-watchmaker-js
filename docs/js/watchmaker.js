@@ -204,7 +204,7 @@ jQuery.extend( jQuery.easing,
  *
  */function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
-    console.log("Registered Drawer Type " + drawerType);
+//    console.log("Registered Drawer Type " + drawerType);
 
 }
 
@@ -213,7 +213,7 @@ function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
     try {
         drawer = this.properties[drawerFactoryType](drawingObject);
     } catch (err) {
-        console.log("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
+        console.error("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
         for(var propt in this.properties){
             console.log(propt + ': ' + this.properties[propt]);
         }
@@ -681,7 +681,6 @@ $( function() {
             var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-            console.log(geneboxes);
             $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
@@ -692,13 +691,9 @@ $( function() {
             var midCanvasDivPosition = midCanvasDiv.position();
             var deltaX = midCanvasDivPosition.left - position.left;
             var deltaY = midCanvasDivPosition.top - position.top;
-            console.log('offSet ' + deltaX + ',' + deltaY);
             var boxes = this.options.breedingBoxes;
-//          console.log("boxes " + boxes);
             var numBoxes = boxes.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
-
-          console.log("canvasClicked.parent " + $(this).parent());
             var midCanvas = $(this.element).parent().find('.midBox').get(0);
             var genotype = jQuery.data(event.target, 'genotype');
             var breedingBoxes = this.options.breedingBoxes;
@@ -706,7 +701,6 @@ $( function() {
             if (genotype != null) {
                 // erase the other canvases
                 var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
-                console.log(breedingWindowCanvases);
                 $(breedingWindowCanvases).each(function(index) {
                     if(index != clickedBoxIndex) {
                         eraseCanvas(this);
@@ -722,12 +716,9 @@ $( function() {
                         easing: 'easeOutExpo',
                         complete: function() {
                             console.log(midCanvas);
-                            jQuery.data(midCanvas, 'genotype', genotype);
-//                          console.log('develop midcanvas ' + midCanvas.id);
+//                            jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
-//                          console.log('midcanvas position ' + midCanvasPos.left + "," + midCanvasPos.top);
-
                             develop(genotype, midCanvas,
                                     drawCrossHairs);
                             breedingBoxes.produceLitter(numBoxes, midBox);
@@ -760,14 +751,10 @@ $( function() {
             var canvas = document.getElementById('overlayCanvas');
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
-            console.log('Sparkline destination ' + destinationCanvas);
             var parents = $(destinationCanvas).parent();
-            console.log('Sparkline destination parents ' + parents);
             
             var midCanvas = $(destinationCanvas).parents('.boxes').find('.midBox').get(0);
-            console.log(midCanvas);
             var midDiv = $(midCanvas).parent();
-            console.log(midDiv);
             var midPos = $(midDiv).position();
             var destDiv = $(destinationCanvas).parent();
             var destPos = $(destDiv).position();
@@ -781,7 +768,22 @@ $( function() {
             context.lineTo(x1, y1);
             context.closePath();
             context.stroke();
-//          console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
+        },
+
+        doReproduce: function (sourceCanvas, targetCanvas) {
+            var breedingWindow = $(sourceCanvas).parents('.breedingWindow').get(0);
+            var generations = $(breedingWindow).find('.generations').get(0);
+            generations.value = Number($(generations).attr('value')) + 1;
+            
+            var genotype = jQuery.data(sourceCanvas, "genotype");
+            if(genotype != null) {
+                var childGenotype = reproduce(genotype);
+                jQuery.data(targetCanvas, 'genotype', childGenotype);
+                develop(childGenotype, targetCanvas, drawCrossHairs); 
+            }
+            else  
+                alert("Genotype is null");
+            return genotype;
         },
 
 
@@ -798,7 +800,7 @@ $( function() {
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
-                    doReproduce(sourceCanvas, targetCanvas);
+                    this.doReproduce(sourceCanvas, targetCanvas);
                     if(recursive) { // one at a time
                         this.sparkLine(targetCanvas);
                         // Move the target canvas back into its home position
@@ -816,7 +818,7 @@ $( function() {
                                 eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                                console.log('finished recursive animate Offspring ' + k);
+//                                console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -855,15 +857,11 @@ $( function() {
 
         // The constructor
         _create: function() {
-
-
             var boxes = this.element;
-
             $(boxes).attr('id', 'boxes').addClass('boxes');
             this.element.append(boxes);
             var numBoxes = this.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
-            console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
             for (j = 0; j < numBoxes; j++) {
                 var isMidBox = j == midBox;
                 var canvasDiv = $("<div></div>").breedingBox({ 
@@ -2554,9 +2552,7 @@ $.widget('dawk.monochrome_geneboxes', {
         this._super(key, value);
     },
     _setOptions : function(options) {
-        console.log('geneboxes setting options');
         this._super(options);
-        console.log('geneboxCollection:' + this.options.geneboxCollection);
         this.refresh();
     },
     refresh : function() {
@@ -2601,15 +2597,7 @@ function startAutoReproduce(canvasId, targetCanvasId) {
     measureGenerationRate(Number(document.getElementById('generations').value));
 }
 
-function measureGenerationRate(generationsPreviousSecond) {
-    var generationCounter = document.getElementById('generations');
-    var newGenerationValue = Number(generationCounter.value) + 1;
-    generationCounter.value = newGenerationValue;
-    document.getElementById('generationRate').value = newGenerationValue - generationsPreviousSecond;
-    if(autoRunning)
-        setTimeout(function() { measureGenerationRate(newGenerationValue)}, 1000);
-    
-}
+
 
 function doRepro(sourceCanvas, targetCanvas) {
     doReproduce(sourceCanvas, targetCanvas);
@@ -2660,29 +2648,6 @@ function formChanged(canvasId) {
     drawCrossHairs = document.getElementById('crosshairs').checked;
     develop(genotype, canvas, drawCrossHairs); 
 }
-
-
-
- 
-
-function doReproduce(sourceCanvas, targetCanvas) {
-//    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
-    var generationCounter = document.getElementById('generations');
-    generationCounter.value = Number(generationCounter.value) + 1;
-    
-    var genotype = jQuery.data(sourceCanvas, "genotype");
-    if(genotype != null) {
-        var childGenotype = reproduce(genotype);
-        jQuery.data(targetCanvas, 'genotype', childGenotype);
-        develop(childGenotype, targetCanvas, drawCrossHairs); 
-    }
-    else  
-        alert("Genotype is null");
-    return genotype;
-}
-
-
-
 $.widget('dawk.blindWatchmaker', {
    options: {
        
@@ -2708,6 +2673,7 @@ $.widget('dawk.blindWatchmaker', {
        this.element.tabs();
        this.newBreedingWindow();
        this.newEngineeringWindow();
+       this.element.tabs('option', 'active', 0);
   },
   newBreedingWindow: function() {
       var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
@@ -2807,6 +2773,17 @@ $( function() {
                     autoBreed()
                 }, Number(document.getElementById("autoReproduceInterval").value));
             }            
+        },
+        measureGenerationRate: function(generationsPreviousSecond) {
+            
+            var generationCounter = $(this.element).parent().find('.generations').get(0);
+            var newGenerationValue = Number(generationCounter.value) + 1;
+            generationCounter.value = newGenerationValue;
+            var generationRate = $(this.element).parent().find('.generationsRate').get(0);
+            generationRate.value = newGenerationValue - generationsPreviousSecond;
+            if(this.options.autoRunning)
+                setTimeout(function() { this.measureGenerationRate(newGenerationValue)}, 1000);
+            
         }
     });
 });
@@ -2830,9 +2807,9 @@ $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
         _create: function() {
             var string = '<div>\
-                Offspring count: <input type="number" value="0" id="generations" />\
+                Offspring count: <input type="number" value="0" class="generations" />\
                 Offspring per second: <input type="number" value="0"\
-                id="generationRate" />\
+                class="generationRate" />\
                 </div>'
                 var div = $.parseHTML(string);
             this.element.append(div);
@@ -2873,7 +2850,6 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            console.log(midCanvas);
             doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
 //            $(midCanvas).trigger('click');
@@ -2938,7 +2914,7 @@ $.widget('dawk.engineeringWindow', {
             var parentBreedingWindow = this.element.parents('.engineeringWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-            console.log(geneboxes);
+//            console.log(geneboxes);
             $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {

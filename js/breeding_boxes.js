@@ -15,14 +15,10 @@ $( function() {
             var canvas = document.getElementById('overlayCanvas');
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
-            console.log('Sparkline destination ' + destinationCanvas);
             var parents = $(destinationCanvas).parent();
-            console.log('Sparkline destination parents ' + parents);
             
             var midCanvas = $(destinationCanvas).parents('.boxes').find('.midBox').get(0);
-            console.log(midCanvas);
             var midDiv = $(midCanvas).parent();
-            console.log(midDiv);
             var midPos = $(midDiv).position();
             var destDiv = $(destinationCanvas).parent();
             var destPos = $(destDiv).position();
@@ -36,7 +32,22 @@ $( function() {
             context.lineTo(x1, y1);
             context.closePath();
             context.stroke();
-//          console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
+        },
+
+        doReproduce: function (sourceCanvas, targetCanvas) {
+            var breedingWindow = $(sourceCanvas).parents('.breedingWindow').get(0);
+            var generations = $(breedingWindow).find('.generations').get(0);
+            generations.value = Number($(generations).attr('value')) + 1;
+            
+            var genotype = jQuery.data(sourceCanvas, "genotype");
+            if(genotype != null) {
+                var childGenotype = reproduce(genotype);
+                jQuery.data(targetCanvas, 'genotype', childGenotype);
+                develop(childGenotype, targetCanvas, drawCrossHairs); 
+            }
+            else  
+                alert("Genotype is null");
+            return genotype;
         },
 
 
@@ -53,7 +64,7 @@ $( function() {
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
-                    doReproduce(sourceCanvas, targetCanvas);
+                    this.doReproduce(sourceCanvas, targetCanvas);
                     if(recursive) { // one at a time
                         this.sparkLine(targetCanvas);
                         // Move the target canvas back into its home position
@@ -71,7 +82,7 @@ $( function() {
                                 eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                                console.log('finished recursive animate Offspring ' + k);
+//                                console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -110,15 +121,11 @@ $( function() {
 
         // The constructor
         _create: function() {
-
-
             var boxes = this.element;
-
             $(boxes).attr('id', 'boxes').addClass('boxes');
             this.element.append(boxes);
             var numBoxes = this.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
-            console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
             for (j = 0; j < numBoxes; j++) {
                 var isMidBox = j == midBox;
                 var canvasDiv = $("<div></div>").breedingBox({ 

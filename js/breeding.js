@@ -80,6 +80,17 @@ $( function() {
                     autoBreed()
                 }, Number(document.getElementById("autoReproduceInterval").value));
             }            
+        },
+        measureGenerationRate: function(generationsPreviousSecond) {
+            
+            var generationCounter = $(this.element).parent().find('.generations').get(0);
+            var newGenerationValue = Number(generationCounter.value) + 1;
+            generationCounter.value = newGenerationValue;
+            var generationRate = $(this.element).parent().find('.generationsRate').get(0);
+            generationRate.value = newGenerationValue - generationsPreviousSecond;
+            if(this.options.autoRunning)
+                setTimeout(function() { this.measureGenerationRate(newGenerationValue)}, 1000);
+            
         }
     });
 });
@@ -103,9 +114,9 @@ $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
         _create: function() {
             var string = '<div>\
-                Offspring count: <input type="number" value="0" id="generations" />\
+                Offspring count: <input type="number" value="0" class="generations" />\
                 Offspring per second: <input type="number" value="0"\
-                id="generationRate" />\
+                class="generationRate" />\
                 </div>'
                 var div = $.parseHTML(string);
             this.element.append(div);
@@ -146,7 +157,6 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            console.log(midCanvas);
             doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
 //            $(midCanvas).trigger('click');

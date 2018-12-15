@@ -104,9 +104,7 @@ $.widget('dawk.monochrome_geneboxes', {
         this._super(key, value);
     },
     _setOptions : function(options) {
-        console.log('geneboxes setting options');
         this._super(options);
-        console.log('geneboxCollection:' + this.options.geneboxCollection);
         this.refresh();
     },
     refresh : function() {

@@ -23,7 +23,7 @@ $( function() {
             var parentBreedingWindow = this.element.parents('.engineeringWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-            console.log(geneboxes);
+//            console.log(geneboxes);
             $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {

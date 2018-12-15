@@ -8,6 +8,7 @@ $.widget('dawk.watchmakerSession', {
        this.element.tabs();
        this.newBreedingWindow();
        this.newEngineeringWindow();
+       this.element.tabs('option', 'active', 0);
   },
   newBreedingWindow: function() {
       var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
