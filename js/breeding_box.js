@@ -15,7 +15,6 @@ $( function() {
             var canvasId = "canvas" + this.options.boxIndex;
             var canvas = $("<canvas></canvas>");
             this.options.canvas = canvas;
-            canvas.attr("id", canvasId);
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
@@ -30,22 +29,15 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var id = this.options.canvas.attr("id");
-            var position = this.element.position();
-            var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
-            var midCanvasDivPosition = midCanvasDiv.position();
-//          console.log('mouseover ' + id + " " + position.left + ',' + position.top);
-//          console.log('midBox ' + midCanvasDivPosition.left + ',' + midCanvasDivPosition.top);
-            var deltaX = midCanvasDivPosition.left - position.left;
-            var deltaY = midCanvasDivPosition.top - position.top;
-//          console.log('offSet ' + deltaX + ',' + deltaY);
-            var geneboxes = $('body').find('.monochromeGeneboxes');
-            geneboxes.monochrome_geneboxes('updateFromCanvas', id);
+            var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
+            var geneboxes = $(parentBreedingWindow)
+                .find('.monochromeGeneboxes').get(0);
+            console.log(geneboxes);
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
-            var id = canvas.attr("id");
-            console.log('canvas clicked: ' + id);
+            
             var position = this.element.position();
             var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
@@ -57,22 +49,22 @@ $( function() {
             var numBoxes = boxes.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
 
-//          console.log("numBoxes "+ numBoxes + " midBox " + midBox);
-            var midCanvas = document.getElementById('canvas' + midBox);
+          console.log("canvasClicked.parent " + $(this).parent());
+            var midCanvas = $(this.element).parent().find('.midBox').get(0);
             var genotype = jQuery.data(event.target, 'genotype');
             var breedingBoxes = this.options.breedingBoxes;
-
+            var clickedBoxIndex =  this.options.boxIndex;
             if (genotype != null) {
                 // erase the other canvases
-                for(k = 0; k < numBoxes; k++) {
-                    var candidateIdForErasure = "canvas" + k;
-                    if(candidateIdForErasure != id) {
-//                      console.log('id is ' + id + ' erasing ' + candidateIdForErasure);
-                        eraseCanvas(document.getElementById(candidateIdForErasure));
-                        $("#" + candidateIdForErasure).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
+                var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
+                console.log(breedingWindowCanvases);
+                $(breedingWindowCanvases).each(function(index) {
+                    if(index != clickedBoxIndex) {
+                        eraseCanvas(this);
+                        $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
-                }
-
+                });
+ 
                 if (! this.options.isMidBox) {
                     $( canvas ).animate({
                         left: "+=" + deltaX,
@@ -80,6 +72,7 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
+                            console.log(midCanvas);
                             jQuery.data(midCanvas, 'genotype', genotype);
 //                          console.log('develop midcanvas ' + midCanvas.id);
                             $(midCanvas).css({left:0,top:0});

@@ -664,7 +664,6 @@ $( function() {
             var canvasId = "canvas" + this.options.boxIndex;
             var canvas = $("<canvas></canvas>");
             this.options.canvas = canvas;
-            canvas.attr("id", canvasId);
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
@@ -679,22 +678,15 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var id = this.options.canvas.attr("id");
-            var position = this.element.position();
-            var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
-            var midCanvasDivPosition = midCanvasDiv.position();
-//          console.log('mouseover ' + id + " " + position.left + ',' + position.top);
-//          console.log('midBox ' + midCanvasDivPosition.left + ',' + midCanvasDivPosition.top);
-            var deltaX = midCanvasDivPosition.left - position.left;
-            var deltaY = midCanvasDivPosition.top - position.top;
-//          console.log('offSet ' + deltaX + ',' + deltaY);
-            var geneboxes = $('body').find('.monochromeGeneboxes');
-            geneboxes.monochrome_geneboxes('updateFromCanvas', id);
+            var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
+            var geneboxes = $(parentBreedingWindow)
+                .find('.monochromeGeneboxes').get(0);
+            console.log(geneboxes);
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
-            var id = canvas.attr("id");
-            console.log('canvas clicked: ' + id);
+            
             var position = this.element.position();
             var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
@@ -706,22 +698,22 @@ $( function() {
             var numBoxes = boxes.options.numBoxes;
             var midBox = Math.trunc(numBoxes / 2);
 
-//          console.log("numBoxes "+ numBoxes + " midBox " + midBox);
-            var midCanvas = document.getElementById('canvas' + midBox);
+          console.log("canvasClicked.parent " + $(this).parent());
+            var midCanvas = $(this.element).parent().find('.midBox').get(0);
             var genotype = jQuery.data(event.target, 'genotype');
             var breedingBoxes = this.options.breedingBoxes;
-
+            var clickedBoxIndex =  this.options.boxIndex;
             if (genotype != null) {
                 // erase the other canvases
-                for(k = 0; k < numBoxes; k++) {
-                    var candidateIdForErasure = "canvas" + k;
-                    if(candidateIdForErasure != id) {
-//                      console.log('id is ' + id + ' erasing ' + candidateIdForErasure);
-                        eraseCanvas(document.getElementById(candidateIdForErasure));
-                        $("#" + candidateIdForErasure).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
+                var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
+                console.log(breedingWindowCanvases);
+                $(breedingWindowCanvases).each(function(index) {
+                    if(index != clickedBoxIndex) {
+                        eraseCanvas(this);
+                        $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
-                }
-
+                });
+ 
                 if (! this.options.isMidBox) {
                     $( canvas ).animate({
                         left: "+=" + deltaX,
@@ -729,6 +721,7 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
+                            console.log(midCanvas);
                             jQuery.data(midCanvas, 'genotype', genotype);
 //                          console.log('develop midcanvas ' + midCanvas.id);
                             $(midCanvas).css({left:0,top:0});
@@ -750,7 +743,168 @@ $( function() {
             return false;
         },
     });
-});
+});/*
+ * breedingBoxes widget definition
+ */
+$( function() {
+    // the widget definition, where "custom" is the namespace,
+    // "colorize" the widget name
+    $.widget( "dawk.breedingBoxes", {
+        // default options
+        options: {
+            cols: 3,
+            numBoxes: 15,
+        },
+
+        sparkLine: function(destinationCanvas) {
+            var canvas = document.getElementById('overlayCanvas');
+            var context = canvas.getContext('2d');
+            var midBox = Math.trunc(this.options.numBoxes / 2);
+            console.log('Sparkline destination ' + destinationCanvas);
+            var parents = $(destinationCanvas).parent();
+            console.log('Sparkline destination parents ' + parents);
+            
+            var midCanvas = $(destinationCanvas).parents('.boxes').find('.midBox').get(0);
+            console.log(midCanvas);
+            var midDiv = $(midCanvas).parent();
+            console.log(midDiv);
+            var midPos = $(midDiv).position();
+            var destDiv = $(destinationCanvas).parent();
+            var destPos = $(destDiv).position();
+            var x0 = Math.trunc(midPos.left + midDiv.width() / 2);
+            var y0 = Math.trunc(midPos.top + midDiv.height() / 2);
+            var x1 = Math.trunc(destPos.left + destDiv.width() / 2);
+            var y1 = Math.trunc(destPos.top + destDiv.height() / 2);
+            context.strokeStyle = '#000000';
+            context.beginPath();
+            context.moveTo(x0, y0);
+            context.lineTo(x1, y1);
+            context.closePath();
+            context.stroke();
+//          console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
+        },
+
+
+        produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
+            if(k < numBoxes) {
+                var sourceCanvas = $(this.element).find('.midBox').get(0);
+                var targetCanvas = $(this.element).find('canvas').get(k);
+                $(targetCanvas).css({ left: "0px", top: "0px" });
+                if (k != midBox) {
+                    var position = $(targetCanvas).parent().position();
+                    var deltaX = midCanvasDivPosition.left - position.left;
+                    var deltaY = midCanvasDivPosition.top - position.top;
+//                  console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+                    // Move the target canvas to the centre
+                    $(targetCanvas).css({ left: deltaX, top: deltaY});
+                    // Grow the offspring on the target canvas
+                    doReproduce(sourceCanvas, targetCanvas);
+                    if(recursive) { // one at a time
+                        this.sparkLine(targetCanvas);
+                        // Move the target canvas back into its home position
+                        $( targetCanvas ).animate({
+                            left: 0,
+                            top: 0
+                        }, { duration: 200, 
+                            easing: 'easeOutExpo',
+                            progress: function(animation, progress, msRemaining) {
+                                var context = $(targetCanvas)[0].getContext("2d");
+
+//                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
+                            },
+                            complete: function() {
+                                eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+                                var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
+                                breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
+                                console.log('finished recursive animate Offspring ' + k);
+                            }});
+                    } else { // Explosive breeding
+                        $( targetCanvas ).animate({
+                            left: 0,
+                            top: 0,
+                        }, { queue: true, duration: 2000,
+                            easing: 'easeOutExpo',
+                            complete: function() {
+//                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+//                              console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+                            }});
+                    }
+                } else { // midbox
+                    if(recursive) {
+                        this.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
+                    }
+                }
+            } else {
+                stillBreeding = false;
+            }
+        },
+
+        produceLitter: function(numBoxes, midBox) {
+            var midCanvasDiv = this.options.midCanvasDiv;
+            var midCanvasDivPosition = midCanvasDiv.position();
+            var recursive = ! document.getElementById('explosiveBreeding').checked;
+            if(recursive) {
+                this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
+            } else {
+                for (k = 0; k < numBoxes; k++) {
+                    this.produceKthOffspring(numBoxes, midBox, k, midCanvasDivPosition, recursive);
+                }
+            }
+
+        },
+
+        // The constructor
+        _create: function() {
+
+
+            var boxes = this.element;
+
+            $(boxes).attr('id', 'boxes').addClass('boxes');
+            this.element.append(boxes);
+            var numBoxes = this.options.numBoxes;
+            var midBox = Math.trunc(numBoxes / 2);
+            console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
+            for (j = 0; j < numBoxes; j++) {
+                var isMidBox = j == midBox;
+                var canvasDiv = $("<div></div>").breedingBox({ 
+                    boxIndex: j, 
+                    isMidBox: isMidBox, 
+                    breedingBoxes: this}).appendTo(boxes);
+                if(isMidBox) {
+                    this.options.midCanvasDiv = canvasDiv;
+                }
+            }
+
+            this._refresh();
+        },
+
+        // Called when created, and later when changing options
+        _refresh: function() {
+        },
+
+        // A public method to change the color to a random value
+        // can be called directly via .colorize( "random" )
+        random: function( event ) {
+        },
+
+        _destroy: function() {
+        },
+
+        // _setOptions is called with a hash of all options that are changing
+        // always refresh when changing options
+        _setOptions: function() {
+            // _super and _superApply handle keeping the right this-context
+            this._superApply( arguments );
+            this._refresh();
+        },
+
+        // _setOption is called for each individual option that is changing
+        _setOption: function( key, value ) {
+            this._super( key, value );
+        }
+    });
+} );
+
 const TRICKLE = 10;
 const MutTypeNo = 9;
 
@@ -846,135 +1000,6 @@ function personToHtml() {
     return htmlResult;
 }
 
-function personSetForm(form) {
-    if(form != null) {
-        var inputGene1 = form['gene1'];
-        var inputGene2 = form['gene2'];
-        var inputGene3 = form['gene3'];
-        var inputGene4 = form['gene4'];
-        var inputGene5 = form['gene5'];
-        var inputGene6 = form['gene6'];
-        var inputGene7 = form['gene7'];
-        var inputGene8 = form['gene8'];
-        var inputGene9 = form['gene9'];
-        var inputDGene1 = form['dGene1'];
-        var inputDGene2 = form['dGene2'];
-        var inputDGene3 = form['dGene3'];
-        var inputDGene4 = form['dGene4'];
-        var inputDGene5 = form['dGene5'];
-        var inputDGene6 = form['dGene6'];
-        var inputDGene7 = form['dGene7'];
-        var inputDGene8 = form['dGene8'];
-        var inputDGene9 = form['dGene9'];
-        var inputDGene10 = form['dGene10'];
-        var inputCompletenessGene = form['completenessGene'];
-        var inputSpokesGene = form['spokesGene'];
-        var inputSegNoGene = form['segNoGene'];
-        var inputSegDistGene = form['segDistGene'];
-        var inputTrickleGene = form['trickleGene'];
-        var inputMutSizeGene = form['mutSizeGene'];
-        var inputMutProbGene = form['mutProbGene'];
-
-        inputGene1.value = this.gene[0];
-        inputGene2.value = this.gene[1];
-        inputGene3.value = this.gene[2];
-        inputGene4.value = this.gene[3];
-        inputGene5.value = this.gene[4];
-        inputGene6.value = this.gene[5];
-        inputGene7.value = this.gene[6];
-        inputGene8.value = this.gene[7];
-        inputGene9.value = this.gene[8];
-
-
-        inputDGene1.selectedIndex = this.dGene[0] - 1;
-        inputDGene2.selectedIndex = this.dGene[1] - 1;
-        inputDGene3.selectedIndex = this.dGene[2] - 1;
-        inputDGene4.selectedIndex = this.dGene[3] - 1;
-        inputDGene5.selectedIndex = this.dGene[4] - 1;
-        inputDGene6.selectedIndex = this.dGene[5] - 1;
-        inputDGene7.selectedIndex = this.dGene[6] - 1;
-        inputDGene8.selectedIndex = this.dGene[7] - 1;
-        inputDGene9.selectedIndex = this.dGene[8] - 1;
-        inputDGene10.selectedIndex = this.dGene[9] - 1;
-
-
-        inputCompletenessGene.selectedIndex = this.completenessGene - 1;
-        inputSpokesGene.selectedIndex = this.spokesGene - 1;
-
-        inputSegNoGene.value = this.segNoGene;
-        inputSegDistGene.value = this.segDistGene;
-        inputTrickleGene.value = this.trickleGene;
-        inputMutSizeGene.value = this.mutSizeGene;
-        inputMutProbGene.value = this.mutProbGene;
-    }
-}
-
-function personFromForm(form) {
-    console.log('biomorph from form ' + form.id);
-    if(form != null) {
-        var inputGene1 = form['gene1'];
-        var inputGene2 = form['gene2'];
-        var inputGene3 = form['gene3'];
-        var inputGene4 = form['gene4'];
-        var inputGene5 = form['gene5'];
-        var inputGene6 = form['gene6'];
-        var inputGene7 = form['gene7'];
-        var inputGene8 = form['gene8'];
-        var inputGene9 = form['gene9'];
-
-        this.gene[0] = Number(inputGene1.value);
-        this.gene[1] = Number(inputGene2.value);
-        this.gene[2] = Number(inputGene3.value);
-        this.gene[3] = Number(inputGene4.value);
-        this.gene[4] = Number(inputGene5.value);
-        this.gene[5] = Number(inputGene6.value);
-        this.gene[6] = Number(inputGene7.value);
-        this.gene[7] = Number(inputGene8.value);
-        this.gene[8] = Number(inputGene9.value);
-
-        var inputDGene1 = form['dGene1'];
-        var inputDGene2 = form['dGene2'];
-        var inputDGene3 = form['dGene3'];
-        var inputDGene4 = form['dGene4'];
-        var inputDGene5 = form['dGene5'];
-        var inputDGene6 = form['dGene6'];
-        var inputDGene7 = form['dGene7'];
-        var inputDGene8 = form['dGene8'];
-        var inputDGene9 = form['dGene9'];
-        var inputDGene10 = form['dGene10'];
-
-        this.dGene[0] = Number(inputDGene1.selectedIndex) + 1;
-        this.dGene[1] = Number(inputDGene2.selectedIndex) + 1;
-        this.dGene[2] = Number(inputDGene3.selectedIndex) + 1;
-        this.dGene[3] = Number(inputDGene4.selectedIndex) + 1;
-        this.dGene[4] = Number(inputDGene5.selectedIndex) + 1;
-        this.dGene[5] = Number(inputDGene6.selectedIndex) + 1;
-        this.dGene[6] = Number(inputDGene7.selectedIndex) + 1;
-        this.dGene[7] = Number(inputDGene8.selectedIndex) + 1;
-        this.dGene[8] = Number(inputDGene9.selectedIndex) + 1;
-        this.dGene[9] = Number(inputDGene10.selectedIndex) + 1;
-
-
-        var inputCompletenessGene = form['completenessGene'];
-        var inputSpokesGene = form['spokesGene'];
-
-        this.completenessGene = Number(inputCompletenessGene.selectedIndex) + 1;
-        this.spokesGene = Number(inputSpokesGene.selectedIndex) + 1;
-
-
-        var inputSegNoGene = form['segNoGene'];
-        var inputSegDistGene = form['segDistGene'];
-        var inputTrickleGene = form['trickleGene'];
-        var inputMutSizeGene = form['mutSizeGene'];
-        var inputMutProbGene = form['mutProbGene'];
-
-        this.segNoGene = Number(inputSegNoGene.value);
-        this.segDistGene = Number(inputSegDistGene.value);
-        this.trickleGene = Number(inputTrickleGene.value);
-        this.mutSizeGene = Number(inputMutSizeGene.value);
-        this.mutProbGene = Number(inputMutProbGene.value);
-    }
-}
 
 function Person() {
     this.gene = chromosome();
@@ -991,8 +1016,6 @@ function Person() {
     this.mutProbGene = 0;
     this.toHtml = personToHtml;
     this.toString = personToString;
-    this.setForm = personSetForm;
-    this.fromForm = personFromForm;
     this.pic = null;
     this.manipulation = manipulation;
 }
@@ -2319,6 +2342,7 @@ $.widget("dawk.monochrome_genebox", {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.BottomRung;
         }
+        
         this.options.geneboxCollection.manipulate(this.options.geneboxIndex, leftRightPos, rung)
         return false;
     }
@@ -2432,8 +2456,8 @@ $.widget('dawk.monochrome_geneboxes', {
         genotype: null,
     },
 
-    updateFromCanvas: function(id) {
-        var canvas = $("#" + id);
+    updateFromCanvas: function(canvas) {
+        
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
             return;
@@ -2538,10 +2562,11 @@ $.widget('dawk.monochrome_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
+        console.log('manipulate ' + geneboxIndex);
        this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
-       this.updateFromCanvas('canvas0');
-       var midCanvasDiv = document.getElementById('canvas0');
-       develop(this.options.genotype, midCanvasDiv,
+       var canvas = $(this.element).parent().find('canvas').get(0);
+       this.updateFromCanvas(canvas);
+       develop(this.options.genotype, canvas,
                drawCrossHairs);
     },
     _destroy : function() {
@@ -2553,9 +2578,7 @@ initializeMut();
 
 var drawCrossHairs = false;
 var autoRunning = false;
-function initialize(biomorphType, canvasId) {
-    doPerson(biomorphType, document.getElementById(canvasId));
-}
+
 
 function doPerson(biomorphType, canvas) {
     
@@ -2567,7 +2590,6 @@ function doPerson(biomorphType, canvas) {
     case "Saltation": doSaltation(genotype); break;
     }
     develop(genotype, canvas, drawCrossHairs); 
-    genotype.setForm(document.getElementById('engineering'));
     jQuery.data(canvas, "genotype", genotype);
     $(canvas).trigger('mouseover');
 
@@ -2589,10 +2611,12 @@ function measureGenerationRate(generationsPreviousSecond) {
     
 }
 
-function doRepro(canvasId, targetCanvasId) {
-    doReproduce(canvasId, targetCanvasId);
+function doRepro(sourceCanvas, targetCanvas) {
+    doReproduce(sourceCanvas, targetCanvas);
     if(autoRunning)
-        setTimeout(function() { doRepro(canvasId, targetCanvasId)}, Number(document.getElementById("autoReproduceInterval").value));
+        setTimeout(function() { 
+            doRepro(sourceCanvas, targetCanvas)}, 
+                Number(document.getElementById("autoReproduceInterval").value));
 
 }
 
@@ -2641,19 +2665,16 @@ function formChanged(canvasId) {
 
  
 
-function doReproduce(canvasId, targetCanvasId) {
+function doReproduce(sourceCanvas, targetCanvas) {
 //    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
     var generationCounter = document.getElementById('generations');
     generationCounter.value = Number(generationCounter.value) + 1;
-    var canvas = document.getElementById(canvasId);
-    var targetCanvas = document.getElementById(targetCanvasId)
-    var genotype = jQuery.data(canvas, "genotype");
+    
+    var genotype = jQuery.data(sourceCanvas, "genotype");
     if(genotype != null) {
         var childGenotype = reproduce(genotype);
         jQuery.data(targetCanvas, 'genotype', childGenotype);
         develop(childGenotype, targetCanvas, drawCrossHairs); 
-        var form = document.getElementById('engineering');
-        genotype.setForm(form);
     }
     else 
         alert("Genotype is null");
@@ -2691,7 +2712,7 @@ $.widget('dawk.blindWatchmaker', {
   newBreedingWindow: function() {
       var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
       this.element.find('ul').append(newTabLi);
-      var div = $('<div id="#breeding"></div>');
+      var div = $('<div id="breeding"></div>');
       this.element.append(div);
       div.breedingWindow();
       this.element.tabs("refresh");
@@ -2699,7 +2720,7 @@ $.widget('dawk.blindWatchmaker', {
   newEngineeringWindow: function() {
       var newTabLi = $('<li><a href="#engineering">Engineering</a></li>');
       this.element.find('ul').append(newTabLi);
-      var div = $('<div id="#engineering"></div>');
+      var div = $('<div id="engineering"></div>');
       this.element.append(div);
       div.engineeringWindow();
       this.element.tabs("refresh");
@@ -2710,168 +2731,9 @@ function initGeneboxes(container, options) {
     container.append(geneboxes);
     return geneboxes;
 }
-/*
- * breedingBoxes widget definition
- */
-$( function() {
-    // the widget definition, where "custom" is the namespace,
-    // "colorize" the widget name
-    $.widget( "dawk.breedingBoxes", {
-        // default options
-        options: {
-            cols: 3,
-            numBoxes: 15,
-        },
-
-        sparkLine: function(destinationId) {
-            var canvas = document.getElementById('overlayCanvas');
-            var context = canvas.getContext('2d');
-            var midBox = Math.trunc(this.options.numBoxes / 2);
-            var midDiv = $('#canvas' + midBox).parent();
-            var midPos = $(midDiv).position();
-            var destDiv = $('#' + destinationId).parent();
-            var destPos = $(destDiv).position();
-            var x0 = Math.trunc(midPos.left + midDiv.width() / 2);
-            var y0 = Math.trunc(midPos.top + midDiv.height() / 2);
-            var x1 = Math.trunc(destPos.left + destDiv.width() / 2);
-            var y1 = Math.trunc(destPos.top + destDiv.height() / 2);
-            context.strokeStyle = '#000000';
-            context.beginPath();
-            context.moveTo(x0, y0);
-            context.lineTo(x1, y1);
-            context.closePath();
-            context.stroke();
-//          console.log('sparkline ' + destinationId + " (" + x0 + "," + y0 + "), (" + x1 + "," + y1 + ")" );
-        },
 
 
-        produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
-            if(k < numBoxes) {
-                var sourceId = 'canvas' + midBox;
-                var targetId = 'canvas' + k; 
-                var targetCanvas = $("#" + targetId);
-                targetCanvas.css({ left: "0px", top: "0px" });
-                if (k != midBox) {
-                    var position = targetCanvas.parent().position();
-                    var deltaX = midCanvasDivPosition.left - position.left;
-                    var deltaY = midCanvasDivPosition.top - position.top;
-//                  console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
-                    // Move the target canvas to the centre
-                    targetCanvas.css({ left: deltaX, top: deltaY});
-                    // Grow the offspring on the target canvas
-                    doReproduce(sourceId, targetId);
-                    if(recursive) { // one at a time
-                        this.sparkLine(targetId);
-                        // Move the target canvas back into its home position
-                        $( targetCanvas ).animate({
-                            left: 0,
-                            top: 0
-                        }, { duration: 200, 
-                            easing: 'easeOutExpo',
-                            progress: function(animation, progress, msRemaining) {
-                                var context = $(targetCanvas)[0].getContext("2d");
 
-//                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
-                            },
-                            complete: function() {
-                                eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-                                var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
-                                breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                                console.log('finished recursive animate Offspring ' + targetCanvas.attr('id'));
-                            }});
-                    } else { // Explosive breeding
-                        $( targetCanvas ).animate({
-                            left: 0,
-                            top: 0,
-                        }, { queue: true, duration: 2000,
-                            easing: 'easeOutExpo',
-                            complete: function() {
-//                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                              console.log('finished animate Offspring ' + targetCanvas.attr('id'));
-                            }});
-                    }
-                } else { // midbox
-                    if(recursive) {
-                        this.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-                    }
-                }
-            } else {
-                stillBreeding = false;
-            }
-        },
-
-        produceLitter: function(numBoxes, midBox) {
-            var midCanvasDiv = this.options.midCanvasDiv;
-            var midCanvasDivPosition = midCanvasDiv.position();
-            var recursive = ! document.getElementById('explosiveBreeding').checked;
-            if(recursive) {
-                this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
-            } else {
-                for (k = 0; k < numBoxes; k++) {
-                    this.produceKthOffspring(numBoxes, midBox, k, midCanvasDivPosition, recursive);
-                }
-            }
-
-        },
-
-        // The constructor
-        _create: function() {
-
-
-            var boxes = this.element;
-
-            $(boxes).attr('id', 'boxes').addClass('boxes');
-            this.element.append(boxes);
-            var numBoxes = this.options.numBoxes;
-            var midBox = Math.trunc(numBoxes / 2);
-            console.log("numberOfBoxes: " + numBoxes + " MidBox: " + midBox);
-            for (j = 0; j < numBoxes; j++) {
-                var isMidBox = j == midBox;
-                var canvasDiv = $("<div></div>").breedingBox({ 
-                    boxIndex: j, 
-                    isMidBox: isMidBox, 
-                    breedingBoxes: this}).appendTo(boxes);
-                if(isMidBox) {
-                    this.options.midCanvasDiv = canvasDiv;
-                }
-            }
-
-            this._refresh();
-        },
-
-        // Called when created, and later when changing options
-        _refresh: function() {
-        },
-
-        // A public method to change the color to a random value
-        // can be called directly via .colorize( "random" )
-        random: function( event ) {
-        },
-
-        _destroy: function() {
-        },
-
-        // _setOptions is called with a hash of all options that are changing
-        // always refresh when changing options
-        _setOptions: function() {
-            // _super and _superApply handle keeping the right this-context
-            this._superApply( arguments );
-            this._refresh();
-        },
-
-        // _setOption is called for each individual option that is changing
-        _setOption: function( key, value ) {
-            this._super( key, value );
-        }
-    });
-} );
-
-
-function startAutoBreeding() {
-    autoRunning = true;
-    autoBreed();
-    measureGenerationRate(Number(document.getElementById('generations').value));
-}
 
 function fitness(biomorph, targetWidth, targetHeight) {
     var margin = biomorph.pic.margin;
@@ -2889,48 +2751,62 @@ function getBiomorphFromCanvas(canvas) {
     return biomorph;
 }
 
-function autoBreed() {
-    if (autoRunning) {
-        var useFitness = document.getElementById('useFitness').checked;
-        var numBoxes = $('#boxes').breedingBoxes("option", "numBoxes");
-        if (useFitness) {
-            var canvasId = 'canvas0';
-            var canvas = document.getElementById(canvasId);
-            var biomorph = getBiomorphFromCanvas(canvas);
-            var bestSoFar = canvasId;
-            var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
-            for (i = 1; i < numBoxes; i++) {
-                canvasId = 'canvas' + i;
-                canvas = document.getElementById(canvasId);
-                var currentError = fitness(getBiomorphFromCanvas(canvas),
-                        canvas.width, canvas.height);
-                if (currentError < errorToBeat) {
-                    bestSoFar = canvasId;
-                    errorToBeat = currentError;
-                }
-            }
-            document.getElementById(bestSoFar).click();
-        } else {
-            var luckyParent = Math.trunc(Math.random() * numBoxes);
-            document.getElementById('canvas' + luckyParent).click();
-        }
-        setTimeout(function() {
-            autoBreed()
-        }, Number(document.getElementById("autoReproduceInterval").value));
-    }
+function autoBreed(breedingBoxes) {
+
 }
 
 $( function() { 
     $.widget( "dawk.breedingAutoReproduceControl", {
+        options: {
+            startButton: null
+
+        },
         _create: function() {
-            var string = '<div><button onclick="startAutoBreeding();">AutoReproduce</button>\
-                <span> with delay of</span> <input type="text"\
-                id="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                milliseconds.\
-                <button id="stopAutoReproduce" onclick="autoRunning = false;">Stop</button>\
-                </div>'
-                var div = $($.parseHTML(string));
+            var div = $('<div></div>');
             this.element.append(div);
+            var button = $('<button>AutoReproduce</button>');
+            this.options.startButton = button;
+            div.append(button);
+            this._on(button, {'click': 'startAutoBreeding'});
+            var string = '<span> with delay of <input type="text"\
+                class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
+                milliseconds.</span>';
+            div.append($(string));
+        },
+        startAutoBreeding: function() {
+            this.options.autoRunning = true;
+            this.autoBreed();
+            this.measureGenerationRate(Number(document.getElementById('generations').value));
+        },
+        autoBreed: function() {
+            var breedingWindow = $(this.element).parent();
+            var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
+            if (autoRunning) {
+                var useFitness = $(breedingWindow).find('.useFitness').get(0).checked;
+                var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
+                if (useFitness) {
+                    var canvas = $(breedingBoxes).find('.box').get(0);
+                    var biomorph = getBiomorphFromCanvas(canvas);
+                    var bestSoFar = canvas;
+                    var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
+                    $(breedingBoxes).each( function(index) {
+                        canvas = this;
+                        var currentError = fitness(getBiomorphFromCanvas(canvas),
+                                canvas.width, canvas.height);
+                        if (currentError < errorToBeat) {
+                            bestSoFar = canvas;
+                            errorToBeat = currentError;
+                        }
+                    });
+                    $(bestSoFar).trigger('click');
+                } else {
+                    var luckyParent = Math.trunc(Math.random() * numBoxes);
+                    $(breedingBoxes).find('.box').get(luckyParent).trigger('click');
+                }
+                setTimeout(function() {
+                    autoBreed()
+                }, Number(document.getElementById("autoReproduceInterval").value));
+            }            
         }
     });
 });
@@ -2939,7 +2815,7 @@ $( function() {
     $.widget( "dawk.breedingControl", {
         _create: function() {
             var string = '<div>\
-                <input type="checkbox" id="useFitness" /> <span>Use Fitness\
+                <input type="checkbox" class="useFitness" /> <span>Use Fitness\
                 (Breed based on how well biomorph fits its box) <a\
                 href="engineering.html">Engineering</a>\
                 </span> <input type="checkbox" id="explosiveBreeding" /> <span>Explosive\
@@ -2970,6 +2846,7 @@ $( function() {
     // "colorize" the widget name
     $.widget( "dawk.breedingWindow", {
         _create: function () {
+            $(this.element).addClass('breedingWindow');
             $(this.element).breedingAutoReproduceControl();
             $(this.element).breedingControl();
             $(this.element).breedingOffspringCounter();
@@ -2993,79 +2870,80 @@ $( function() {
             overlay.append(overlayCanvas);
             this.element.append(container);
             var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
-            var midCanvasDivId = 'canvas' + Math.trunc(numBoxes / 2);
             var cols = boxes.breedingBoxes("option", 'cols');
 
-
-            initialize("BasicTree", midCanvasDivId);
-
-
-            $('#' + midCanvasDivId).trigger('mouseover');
-            $('#' + midCanvasDivId).trigger('click');
+            var midCanvas = $(this.element).find('.midBox').get(0);
+            console.log(midCanvas);
+            doPerson("BasicTree", midCanvas);
+            $(midCanvas).trigger('mouseover');
+//            $(midCanvas).trigger('click');
         }})});
 
 
 $.widget('dawk.engineeringWindow', {
     options: {},
     _create: function() {
-        var div = $("<div></div>")
-        var geneboxes = initGeneboxes(div, {
+        $(this.element).addClass('engineeringWindow');
+        var geneboxes = initGeneboxes(this.element, {
             engineering : true
         });
-        var boxes = $("<div></div>").engineeringBoxes({
-            numBoxes : 1,
-            cols : 1
-        }).appendTo(div);
-        this.element.append(div);
-        var midCanvasDiv = $(boxes).engineeringBoxes("option", "midCanvasDiv");
-        console.log(midCanvasDiv);
-        var canvas = $(midCanvasDiv).find('canvas').get(0);
-        console.log(canvas);
-        console.log(canvas.height);
-        doPerson("BasicTree", canvas);
+        var engineeringDiv = $("<div></div>").engineeringBox({ 
+            height: 600,
+            width: 1000});
+        this.element.append(engineeringDiv);
+        doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
+    },
+
+    // Called when created, and later when changing options
+    _refresh: function() {
+    },
+
+    _destroy: function() {
+    },
+
+    // _setOptions is called with a hash of all options that are changing
+    // always refresh when changing options
+    _setOptions: function() {
+        // _super and _superApply handle keeping the right this-context
+        this._superApply( arguments );
+        this._refresh();
+    },
+
+    // _setOption is called for each individual option that is changing
+    _setOption: function( key, value ) {
+        this._super( key, value );
     }
 });$( function() {
-    // the widget definition, where "custom" is the namespace,
-    // "colorize" the widget name
-    $.widget( "dawk.engineeringBoxes", {
-        // default options
+    $.widget('dawk.engineeringBox', {
         options: {
+            canvas: null,
+            width: 200,
+            height: 200,
         },
-
-        // The constructor
         _create: function() {
-            var boxes = this.element;
+            this.element.addClass('boxDiv');
+            var canvas = $("<canvas></canvas>");
+            this.options.canvas = canvas;
+            canvas.attr('width', this.options.width);
+            canvas.attr('height', this.options.height);
+            canvas.addClass('box');
+            this.element.append(canvas);
 
-            $(boxes).attr('id', 'boxes').addClass('engineering');
-            var canvas = $("<div></div>").breedingBox({ 
-                boxIndex: 0, 
-                isMidBox: true,
-                height: 600,
-                width: 1000,
-                breedingBoxes: this}).appendTo(boxes);
-            this.options.midCanvasDiv = canvas;
-        
-            this._refresh();
+            this._on( canvas, {
+                click: "_doCanvasClicked",
+                mouseover: "_doMouseOver"
+            });
         },
-
-        // Called when created, and later when changing options
-        _refresh: function() {
+        _doMouseOver: function(event) {
+            var parentBreedingWindow = this.element.parents('.engineeringWindow').get(0);
+            var geneboxes = $(parentBreedingWindow)
+                .find('.monochromeGeneboxes').get(0);
+            console.log(geneboxes);
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
-
-        _destroy: function() {
+        _doCanvasClicked: function(event) {
+            // Raise the hypodermic message TODO
+            return false;
         },
-
-        // _setOptions is called with a hash of all options that are changing
-        // always refresh when changing options
-        _setOptions: function() {
-            // _super and _superApply handle keeping the right this-context
-            this._superApply( arguments );
-            this._refresh();
-        },
-
-        // _setOption is called for each individual option that is changing
-        _setOption: function( key, value ) {
-            this._super( key, value );
-        }
     });
-} );
+});

@@ -2,9 +2,7 @@ initializeMut();
 
 var drawCrossHairs = false;
 var autoRunning = false;
-function initialize(biomorphType, canvasId) {
-    doPerson(biomorphType, document.getElementById(canvasId));
-}
+
 
 function doPerson(biomorphType, canvas) {
     
@@ -16,7 +14,6 @@ function doPerson(biomorphType, canvas) {
     case "Saltation": doSaltation(genotype); break;
     }
     develop(genotype, canvas, drawCrossHairs); 
-    genotype.setForm(document.getElementById('engineering'));
     jQuery.data(canvas, "genotype", genotype);
     $(canvas).trigger('mouseover');
 
@@ -38,10 +35,12 @@ function measureGenerationRate(generationsPreviousSecond) {
     
 }
 
-function doRepro(canvasId, targetCanvasId) {
-    doReproduce(canvasId, targetCanvasId);
+function doRepro(sourceCanvas, targetCanvas) {
+    doReproduce(sourceCanvas, targetCanvas);
     if(autoRunning)
-        setTimeout(function() { doRepro(canvasId, targetCanvasId)}, Number(document.getElementById("autoReproduceInterval").value));
+        setTimeout(function() { 
+            doRepro(sourceCanvas, targetCanvas)}, 
+                Number(document.getElementById("autoReproduceInterval").value));
 
 }
 
@@ -90,19 +89,16 @@ function formChanged(canvasId) {
 
  
 
-function doReproduce(canvasId, targetCanvasId) {
+function doReproduce(sourceCanvas, targetCanvas) {
 //    console.log('sourceId ' + canvasId + ' targetCanvasId ' + targetCanvasId);
     var generationCounter = document.getElementById('generations');
     generationCounter.value = Number(generationCounter.value) + 1;
-    var canvas = document.getElementById(canvasId);
-    var targetCanvas = document.getElementById(targetCanvasId)
-    var genotype = jQuery.data(canvas, "genotype");
+    
+    var genotype = jQuery.data(sourceCanvas, "genotype");
     if(genotype != null) {
         var childGenotype = reproduce(genotype);
         jQuery.data(targetCanvas, 'genotype', childGenotype);
         develop(childGenotype, targetCanvas, drawCrossHairs); 
-        var form = document.getElementById('engineering');
-        genotype.setForm(form);
     }
     else 
         alert("Genotype is null");

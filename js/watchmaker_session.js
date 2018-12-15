@@ -12,7 +12,7 @@ $.widget('dawk.watchmakerSession', {
   newBreedingWindow: function() {
       var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
       this.element.find('ul').append(newTabLi);
-      var div = $('<div id="#breeding"></div>');
+      var div = $('<div id="breeding"></div>');
       this.element.append(div);
       div.breedingWindow();
       this.element.tabs("refresh");
@@ -20,7 +20,7 @@ $.widget('dawk.watchmakerSession', {
   newEngineeringWindow: function() {
       var newTabLi = $('<li><a href="#engineering">Engineering</a></li>');
       this.element.find('ul').append(newTabLi);
-      var div = $('<div id="#engineering"></div>');
+      var div = $('<div id="engineering"></div>');
       this.element.append(div);
       div.engineeringWindow();
       this.element.tabs("refresh");
