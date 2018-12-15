@@ -2676,7 +2676,7 @@ function doReproduce(sourceCanvas, targetCanvas) {
         jQuery.data(targetCanvas, 'genotype', childGenotype);
         develop(childGenotype, targetCanvas, drawCrossHairs); 
     }
-    else 
+    else  
         alert("Genotype is null");
     return genotype;
 }
