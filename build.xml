@@ -35,7 +35,9 @@
         	<fileset file="js/monochrome/biomorph_pic.js" />
         	<fileset file="js/monochrome/biomorph_develop.js" />
         	<fileset file="js/geneboxes.js" />
-        	<fileset file="js/app.js" />
+            <fileset file="js/app.js" />
+            <fileset file="js/blind_watchmaker.js" />
+            <fileset file="js/watchmaker_session.js" />
             <fileset file="js/breeding.js" />
             <fileset file="js/engineering.js" />
         </concat>

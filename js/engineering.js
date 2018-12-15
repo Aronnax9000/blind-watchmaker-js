@@ -44,3 +44,16 @@ $( function() {
     });
 } );
 
+$.widget('dawk.engineeringWindow', {
+    options: {},
+    _create: function() {
+        var geneboxes = initGeneboxes(this.element, {
+            engineering : true
+        });
+        var boxes = $("<div></div>").engineeringBoxes({
+            numBoxes : 1,
+            cols : 1
+        }).appendTo(this.element);
+        doPerson("BasicTree", 'canvas0');
+    }
+});
