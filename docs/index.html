@@ -8,55 +8,32 @@
 <script src="js/watchmaker.js"></script>
 
 <script type="text/javascript">
-    $(document).ready(function() {
-        
-        $( "#menu" ).menu().show();
-        $('.blindWatchmaker').blindWatchmaker();
-        $(".ui-closable-tab").click(function() {
-            var tabContainerDiv=$(this).closest(".ui-tabs").attr("id");
-            var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
-            $( "#" + panelId ).remove();
-            $("#"+tabContainerDiv).tabs("refresh");
-            var tabCount=$("#"+tabContainerDiv).find(".ui-closable-tab").length;
-            if (tabCount<1) {
-                $("#"+tabContainerDiv).hide();
-            }
+
+
+$(document).ready(
+        function() {
+            $('.blindWatchmaker').blindWatchmaker();
+            $(".ui-closable-tab").click(
+                    function() {
+                        var tabContainerDiv = $(this).closest(".ui-tabs")
+                                .attr("id");
+                        var panelId = $(this).closest("li").remove().attr(
+                                "aria-controls");
+                        $("#" + panelId).remove();
+                        $("#" + tabContainerDiv).tabs("refresh");
+                        var tabCount = $("#" + tabContainerDiv).find(
+                                ".ui-closable-tab").length;
+                        if (tabCount < 1) {
+                            $("#" + tabContainerDiv).hide();
+                        }
+                    });
         });
-    });
-
-
 </script>
-<style>
-.ui-menu {
-	width: 150px;
-	position: fixed;
-	right: 0px;
-	top: 0px;
-	z-index: 1;
-}
-  .ui-icon-circle-close {
-    cursor:pointer;
-  }
-</style>
+
 </head>
 
 <body>
 	<!--  class="ui-state-disabled" on li you don't want enabled -->
-	<ul style='display: none;' id="menu">
-		<li><div>Menu</div>
-			<ul>
-				<li><div>Blind Watchmaker</div>
-					<ul>
-						<li><div>New Session</div>
-							<ul>
-								<li><div>Monochrome Biomorphs</div></li>
-							</ul></li>
-						<li><div>Close Session</div></li>
-					</ul></li>
-			</ul>
-			</li>
-			</ul>
-			
-			<div class="blindWatchmaker"></div>
+	<div class="blindWatchmaker"></div>
 </body>
 </html>

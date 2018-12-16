@@ -41,3 +41,15 @@ input[type=checkbox]
 div {
 	font-size: 14pt;
 }
+
+.ui-menu {
+    width: 150px;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    z-index: 1;
+}
+
+.ui-icon-circle-close {
+    cursor: pointer;
+}

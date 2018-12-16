@@ -1,8 +1,17 @@
 $.widget('dawk.watchmakerSession', {
    options: {
-       
+       name: 'Default Session'
+   },
+   buildMenu: function(menuContents) {
+       var li;
+       li = $('<li><div>New Breeding</div></li>');
+       menuContents.append(li);
+       li = $('<li><div>New Engineering</div></li>');
+       menuContents.append(li);
+       console.log('watchmakerSession BuildMenu');
    },
    _create: function () {
+       this.element.addClass('watchmakerSession');
        var ul = $('<ul></ul>');
        this.element.append(ul);
        this.element.tabs();
