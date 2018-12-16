@@ -14,7 +14,7 @@ $.widget('dawk.blindWatchmaker', {
     },
     newMonochromeSession: function() {
         var uuid = uuidv4();
-        var string = '<li><a href="#' + uuid + '">Monochrome</a></li>';
+        var string = '<li><a href="#' + uuid + '">Monochrome</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);

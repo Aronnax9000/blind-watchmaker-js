@@ -11,6 +11,16 @@
     $(document).ready(function() {
         $( "#menu" ).menu();
         $('.blindWatchmaker').blindWatchmaker();
+        $(".ui-closable-tab").click(function() {
+            var tabContainerDiv=$(this).closest(".ui-tabs").attr("id");
+            var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
+            $( "#" + panelId ).remove();
+            $("#"+tabContainerDiv).tabs("refresh");
+            var tabCount=$("#"+tabContainerDiv).find(".ui-closable-tab").length;
+            if (tabCount<1) {
+                $("#"+tabContainerDiv).hide();
+            }
+        });
     });
 
 
@@ -23,6 +33,9 @@
 	top: 0px;
 	z-index: 1;
 }
+  .ui-icon-circle-close {
+    cursor:pointer;
+  }
 </style>
 </head>
 
