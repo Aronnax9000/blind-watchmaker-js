@@ -2573,6 +2573,12 @@ initializeMut();
 
 var drawCrossHairs = false;
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
 
 
 function doPerson(biomorphType, canvas) {
@@ -2648,26 +2654,30 @@ function formChanged(canvasId) {
     develop(genotype, canvas, drawCrossHairs); 
 }
 $.widget('dawk.blindWatchmaker', {
-   options: {
-       
-   } ,
-   _create: function () {
-       var ul = $('<ul></ul>');
-       this.element.append(ul);
-       this.element.tabs();
-       this.newMonochromeSession();
-       this.element.tabs('option', 'active', 0);
-       this.element.tabs("refresh");
-       
-   },
-   newMonochromeSession: function() {
-       var newTabLi = $('<li><a href="#monochrome">Monochrome</a></li>');
-       this.element.find('ul').append(newTabLi);
-       var div = $('<div id="monochrome"></div>');
-       this.element.append(div);
-       div.watchmakerSession();
-       this.element.tabs("refresh");
-   },
+    options: {
+
+    } ,
+    _create: function () {
+        var ul = $('<ul></ul>');
+        this.element.append(ul);
+        this.element.tabs();
+        this.newMonochromeSession();
+        this.newMonochromeSession();
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+
+    },
+    newMonochromeSession: function() {
+        var uuid = uuidv4();
+        var string = '<li><a href="#' + uuid + '">Monochrome</a></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.watchmakerSession();
+        this.element.tabs("refresh");
+    },
 
 });$.widget('dawk.watchmakerSession', {
    options: {
@@ -2679,20 +2689,30 @@ $.widget('dawk.blindWatchmaker', {
        this.element.tabs();
        this.newBreedingWindow();
        this.newEngineeringWindow();
+       this.newBreedingWindow();
+       this.newEngineeringWindow();
+       this.newBreedingWindow();
+       this.newEngineeringWindow();
        this.element.tabs('option', 'active', 0);
   },
   newBreedingWindow: function() {
-      var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
-      this.element.find('ul').append(newTabLi);
-      var div = $('<div id="breeding"></div>');
+      var uuid = uuidv4();
+      var string = '<li><a href="#' + uuid + '">Breeding</a></li>';
+      var newTabLi = $(string);
+      var ul = this.element.find('ul').get(0);
+      $(ul).append(newTabLi);
+      var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.breedingWindow();
       this.element.tabs("refresh");
   },
   newEngineeringWindow: function() {
-      var newTabLi = $('<li><a href="#engineering">Engineering</a></li>');
-      this.element.find('ul').append(newTabLi);
-      var div = $('<div id="engineering"></div>');
+      var uuid = uuidv4();
+      var string = '<li><a href="#' + uuid + '">Engineering</a></li>';
+      var newTabLi = $(string);
+      var ul = this.element.find('ul').get(0);
+      $(ul).append(newTabLi);
+      var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.engineeringWindow();
       this.element.tabs("refresh");

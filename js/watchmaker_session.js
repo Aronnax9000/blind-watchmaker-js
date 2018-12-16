@@ -8,20 +8,30 @@ $.widget('dawk.watchmakerSession', {
        this.element.tabs();
        this.newBreedingWindow();
        this.newEngineeringWindow();
+       this.newBreedingWindow();
+       this.newEngineeringWindow();
+       this.newBreedingWindow();
+       this.newEngineeringWindow();
        this.element.tabs('option', 'active', 0);
   },
   newBreedingWindow: function() {
-      var newTabLi = $('<li><a href="#breeding">Breeding</a></li>');
-      this.element.find('ul').append(newTabLi);
-      var div = $('<div id="breeding"></div>');
+      var uuid = uuidv4();
+      var string = '<li><a href="#' + uuid + '">Breeding</a></li>';
+      var newTabLi = $(string);
+      var ul = this.element.find('ul').get(0);
+      $(ul).append(newTabLi);
+      var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.breedingWindow();
       this.element.tabs("refresh");
   },
   newEngineeringWindow: function() {
-      var newTabLi = $('<li><a href="#engineering">Engineering</a></li>');
-      this.element.find('ul').append(newTabLi);
-      var div = $('<div id="engineering"></div>');
+      var uuid = uuidv4();
+      var string = '<li><a href="#' + uuid + '">Engineering</a></li>';
+      var newTabLi = $(string);
+      var ul = this.element.find('ul').get(0);
+      $(ul).append(newTabLi);
+      var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.engineeringWindow();
       this.element.tabs("refresh");

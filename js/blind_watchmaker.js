@@ -1,23 +1,27 @@
 $.widget('dawk.blindWatchmaker', {
-   options: {
-       
-   } ,
-   _create: function () {
-       var ul = $('<ul></ul>');
-       this.element.append(ul);
-       this.element.tabs();
-       this.newMonochromeSession();
-       this.element.tabs('option', 'active', 0);
-       this.element.tabs("refresh");
-       
-   },
-   newMonochromeSession: function() {
-       var newTabLi = $('<li><a href="#monochrome">Monochrome</a></li>');
-       this.element.find('ul').append(newTabLi);
-       var div = $('<div id="monochrome"></div>');
-       this.element.append(div);
-       div.watchmakerSession();
-       this.element.tabs("refresh");
-   },
+    options: {
+
+    } ,
+    _create: function () {
+        var ul = $('<ul></ul>');
+        this.element.append(ul);
+        this.element.tabs();
+        this.newMonochromeSession();
+        this.newMonochromeSession();
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+
+    },
+    newMonochromeSession: function() {
+        var uuid = uuidv4();
+        var string = '<li><a href="#' + uuid + '">Monochrome</a></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.watchmakerSession();
+        this.element.tabs("refresh");
+    },
 
 });
