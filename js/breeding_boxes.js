@@ -37,7 +37,7 @@ $( function() {
         doReproduce: function (sourceCanvas, targetCanvas) {
             var breedingWindow = $(sourceCanvas).parents('.breedingWindow').get(0);
             var generations = $(breedingWindow).find('.generations').get(0);
-            generations.value = Number($(generations).attr('value')) + 1;
+            generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
             if(genotype != null) {

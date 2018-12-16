@@ -24,87 +24,18 @@ function getBiomorphFromCanvas(canvas) {
     return biomorph;
 }
 
-function autoBreed(breedingBoxes) {
-
-}
-
-$( function() { 
-    $.widget( "dawk.breedingAutoReproduceControl", {
-        options: {
-            startButton: null
-
-        },
-        _create: function() {
-            var div = $('<div></div>');
-            this.element.append(div);
-            var button = $('<button>AutoReproduce</button>');
-            this.options.startButton = button;
-            div.append(button);
-            this._on(button, {'click': 'startAutoBreeding'});
-            var string = '<span> with delay of <input type="text"\
-                class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                milliseconds.</span>';
-            div.append($(string));
-        },
-        startAutoBreeding: function() {
-            this.options.autoRunning = true;
-            this.autoBreed();
-            this.measureGenerationRate(Number(document.getElementById('generations').value));
-        },
-        autoBreed: function() {
-            var breedingWindow = $(this.element).parent();
-            var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
-            if (autoRunning) {
-                var useFitness = $(breedingWindow).find('.useFitness').get(0).checked;
-                var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
-                if (useFitness) {
-                    var canvas = $(breedingBoxes).find('.box').get(0);
-                    var biomorph = getBiomorphFromCanvas(canvas);
-                    var bestSoFar = canvas;
-                    var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
-                    $(breedingBoxes).each( function(index) {
-                        canvas = this;
-                        var currentError = fitness(getBiomorphFromCanvas(canvas),
-                                canvas.width, canvas.height);
-                        if (currentError < errorToBeat) {
-                            bestSoFar = canvas;
-                            errorToBeat = currentError;
-                        }
-                    });
-                    $(bestSoFar).trigger('click');
-                } else {
-                    var luckyParent = Math.trunc(Math.random() * numBoxes);
-                    $(breedingBoxes).find('.box').get(luckyParent).trigger('click');
-                }
-                setTimeout(function() {
-                    autoBreed()
-                }, Number(document.getElementById("autoReproduceInterval").value));
-            }            
-        },
-        measureGenerationRate: function(generationsPreviousSecond) {
-            
-            var generationCounter = $(this.element).parent().find('.generations').get(0);
-            var newGenerationValue = Number(generationCounter.value) + 1;
-            generationCounter.value = newGenerationValue;
-            var generationRate = $(this.element).parent().find('.generationsRate').get(0);
-            generationRate.value = newGenerationValue - generationsPreviousSecond;
-            if(this.options.autoRunning)
-                setTimeout(function() { this.measureGenerationRate(newGenerationValue)}, 1000);
-            
-        }
-    });
-});
 
 $( function() {
     $.widget( "dawk.breedingControl", {
         _create: function() {
-            var string = '<div>\
+            $(this.element).addClass('breedingControl');
+            var string = '<span>\
                 <input type="checkbox" class="useFitness" /> <span>Use Fitness\
                 (Breed based on how well biomorph fits its box) <a\
                 href="engineering.html">Engineering</a>\
                 </span> <input type="checkbox" id="explosiveBreeding" /> <span>Explosive\
                 Breeding </span>\
-                </div>';
+                </span>';
             var div = $($.parseHTML(string));
             this.element.append(div);
         }
@@ -112,12 +43,13 @@ $( function() {
 });
 $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
+
         _create: function() {
-            var string = '<div>\
-                Offspring count: <input type="number" value="0" class="generations" />\
+            $(this.element).addClass('breedingOffspringCounter');
+            var string = '<span>Offspring count: <input type="number" value="0" class="generations" />\
                 Offspring per second: <input type="number" value="0"\
                 class="generationRate" />\
-                </div>'
+                </span>'
                 var div = $.parseHTML(string);
             this.element.append(div);
         }
@@ -131,9 +63,9 @@ $( function() {
     $.widget( "dawk.breedingWindow", {
         _create: function () {
             $(this.element).addClass('breedingWindow');
-            $(this.element).breedingAutoReproduceControl();
-            $(this.element).breedingControl();
-            $(this.element).breedingOffspringCounter();
+            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
+            $("<div></div>").breedingControl().appendTo(this.element);
+            $("<div></div>").breedingOffspringCounter().appendTo(this.element);
             var geneboxes = initGeneboxes(this.element, {
                 numBoxes : 15,
                 cols : 5,
@@ -159,6 +91,6 @@ $( function() {
             var midCanvas = $(this.element).find('.midBox').get(0);
             doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
-//            $(midCanvas).trigger('click');
+            $(midCanvas).trigger('click');
         }})});
 
