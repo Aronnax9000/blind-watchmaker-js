@@ -9,7 +9,8 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $( "#menu" ).menu();
+        
+        $( "#menu" ).menu().show();
         $('.blindWatchmaker').blindWatchmaker();
         $(".ui-closable-tab").click(function() {
             var tabContainerDiv=$(this).closest(".ui-tabs").attr("id");
@@ -41,7 +42,7 @@
 
 <body>
 	<!--  class="ui-state-disabled" on li you don't want enabled -->
-	<ul id="menu">
+	<ul style='display: none;' id="menu">
 		<li><div>Menu</div>
 			<ul>
 				<li><div>Blind Watchmaker</div>
