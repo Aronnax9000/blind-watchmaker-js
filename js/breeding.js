@@ -52,8 +52,18 @@ $( function() {
 $( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
-    $.widget( "dawk.breedingWindow", {
+    $.widget( "dawk.breedingWindow", $.dawk.watchmakerView, {
+        options: { watchmakerSession: null},
+        viewGainedFocus: function(event) {
+            console.log($(this).breedingWindow("option", "test"));
+            console.log($(this).breedingWindow("option", "hi"));
+            var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
+            console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
+            $(watchmakerSession.element).watchmakerSession('raiseAlert');
+        },
+
         _create: function () {
+            this._super("_create");
             $(this.element).addClass('breedingWindow');
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
             $("<div></div>").breedingControl().appendTo(this.element);

@@ -41,8 +41,10 @@
             <fileset file="js/blind_watchmaker.js" />
             <fileset file="js/watchmaker_session.js" />
             <fileset file="js/breeding_autoreproducecontrol.js" />
-            <fileset file="js/breeding.js" />
-            <fileset file="js/engineering_window.js" />
+        	
+        	<fileset file="js/watchmaker_view.js" />
+        	<fileset file="js/breeding.js" />
+        	            <fileset file="js/engineering_window.js" />
             <fileset file="js/engineering_box.js" />
         </concat>
         <concat destfile="docs/css/watchmaker.css">

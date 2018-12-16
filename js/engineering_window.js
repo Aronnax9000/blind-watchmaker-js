@@ -1,7 +1,8 @@
 
-$.widget('dawk.engineeringWindow', {
+$.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
     options: {},
     _create: function() {
+        this._super("_create");
         $(this.element).addClass('engineeringWindow');
         var geneboxes = $("<div></div>").monochrome_geneboxes({
             engineering : true

@@ -2672,6 +2672,8 @@ $.widget('dawk.blindWatchmaker', {
         var parents = $(ui.newTab).parents('.blindWatchmaker').get(0);
         $(parents).blindWatchmaker('buildMenu');
     },
+    raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
+    
     newMonochromeSession: function() {
         var index = $(this.element).children('ul').find('li').length;
         var uuid = uuidv4();
@@ -2683,11 +2685,11 @@ $.widget('dawk.blindWatchmaker', {
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
         var sessionName = 'Monochrome ' + index;
-        div.watchmakerSession({'name': sessionName});
+        div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this});
         this.element.tabs("refresh");
     },
     buildMenu: function() {
-        console.log('bw buildMenu');
+//        console.log('bw buildMenu');
         $(this.element).find('.watchmakerMenu').each(function() {this.remove();});
         var menu = $('<ul class="watchmakerMenu"></ul>');
         $(this.element).append(menu);
@@ -2702,9 +2704,9 @@ $.widget('dawk.blindWatchmaker', {
         }
 
         
-        console.log($(this.element).tabs("option", "active"));
+//        console.log($(this.element).tabs("option", "active"));
         var activeIndex = $(this.element).tabs("option", "active");
-        console.log(activeIndex);
+//        console.log(activeIndex);
         var activeSession = $(this.element).find('.watchmakerSession').get(activeIndex);
         var sessionName = $(activeSession).watchmakerSession('option', 'name');
         var sessionLi = $("<li><div>" + sessionName + "</div></li>")
@@ -2729,12 +2731,15 @@ $.widget('dawk.blindWatchmaker', {
         $(liToRemove).remove();
         this.element.tabs("refresh");
     }
-    
-    
-
 });$.widget('dawk.watchmakerSession', {
    options: {
-       name: 'Default Session'
+       name: 'Default Session',
+       blindWatchmaker: null
+   },
+   raiseAlert: function() {
+       console.log('raise alert in watchmaker session');
+       var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
+       $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
    },
    buildMenu: function(menuContents) {
        var li;
@@ -2742,13 +2747,34 @@ $.widget('dawk.blindWatchmaker', {
        menuContents.append(li);
        li = $('<li><div>New Engineering</div></li>');
        menuContents.append(li);
-       console.log('watchmakerSession BuildMenu');
+//       console.log('watchmakerSession BuildMenu');
+       
+//       console.log($(this.element).tabs("option", "active"));
+       var activeIndex = $(this.element).tabs("option", "active");
+//       console.log(activeIndex);
+       var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
+//       console.log("watchmakerSession.buildMenu Active view: " + activeView);
+//       var viewName = $(activeView).watchmakerView('option', 'name');
+//       var viewLi = $("<li><div>" + viewName + "</div></li>")
+//       menuContents.append(sessionLi);
+//       var viewMenu = $('<ul></ul>');
+//       viewLi.append(viewMenu);
+//       $(activeView).watchmakerView('buildMenu', viewMenu);
+       
    },
+   on_activate: function (event, ui) {
+       // One of the session's views, like Breeding, has just become active.
+       var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
+//       $(parents).watchmakerView('buildMenu');
+//       console.log(ui.newPanel);
+       $(ui.newPanel).trigger('dawk:viewGainedFocus');
+       
+   },   
    _create: function () {
        this.element.addClass('watchmakerSession');
        var ul = $('<ul></ul>');
        this.element.append(ul);
-       this.element.tabs();
+       this.element.tabs({activate: this.on_activate});
        this.newBreedingWindow();
        this.newEngineeringWindow();
        this.newBreedingWindow();
@@ -2756,6 +2782,7 @@ $.widget('dawk.blindWatchmaker', {
        this.newBreedingWindow();
        this.newEngineeringWindow();
        this.element.tabs('option', 'active', 0);
+       this.element.tabs("refresh");
   },
   newBreedingWindow: function() {
       var uuid = uuidv4();
@@ -2765,7 +2792,7 @@ $.widget('dawk.blindWatchmaker', {
       $(ul).append(newTabLi);
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
-      div.breedingWindow();
+      div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this});
       this.element.tabs("refresh");
   },
   newEngineeringWindow: function() {
@@ -2776,7 +2803,7 @@ $.widget('dawk.blindWatchmaker', {
       $(ul).append(newTabLi);
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
-      div.engineeringWindow();
+      div.engineeringWindow({watchmakerSession: this});
       this.element.tabs("refresh");
   }
 });$( function() { 
@@ -2859,7 +2886,26 @@ $.widget('dawk.blindWatchmaker', {
         }
     });
 });
-
+$.widget('dawk.watchmakerView', {
+  options: {
+  },
+  _create: function() {
+      
+      $(this.element).addClass('watchmakerView');
+      
+  },
+  _init: function() {
+      $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus);
+  },
+  viewGainedFocus: function(event) {console.log('View gained focus');}
+  ,
+  buildMenu: function(menuContents) {
+      console.log('in view buildmenu');
+      var li;
+      li = $('<li><div>Close View</div></li>');
+      menuContents.append(li);
+  },
+})
 
 
 function fitness(biomorph, targetWidth, targetHeight) {
@@ -2913,8 +2959,18 @@ $( function() {
 $( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
-    $.widget( "dawk.breedingWindow", {
+    $.widget( "dawk.breedingWindow", $.dawk.watchmakerView, {
+        options: { watchmakerSession: null},
+        viewGainedFocus: function(event) {
+            console.log($(this).breedingWindow("option", "test"));
+            console.log($(this).breedingWindow("option", "hi"));
+            var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
+            console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
+            $(watchmakerSession.element).watchmakerSession('raiseAlert');
+        },
+
         _create: function () {
+            this._super("_create");
             $(this.element).addClass('breedingWindow');
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
             $("<div></div>").breedingControl().appendTo(this.element);
@@ -2949,9 +3005,10 @@ $( function() {
         }})});
 
 
-$.widget('dawk.engineeringWindow', {
+$.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
     options: {},
     _create: function() {
+        this._super("_create");
         $(this.element).addClass('engineeringWindow');
         var geneboxes = $("<div></div>").monochrome_geneboxes({
             engineering : true
