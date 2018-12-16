@@ -715,6 +715,7 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
+                            jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
                             develop(genotype, midCanvas,
@@ -2571,7 +2572,7 @@ $.widget('dawk.monochrome_geneboxes', {
 initializeMut();
 
 var drawCrossHairs = false;
-var autoRunning = false;
+
 
 
 function doPerson(biomorphType, canvas) {

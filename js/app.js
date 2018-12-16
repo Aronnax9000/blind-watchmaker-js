@@ -1,7 +1,7 @@
 initializeMut();
 
 var drawCrossHairs = false;
-var autoRunning = false;
+
 
 
 function doPerson(biomorphType, canvas) {
