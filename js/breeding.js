@@ -1,11 +1,4 @@
 
-function initGeneboxes(container, options) {
-    var geneboxes = $("<div></div>").monochrome_geneboxes(options);
-    container.append(geneboxes);
-    return geneboxes;
-}
-
-
 
 
 function fitness(biomorph, targetWidth, targetHeight) {
@@ -31,8 +24,7 @@ $( function() {
             $(this.element).addClass('breedingControl');
             var string = '<span>\
                 <input type="checkbox" class="useFitness" /> <span>Use Fitness\
-                (Breed based on how well biomorph fits its box) <a\
-                href="engineering.html">Engineering</a>\
+                (Breed based on how well biomorph fits its box)\
                 </span> <input type="checkbox" id="explosiveBreeding" /> <span>Explosive\
                 Breeding </span>\
                 </span>';
@@ -66,11 +58,12 @@ $( function() {
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
             $("<div></div>").breedingControl().appendTo(this.element);
             $("<div></div>").breedingOffspringCounter().appendTo(this.element);
-            var geneboxes = initGeneboxes(this.element, {
+            var geneboxes = $("<div></div>").monochrome_geneboxes({
                 numBoxes : 15,
                 cols : 5,
                 engineering : false
             });
+            this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
             var boxes = $("<div></div>").breedingBoxes();

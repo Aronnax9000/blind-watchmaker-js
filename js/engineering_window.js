@@ -3,9 +3,10 @@ $.widget('dawk.engineeringWindow', {
     options: {},
     _create: function() {
         $(this.element).addClass('engineeringWindow');
-        var geneboxes = initGeneboxes(this.element, {
+        var geneboxes = $("<div></div>").monochrome_geneboxes({
             engineering : true
         });
+        this.element.append(geneboxes);
         var engineeringDiv = $("<div></div>").engineeringBox({ 
             height: 600,
             width: 1000});
