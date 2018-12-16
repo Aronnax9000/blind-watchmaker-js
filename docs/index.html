@@ -9,12 +9,40 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $( "#menu" ).menu();
         $('.blindWatchmaker').blindWatchmaker();
     });
+
+
 </script>
+<style>
+.ui-menu {
+	width: 150px;
+	position: fixed;
+	right: 0px;
+	top: 0px;
+	z-index: 1;
+}
+</style>
 </head>
 
 <body>
-    <div class="blindWatchmaker"></div>
+	<!--  class="ui-state-disabled" on li you don't want enabled -->
+	<ul id="menu">
+		<li><div>Menu</div>
+			<ul>
+				<li><div>Blind Watchmaker</div>
+					<ul>
+						<li><div>New Session</div>
+							<ul>
+								<li><div>Monochrome Biomorphs</div></li>
+							</ul></li>
+						<li><div>Close Session</div></li>
+					</ul></li>
+			</ul>
+			</li>
+			</ul>
+			
+			<div class="blindWatchmaker"></div>
 </body>
 </html>
