@@ -12,8 +12,11 @@ $.widget('dawk.watchmakerSession', {
        var li;
        li = $('<li><div>New Breeding</div></li>');
        menuContents.append(li);
+       this._on(li, {click: 'newBreedingWindow'});
+
        li = $('<li><div>New Engineering</div></li>');
        menuContents.append(li);
+       this._on(li, {click: 'newEngineeringWindow'});
 //       console.log('watchmakerSession BuildMenu');
        
 //       console.log($(this.element).tabs("option", "active"));
@@ -39,13 +42,9 @@ $.widget('dawk.watchmakerSession', {
    },   
    _create: function () {
        this.element.addClass('watchmakerSession');
-       var ul = $('<ul></ul>');
+       var ul = $('<ul class="watchmakerViewTabs"></ul>');
        this.element.append(ul);
        this.element.tabs({activate: this.on_activate});
-       this.newBreedingWindow();
-       this.newEngineeringWindow();
-       this.newBreedingWindow();
-       this.newEngineeringWindow();
        this.newBreedingWindow();
        this.newEngineeringWindow();
        this.element.tabs('option', 'active', 0);
@@ -75,8 +74,9 @@ $.widget('dawk.watchmakerSession', {
                   }
               });    
       this.element.tabs("refresh");
-      var tabcount = $(this.element).find('li').length;
-      console.log('tabcount '+ tabcount);
+      var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+      console.log('watchmaker view tabcount '+ tabcount);
+      this.element.tabs("refresh");
       this.element.tabs("option", "active", tabcount - 1);
 
   },
@@ -104,6 +104,9 @@ $.widget('dawk.watchmakerSession', {
                   }
               });    
       
+      var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+      console.log('watchmaker view tabcount '+ tabcount);
       this.element.tabs("refresh");
+      this.element.tabs("option", "active", tabcount - 1);
   }
 });

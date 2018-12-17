@@ -36,7 +36,6 @@ $.widget('dawk.blindWatchmaker', {
         console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-        this.element.tabs("refresh");
 
     },
     buildMenu: function() {
