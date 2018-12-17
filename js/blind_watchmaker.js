@@ -22,14 +22,14 @@ $.widget('dawk.blindWatchmaker', {
     newMonochromeSession: function() {
         var index = $(this.element).children('ul').find('li').length;
         var uuid = uuidv4();
+        var sessionName = 'Monochrome ' + index;
         
-        var string = '<li><a href="#' + uuid + '">' + index + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var string = '<li><a href="#' + uuid + '">' + sessionName + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        var sessionName = 'Monochrome ' + index;
         div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this});
         this.element.tabs("refresh");
     },
