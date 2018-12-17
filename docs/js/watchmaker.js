@@ -2655,14 +2655,13 @@ function formChanged(canvasId) {
 }
 $.widget('dawk.blindWatchmaker', {
     options: {
-        menu: null
+        menu: null,
+        sessionCount: 0,
     } ,
     _create: function () {
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        
-        this.newMonochromeSession();
         this.newMonochromeSession();
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
@@ -2675,7 +2674,9 @@ $.widget('dawk.blindWatchmaker', {
     raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
     
     newMonochromeSession: function() {
-        var index = $(this.element).children('ul').find('li').length;
+        
+        var index = this.options.sessionCount;
+        this.options.sessionCount++;
         var uuid = uuidv4();
         var sessionName = 'Monochrome ' + index;
         
@@ -2686,7 +2687,12 @@ $.widget('dawk.blindWatchmaker', {
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
         div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this});
+        var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
+        console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+        this.element.tabs("refresh");
+
     },
     buildMenu: function() {
 //        console.log('bw buildMenu');
@@ -2697,6 +2703,10 @@ $.widget('dawk.blindWatchmaker', {
         menu.append(liTop);
         var menuContents = $("<ul></ul>");
         liTop.append(menuContents);
+        var newMonochrome = $("<li><div>New Monochrome session</div></li>");
+        menuContents.append(newMonochrome);
+        this._on(newMonochrome, {click: 'newMonochromeSession'});
+        
         if($(this.element).find('.watchmakerSession').length != 0) {
             var liCloseSession = $('<li><div>Close session</div></li>');
             this._on(liCloseSession, {click: 'closeSession'});
@@ -2793,7 +2803,25 @@ $.widget('dawk.blindWatchmaker', {
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this});
+      $('.ui-closable-tab').click(
+              function() {
+                  var tabContainerDiv = $(this).closest(".ui-tabs")
+                          .attr("id");
+                  var panelId = $(this).closest("li").remove().attr(
+                          "aria-controls");
+                  $("#" + panelId).remove();
+                  $("#" + tabContainerDiv).tabs("refresh");
+                  var tabCount = $("#" + tabContainerDiv).find(
+                          ".ui-closable-tab").length;
+                  if (tabCount < 1) {
+                      $("#" + tabContainerDiv).hide();
+                  }
+              });    
       this.element.tabs("refresh");
+      var tabcount = $(this.element).find('li').length;
+      console.log('tabcount '+ tabcount);
+      this.element.tabs("option", "active", tabcount - 1);
+
   },
   newEngineeringWindow: function() {
       var uuid = uuidv4();
@@ -2804,6 +2832,21 @@ $.widget('dawk.blindWatchmaker', {
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.engineeringWindow({watchmakerSession: this});
+      $('.ui-closable-tab').click(
+              function() {
+                  var tabContainerDiv = $(this).closest(".ui-tabs")
+                          .attr("id");
+                  var panelId = $(this).closest("li").remove().attr(
+                          "aria-controls");
+                  $("#" + panelId).remove();
+                  $("#" + tabContainerDiv).tabs("refresh");
+                  var tabCount = $("#" + tabContainerDiv).find(
+                          ".ui-closable-tab").length;
+                  if (tabCount < 1) {
+                      $("#" + tabContainerDiv).hide();
+                  }
+              });    
+      
       this.element.tabs("refresh");
   }
 });$( function() { 

@@ -60,7 +60,25 @@ $.widget('dawk.watchmakerSession', {
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this});
+      $('.ui-closable-tab').click(
+              function() {
+                  var tabContainerDiv = $(this).closest(".ui-tabs")
+                          .attr("id");
+                  var panelId = $(this).closest("li").remove().attr(
+                          "aria-controls");
+                  $("#" + panelId).remove();
+                  $("#" + tabContainerDiv).tabs("refresh");
+                  var tabCount = $("#" + tabContainerDiv).find(
+                          ".ui-closable-tab").length;
+                  if (tabCount < 1) {
+                      $("#" + tabContainerDiv).hide();
+                  }
+              });    
       this.element.tabs("refresh");
+      var tabcount = $(this.element).find('li').length;
+      console.log('tabcount '+ tabcount);
+      this.element.tabs("option", "active", tabcount - 1);
+
   },
   newEngineeringWindow: function() {
       var uuid = uuidv4();
@@ -71,6 +89,21 @@ $.widget('dawk.watchmakerSession', {
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
       div.engineeringWindow({watchmakerSession: this});
+      $('.ui-closable-tab').click(
+              function() {
+                  var tabContainerDiv = $(this).closest(".ui-tabs")
+                          .attr("id");
+                  var panelId = $(this).closest("li").remove().attr(
+                          "aria-controls");
+                  $("#" + panelId).remove();
+                  $("#" + tabContainerDiv).tabs("refresh");
+                  var tabCount = $("#" + tabContainerDiv).find(
+                          ".ui-closable-tab").length;
+                  if (tabCount < 1) {
+                      $("#" + tabContainerDiv).hide();
+                  }
+              });    
+      
       this.element.tabs("refresh");
   }
 });
