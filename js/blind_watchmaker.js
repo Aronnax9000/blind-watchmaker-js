@@ -47,9 +47,19 @@ $.widget('dawk.blindWatchmaker', {
         menu.append(liTop);
         var menuContents = $("<ul></ul>");
         liTop.append(menuContents);
-        var newMonochrome = $("<li><div>New Monochrome session</div></li>");
-        menuContents.append(newMonochrome);
-        this._on(newMonochrome, {click: function(event) { this.newWatchmakerSession("Monochrome");}});
+        var newSessionMenu;
+        newSessionMenu = $("<li><div>New Monochrome session</div></li>");
+        menuContents.append(newSessionMenu);
+        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Monochrome");}});
+        newSessionMenu = $("<li><div>New Colour session</div></li>");
+        menuContents.append(newSessionMenu);
+        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Colour");}});
+        newSessionMenu = $("<li><div>New Snails session</div></li>");
+        menuContents.append(newSessionMenu);
+        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Snails");}});
+        newSessionMenu = $("<li><div>New Arthromorphs session</div></li>");
+        menuContents.append(newSessionMenu);
+        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Arthromorphs");}});
         
         if($(this.element).find('.watchmakerSession').length != 0) {
             var liCloseSession = $('<li><div>Close session</div></li>');
