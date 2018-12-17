@@ -2662,7 +2662,7 @@ $.widget('dawk.blindWatchmaker', {
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        this.newMonochromeSession();
+        this.newWatchmakerSession('Monochrome');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
         this.buildMenu();
@@ -2673,12 +2673,12 @@ $.widget('dawk.blindWatchmaker', {
     },
     raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
     
-    newMonochromeSession: function() {
-        
+    newWatchmakerSession: function(species) {
+        console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
-        var sessionName = 'Monochrome ' + index;
+        var sessionName = species + ' ' + index;
         
         var string = '<li><a href="#' + uuid + '">' + sessionName + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
@@ -2686,7 +2686,7 @@ $.widget('dawk.blindWatchmaker', {
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this});
+        div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
         console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
@@ -2704,7 +2704,7 @@ $.widget('dawk.blindWatchmaker', {
         liTop.append(menuContents);
         var newMonochrome = $("<li><div>New Monochrome session</div></li>");
         menuContents.append(newMonochrome);
-        this._on(newMonochrome, {click: 'newMonochromeSession'});
+        this._on(newMonochrome, {click: function(event) { this.newWatchmakerSession("Monochrome");}});
         
         if($(this.element).find('.watchmakerSession').length != 0) {
             var liCloseSession = $('<li><div>Close session</div></li>');
@@ -2742,11 +2742,13 @@ $.widget('dawk.blindWatchmaker', {
     }
 });$.widget('dawk.watchmakerSession', {
    options: {
+       species: null,
        name: 'Default Session',
        blindWatchmaker: null
    },
-   raiseAlert: function() {
-       console.log('raise alert in watchmaker session');
+   raiseAlert: function(newMenu) {
+       console.log('raise alert in watchmaker session')
+       console.log(newMenu);
        var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
        $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
    },
@@ -2783,6 +2785,7 @@ $.widget('dawk.blindWatchmaker', {
        
    },   
    _create: function () {
+       console.log('new WatchmakerSession ' + this.options.species);
        this.element.addClass('watchmakerSession');
        var ul = $('<ul class="watchmakerViewTabs"></ul>');
        this.element.append(ul);
@@ -3011,7 +3014,14 @@ $( function() {
             console.log($(this).breedingWindow("option", "hi"));
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
             console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
-            $(watchmakerSession.element).watchmakerSession('raiseAlert');
+            var newMenu = $('<ul></ul>');
+            var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
+            newMenu.append(operation);
+            var li = $('<li><div><a href="#">Breed in new</a></div></li>');
+            newMenu.append(li);
+            var li = $('<li><div><a href="#">Engineer in new</a></div></li>');
+            newMenu.append(li);
+            $(watchmakerSession.element).watchmakerSession('raiseAlert', newMenu);
         },
 
         _create: function () {

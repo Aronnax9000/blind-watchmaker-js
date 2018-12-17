@@ -7,7 +7,7 @@ $.widget('dawk.blindWatchmaker', {
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        this.newMonochromeSession();
+        this.newWatchmakerSession('Monochrome');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
         this.buildMenu();
@@ -18,12 +18,12 @@ $.widget('dawk.blindWatchmaker', {
     },
     raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
     
-    newMonochromeSession: function() {
-        
+    newWatchmakerSession: function(species) {
+        console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
-        var sessionName = 'Monochrome ' + index;
+        var sessionName = species + ' ' + index;
         
         var string = '<li><a href="#' + uuid + '">' + sessionName + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
@@ -31,7 +31,7 @@ $.widget('dawk.blindWatchmaker', {
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this});
+        div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
         console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
@@ -49,7 +49,7 @@ $.widget('dawk.blindWatchmaker', {
         liTop.append(menuContents);
         var newMonochrome = $("<li><div>New Monochrome session</div></li>");
         menuContents.append(newMonochrome);
-        this._on(newMonochrome, {click: 'newMonochromeSession'});
+        this._on(newMonochrome, {click: function(event) { this.newWatchmakerSession("Monochrome");}});
         
         if($(this.element).find('.watchmakerSession').length != 0) {
             var liCloseSession = $('<li><div>Close session</div></li>');

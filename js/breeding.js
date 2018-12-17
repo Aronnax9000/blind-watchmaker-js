@@ -59,7 +59,14 @@ $( function() {
             console.log($(this).breedingWindow("option", "hi"));
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
             console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
-            $(watchmakerSession.element).watchmakerSession('raiseAlert');
+            var newMenu = $('<ul></ul>');
+            var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
+            newMenu.append(operation);
+            var li = $('<li><div><a href="#">Breed in new</a></div></li>');
+            newMenu.append(li);
+            var li = $('<li><div><a href="#">Engineer in new</a></div></li>');
+            newMenu.append(li);
+            $(watchmakerSession.element).watchmakerSession('raiseAlert', newMenu);
         },
 
         _create: function () {

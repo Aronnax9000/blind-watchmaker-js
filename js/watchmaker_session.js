@@ -1,10 +1,12 @@
 $.widget('dawk.watchmakerSession', {
    options: {
+       species: null,
        name: 'Default Session',
        blindWatchmaker: null
    },
-   raiseAlert: function() {
-       console.log('raise alert in watchmaker session');
+   raiseAlert: function(newMenu) {
+       console.log('raise alert in watchmaker session')
+       console.log(newMenu);
        var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
        $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
    },
@@ -41,6 +43,7 @@ $.widget('dawk.watchmakerSession', {
        
    },   
    _create: function () {
+       console.log('new WatchmakerSession ' + this.options.species);
        this.element.addClass('watchmakerSession');
        var ul = $('<ul class="watchmakerViewTabs"></ul>');
        this.element.append(ul);
