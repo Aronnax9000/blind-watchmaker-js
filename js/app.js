@@ -10,28 +10,11 @@ function uuidv4() {
   }
 
 
-function doPerson(biomorphType, canvas) {
-    
-    var genotype = new Person();
-    switch(biomorphType) {
-    case "Chess": chess(genotype); break;
-    case "BasicTree": basicTree(genotype); break;
-    case "Insect": insect(genotype); break;
-    case "Saltation": doSaltation(genotype); break;
-    }
-    develop(genotype, canvas, drawCrossHairs); 
-    jQuery.data(canvas, "genotype", genotype);
-    $(canvas).trigger('mouseover');
-
-    return genotype;
-}
 function startAutoReproduce(canvasId, targetCanvasId) {
     autoRunning = true;
     doRepro(canvasId, targetCanvasId);
     measureGenerationRate(Number(document.getElementById('generations').value));
 }
-
-
 
 function doRepro(sourceCanvas, targetCanvas) {
     doReproduce(sourceCanvas, targetCanvas);
@@ -39,7 +22,6 @@ function doRepro(sourceCanvas, targetCanvas) {
         setTimeout(function() { 
             doRepro(sourceCanvas, targetCanvas)}, 
                 Number(document.getElementById("autoReproduceInterval").value));
-
 }
 
 function eraseCanvasNoCenter(canvas) {
@@ -74,11 +56,3 @@ function eraseCanvas(canvas) {
     }
 }
 
-function formChanged(canvasId) {
-    var form = document.getElementById('engineering');
-    var canvas  = document.getElementById(canvasId);
-    genotype = jQuery.data(canvas, "genotype");
-    genotype.fromForm(form);
-    drawCrossHairs = document.getElementById('crosshairs').checked;
-    develop(genotype, canvas, drawCrossHairs); 
-}

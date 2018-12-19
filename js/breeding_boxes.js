@@ -9,6 +9,7 @@ $( function() {
         options: {
             cols: 3,
             numBoxes: 15,
+            speciesFactory: null,
         },
 
         sparkLine: function(destinationCanvas) {
@@ -40,10 +41,11 @@ $( function() {
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
+            var speciesFactory = this.options.speciesFactory;
             if(genotype != null) {
-                var childGenotype = reproduce(genotype);
+                var childGenotype = speciesFactory.reproduce(genotype);
                 jQuery.data(targetCanvas, 'genotype', childGenotype);
-                develop(childGenotype, targetCanvas, drawCrossHairs); 
+                speciesFactory.develop(childGenotype, targetCanvas, drawCrossHairs); 
             }
             else  
                 alert("Genotype is null");

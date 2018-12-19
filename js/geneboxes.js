@@ -114,7 +114,7 @@ $.widget('dawk.monochrome_geneboxes', {
        this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
        var canvas = $(this.element).parent().find('canvas').get(0);
        this.updateFromCanvas(canvas);
-       develop(this.options.genotype, canvas,
+       this.options.speciesFactory.develop(this.options.genotype, canvas,
                drawCrossHairs);
     },
     _destroy : function() {

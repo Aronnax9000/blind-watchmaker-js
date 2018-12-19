@@ -718,7 +718,7 @@ $( function() {
                             jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
-                            develop(genotype, midCanvas,
+                            breedingBoxes.options.speciesFactory.develop(genotype, midCanvas,
                                     drawCrossHairs);
                             breedingBoxes.produceLitter(numBoxes, midBox);
                         } });
@@ -744,6 +744,7 @@ $( function() {
         options: {
             cols: 3,
             numBoxes: 15,
+            speciesFactory: null,
         },
 
         sparkLine: function(destinationCanvas) {
@@ -775,10 +776,11 @@ $( function() {
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
+            var speciesFactory = this.options.speciesFactory;
             if(genotype != null) {
-                var childGenotype = reproduce(genotype);
+                var childGenotype = speciesFactory.reproduce(genotype);
                 jQuery.data(targetCanvas, 'genotype', childGenotype);
-                develop(childGenotype, targetCanvas, drawCrossHairs); 
+                speciesFactory.develop(childGenotype, targetCanvas, drawCrossHairs); 
             }
             else  
                 alert("Genotype is null");
@@ -1014,7 +1016,7 @@ function Person() {
     this.toHtml = personToHtml;
     this.toString = personToString;
     this.pic = null;
-    this.manipulation = manipulation;
+    this.manipulation = _monochrome_manipulation;
 }
 
 /*
@@ -1046,7 +1048,7 @@ function Person() {
         END; {makegenes}
 
  */
-function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
+function _monochrome_makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
     for(j = 0; j < 10; j++) {
         genotype.dGene[j] = SwellType.Same;
     }
@@ -1070,7 +1072,7 @@ function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
 
 
 
-function randSwell (indGene) {
+function _monochrome_randSwell (indGene) {
     switch(indGene) {
     case SwellType.Shrink:
         return SwellType.Same;
@@ -1086,7 +1088,7 @@ function randSwell (indGene) {
 }
 
 
-function doSaltation(genotype) {
+function _monochrome_doSaltation(genotype) {
     // {bomb 5, range check failed, here after killing top Adam}
     if(mut[0]) {
         genotype.segNoGene = randInt(6);
@@ -1182,7 +1184,7 @@ function doSaltation(genotype) {
     genotype.gene[8] = randInt(6);
 }
 
-function chess (genotype) {
+function _monochrome_chess (genotype) {
     makeGenes(genotype, 
             -TRICKLE, 
             3 * TRICKLE, 
@@ -1213,8 +1215,8 @@ function chess (genotype) {
                         END;
         END; {root}
  */
-function basicTree(genotype) {
-    makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
+function _monochrome_basicTree(genotype) {
+    this.makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
     genotype.segNoGene = 2;
     genotype.segDistGene = 150;
     genotype.completenessGene = CompletenessType.Single;
@@ -1225,7 +1227,7 @@ function basicTree(genotype) {
     genotype.trickleGene = 9;
 }
 
-function insect(genotype) {
+function _monochrome_insect(genotype) {
     makeGenes(
             genotype, 
             TRICKLE, 
@@ -1244,20 +1246,20 @@ function randInt(ceiling) {
     return Math.floor(Math.random() * ceiling) + 1;  
 }
 
-function direction(child) {
+function _monochrome_direction(child) {
     if(randInt(2) == 2) 
         return child.mutSizeGene;
     else
         return -child.mutSizeGene;
 }
-function direction9() {
+function _monochrome_direction9() {
     if(randInt(2) == 2)
         return 1;
     else
         return -1;
 }
 
-function copyBiomorph(child, parent) {
+function _monochrome_copyBiomorph(child, parent) {
     child.gene = parent.gene.slice();
     child.dGene = parent.dGene.slice();
     child.segNoGene = parent.segNoGene;
@@ -1311,7 +1313,7 @@ function twoToThe(n) {
     }
 }
 
-function randSwell(indGene) {
+function _monochrome_randSwell(indGene) {
     switch(indGene) {
     case SwellType.Shrink: 
         return SwellType.Same;
@@ -1348,7 +1350,7 @@ var VertPos = {
         }
 };
 
-function manipulation(geneboxIndex, leftRightPos, rung) {
+function _monochrome_manipulation(geneboxIndex, leftRightPos, rung) {
     var str = geneboxIndex;
 
     var leftRightPosProperties = HorizPos.properties[leftRightPos];
@@ -1535,20 +1537,20 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
 //  Alert subscribers that the genome has changed here.
 }
 
-function reproduce(parent) {
+function _monochrome_reproduce(parent) {
     // // console.log("Reproduce");
     var child = new Person();
-    copyBiomorph(child, parent);
+    this.copyBiomorph(child, parent);
     if(mut[6]) 
         if(randInt(100) < child.mutProbGene) 
             do 
-                child.mutProbGene += direction9();
+                child.mutProbGene += this.direction9();
             while ((Math.abs(child.mutProbGene) > 100) || (child.mutProbGene == 0));
     for(j = 0; j<8; j++) 
         if(randInt(100) < child.mutProbGene) 
-            child.gene[j] += direction(child);
+            child.gene[j] += this.direction(child);
     if(randInt(100) < child.mutProbGene) 
-        child.gene[8] += direction9();
+        child.gene[8] += this.direction9();
     if(child.gene[8] < 1) 
         child.gene[8] = 1;
     var sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
@@ -1559,7 +1561,7 @@ function reproduce(parent) {
     }
     if(mut[0]) 
         if(randInt(100) < child.mutProbGene) {
-            var j = direction9();
+            var j = this.direction9();
             child.segNoGene += j;
             if(j > 0) {
                 sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
@@ -1572,16 +1574,16 @@ function reproduce(parent) {
     if((mut[1]) && (child.segNoGene > 1)) {
         for(j = 0; j<8; j++) 
             if(randInt(100) < child.mutProbGene/2>>0) 
-                child.dGene[j] = randSwell(child.dGene[j]);
+                child.dGene[j] = this.randSwell(child.dGene[j]);
         if(randInt(100) < child.mutProbGene/2>>0) 
-            child.dGene[9] = randSwell(child.dGene[9]);
+            child.dGene[9] = this.randSwell(child.dGene[9]);
     }
     if(mut[7])
         if((mut[8] && (randInt(100) < child.mutProbGene))) 
-            child.dGene[8] = randSwell(child.dGene[8]);
+            child.dGene[8] = this.randSwell(child.dGene[8]);
     if((mut[0]) && (child.segNoGene > 1)) 
         if(randInt(100) < child.mutProbGene) 
-            child.segDistGene = child.segDistGene + direction9();
+            child.segDistGene = child.segDistGene + this.direction9();
     if(mut[2]) 
         if(randInt(100) < child.mutProbGene/2>>0) 
             if(child.completenessGene == CompletenessType.Single) 
@@ -1595,7 +1597,7 @@ function reproduce(parent) {
                 child.spokesGene = SpokesType.NSouth;
                 break;
             case SpokesType.NSouth: 
-                if(direction9() == 1) 
+                if(this.direction9() == 1) 
                     child.spokesGene = SpokesType.Radial;
                 else 
                     child.spokesGene = SpokesType.NorthOnly;
@@ -1606,13 +1608,13 @@ function reproduce(parent) {
             }
     if(mut[4]) 
         if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.trickleGene += direction9();
+            child.trickleGene += this.direction9();
             if(child.trickleGene < 1) 
                 child.trickleGene = 1;
         }
     if(mut[5]) 
         if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.mutSizeGene += direction9();
+            child.mutSizeGene += this.direction9();
             if(child.mutSizeGene < 1) 
                 child.mutSizeGene = 1;
         }
@@ -1718,7 +1720,7 @@ function Pic() {
             END
     END; {ZeroPic}
  */
-function zeroPic(thisPic, here) {
+function _monochrome_zeroPic(thisPic, here) {
     if(thisPic.basePtr != null) { 
         // Pic has lines. Walk the singly linked list all the way to the end,
         // disconnect each Lin from the next.
@@ -1771,7 +1773,7 @@ const PICSIZEMAX = 4095;
     END; {PicLine}
 
  */
-function picLine(thisPic, x, y, xnew, ynew, thick) {
+function _monochrome_picLine(thisPic, x, y, xnew, ynew, thick) {
 //	   // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
@@ -1844,7 +1846,7 @@ var orientation = Compass.NorthSouth;
 
 
 
-function actualLine(picStyle, orientation, thisPic, drawer) {
+function _monochrome_actualLine(picStyle, orientation, thisPic, drawer) {
     var origin = thisPic.origin;
     var movePtr = thisPic.movePtr;
 //    console.log("actualLine Style:" + PicStyleType.properties[picStyle].name + " movePtr:" + movePtr.toString() + " Origin:" + origin.toString() + " Place:" + place.toString());
@@ -1898,7 +1900,7 @@ function actualLine(picStyle, orientation, thisPic, drawer) {
 //{Pic already contains its own origin, meaning the coordinates at which}
 //{ it was originally drawn. Now draw it at place}
 
-function drawPic(thisPic, place, biomorph, drawer, drawMargin) {
+function _monochrome_drawPic(thisPic, place, biomorph, drawer, drawMargin) {
 //    if(biomorph.dGene[8] == SwellType.Swell) {
 //        alert("Gradient Gene 9 is Swell");
 //    }
@@ -1948,12 +1950,12 @@ function drawPic(thisPic, place, biomorph, drawer, drawMargin) {
     drawer.setColor("black");
 
     while(true) {
-    	actualLine(picStyle, Compass.NorthSouth, thisPic, drawer); // {sometimes rangecheck error}
+    	this.actualLine(picStyle, Compass.NorthSouth, thisPic, drawer); // {sometimes rangecheck error}
         if(biomorph.spokesGene == SpokesType.Radial) 
         	if(biomorph.completenessGene = CompletenessType.Single) 
-                actualLine(PicStyleType.RUD, Compass.EastWest, thisPic, drawer);
+                this.actualLine(PicStyleType.RUD, Compass.EastWest, thisPic, drawer);
             else
-            	actualLine(picStyle, Compass.EastWest, thisPic, drawer);
+            	this.actualLine(picStyle, Compass.EastWest, thisPic, drawer);
         if(thisPic.movePtr.nextLin == null)
         	break; // Leave iteration with thisPic.movePtr pointing to the last Lin.
         // Advance to next Lin.
@@ -1963,7 +1965,7 @@ function drawPic(thisPic, place, biomorph, drawer, drawMargin) {
 //	drawer.closePath();
 //	drawer.penSize(1);
 } // {DrawPic}
-function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
+function _monochrome_tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
     if(dir < 0)
         dir = dir + 8;
     if(dir >= 8)
@@ -1983,18 +1985,18 @@ function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
         thick = 1;
     }
 
-    picLine(myPic, x, y, xnew, ynew, thick * myPenSize);
+    this.picLine(myPic, x, y, xnew, ynew, thick * myPenSize);
 
     if(lgth > 1)
         if(oddOne) {
             
-            tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+            this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
             if(lgth < order)
-                tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+                this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
         } else {
-            tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+            this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
             if(lgth < order)
-                tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+                this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
         }
 } // {tree}
 /*
@@ -2004,7 +2006,7 @@ function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
  return the new value for order, and pray the calling
  routine assigns the return value to order.
  */
-function plugIn(gene, dx, dy) {
+function _monochrome_plugIn(gene, dx, dy) {
     var order = gene[8]; 
     dx[3] = gene[0];
     dx[4] = gene[1];
@@ -2046,7 +2048,7 @@ var Mode = {
 };
 
 var theMode = Mode.Breeding;
-function develop(biomorph, drawingObject, drawMargin) {
+function _monochrome_develop(biomorph, drawingObject, drawMargin) {
     var drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
 
     // Use the identity matrix while clearing the canvas
@@ -2072,9 +2074,9 @@ function develop(biomorph, drawingObject, drawMargin) {
     clipBoarding = false;
     here = new Point(0,0);
     var centre = here.copy();
-    var order = plugIn(biomorph.gene, dx, dy); // Pass-by value workaround returns order as result.
+    var order = this.plugIn(biomorph.gene, dx, dy); // Pass-by value workaround returns order as result.
     // // // // console.log("develop order:" + order)
-    zeroPic(myPic, here);
+    this.zeroPic(myPic, here);
 
     if(biomorph.segNoGene < 1)
         biomorph.segNoGene = 1;
@@ -2105,7 +2107,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             else
                 thick = 1;
             // // // // console.log("picLine A");
-            picLine(myPic, oldHere.h, oldHere.v, here.h, here.v, thick);
+            this.picLine(myPic, oldHere.h, oldHere.v, here.h, here.v, thick);
             var dGene = biomorph.dGene;
             for(j = 0; j<8; j++) {
                 // // console.log("SwellType[" + j + "] " + SwellType.properties[dGene[j]].name);
@@ -2123,7 +2125,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             }
             // // console.log("before plugin running " + running + " dx" + dx + "dy " + dy + " order" + order);
 
-            order = plugIn(running, dx, dy);
+            order = this.plugIn(running, dx, dy);
             // // console.log("running " + running + " dx" + dx + "dy " + dy + " order" + order);
         }	
         var sizeWorry = biomorph.segNoGene * twoToThe(biomorph.gene[8]);
@@ -2133,7 +2135,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             biomorph.gene[8] = 1;
         }
         // // console.log("call to tree order " + order + " gene8" + biomorph.gene[8]);
-        tree(here.h, here.v, order, 2, biomorph, dx, dy, thick, myPic, oddOne, order);
+        this.tree(here.h, here.v, order, 2, biomorph, dx, dy, thick, myPic, oddOne, order);
     }
     var spokesGene = biomorph.spokesGene;
 
@@ -2175,7 +2177,7 @@ function develop(biomorph, drawingObject, drawMargin) {
     // console.log("Margin " + margin.toString());
     var     offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
     // console.log("offCentre " + offCentre.toString());
-    drawPic(myPic, offCentre, biomorph, drawer, drawMargin);
+    this.drawPic(myPic, offCentre, biomorph, drawer, drawMargin);
 
 }// {develop}
 
@@ -2561,7 +2563,7 @@ $.widget('dawk.monochrome_geneboxes', {
        this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
        var canvas = $(this.element).parent().find('canvas').get(0);
        this.updateFromCanvas(canvas);
-       develop(this.options.genotype, canvas,
+       this.options.speciesFactory.develop(this.options.genotype, canvas,
                drawCrossHairs);
     },
     _destroy : function() {
@@ -2569,6 +2571,87 @@ $.widget('dawk.monochrome_geneboxes', {
     }
     
 });
+function speciesFactory_registerSpeciesType(speciesType, constructorFunction) {
+    this.properties[speciesType] = constructorFunction;
+    console.log("Registered Species Type " + speciesType);
+}
+
+function speciesFactory_getSpecies(speciesFactoryType) {
+    var species = null;
+    try {
+        species = this.properties[speciesFactoryType]();
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered species for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        for(var propt in this.properties){
+            console.log(propt + ': ' + this.properties[propt]);
+        }
+        console.log("err: " + err);
+    }
+    if(species != null)
+        console.log("Got species for " + speciesFactoryType);
+    return species;
+}
+
+function SpeciesFactory() {
+    this.properties = {};
+    this.registerSpeciesType = speciesFactory_registerSpeciesType;
+    this.getSpecies = speciesFactory_getSpecies;
+}
+
+
+var _speciesFactorySingleton = new SpeciesFactory();
+function _monochrome_doPerson(biomorphType, canvas) {
+    
+    var genotype = new Person();
+    switch(biomorphType) {
+    case "Chess": this.chess(genotype); break;
+    case "BasicTree": this.basicTree(genotype); break;
+    case "Insect": this.insect(genotype); break;
+    case "Saltation": this.doSaltation(genotype); break;
+    }
+    this.develop(genotype, canvas, drawCrossHairs); 
+    jQuery.data(canvas, "genotype", genotype);
+    $(canvas).trigger('mouseover');
+
+    return genotype;
+}
+
+
+
+
+function Monochrome() {
+    this.basicTree = _monochrome_basicTree;
+    this.chess = _monochrome_chess;
+    this.insect = _monochrome_insect;
+    this.doSaltation = _monochrome_doSaltation;
+    this.geneboxes = $.fn.monochrome_geneboxes;
+    this.doPerson = _monochrome_doPerson;
+    this.tree = _monochrome_tree;
+    this.plugIn = _monochrome_plugIn;
+    this.develop = _monochrome_develop;
+    this.drawPic = _monochrome_drawPic;
+    this.actualLine = _monochrome_actualLine;
+    this.picLine = _monochrome_picLine;
+    this.zeroPic = _monochrome_zeroPic;
+    this.reproduce = _monochrome_reproduce;
+    this.makeGenes = _monochrome_makeGenes;
+//    this.manipulation = _monochrome_manipulation;
+    this.randSwell = _monochrome_randSwell;
+    this.copyBiomorph = _monochrome_copyBiomorph;
+    this.direction9 =_monochrome_direction9;
+    this.direction = _monochrome_direction;
+}
+
+_speciesFactorySingleton.registerSpeciesType("Monochrome", (
+        function() { 
+            return new Monochrome();}));
+
+
+//test
+var monochrome = _speciesFactorySingleton.getSpecies("Monochrome");
+console.log("monochrome");
+console.log(monochrome);
+
 initializeMut();
 
 var drawCrossHairs = false;
@@ -2581,28 +2664,11 @@ function uuidv4() {
   }
 
 
-function doPerson(biomorphType, canvas) {
-    
-    var genotype = new Person();
-    switch(biomorphType) {
-    case "Chess": chess(genotype); break;
-    case "BasicTree": basicTree(genotype); break;
-    case "Insect": insect(genotype); break;
-    case "Saltation": doSaltation(genotype); break;
-    }
-    develop(genotype, canvas, drawCrossHairs); 
-    jQuery.data(canvas, "genotype", genotype);
-    $(canvas).trigger('mouseover');
-
-    return genotype;
-}
 function startAutoReproduce(canvasId, targetCanvasId) {
     autoRunning = true;
     doRepro(canvasId, targetCanvasId);
     measureGenerationRate(Number(document.getElementById('generations').value));
 }
-
-
 
 function doRepro(sourceCanvas, targetCanvas) {
     doReproduce(sourceCanvas, targetCanvas);
@@ -2610,7 +2676,6 @@ function doRepro(sourceCanvas, targetCanvas) {
         setTimeout(function() { 
             doRepro(sourceCanvas, targetCanvas)}, 
                 Number(document.getElementById("autoReproduceInterval").value));
-
 }
 
 function eraseCanvasNoCenter(canvas) {
@@ -2645,14 +2710,6 @@ function eraseCanvas(canvas) {
     }
 }
 
-function formChanged(canvasId) {
-    var form = document.getElementById('engineering');
-    var canvas  = document.getElementById(canvasId);
-    genotype = jQuery.data(canvas, "genotype");
-    genotype.fromForm(form);
-    drawCrossHairs = document.getElementById('crosshairs').checked;
-    develop(genotype, canvas, drawCrossHairs); 
-}
 $.widget('dawk.blindWatchmaker', {
     options: {
         menu: null,
@@ -2753,6 +2810,7 @@ $.widget('dawk.blindWatchmaker', {
 });$.widget('dawk.watchmakerSession', {
    options: {
        species: null,
+       speciesFactory: null,
        name: 'Default Session',
        blindWatchmaker: null
    },
@@ -2771,19 +2829,8 @@ $.widget('dawk.blindWatchmaker', {
        li = $('<li><div>New Engineering</div></li>');
        menuContents.append(li);
        this._on(li, {click: 'newEngineeringWindow'});
-//       console.log('watchmakerSession BuildMenu');
-       
-//       console.log($(this.element).tabs("option", "active"));
        var activeIndex = $(this.element).tabs("option", "active");
-//       console.log(activeIndex);
        var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
-//       console.log("watchmakerSession.buildMenu Active view: " + activeView);
-//       var viewName = $(activeView).watchmakerView('option', 'name');
-//       var viewLi = $("<li><div>" + viewName + "</div></li>")
-//       menuContents.append(sessionLi);
-//       var viewMenu = $('<ul></ul>');
-//       viewLi.append(viewMenu);
-//       $(activeView).watchmakerView('buildMenu', viewMenu);
        
    },
    on_activate: function (event, ui) {
@@ -2795,17 +2842,20 @@ $.widget('dawk.blindWatchmaker', {
        
    },   
    _create: function () {
-       console.log('new WatchmakerSession ' + this.options.species);
+       this.options.speciesFactory = _speciesFactorySingleton.getSpecies(this.options.species);
+       
+       console.log('new WatchmakerSession');
+       console.log(this.options.speciesFactory);
        this.element.addClass('watchmakerSession');
        var ul = $('<ul class="watchmakerViewTabs"></ul>');
        this.element.append(ul);
        this.element.tabs({activate: this.on_activate});
-       this.newBreedingWindow();
-       this.newEngineeringWindow();
+       this.newBreedingWindow(this.options.speciesFactory);
+       this.newEngineeringWindow(this.options.speciesFactory);
        this.element.tabs('option', 'active', 0);
        this.element.tabs("refresh");
   },
-  newBreedingWindow: function() {
+  newBreedingWindow: function(speciesFactory) {
       var uuid = uuidv4();
       var string = '<li><a href="#' + uuid + '">Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
       var newTabLi = $(string);
@@ -2813,7 +2863,7 @@ $.widget('dawk.blindWatchmaker', {
       $(ul).append(newTabLi);
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
-      div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this});
+      div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this, speciesFactory: speciesFactory});
       $('.ui-closable-tab').click(
               function() {
                   var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -2835,7 +2885,7 @@ $.widget('dawk.blindWatchmaker', {
       this.element.tabs("option", "active", tabcount - 1);
 
   },
-  newEngineeringWindow: function() {
+  newEngineeringWindow: function(speciesFactory) {
       var uuid = uuidv4();
       var string = '<li><a href="#' + uuid + '">Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
       var newTabLi = $(string);
@@ -2843,7 +2893,7 @@ $.widget('dawk.blindWatchmaker', {
       $(ul).append(newTabLi);
       var div = $('<div id="' + uuid + '"></div>');
       this.element.append(div);
-      div.engineeringWindow({watchmakerSession: this});
+      div.engineeringWindow({watchmakerSession: this, speciesFactory: speciesFactory});
       $('.ui-closable-tab').click(
               function() {
                   var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -2946,6 +2996,7 @@ $.widget('dawk.blindWatchmaker', {
 });
 $.widget('dawk.watchmakerView', {
   options: {
+      speciesFactory: null,
   },
   _create: function() {
       
@@ -3040,15 +3091,16 @@ $( function() {
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
             $("<div></div>").breedingControl().appendTo(this.element);
             $("<div></div>").breedingOffspringCounter().appendTo(this.element);
-            var geneboxes = $("<div></div>").monochrome_geneboxes({
-                numBoxes : 15,
-                cols : 5,
+            var speciesFactory = this.options.speciesFactory;
+            var geneboxes_options = {
                 engineering : false
-            });
+            }
+            var geneboxes = $("<div></div>");
+            speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes();
+            var boxes = $("<div></div>").breedingBoxes({speciesFactory: speciesFactory});
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
@@ -3064,7 +3116,7 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            doPerson("BasicTree", midCanvas);
+            speciesFactory.doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
             $(midCanvas).trigger('click');
         }})});
@@ -3075,15 +3127,19 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create");
         $(this.element).addClass('engineeringWindow');
-        var geneboxes = $("<div></div>").monochrome_geneboxes({
-            engineering : true
-        });
+        var speciesFactory = this.options.speciesFactory;
+        var geneboxes_options = {
+            engineering : true,
+            speciesFactory: speciesFactory,
+        }
+        var geneboxes = $("<div></div>");
+        speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
         this.element.append(geneboxes);
         var engineeringDiv = $("<div></div>").engineeringBox({ 
             height: 600,
             width: 1000});
         this.element.append(engineeringDiv);
-        doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
+        speciesFactory.doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
     },
 
     // Called when created, and later when changing options

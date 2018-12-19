@@ -1,4 +1,4 @@
-function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
+function _monochrome_tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
     if(dir < 0)
         dir = dir + 8;
     if(dir >= 8)
@@ -18,18 +18,18 @@ function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
         thick = 1;
     }
 
-    picLine(myPic, x, y, xnew, ynew, thick * myPenSize);
+    this.picLine(myPic, x, y, xnew, ynew, thick * myPenSize);
 
     if(lgth > 1)
         if(oddOne) {
             
-            tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+            this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
             if(lgth < order)
-                tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+                this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
         } else {
-            tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+            this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
             if(lgth < order)
-                tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
+                this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
         }
 } // {tree}
 /*
@@ -39,7 +39,7 @@ function tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
  return the new value for order, and pray the calling
  routine assigns the return value to order.
  */
-function plugIn(gene, dx, dy) {
+function _monochrome_plugIn(gene, dx, dy) {
     var order = gene[8]; 
     dx[3] = gene[0];
     dx[4] = gene[1];
@@ -81,7 +81,7 @@ var Mode = {
 };
 
 var theMode = Mode.Breeding;
-function develop(biomorph, drawingObject, drawMargin) {
+function _monochrome_develop(biomorph, drawingObject, drawMargin) {
     var drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
 
     // Use the identity matrix while clearing the canvas
@@ -107,9 +107,9 @@ function develop(biomorph, drawingObject, drawMargin) {
     clipBoarding = false;
     here = new Point(0,0);
     var centre = here.copy();
-    var order = plugIn(biomorph.gene, dx, dy); // Pass-by value workaround returns order as result.
+    var order = this.plugIn(biomorph.gene, dx, dy); // Pass-by value workaround returns order as result.
     // // // // console.log("develop order:" + order)
-    zeroPic(myPic, here);
+    this.zeroPic(myPic, here);
 
     if(biomorph.segNoGene < 1)
         biomorph.segNoGene = 1;
@@ -140,7 +140,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             else
                 thick = 1;
             // // // // console.log("picLine A");
-            picLine(myPic, oldHere.h, oldHere.v, here.h, here.v, thick);
+            this.picLine(myPic, oldHere.h, oldHere.v, here.h, here.v, thick);
             var dGene = biomorph.dGene;
             for(j = 0; j<8; j++) {
                 // // console.log("SwellType[" + j + "] " + SwellType.properties[dGene[j]].name);
@@ -158,7 +158,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             }
             // // console.log("before plugin running " + running + " dx" + dx + "dy " + dy + " order" + order);
 
-            order = plugIn(running, dx, dy);
+            order = this.plugIn(running, dx, dy);
             // // console.log("running " + running + " dx" + dx + "dy " + dy + " order" + order);
         }	
         var sizeWorry = biomorph.segNoGene * twoToThe(biomorph.gene[8]);
@@ -168,7 +168,7 @@ function develop(biomorph, drawingObject, drawMargin) {
             biomorph.gene[8] = 1;
         }
         // // console.log("call to tree order " + order + " gene8" + biomorph.gene[8]);
-        tree(here.h, here.v, order, 2, biomorph, dx, dy, thick, myPic, oddOne, order);
+        this.tree(here.h, here.v, order, 2, biomorph, dx, dy, thick, myPic, oddOne, order);
     }
     var spokesGene = biomorph.spokesGene;
 
@@ -210,7 +210,7 @@ function develop(biomorph, drawingObject, drawMargin) {
     // console.log("Margin " + margin.toString());
     var     offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
     // console.log("offCentre " + offCentre.toString());
-    drawPic(myPic, offCentre, biomorph, drawer, drawMargin);
+    this.drawPic(myPic, offCentre, biomorph, drawer, drawMargin);
 
 }// {develop}
 

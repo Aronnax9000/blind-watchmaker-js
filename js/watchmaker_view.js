@@ -1,5 +1,6 @@
 $.widget('dawk.watchmakerView', {
   options: {
+      speciesFactory: null,
   },
   _create: function() {
       

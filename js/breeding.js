@@ -75,15 +75,16 @@ $( function() {
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
             $("<div></div>").breedingControl().appendTo(this.element);
             $("<div></div>").breedingOffspringCounter().appendTo(this.element);
-            var geneboxes = $("<div></div>").monochrome_geneboxes({
-                numBoxes : 15,
-                cols : 5,
+            var speciesFactory = this.options.speciesFactory;
+            var geneboxes_options = {
                 engineering : false
-            });
+            }
+            var geneboxes = $("<div></div>");
+            speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes();
+            var boxes = $("<div></div>").breedingBoxes({speciesFactory: speciesFactory});
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
@@ -99,7 +100,7 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            doPerson("BasicTree", midCanvas);
+            speciesFactory.doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
             $(midCanvas).trigger('click');
         }})});

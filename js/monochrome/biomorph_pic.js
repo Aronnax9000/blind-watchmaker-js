@@ -58,7 +58,7 @@ function Pic() {
             END
     END; {ZeroPic}
  */
-function zeroPic(thisPic, here) {
+function _monochrome_zeroPic(thisPic, here) {
     if(thisPic.basePtr != null) { 
         // Pic has lines. Walk the singly linked list all the way to the end,
         // disconnect each Lin from the next.
@@ -111,7 +111,7 @@ const PICSIZEMAX = 4095;
     END; {PicLine}
 
  */
-function picLine(thisPic, x, y, xnew, ynew, thick) {
+function _monochrome_picLine(thisPic, x, y, xnew, ynew, thick) {
 //	   // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
@@ -184,7 +184,7 @@ var orientation = Compass.NorthSouth;
 
 
 
-function actualLine(picStyle, orientation, thisPic, drawer) {
+function _monochrome_actualLine(picStyle, orientation, thisPic, drawer) {
     var origin = thisPic.origin;
     var movePtr = thisPic.movePtr;
 //    console.log("actualLine Style:" + PicStyleType.properties[picStyle].name + " movePtr:" + movePtr.toString() + " Origin:" + origin.toString() + " Place:" + place.toString());
@@ -238,7 +238,7 @@ function actualLine(picStyle, orientation, thisPic, drawer) {
 //{Pic already contains its own origin, meaning the coordinates at which}
 //{ it was originally drawn. Now draw it at place}
 
-function drawPic(thisPic, place, biomorph, drawer, drawMargin) {
+function _monochrome_drawPic(thisPic, place, biomorph, drawer, drawMargin) {
 //    if(biomorph.dGene[8] == SwellType.Swell) {
 //        alert("Gradient Gene 9 is Swell");
 //    }
@@ -288,12 +288,12 @@ function drawPic(thisPic, place, biomorph, drawer, drawMargin) {
     drawer.setColor("black");
 
     while(true) {
-    	actualLine(picStyle, Compass.NorthSouth, thisPic, drawer); // {sometimes rangecheck error}
+    	this.actualLine(picStyle, Compass.NorthSouth, thisPic, drawer); // {sometimes rangecheck error}
         if(biomorph.spokesGene == SpokesType.Radial) 
         	if(biomorph.completenessGene = CompletenessType.Single) 
-                actualLine(PicStyleType.RUD, Compass.EastWest, thisPic, drawer);
+                this.actualLine(PicStyleType.RUD, Compass.EastWest, thisPic, drawer);
             else
-            	actualLine(picStyle, Compass.EastWest, thisPic, drawer);
+            	this.actualLine(picStyle, Compass.EastWest, thisPic, drawer);
         if(thisPic.movePtr.nextLin == null)
         	break; // Leave iteration with thisPic.movePtr pointing to the last Lin.
         // Advance to next Lin.

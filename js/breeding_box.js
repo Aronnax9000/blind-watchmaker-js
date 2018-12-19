@@ -69,7 +69,7 @@ $( function() {
                             jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
-                            develop(genotype, midCanvas,
+                            breedingBoxes.options.speciesFactory.develop(genotype, midCanvas,
                                     drawCrossHairs);
                             breedingBoxes.produceLitter(numBoxes, midBox);
                         } });

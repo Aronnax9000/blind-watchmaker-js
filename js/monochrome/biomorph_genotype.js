@@ -111,7 +111,7 @@ function Person() {
     this.toHtml = personToHtml;
     this.toString = personToString;
     this.pic = null;
-    this.manipulation = manipulation;
+    this.manipulation = _monochrome_manipulation;
 }
 
 /*
@@ -143,7 +143,7 @@ function Person() {
         END; {makegenes}
 
  */
-function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
+function _monochrome_makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
     for(j = 0; j < 10; j++) {
         genotype.dGene[j] = SwellType.Same;
     }
@@ -167,7 +167,7 @@ function makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
 
 
 
-function randSwell (indGene) {
+function _monochrome_randSwell (indGene) {
     switch(indGene) {
     case SwellType.Shrink:
         return SwellType.Same;
@@ -183,7 +183,7 @@ function randSwell (indGene) {
 }
 
 
-function doSaltation(genotype) {
+function _monochrome_doSaltation(genotype) {
     // {bomb 5, range check failed, here after killing top Adam}
     if(mut[0]) {
         genotype.segNoGene = randInt(6);
@@ -279,7 +279,7 @@ function doSaltation(genotype) {
     genotype.gene[8] = randInt(6);
 }
 
-function chess (genotype) {
+function _monochrome_chess (genotype) {
     makeGenes(genotype, 
             -TRICKLE, 
             3 * TRICKLE, 
@@ -310,8 +310,8 @@ function chess (genotype) {
                         END;
         END; {root}
  */
-function basicTree(genotype) {
-    makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
+function _monochrome_basicTree(genotype) {
+    this.makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
     genotype.segNoGene = 2;
     genotype.segDistGene = 150;
     genotype.completenessGene = CompletenessType.Single;
@@ -322,7 +322,7 @@ function basicTree(genotype) {
     genotype.trickleGene = 9;
 }
 
-function insect(genotype) {
+function _monochrome_insect(genotype) {
     makeGenes(
             genotype, 
             TRICKLE, 
@@ -341,20 +341,20 @@ function randInt(ceiling) {
     return Math.floor(Math.random() * ceiling) + 1;  
 }
 
-function direction(child) {
+function _monochrome_direction(child) {
     if(randInt(2) == 2) 
         return child.mutSizeGene;
     else
         return -child.mutSizeGene;
 }
-function direction9() {
+function _monochrome_direction9() {
     if(randInt(2) == 2)
         return 1;
     else
         return -1;
 }
 
-function copyBiomorph(child, parent) {
+function _monochrome_copyBiomorph(child, parent) {
     child.gene = parent.gene.slice();
     child.dGene = parent.dGene.slice();
     child.segNoGene = parent.segNoGene;
@@ -408,7 +408,7 @@ function twoToThe(n) {
     }
 }
 
-function randSwell(indGene) {
+function _monochrome_randSwell(indGene) {
     switch(indGene) {
     case SwellType.Shrink: 
         return SwellType.Same;
@@ -445,7 +445,7 @@ var VertPos = {
         }
 };
 
-function manipulation(geneboxIndex, leftRightPos, rung) {
+function _monochrome_manipulation(geneboxIndex, leftRightPos, rung) {
     var str = geneboxIndex;
 
     var leftRightPosProperties = HorizPos.properties[leftRightPos];
@@ -632,20 +632,20 @@ function manipulation(geneboxIndex, leftRightPos, rung) {
 //  Alert subscribers that the genome has changed here.
 }
 
-function reproduce(parent) {
+function _monochrome_reproduce(parent) {
     // // console.log("Reproduce");
     var child = new Person();
-    copyBiomorph(child, parent);
+    this.copyBiomorph(child, parent);
     if(mut[6]) 
         if(randInt(100) < child.mutProbGene) 
             do 
-                child.mutProbGene += direction9();
+                child.mutProbGene += this.direction9();
             while ((Math.abs(child.mutProbGene) > 100) || (child.mutProbGene == 0));
     for(j = 0; j<8; j++) 
         if(randInt(100) < child.mutProbGene) 
-            child.gene[j] += direction(child);
+            child.gene[j] += this.direction(child);
     if(randInt(100) < child.mutProbGene) 
-        child.gene[8] += direction9();
+        child.gene[8] += this.direction9();
     if(child.gene[8] < 1) 
         child.gene[8] = 1;
     var sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
@@ -656,7 +656,7 @@ function reproduce(parent) {
     }
     if(mut[0]) 
         if(randInt(100) < child.mutProbGene) {
-            var j = direction9();
+            var j = this.direction9();
             child.segNoGene += j;
             if(j > 0) {
                 sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
@@ -669,16 +669,16 @@ function reproduce(parent) {
     if((mut[1]) && (child.segNoGene > 1)) {
         for(j = 0; j<8; j++) 
             if(randInt(100) < child.mutProbGene/2>>0) 
-                child.dGene[j] = randSwell(child.dGene[j]);
+                child.dGene[j] = this.randSwell(child.dGene[j]);
         if(randInt(100) < child.mutProbGene/2>>0) 
-            child.dGene[9] = randSwell(child.dGene[9]);
+            child.dGene[9] = this.randSwell(child.dGene[9]);
     }
     if(mut[7])
         if((mut[8] && (randInt(100) < child.mutProbGene))) 
-            child.dGene[8] = randSwell(child.dGene[8]);
+            child.dGene[8] = this.randSwell(child.dGene[8]);
     if((mut[0]) && (child.segNoGene > 1)) 
         if(randInt(100) < child.mutProbGene) 
-            child.segDistGene = child.segDistGene + direction9();
+            child.segDistGene = child.segDistGene + this.direction9();
     if(mut[2]) 
         if(randInt(100) < child.mutProbGene/2>>0) 
             if(child.completenessGene == CompletenessType.Single) 
@@ -692,7 +692,7 @@ function reproduce(parent) {
                 child.spokesGene = SpokesType.NSouth;
                 break;
             case SpokesType.NSouth: 
-                if(direction9() == 1) 
+                if(this.direction9() == 1) 
                     child.spokesGene = SpokesType.Radial;
                 else 
                     child.spokesGene = SpokesType.NorthOnly;
@@ -703,13 +703,13 @@ function reproduce(parent) {
             }
     if(mut[4]) 
         if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.trickleGene += direction9();
+            child.trickleGene += this.direction9();
             if(child.trickleGene < 1) 
                 child.trickleGene = 1;
         }
     if(mut[5]) 
         if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.mutSizeGene += direction9();
+            child.mutSizeGene += this.direction9();
             if(child.mutSizeGene < 1) 
                 child.mutSizeGene = 1;
         }

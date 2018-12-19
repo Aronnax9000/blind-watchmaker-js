@@ -4,15 +4,19 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create");
         $(this.element).addClass('engineeringWindow');
-        var geneboxes = $("<div></div>").monochrome_geneboxes({
-            engineering : true
-        });
+        var speciesFactory = this.options.speciesFactory;
+        var geneboxes_options = {
+            engineering : true,
+            speciesFactory: speciesFactory,
+        }
+        var geneboxes = $("<div></div>");
+        speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
         this.element.append(geneboxes);
         var engineeringDiv = $("<div></div>").engineeringBox({ 
             height: 600,
             width: 1000});
         this.element.append(engineeringDiv);
-        doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
+        speciesFactory.doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
     },
 
     // Called when created, and later when changing options
