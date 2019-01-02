@@ -54,6 +54,7 @@ $( function() {
                 var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
                 $(breedingWindowCanvases).each(function(index) {
                     if(index != clickedBoxIndex) {
+                        // console.log('erase ' + index)
                         eraseCanvas(this);
                         $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
@@ -66,17 +67,27 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
-                            jQuery.data(midCanvas, 'genotype', genotype);
-                            $(midCanvas).css({left:0,top:0});
-                            var midCanvasPos = $(midCanvas).position();
-                            genotype.develop();
-                            breedingBoxes.produceLitter(numBoxes, midBox);
+//                            // console.log('midCanvas');
+//                            // console.log(midCanvas);
+                            // Hand the biomorph off to the new canvas
+                            jQuery.data(canvas, 'genotype', null)
+                            jQuery.data(midCanvas, 'genotype', genotype)
+                            // Inform the genotype that it now draws on a different
+                            // canvas
+                            genotype.drawer = midCanvas
+                            // console.log('animateToCenter complete')
+                            
+                            // console.log(genotype.drawer)
+                            $(midCanvas).css({left:0,top:0})
+                            var midCanvasPos = $(midCanvas).position()
+                            genotype.develop()
+                            breedingBoxes.produceLitter(numBoxes, midBox)
                         } });
                 } else {
                     breedingBoxes.produceLitter(numBoxes, midBox);
                 }
             } else {
-                console.log("Genotype was null");
+                // console.log("Genotype was null");
             } 
             // Update the geneboxes with the genes of the new parent.
             $(midCanvasDiv).trigger("mouseover");

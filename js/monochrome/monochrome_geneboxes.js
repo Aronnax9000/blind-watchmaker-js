@@ -10,13 +10,13 @@ $.widget('dawk.monochrome_geneboxes', {
         
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-            console.log('updateFromCanvas: no biomorph on canvas.')
-            console.log(canvas);
+            // console.log('updateFromCanvas: no biomorph on canvas.')
+            // console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;
         geneboxes = $(this.element).find('.monochromeGenebox');
-//        console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
+//        // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
@@ -97,7 +97,7 @@ $.widget('dawk.monochrome_geneboxes', {
         this.refresh();
     },
     _setOption : function(key, value) {
-//        // console.log('setOption ' + key + ": " + value);
+//        // // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {
@@ -107,7 +107,7 @@ $.widget('dawk.monochrome_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-//       console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
+//       // console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
        this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
        var canvas = $(this.element).parent().find('canvas').get(0);
        this.updateFromCanvas(canvas);

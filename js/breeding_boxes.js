@@ -14,7 +14,7 @@ $( function() {
 
         sparkLine: function(destinationCanvas) {
             var canvas = $(this.element).parent().find('.overlayCanvas')[0];
-//            console.log(canvas);
+//            // console.log(canvas);
 
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
@@ -56,8 +56,8 @@ $( function() {
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
-                console.log('produceKthOffspring ' + k)
-                console.log($(this.element))
+                // console.log('produceKthOffspring ' + k)
+                // console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -65,7 +65,7 @@ $( function() {
                     var position = $(targetCanvas).parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-//                  console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+//                  // console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
@@ -78,18 +78,13 @@ $( function() {
                             top: 0
                         }, { duration: 200, 
                             easing: 'easeOutExpo',
-                            progress: function(animation, progress, msRemaining) {
-                                var context = $(targetCanvas)[0].getContext("2d");
-
-//                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
-                            },
                             complete: function() {
                                 var overlayCanvas = $(targetCanvas).parents('.watchmakerView').find('.overlayCanvas')[0];
                                 
                                 eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-//                                console.log('finished recursive animate Offspring ' + k);
+//                                // console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -99,7 +94,7 @@ $( function() {
                             easing: 'easeOutExpo',
                             complete: function() {
 //                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                              console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+//                              // console.log('finished animate Offspring ' + targetCanvas.attr('id'));
                             }});
                     }
                 } else { // midbox
@@ -141,7 +136,7 @@ $( function() {
                     boxIndex: j, 
                     isMidBox: isMidBox, 
                     breedingBoxes: this}).appendTo(boxes)
-                console.log('adding canvas ' + j)
+                // console.log('adding canvas ' + j)
                 if(isMidBox) {
                     // Create a biomorph and render it on the middle canvas.
                     this.options.midCanvasDiv = canvasDiv

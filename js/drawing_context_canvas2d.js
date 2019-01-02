@@ -7,7 +7,7 @@ function canvas2DDrawer_erase() {
     var height = this.getHeight();
     var halfWidth = width / 2;
     var halfHeight = height / 2;
-    console.log('erase ' + width + 'x' + height);
+    // console.log('erase ' + width + 'x' + height);
 
     this.drawingContext.clearRect(0, 0, width, height);
     this.setColor('#FF0000');
@@ -35,7 +35,7 @@ function canvas2DDrawer_penSize(penSize) {
     if(penSize === undefined) {
         return this.drawingContext.lineWidth * 2;
     } else {
-//        console.log("canvas2DDrawer.penSize = " + penSize);
+//        // console.log("canvas2DDrawer.penSize = " + penSize);
         this.drawingContext.lineWidth = penSize / 2;
     }
 }
@@ -43,7 +43,7 @@ function canvas2DDrawer_penSize(penSize) {
 function canvas2DDrawer_setColor(color) {
     this.drawingContext.strokeStyle = color;
     this.drawingContext.fillStyle = color;
-//    console.log('setColor ' + color);
+//    // console.log('setColor ' + color);
 }
 
 function canvas2DDrawer_moveTo(x,y) {

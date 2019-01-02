@@ -14,10 +14,10 @@ Monochrome.prototype.mutate = function() {
     if(this.gene[8] < 1) 
         this.gene[8] = 1;
     var sizeWorry = this.segNoGene * this.twoToThe(this.gene[8]);
-    // // console.log("Gene9: " + this.gene[8] + "SegNoGene: " + this.segNoGene + " SizeWorry: " + sizeWorry);
+    // // // console.log("Gene9: " + this.gene[8] + "SegNoGene: " + this.segNoGene + " SizeWorry: " + sizeWorry);
     if(sizeWorry > WORRYMAX)  
     {this.gene[8]--; 
-    // // console.log("Decrementing segNoGene");
+    // // // console.log("Decrementing segNoGene");
     }
     if(mut[0]) 
         if(this.randInt(100) < this.mutProbGene) {

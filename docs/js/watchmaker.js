@@ -204,7 +204,7 @@ jQuery.extend( jQuery.easing,
  *
  */function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
-    console.log("Registered Drawer Type " + drawerType);
+    // console.log("Registered Drawer Type " + drawerType);
 
 }
 
@@ -215,9 +215,9 @@ function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
     } catch (err) {
         console.error("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
         for(let propt in this.properties){
-            console.log(propt + ': ' + this.properties[propt]);
+            // console.log(propt + ': ' + this.properties[propt]);
         }
-        console.log("err: " + err);
+        // console.log("err: " + err);
     }
     return drawer;
 }
@@ -264,7 +264,7 @@ function canvas2DDrawer_erase() {
     var height = this.getHeight();
     var halfWidth = width / 2;
     var halfHeight = height / 2;
-    console.log('erase ' + width + 'x' + height);
+    // console.log('erase ' + width + 'x' + height);
 
     this.drawingContext.clearRect(0, 0, width, height);
     this.setColor('#FF0000');
@@ -292,7 +292,7 @@ function canvas2DDrawer_penSize(penSize) {
     if(penSize === undefined) {
         return this.drawingContext.lineWidth * 2;
     } else {
-//        console.log("canvas2DDrawer.penSize = " + penSize);
+//        // console.log("canvas2DDrawer.penSize = " + penSize);
         this.drawingContext.lineWidth = penSize / 2;
     }
 }
@@ -300,7 +300,7 @@ function canvas2DDrawer_penSize(penSize) {
 function canvas2DDrawer_setColor(color) {
     this.drawingContext.strokeStyle = color;
     this.drawingContext.fillStyle = color;
-//    console.log('setColor ' + color);
+//    // console.log('setColor ' + color);
 }
 
 function canvas2DDrawer_moveTo(x,y) {
@@ -703,6 +703,7 @@ $( function() {
                 var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
                 $(breedingWindowCanvases).each(function(index) {
                     if(index != clickedBoxIndex) {
+                        // console.log('erase ' + index)
                         eraseCanvas(this);
                         $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
@@ -715,17 +716,27 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
-                            jQuery.data(midCanvas, 'genotype', genotype);
-                            $(midCanvas).css({left:0,top:0});
-                            var midCanvasPos = $(midCanvas).position();
-                            genotype.develop();
-                            breedingBoxes.produceLitter(numBoxes, midBox);
+//                            // console.log('midCanvas');
+//                            // console.log(midCanvas);
+                            // Hand the biomorph off to the new canvas
+                            jQuery.data(canvas, 'genotype', null)
+                            jQuery.data(midCanvas, 'genotype', genotype)
+                            // Inform the genotype that it now draws on a different
+                            // canvas
+                            genotype.drawer = midCanvas
+                            // console.log('animateToCenter complete')
+                            
+                            // console.log(genotype.drawer)
+                            $(midCanvas).css({left:0,top:0})
+                            var midCanvasPos = $(midCanvas).position()
+                            genotype.develop()
+                            breedingBoxes.produceLitter(numBoxes, midBox)
                         } });
                 } else {
                     breedingBoxes.produceLitter(numBoxes, midBox);
                 }
             } else {
-                console.log("Genotype was null");
+                // console.log("Genotype was null");
             } 
             // Update the geneboxes with the genes of the new parent.
             $(midCanvasDiv).trigger("mouseover");
@@ -748,7 +759,7 @@ $( function() {
 
         sparkLine: function(destinationCanvas) {
             var canvas = $(this.element).parent().find('.overlayCanvas')[0];
-//            console.log(canvas);
+//            // console.log(canvas);
 
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
@@ -790,8 +801,8 @@ $( function() {
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
-                console.log('produceKthOffspring ' + k)
-                console.log($(this.element))
+                // console.log('produceKthOffspring ' + k)
+                // console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -799,7 +810,7 @@ $( function() {
                     var position = $(targetCanvas).parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-//                  console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
+//                  // console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
@@ -812,18 +823,13 @@ $( function() {
                             top: 0
                         }, { duration: 200, 
                             easing: 'easeOutExpo',
-                            progress: function(animation, progress, msRemaining) {
-                                var context = $(targetCanvas)[0].getContext("2d");
-
-//                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
-                            },
                             complete: function() {
                                 var overlayCanvas = $(targetCanvas).parents('.watchmakerView').find('.overlayCanvas')[0];
                                 
                                 eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-//                                console.log('finished recursive animate Offspring ' + k);
+//                                // console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -833,7 +839,7 @@ $( function() {
                             easing: 'easeOutExpo',
                             complete: function() {
 //                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                              console.log('finished animate Offspring ' + targetCanvas.attr('id'));
+//                              // console.log('finished animate Offspring ' + targetCanvas.attr('id'));
                             }});
                     }
                 } else { // midbox
@@ -875,7 +881,7 @@ $( function() {
                     boxIndex: j, 
                     isMidBox: isMidBox, 
                     breedingBoxes: this}).appendTo(boxes)
-                console.log('adding canvas ' + j)
+                // console.log('adding canvas ' + j)
                 if(isMidBox) {
                     // Create a biomorph and render it on the middle canvas.
                     this.options.midCanvasDiv = canvasDiv
@@ -936,7 +942,7 @@ function Point(x,y) {
    
    this.toString = pointToString;
    this.copy = pointCopy;
-   // // // // console.log("Point" + this.toString());
+   // // // // // console.log("Point" + this.toString());
 }
 
 
@@ -968,11 +974,11 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.constructorFunctions[speciesType] = constructorFunction
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
-    console.log("Registered Species Type " + speciesType);
-    console.log("Constructor")
-    console.log(this.constructorFunctions[speciesType])
-    console.log("Session initializer ")
-    console.log(this.sessionInitializers[speciesType])
+    // console.log("Registered Species Type " + speciesType);
+    // console.log("Constructor")
+    // console.log(this.constructorFunctions[speciesType])
+    // console.log("Session initializer ")
+    // console.log(this.sessionInitializers[speciesType])
 }
 
 SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canvas) {
@@ -989,12 +995,12 @@ SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canv
         console.error('geneboxes')
         console.error(geneboxes)
         for(let propt in this.constructorFunctions) {
-            console.log(propt + ': ' + this.constructorFunctions[propt]);
+            // console.log(propt + ': ' + this.constructorFunctions[propt]);
         }
         
     }
     if(species != null)
-        console.log("Got species for " + speciesFactoryType);
+        // console.log("Got species for " + speciesFactoryType);
     return species;
 }
 SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
@@ -1004,12 +1010,12 @@ SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, sessio
     } catch (err) {
         console.error("SpeciesFactory can't find a registered session initializer for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
         for(let propt in this.sessionInitializers){
-            console.log(propt + ': ' + this.sessionInitializers[propt]);
+            // console.log(propt + ': ' + this.sessionInitializers[propt]);
         }
-        console.log("err: " + err);
+        // console.log("err: " + err);
     }
     if(species != null)
-        console.log("Got session initializer for " + speciesFactoryType);
+        // console.log("Got session initializer for " + speciesFactoryType);
     return species;
 }
 
@@ -1021,12 +1027,12 @@ SpeciesFactory.prototype.geneboxes = function(speciesFactoryType,
     } catch (err) {
         console.error("SpeciesFactory can't find a registered session initializer for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
         for(let propt in this.sessionInitializers){
-            console.log(propt + ': ' + this.sessionInitializers[propt]);
+            // console.log(propt + ': ' + this.sessionInitializers[propt]);
         }
-        console.log("err: " + err);
+        // console.log("err: " + err);
     }
     if(species != null)
-        console.log("Got session initializer for " + speciesFactoryType);
+        // console.log("Got session initializer for " + speciesFactoryType);
     return species;
 }
 
@@ -1060,7 +1066,7 @@ function doRepro(sourceCanvas, targetCanvas) {
 }
 
 function eraseCanvasNoCenter(canvas) {
-//    console.log("eraseCanvasNoCenter");
+//    // console.log("eraseCanvasNoCenter");
     var drawingContext = canvas.getContext("2d");
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -1109,10 +1115,11 @@ $.widget('dawk.blindWatchmaker', {
         var parents = $(ui.newTab).parents('.blindWatchmaker').get(0);
         $(parents).blindWatchmaker('buildMenu');
     },
-    raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
-    
+    raiseAlert: function() {
+     // console.log('Blindwatchmaker callback from view');   
+    },
     newWatchmakerSession: function(species) {
-//        console.log('new Watchmaker session ' + species);
+//        // console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
@@ -1126,13 +1133,13 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(div);
         div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-//        console.log('watchmaker session tabcount '+ tabcount);
+//        // console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
     },
     buildMenu: function() {
-//        console.log('bw buildMenu');
+//        // console.log('bw buildMenu');
         $(this.element).find('.watchmakerMenu').each(function() {this.remove();});
         var menu = $('<ul class="watchmakerMenu"></ul>');
         $(this.element).append(menu);
@@ -1161,9 +1168,9 @@ $.widget('dawk.blindWatchmaker', {
         }
 
         
-//        console.log($(this.element).tabs("option", "active"));
+//        // console.log($(this.element).tabs("option", "active"));
         var activeIndex = $(this.element).tabs("option", "active");
-//        console.log(activeIndex);
+//        // console.log(activeIndex);
         var activeSession = $(this.element).find('.watchmakerSession').get(activeIndex);
         var sessionName = $(activeSession).watchmakerSession('option', 'name');
         var sessionLi = $("<li><div>" + sessionName + "</div></li>")
@@ -1176,14 +1183,14 @@ $.widget('dawk.blindWatchmaker', {
     },
     closeSession: function() {
         var selectedIndex = this.element.tabs('option', 'active');
-        console.log('selectedIndex ' + selectedIndex);
+        // console.log('selectedIndex ' + selectedIndex);
         var selectedDiv = $(this.element).find('.watchmakerSession').get(selectedIndex);
         var ul = this.element.find('ul.watchmakerTabs').get(0);
-        console.log(ul);
+        // console.log(ul);
         var liToRemove = $(ul).find('li').get(selectedIndex);
         var divToRemove = $(this.element).find('div').get(selectedIndex);
-        console.log(liToRemove);
-        console.log(divToRemove);
+        // console.log(liToRemove);
+        // console.log(divToRemove);
         $(divToRemove).remove();
         $(liToRemove).remove();
         this.element.tabs("refresh");
@@ -1196,8 +1203,8 @@ $.widget('dawk.blindWatchmaker', {
         blindWatchmaker: null
     },
     raiseAlert: function(newMenu) {
-        console.log('raise alert in watchmaker session')
-        console.log(newMenu);
+        // console.log('raise alert in watchmaker session')
+        // console.log(newMenu);
         var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
     },
@@ -1218,14 +1225,14 @@ $.widget('dawk.blindWatchmaker', {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
 //      $(parents).watchmakerView('buildMenu');
-//      console.log(ui.newPanel);
+//      // console.log(ui.newPanel);
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
 
     },   
     _create: function () {
         var species = this.options.species
         this.options.session = new WatchmakerSession(species)
-        console.log('new WatchmakerSession species ' + species);
+        // console.log('new WatchmakerSession species ' + species);
         this.element.addClass('watchmakerSession');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
@@ -1263,7 +1270,7 @@ $.widget('dawk.blindWatchmaker', {
                 });    
         this.element.tabs("refresh");
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        console.log('watchmaker view tabcount '+ tabcount);
+        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
@@ -1295,7 +1302,7 @@ $.widget('dawk.blindWatchmaker', {
                 });    
 
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        console.log('watchmaker view tabcount '+ tabcount);
+        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     }
@@ -1399,10 +1406,10 @@ $.widget('dawk.watchmakerView', {
       $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
   },
   viewGainedFocus: function(event) {
-      console.log('View gained focus');
+      // console.log('View gained focus');
   },
   buildMenu: function(menuContents) {
-      console.log('in view buildmenu')
+      // console.log('in view buildmenu')
       var li
       li = $('<li><div>Close View</div></li>')
       menuContents.append(li)
@@ -1468,7 +1475,7 @@ $( function() {
         },
         viewGainedFocus: function(event) {
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
-            console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
+            // console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
             var newMenu = $('<ul></ul>');
             var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
             newMenu.append(operation);
@@ -1519,7 +1526,7 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
         this._super("_create")
         $(this.element).addClass('engineeringWindow')
         var species = this.options.session.species
-        console.log('EW species ' + species)
+        // console.log('EW species ' + species)
         var geneboxes_options = {
             engineering : true,
             species: species,
@@ -1534,7 +1541,9 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
         var canvas = $(engineeringDiv).find('canvas').get(0)
         var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
         biomorph.doPerson("BasicTree")
-        $(canvas).data('genotype', biomorph)
+        jQuery.data(canvas, 'genotype', biomorph)
+        biomorph.develop()
+        $(canvas).trigger('mouseover')
         
     },
 
@@ -1582,7 +1591,7 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
             var parentBreedingWindow = this.element.parents('.engineeringWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-//            console.log(geneboxes);
+//            // console.log(geneboxes);
             $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas.get(0));
         },
         _doCanvasClicked: function(event) {

@@ -82,9 +82,9 @@ var Mode = {
 
 var theMode = Mode.Breeding;
 Monochrome.prototype.develop = function() {
-    console.log('Develop')
+    // console.log('Develop')
     var drawingObject = this.drawer;
-    console.log(drawingObject)
+    // console.log(drawingObject)
     var drawingContext = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -109,7 +109,7 @@ Monochrome.prototype.develop = function() {
     here = new Point(0,0);
     var centre = here.copy();
     var order = this.plugIn(this.gene, dx, dy); // Pass-by value workaround returns order as result.
-    // // // // console.log("develop order:" + order)
+    // // // // // console.log("develop order:" + order)
     this.pic.zeroPic(here);
 
     if(this.segNoGene < 1)
@@ -124,14 +124,14 @@ Monochrome.prototype.develop = function() {
         extraDistance = 0;
 
     var running = this.gene.slice();
-    // // // console.log("this.gene " + this.gene + "running:" + running);
+    // // // // console.log("this.gene " + this.gene + "running:" + running);
     var incDistance = 0;
-    // // console.log("this.segNoGene " + this.segNoGene);
+    // // // console.log("this.segNoGene " + this.segNoGene);
     // { FOR seg := 1 TO SegNoGene DO}
     var segNoGeneLimit = this.segNoGene + 1;
     for(let seg = 1; seg < segNoGeneLimit; seg++) {
         var oddOne = (seg % 2) == 1;
-        // // console.log("oddOne " + oddOne + " seg" + seg);
+        // // // console.log("oddOne " + oddOne + " seg" + seg);
         if(seg > 1) {
             oldHere = here.copy();
             here.v += (this.segDistGene + incDistance)/this.trickleGene>>0;
@@ -200,9 +200,9 @@ Monochrome.prototype.develop = function() {
     
 
     margin = this.pic.margin;
-    // console.log("Margin " + margin.toString());
+    // // console.log("Margin " + margin.toString());
     var offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
-    // console.log("offCentre " + offCentre.toString());
+    // // console.log("offCentre " + offCentre.toString());
     this.pic.drawPic(offCentre);
 
 }// {develop}

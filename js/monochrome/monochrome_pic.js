@@ -57,9 +57,8 @@ var Compass = {NorthSouth:1, EastWest:2, properties: {
  *      
  * 
  */
-function Pic(biomorph, drawingObject) {
+function Pic(biomorph) {
     this.biomorph = biomorph
-    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
 
     this.basePtr = null // The first Lin
     this.movePtr = null // The current Lin (used in walking the array)
@@ -100,8 +99,8 @@ Pic.prototype.zeroPic = function (here) {
     this.margin = new Rect()
     this.basePtr = null
     this.movePtr = null
-    console.log('zeroPic') 
-    console.log(this)
+    // console.log('zeroPic') 
+    // console.log(this)
 }
 /*
  * Globals, line 28.
@@ -140,7 +139,7 @@ const PICSIZEMAX = 4095
 
  */
 Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
-//  // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
+//  // // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
     if(this.picSize >= PICSIZEMAX) {
@@ -151,7 +150,7 @@ Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
     } else {
         newLin = new Lin(x, y, xnew, ynew, thick)
 //        newLin.id = this.picSize++
-//        console.log('added line ' + newLin.id)
+//        // console.log('added line ' + newLin.id)
         if(this.basePtr == null) { // First Lin in the Pic.
             this.basePtr = newLin; // set the base pointer to the new Lin
         } else { // Pic already has at least one Lin.
@@ -193,7 +192,7 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
     var movePtr = this.movePtr;
     var drawer = this.drawer;
 //    
-//  console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
+//  // console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
 //          + " id " + movePtr.id 
 //          + " movePtr:" + movePtr.toString() 
 //          + " Origin:" + origin.toString())
@@ -248,13 +247,15 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
 //{ it was originally drawn. Now draw it at place}
 
 Pic.prototype.drawPic = function(place) {
-    console.log('drawPic picSize ' + this.picSize)
-    console.log(this)
+    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', this.biomorph.drawer);
+
+    // console.log('drawPic picSize ' + this.picSize)
+    // console.log(this)
     var drawer = this.drawer
     var biomorph = this.biomorph
     drawer.save()
     drawer.translate(-place.h,-place.v);
-    if(true) { // draw bounding rectangle for debugging centring
+    if(false) { // draw bounding rectangle for debugging centring
         drawer.setColor("red");
         drawer.frameRect(this.margin);
     }

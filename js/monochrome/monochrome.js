@@ -33,7 +33,7 @@ function Monochrome(session, drawer) {
     this.trickleGene = TRICKLE
     this.mutSizeGene = 0
     this.mutProbGene = 0
-    this.pic = new Pic(this, drawer)
+    this.pic = new Pic(this)
 }
 
 // Register the Monochrome biomorph species with the SpeciesFactory.

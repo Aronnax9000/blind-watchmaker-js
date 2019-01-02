@@ -59,7 +59,7 @@ $( function() {
         },
         viewGainedFocus: function(event) {
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
-            console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
+            // console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
             var newMenu = $('<ul></ul>');
             var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
             newMenu.append(operation);

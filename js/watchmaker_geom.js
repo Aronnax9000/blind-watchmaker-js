@@ -17,7 +17,7 @@ function Point(x,y) {
    
    this.toString = pointToString;
    this.copy = pointCopy;
-   // // // // console.log("Point" + this.toString());
+   // // // // // console.log("Point" + this.toString());
 }
 
 

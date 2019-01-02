@@ -6,8 +6,8 @@ $.widget('dawk.watchmakerSession', {
         blindWatchmaker: null
     },
     raiseAlert: function(newMenu) {
-        console.log('raise alert in watchmaker session')
-        console.log(newMenu);
+        // console.log('raise alert in watchmaker session')
+        // console.log(newMenu);
         var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
     },
@@ -28,14 +28,14 @@ $.widget('dawk.watchmakerSession', {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
 //      $(parents).watchmakerView('buildMenu');
-//      console.log(ui.newPanel);
+//      // console.log(ui.newPanel);
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
 
     },   
     _create: function () {
         var species = this.options.species
         this.options.session = new WatchmakerSession(species)
-        console.log('new WatchmakerSession species ' + species);
+        // console.log('new WatchmakerSession species ' + species);
         this.element.addClass('watchmakerSession');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
@@ -73,7 +73,7 @@ $.widget('dawk.watchmakerSession', {
                 });    
         this.element.tabs("refresh");
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        console.log('watchmaker view tabcount '+ tabcount);
+        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
@@ -105,7 +105,7 @@ $.widget('dawk.watchmakerSession', {
                 });    
 
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        console.log('watchmaker view tabcount '+ tabcount);
+        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     }

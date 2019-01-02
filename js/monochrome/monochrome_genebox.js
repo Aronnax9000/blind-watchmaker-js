@@ -67,18 +67,18 @@ $.widget("dawk.monochrome_genebox", {
     },
     _setOptions : function(options) {
         this._super(options);
-//        console.log('genebox set options' + options);
+//        // console.log('genebox set options' + options);
         this.refresh();
     },
 
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {
-            // console.log("Showsign " + this.options.showSign);
+            // // console.log("Showsign " + this.options.showSign);
             str = "+s+" + String(str);
-            // console.log(str);
+            // // console.log(str);
         }
-        // console.log(str);
+        // // console.log(str);
         this.element.find('.geneValue').text(str);
         
     },
@@ -94,25 +94,25 @@ $.widget("dawk.monochrome_genebox", {
     refreshGradient: function() {
         if(this.options.hasGradient) {
             var gradientImg = this.element.find('.gradientGene');
-    //        // console.log("gradientValue " + this.options.gradientValue);
+    //        // // console.log("gradientValue " + this.options.gradientValue);
             switch (this.options.gradientValue) {
             case SwellType.Swell:
-    //            // console.log('refresh finds Swell');
+    //            // // console.log('refresh finds Swell');
                 gradientImg.removeClass('gradientSame gradientShrink');
                 gradientImg.addClass('gradientSwell');
                 break;
             case SwellType.Shrink:
-    //            // console.log('refresh finds Shrink');
+    //            // // console.log('refresh finds Shrink');
                 gradientImg.removeClass('gradientSame gradientSwell');
                 gradientImg.addClass('gradientShrink');
                 break;
             case SwellType.Same:
-    //            // console.log('refresh finds Same');
+    //            // // console.log('refresh finds Same');
                 gradientImg.removeClass('gradientShrink gradientSwell');
                 gradientImg.addClass('gradientSame');
                 break;
             default:
-                // console.log('Illegal gradientValue: '+ this.options.gradientValue);
+                // // console.log('Illegal gradientValue: '+ this.options.gradientValue);
             }
         }
     },
@@ -137,7 +137,7 @@ $.widget("dawk.monochrome_genebox", {
         var target = $(event.target);
         var leftRightPos;
         var rung;
-        // console.log(target.attr('class'));
+        // // console.log(target.attr('class'));
         if(target.hasClass('geneboxLeft')) {
             leftRightPos = HorizPos.LeftThird;
         } else if(target.hasClass('geneboxRight')) {
@@ -233,7 +233,7 @@ $.widget( "dawk.completenessGenebox", $.dawk.monochrome_genebox, {
     refresh: function() {
         this.refreshGradient();
         var str = this.options.value;
-        // console.log(str);
+        // // console.log(str);
         var properties = CompletenessType.properties[str];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.geneboxName);
@@ -254,7 +254,7 @@ $.widget( "dawk.spokesGenebox", $.dawk.monochrome_genebox, {
     refresh: function() {
         this.refreshGradient();
         var str = this.options.value;
-        // console.log(str);
+        // // console.log(str);
         var properties = SpokesType.properties[str];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.geneboxName);

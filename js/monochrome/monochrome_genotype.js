@@ -5,7 +5,7 @@ const MutTypeNo = 9;
 
 // Really belongs on the session
 Monochrome.initializeMut = function(session) {
-    console.log('initializeMut')
+    // console.log('initializeMut')
     var mut = new Array(MutTypeNo);
     mut[0] = true;  // Segmentation // {** changed 1.1 **}
     mut[1] = true;  // Gradient {** changed 1.1 **}
@@ -197,7 +197,7 @@ Monochrome.prototype.doSaltation = function() {
         } while(maxgene > 9 * this.trickleGene || maxgene < -9 * this.trickleGene);
     }
     do {
-        console.log("doSaltation2 trickleGene " + this.trickleGene);
+        // console.log("doSaltation2 trickleGene " + this.trickleGene);
         if(mut[7]) {
             this.dGene[8] = this.randSwell(this.dGene[8]);
         } else {
@@ -229,7 +229,7 @@ Monochrome.prototype.doSaltation = function() {
             break;
         }
         maxgene = this.segDistGene * this.segNoGene * factor;
-        console.log("mut1 and 7 maxgene " + maxgene);
+        // console.log("mut1 and 7 maxgene " + maxgene);
     } while (maxgene > 100 || maxgene < -100);
     this.gene[8] = this.randInt(6);
 }
@@ -402,7 +402,7 @@ var VertPos = {
 
 
 Monochrome.prototype.reproduce = function(childCanvas) {
-    // // console.log("Reproduce");
+    // // // console.log("Reproduce");
     var child = new Monochrome(this.session, childCanvas);
     this.copyBiomorph(child);
     child.mutate();

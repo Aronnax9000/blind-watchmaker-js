@@ -10,7 +10,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     if(rungProperties != null) {
         str += ',' + rungProperties.name;
     }
-    console.log(str);
+    // console.log(str);
     switch(geneboxIndex) {
     case 1:
     case 2:
@@ -191,7 +191,7 @@ const MutTypeNo = 9;
 
 // Really belongs on the session
 Monochrome.initializeMut = function(session) {
-    console.log('initializeMut')
+    // console.log('initializeMut')
     var mut = new Array(MutTypeNo);
     mut[0] = true;  // Segmentation // {** changed 1.1 **}
     mut[1] = true;  // Gradient {** changed 1.1 **}
@@ -383,7 +383,7 @@ Monochrome.prototype.doSaltation = function() {
         } while(maxgene > 9 * this.trickleGene || maxgene < -9 * this.trickleGene);
     }
     do {
-        console.log("doSaltation2 trickleGene " + this.trickleGene);
+        // console.log("doSaltation2 trickleGene " + this.trickleGene);
         if(mut[7]) {
             this.dGene[8] = this.randSwell(this.dGene[8]);
         } else {
@@ -415,7 +415,7 @@ Monochrome.prototype.doSaltation = function() {
             break;
         }
         maxgene = this.segDistGene * this.segNoGene * factor;
-        console.log("mut1 and 7 maxgene " + maxgene);
+        // console.log("mut1 and 7 maxgene " + maxgene);
     } while (maxgene > 100 || maxgene < -100);
     this.gene[8] = this.randInt(6);
 }
@@ -588,7 +588,7 @@ var VertPos = {
 
 
 Monochrome.prototype.reproduce = function(childCanvas) {
-    // // console.log("Reproduce");
+    // // // console.log("Reproduce");
     var child = new Monochrome(this.session, childCanvas);
     this.copyBiomorph(child);
     child.mutate();
@@ -624,10 +624,10 @@ Monochrome.prototype.mutate = function() {
     if(this.gene[8] < 1) 
         this.gene[8] = 1;
     var sizeWorry = this.segNoGene * this.twoToThe(this.gene[8]);
-    // // console.log("Gene9: " + this.gene[8] + "SegNoGene: " + this.segNoGene + " SizeWorry: " + sizeWorry);
+    // // // console.log("Gene9: " + this.gene[8] + "SegNoGene: " + this.segNoGene + " SizeWorry: " + sizeWorry);
     if(sizeWorry > WORRYMAX)  
     {this.gene[8]--; 
-    // // console.log("Decrementing segNoGene");
+    // // // console.log("Decrementing segNoGene");
     }
     if(mut[0]) 
         if(this.randInt(100) < this.mutProbGene) {
@@ -749,9 +749,8 @@ var Compass = {NorthSouth:1, EastWest:2, properties: {
  *      
  * 
  */
-function Pic(biomorph, drawingObject) {
+function Pic(biomorph) {
     this.biomorph = biomorph
-    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
 
     this.basePtr = null // The first Lin
     this.movePtr = null // The current Lin (used in walking the array)
@@ -792,8 +791,8 @@ Pic.prototype.zeroPic = function (here) {
     this.margin = new Rect()
     this.basePtr = null
     this.movePtr = null
-    console.log('zeroPic') 
-    console.log(this)
+    // console.log('zeroPic') 
+    // console.log(this)
 }
 /*
  * Globals, line 28.
@@ -832,7 +831,7 @@ const PICSIZEMAX = 4095
 
  */
 Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
-//  // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
+//  // // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
     if(this.picSize >= PICSIZEMAX) {
@@ -843,7 +842,7 @@ Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
     } else {
         newLin = new Lin(x, y, xnew, ynew, thick)
 //        newLin.id = this.picSize++
-//        console.log('added line ' + newLin.id)
+//        // console.log('added line ' + newLin.id)
         if(this.basePtr == null) { // First Lin in the Pic.
             this.basePtr = newLin; // set the base pointer to the new Lin
         } else { // Pic already has at least one Lin.
@@ -885,7 +884,7 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
     var movePtr = this.movePtr;
     var drawer = this.drawer;
 //    
-//  console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
+//  // console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
 //          + " id " + movePtr.id 
 //          + " movePtr:" + movePtr.toString() 
 //          + " Origin:" + origin.toString())
@@ -940,13 +939,15 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
 //{ it was originally drawn. Now draw it at place}
 
 Pic.prototype.drawPic = function(place) {
-    console.log('drawPic picSize ' + this.picSize)
-    console.log(this)
+    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', this.biomorph.drawer);
+
+    // console.log('drawPic picSize ' + this.picSize)
+    // console.log(this)
     var drawer = this.drawer
     var biomorph = this.biomorph
     drawer.save()
     drawer.translate(-place.h,-place.v);
-    if(true) { // draw bounding rectangle for debugging centring
+    if(false) { // draw bounding rectangle for debugging centring
         drawer.setColor("red");
         drawer.frameRect(this.margin);
     }
@@ -1082,9 +1083,9 @@ var Mode = {
 
 var theMode = Mode.Breeding;
 Monochrome.prototype.develop = function() {
-    console.log('Develop')
+    // console.log('Develop')
     var drawingObject = this.drawer;
-    console.log(drawingObject)
+    // console.log(drawingObject)
     var drawingContext = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -1109,7 +1110,7 @@ Monochrome.prototype.develop = function() {
     here = new Point(0,0);
     var centre = here.copy();
     var order = this.plugIn(this.gene, dx, dy); // Pass-by value workaround returns order as result.
-    // // // // console.log("develop order:" + order)
+    // // // // // console.log("develop order:" + order)
     this.pic.zeroPic(here);
 
     if(this.segNoGene < 1)
@@ -1124,14 +1125,14 @@ Monochrome.prototype.develop = function() {
         extraDistance = 0;
 
     var running = this.gene.slice();
-    // // // console.log("this.gene " + this.gene + "running:" + running);
+    // // // // console.log("this.gene " + this.gene + "running:" + running);
     var incDistance = 0;
-    // // console.log("this.segNoGene " + this.segNoGene);
+    // // // console.log("this.segNoGene " + this.segNoGene);
     // { FOR seg := 1 TO SegNoGene DO}
     var segNoGeneLimit = this.segNoGene + 1;
     for(let seg = 1; seg < segNoGeneLimit; seg++) {
         var oddOne = (seg % 2) == 1;
-        // // console.log("oddOne " + oddOne + " seg" + seg);
+        // // // console.log("oddOne " + oddOne + " seg" + seg);
         if(seg > 1) {
             oldHere = here.copy();
             here.v += (this.segDistGene + incDistance)/this.trickleGene>>0;
@@ -1200,9 +1201,9 @@ Monochrome.prototype.develop = function() {
     
 
     margin = this.pic.margin;
-    // console.log("Margin " + margin.toString());
+    // // console.log("Margin " + margin.toString());
     var offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
-    // console.log("offCentre " + offCentre.toString());
+    // // console.log("offCentre " + offCentre.toString());
     this.pic.drawPic(offCentre);
 
 }// {develop}
@@ -1278,18 +1279,18 @@ $.widget("dawk.monochrome_genebox", {
     },
     _setOptions : function(options) {
         this._super(options);
-//        console.log('genebox set options' + options);
+//        // console.log('genebox set options' + options);
         this.refresh();
     },
 
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {
-            // console.log("Showsign " + this.options.showSign);
+            // // console.log("Showsign " + this.options.showSign);
             str = "+s+" + String(str);
-            // console.log(str);
+            // // console.log(str);
         }
-        // console.log(str);
+        // // console.log(str);
         this.element.find('.geneValue').text(str);
         
     },
@@ -1305,25 +1306,25 @@ $.widget("dawk.monochrome_genebox", {
     refreshGradient: function() {
         if(this.options.hasGradient) {
             var gradientImg = this.element.find('.gradientGene');
-    //        // console.log("gradientValue " + this.options.gradientValue);
+    //        // // console.log("gradientValue " + this.options.gradientValue);
             switch (this.options.gradientValue) {
             case SwellType.Swell:
-    //            // console.log('refresh finds Swell');
+    //            // // console.log('refresh finds Swell');
                 gradientImg.removeClass('gradientSame gradientShrink');
                 gradientImg.addClass('gradientSwell');
                 break;
             case SwellType.Shrink:
-    //            // console.log('refresh finds Shrink');
+    //            // // console.log('refresh finds Shrink');
                 gradientImg.removeClass('gradientSame gradientSwell');
                 gradientImg.addClass('gradientShrink');
                 break;
             case SwellType.Same:
-    //            // console.log('refresh finds Same');
+    //            // // console.log('refresh finds Same');
                 gradientImg.removeClass('gradientShrink gradientSwell');
                 gradientImg.addClass('gradientSame');
                 break;
             default:
-                // console.log('Illegal gradientValue: '+ this.options.gradientValue);
+                // // console.log('Illegal gradientValue: '+ this.options.gradientValue);
             }
         }
     },
@@ -1348,7 +1349,7 @@ $.widget("dawk.monochrome_genebox", {
         var target = $(event.target);
         var leftRightPos;
         var rung;
-        // console.log(target.attr('class'));
+        // // console.log(target.attr('class'));
         if(target.hasClass('geneboxLeft')) {
             leftRightPos = HorizPos.LeftThird;
         } else if(target.hasClass('geneboxRight')) {
@@ -1444,7 +1445,7 @@ $.widget( "dawk.completenessGenebox", $.dawk.monochrome_genebox, {
     refresh: function() {
         this.refreshGradient();
         var str = this.options.value;
-        // console.log(str);
+        // // console.log(str);
         var properties = CompletenessType.properties[str];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.geneboxName);
@@ -1465,7 +1466,7 @@ $.widget( "dawk.spokesGenebox", $.dawk.monochrome_genebox, {
     refresh: function() {
         this.refreshGradient();
         var str = this.options.value;
-        // console.log(str);
+        // // console.log(str);
         var properties = SpokesType.properties[str];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.geneboxName);
@@ -1485,13 +1486,13 @@ $.widget('dawk.monochrome_geneboxes', {
         
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-            console.log('updateFromCanvas: no biomorph on canvas.')
-            console.log(canvas);
+            // console.log('updateFromCanvas: no biomorph on canvas.')
+            // console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;
         geneboxes = $(this.element).find('.monochromeGenebox');
-//        console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
+//        // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
@@ -1572,7 +1573,7 @@ $.widget('dawk.monochrome_geneboxes', {
         this.refresh();
     },
     _setOption : function(key, value) {
-//        // console.log('setOption ' + key + ": " + value);
+//        // // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {
@@ -1582,7 +1583,7 @@ $.widget('dawk.monochrome_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-//       console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
+//       // console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
        this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
        var canvas = $(this.element).parent().find('canvas').get(0);
        this.updateFromCanvas(canvas);
@@ -1628,7 +1629,7 @@ function Monochrome(session, drawer) {
     this.trickleGene = TRICKLE
     this.mutSizeGene = 0
     this.mutProbGene = 0
-    this.pic = new Pic(this, drawer)
+    this.pic = new Pic(this)
 }
 
 // Register the Monochrome biomorph species with the SpeciesFactory.
