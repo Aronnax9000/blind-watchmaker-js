@@ -56,6 +56,10 @@
         <concat destfile="docs/js/minimal.js">
             <fileset file="js/minimal/species_minimal.js" />
             </concat>
+        <concat destfile="docs/js/colour_biomorph.js">
+            <fileset file="js/colour_biomorph/colour_biomorph.js" />
+            <fileset file="js/colour_biomorph/colour_pic.js" />
+            </concat>
         <concat destfile="docs/js/triay_shell.js">
             <fileset file="js/triay_shell/triay_shell.js" />
             <fileset file="js/triay_shell/shell-bundle.js" />
