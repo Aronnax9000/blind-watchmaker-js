@@ -204,7 +204,7 @@ jQuery.extend( jQuery.easing,
  *
  */function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
-//    console.log("Registered Drawer Type " + drawerType);
+    console.log("Registered Drawer Type " + drawerType);
 
 }
 
@@ -214,7 +214,7 @@ function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
         drawer = this.properties[drawerFactoryType](drawingObject);
     } catch (err) {
         console.error("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
-        for(var propt in this.properties){
+        for(let propt in this.properties){
             console.log(propt + ': ' + this.properties[propt]);
         }
         console.log("err: " + err);
@@ -663,10 +663,10 @@ $( function() {
             this.element.addClass('boxDiv');
             var canvasId = "canvas" + this.options.boxIndex;
             var canvas = $("<canvas></canvas>");
-            this.options.canvas = canvas;
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
+            this.options.canvas = canvas;
             this.element.append(canvas);
             if (this.options.isMidBox) {
                 canvas.addClass('midBox');
@@ -718,8 +718,7 @@ $( function() {
                             jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
-                            breedingBoxes.options.speciesFactory.develop(genotype, midCanvas,
-                                    drawCrossHairs);
+                            genotype.develop();
                             breedingBoxes.produceLitter(numBoxes, midBox);
                         } });
                 } else {
@@ -748,7 +747,9 @@ $( function() {
         },
 
         sparkLine: function(destinationCanvas) {
-            var canvas = document.getElementById('overlayCanvas');
+            var canvas = $(this.element).parent().find('.overlayCanvas')[0];
+//            console.log(canvas);
+
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
             var parents = $(destinationCanvas).parent();
@@ -776,20 +777,21 @@ $( function() {
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
-            var speciesFactory = this.options.speciesFactory;
             if(genotype != null) {
-                var childGenotype = speciesFactory.reproduce(genotype);
+                var childGenotype = genotype.reproduce(targetCanvas);
                 jQuery.data(targetCanvas, 'genotype', childGenotype);
-                speciesFactory.develop(childGenotype, targetCanvas, drawCrossHairs); 
+                childGenotype.develop(); 
             }
             else  
                 alert("Genotype is null");
-            return genotype;
+//            return genotype;
         },
 
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
+                console.log('produceKthOffspring ' + k)
+                console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -816,7 +818,9 @@ $( function() {
 //                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
                             },
                             complete: function() {
-                                eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+                                var overlayCanvas = $(targetCanvas).parents('.watchmakerView').find('.overlayCanvas')[0];
+                                
+                                eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
 //                                console.log('finished recursive animate Offspring ' + k);
@@ -858,23 +862,33 @@ $( function() {
 
         // The constructor
         _create: function() {
-            var boxes = this.element;
-            $(boxes).attr('id', 'boxes').addClass('boxes');
-            this.element.append(boxes);
-            var numBoxes = this.options.numBoxes;
-            var midBox = Math.trunc(numBoxes / 2);
+            var session = this.options.session
+            var species = this.options.session.species
+            var boxes = this.element
+            $(boxes).attr('id', 'boxes').addClass('boxes')
+            this.element.append(boxes)
+            var numBoxes = this.options.numBoxes
+            var midBox = Math.trunc(numBoxes / 2)
             for (j = 0; j < numBoxes; j++) {
-                var isMidBox = j == midBox;
+                var isMidBox = j == midBox
                 var canvasDiv = $("<div></div>").breedingBox({ 
                     boxIndex: j, 
                     isMidBox: isMidBox, 
-                    breedingBoxes: this}).appendTo(boxes);
+                    breedingBoxes: this}).appendTo(boxes)
+                console.log('adding canvas ' + j)
                 if(isMidBox) {
-                    this.options.midCanvasDiv = canvasDiv;
+                    // Create a biomorph and render it on the middle canvas.
+                    this.options.midCanvasDiv = canvasDiv
+                    var canvas = $(canvasDiv).find('canvas').get(0)
+                    var biomorph = _speciesFactorySingleton.getSpecies(
+                            species, session, canvas)
+                    $(canvas).data('genotype', biomorph)        
+                    biomorph.doPerson('BasicTree')
+                    biomorph.develop()
                 }
             }
 
-            this._refresh();
+            this._refresh()
         },
 
         // Called when created, and later when changing options
@@ -893,8 +907,8 @@ $( function() {
         // always refresh when changing options
         _setOptions: function() {
             // _super and _superApply handle keeping the right this-context
-            this._superApply( arguments );
-            this._refresh();
+            this._superApply( arguments )
+            this._refresh()
         },
 
         // _setOption is called for each individual option that is changing
@@ -903,725 +917,6 @@ $( function() {
         }
     });
 } );
-
-const TRICKLE = 10;
-const MutTypeNo = 9;
-
-var mut = new Array(MutTypeNo);
-
-function initializeMut() {
-    mut[0] = true;  // Segmentation // {** changed 1.1 **}
-    mut[1] = true;  // Gradient {** changed 1.1 **}
-    mut[2] = true;  // Asymmetry {** changed 1.1 **}
-    mut[3] = true;  // Radial Sym {** changed 1.1 **}
-    mut[4] = true;  // Scaling Factor {** changed 1.1 **}
-    mut[5] = false; // Mutation Size
-    mut[6] = false; // Mutation Rate
-    mut[7] = true;  // Tapering Twigs
-    mut[8] = true;
-}
-
-var SwellType = {
-        Swell: 1,
-        Shrink: 2,
-        Same: 3,
-        properties: {
-            1: {name: "Swell"},
-            2: {name: "Shrink"},
-            3: {name: "Same"}
-        }
-};
-
-
-
-
-function chromosome() {
-    var chrome = new Array(9);
-    for(i = 0; i < 9; i++)
-        chrome[i] = 0; // indexed 0-8, unlike Pascal 1-based arrays.
-    return chrome;
-}
-
-var CompletenessType = {
-        Single: 1,
-        Double: 2,
-        properties: {
-            1: {name: "Single", geneboxName: "Asym"},
-            2: {name: "Double", geneboxName: "Bilat"}
-        }
-};
-
-var SpokesType = {
-        NorthOnly: 1,
-        NSouth: 2,
-        Radial: 3,
-        properties: {
-            1: {name: "NorthOnly", geneboxName: "Single"},
-            2: {name: "NSouth", geneboxName: "UpDn"},
-            3: {name: "Radial", geneboxName: "Radial"}
-        }
-};
-
-function personToString() {
-    var htmlResult = 
-        "Gene: " + this.gene + " DGene: ";
-    for(i = 0; i < 10; i++) {
-        htmlResult +=  SwellType.properties[this.dGene[i]].name; 
-        if(i<9) htmlResult += ",";
-    }
-    htmlResult +=  " SegNoGene: " + this.segNoGene +  
-    " SegDistGene: " + this.segDistGene +  
-    " CompletenessGene: " + CompletenessType.properties[this.completenessGene].name +  
-    " SpokesGene: " + SpokesType.properties[this.spokesGene].name +  
-    " TrickleGene: " + this.trickleGene +  
-    " MutSizeGene: " + this.mutSizeGene +  
-    " MutProbGene: " + this.mutProbGene;
-    return htmlResult;
-}
-
-function personToHtml() {
-    var h4open = "<h4>";
-    var h4close = "</h4>";
-    var breaktag = "<br />";
-    var htmlResult = h4open + name + h4close + 
-    "Gene: " + this.gene + breaktag + "DGene: ";
-    for(i = 0; i < 10; i++) {
-        htmlResult +=  SwellType.properties[this.dGene[i]].name; 
-        if(i<9) htmlResult += ",";
-    }
-    htmlResult += breaktag + "SegNoGene: " + this.segNoGene +  
-    breaktag + "SegDistGene: " + this.segDistGene +  
-    breaktag + "CompletenessGene: " + CompletenessType.properties[this.completenessGene].name +  
-    breaktag + "SpokesGene: " + SpokesType.properties[this.spokesGene].name +  
-    breaktag + "TrickleGene: " + this.trickleGene +  
-    breaktag + "MutSizeGene: " + this.mutSizeGene +  
-    breaktag + "MutProbGene: " + this.mutProbGene;
-    return htmlResult;
-}
-
-
-function Person() {
-    this.gene = chromosome();
-    this.dGene = new Array(10);
-    for(i = 0; i < 10; i++) {
-        this.dGene[i] = SwellType.Same;
-    }
-    this.segNoGene = 0;
-    this.segDistGene = 0;
-    this.completenessGene = CompletenessType.Single;
-    this.spokesGene = SpokesType.NorthOnly;
-    this.trickleGene = TRICKLE;
-    this.mutSizeGene = 0;
-    this.mutProbGene = 0;
-    this.toHtml = personToHtml;
-    this.toString = personToString;
-    this.pic = null;
-    this.manipulation = _monochrome_manipulation;
-}
-
-/*
- * PROCEDURE MakeGenes (VAR genotype: person; a, b, c, d, e, f, g, h, i: Integer);
-        VAR
-                j: Integer;
-        BEGIN
-                WITH genotype DO
-                        BEGIN
-                                FOR j := 1 TO 10 DO
-                                        dgene[j] := same;
-                                SegNoGene := 1;
-                                SegDistGene := 150;
-                                CompletenessGene := Double;
-                                SpokesGene := NorthOnly;
-                                TrickleGene := Trickle;
-                                MutSizeGene := Trickle DIV 2;
-                                MutProbGene := 10;
-                                gene[1] := a;
-                                gene[2] := b;
-                                gene[3] := c;
-                                gene[4] := d;
-                                gene[5] := e;
-                                gene[6] := f;
-                                gene[7] := g;
-                                gene[8] := h;
-                                gene[9] := i;
-                        END;
-        END; {makegenes}
-
- */
-function _monochrome_makeGenes(genotype, a, b, c, d, e, f, g, h, i) {
-    for(j = 0; j < 10; j++) {
-        genotype.dGene[j] = SwellType.Same;
-    }
-    genotype.segNoGene = 1;
-    genotype.segDistGene = 150;
-    genotype.completenessGene = CompletenessType.Double;
-    genotype.spokesGene = SpokesType.NorthOnly;
-    genotype.trickleGene = TRICKLE;
-    genotype.mutSizeGene = Math.trunc(TRICKLE/2); // Trickle div 2;
-    genotype.mutProbGene = 10;
-    genotype.gene[0] = a;
-    genotype.gene[1] = b;
-    genotype.gene[2] = c;
-    genotype.gene[3] = d;
-    genotype.gene[4] = e;
-    genotype.gene[5] = f;
-    genotype.gene[6] = g;
-    genotype.gene[7] = h;
-    genotype.gene[8] = i;
-}
-
-
-
-function _monochrome_randSwell (indGene) {
-    switch(indGene) {
-    case SwellType.Shrink:
-        return SwellType.Same;
-    case SwellType.Same:
-        if(randInt(2) == 1) {
-            return SwellType.Shrink;
-        } else {
-            return SwellType.Swell;
-        }
-    case SwellType.Swell:
-        return SwellType.Same;
-    }
-}
-
-
-function _monochrome_doSaltation(genotype) {
-    // {bomb 5, range check failed, here after killing top Adam}
-    if(mut[0]) {
-        genotype.segNoGene = randInt(6);
-        genotype.segDistGene = randInt(20);
-    } else {
-        genotype.segNoGene = 1;
-        genotype.segDistGene = 1;
-    }
-    var r = randInt(100);
-    genotype.completenessGene = CompletenessType.Double;
-    if(mut[2]) {
-        if(r < 50) {
-            genotype.completenessGene = CompletenessType.Single;
-        } 
-    }
-    r = randInt(100);
-    if(mut[3]) {
-        if(r < 33) {
-            genotype.spokesGene = SpokesType.Radial;
-        } else if(r < 66) {
-            genotype.spokesGene = SpokesType.NSouth;
-        } else {
-            genotype.spokesGene = SpokesType.NorthOnly;
-        }
-    } else {
-        genotype.spokesGene = SpokesType.NorthOnly;
-    }
-    if(mut[4]) {
-        genotype.trickleGene = randInt(10);
-        if(genotype.trickleGene > 1) {
-            genotype.mutSizeGene = Math.trunc(genotype.trickleGene / 2);
-        }
-    }
-    for(j = 0; j < 8; j++) {
-        var maxGene;
-        do {
-            genotype.gene[j] = Math.trunc(genotype.mutSizeGene * (randInt(19) - 10));
-            if(mut[1]) {
-                genotype.dGene[j] = randSwell(genotype.dGene[j]);
-            } else {
-                genotype.dGene[j] = SwellType.Same;
-            }
-            var factor;
-            switch(genotype.dGene[j]) {
-            case SwellType.Shrink:
-                factor = 1;
-                break;
-            case SwellType.Same:
-                factor = 0;
-                break;
-            case SwellType.Swell:
-                factor = 1;
-                break;
-            }
-            maxgene = genotype.gene[j] * genotype.segNoGene * factor;
-        } while(maxgene > 9 * genotype.trickleGene || maxgene < -9 * genotype.trickleGene);
-    }
-    do {
-        console.log("doSaltation2 trickleGene " + genotype.trickleGene);
-        if(mut[7]) {
-            genotype.dGene[8] = randSwell(genotype.dGene[8]);
-        } else {
-            genotype.dGene[8] = SwellType.Same;
-        }
-        if(mut[1]) {
-            genotype.dGene[9] = randSwell(genotype.dGene[8])
-        } else {
-            genotype.dGene[9] = Same;
-        }
-        var factor;
-        // In the Pascal, the index of the previous for loop, j, is used.
-        // the loop ran from 1 to 8.
-        // I don't know if the value of the counter in a Pascal for...do loop
-        // should
-        // to be 9 or 8. I'm guessing 9, and since we use 0-based arrays,
-        // using 8 below. Best inform for the guess is that dGene[7] isn't
-        // altered within the routine, and using dGene[8] seems to cause endless
-        // loops
-        switch(genotype.dGene[8]) {
-        case SwellType.Shrink:
-            factor = 1;
-            break;
-        case SwellType.Same:
-            factor = 0;
-            break;
-        case SwellType.Swell:
-            factor = 1;
-            break;
-        }
-        maxgene = genotype.segDistGene * genotype.segNoGene * factor;
-        console.log("mut1 and 7 maxgene " + maxgene);
-    } while (maxgene > 100 || maxgene < -100);
-    genotype.gene[8] = randInt(6);
-}
-
-function _monochrome_chess (genotype) {
-    makeGenes(genotype, 
-            -TRICKLE, 
-            3 * TRICKLE, 
-            -3 * TRICKLE, 
-            -3 * TRICKLE, 
-            TRICKLE, 
-            -2 * TRICKLE, 
-            6 * TRICKLE, 
-            -5 * TRICKLE, 
-            7);
-}
-/**
- * PROCEDURE BasicTree (VAR genotype: person);
-        VAR
-                j: Integer;
-        BEGIN
-                makegenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
-                WITH genotype DO
-                        BEGIN
-                                SegNoGene := 2;
-                                SegDistGene := 150;
-                                CompletenessGene := single;
-                                dgene[4] := shrink;
-                                dgene[5] := shrink;
-                                dgene[6] := shrink;
-                                dgene[9] := shrink;
-                                tricklegene := 9;
-                        END;
-        END; {root}
- */
-function _monochrome_basicTree(genotype) {
-    this.makeGenes(genotype, -10, -20, -20, -15, -15, 0, 15, 15, 7);
-    genotype.segNoGene = 2;
-    genotype.segDistGene = 150;
-    genotype.completenessGene = CompletenessType.Single;
-    genotype.dGene[3] = SwellType.Shrink;
-    genotype.dGene[4] = SwellType.Shrink;
-    genotype.dGene[5] = SwellType.Shrink;
-    genotype.dGene[8] = SwellType.Shrink;
-    genotype.trickleGene = 9;
-}
-
-function _monochrome_insect(genotype) {
-    makeGenes(
-            genotype, 
-            TRICKLE, 
-            TRICKLE, 
-            -4 * TRICKLE, 
-            TRICKLE, 
-            -TRICKLE, 
-            -2 * TRICKLE, 
-            8 * TRICKLE, 
-            -4 * TRICKLE, 
-            6);
-}
-
-
-function randInt(ceiling) {
-    return Math.floor(Math.random() * ceiling) + 1;  
-}
-
-function _monochrome_direction(child) {
-    if(randInt(2) == 2) 
-        return child.mutSizeGene;
-    else
-        return -child.mutSizeGene;
-}
-function _monochrome_direction9() {
-    if(randInt(2) == 2)
-        return 1;
-    else
-        return -1;
-}
-
-function _monochrome_copyBiomorph(child, parent) {
-    child.gene = parent.gene.slice();
-    child.dGene = parent.dGene.slice();
-    child.segNoGene = parent.segNoGene;
-    child.segDistGene = parent.segDistGene;
-    child.completenessGene = parent.completenessGene;
-    child.spokesGene = parent.spokesGene;
-    child.trickleGene = parent.trickleGene;
-    child.mutSizeGene = parent.mutSizeGene;
-    child.mutProbGene = parent.mutProbGene;
-    return child;
-}
-
-/*
- * Globals, line 29:
- * 
- * CONST
- *     WorryMax = 4095;
- */
-const WORRYMAX = 4095;
-
-function twoToThe(n) {
-    switch(n) {
-    case 0: 
-        return 1;
-    case 1: 
-        return 2;
-    case 2: 
-        return 4;
-    case 3: 
-        return 8;
-    case 4: 
-        return 16;
-    case 5: 
-        return 32;
-    case 6: 
-        return 64;
-    case 7: 
-        return 128;
-    case 8: 
-        return 256;
-    case 9: 
-        return 512;
-    case 10: 
-        return 1024;
-    case 11: 
-        return 2048;
-    case 12: 
-        return 4096;
-    default:
-        return 8192;
-    }
-}
-
-function _monochrome_randSwell(indGene) {
-    switch(indGene) {
-    case SwellType.Shrink: 
-        return SwellType.Same;
-    case SwellType.Same: 
-        if(randInt(2) == 1) {
-            return SwellType.Shrink;
-        } else {
-            return SwellType.Swell;
-        }
-    case SwellType.Swell: 
-        return SwellType.Same;
-    }
-}
-
-var HorizPos = {
-        LeftThird: 1,
-        MidThird: 2,
-        RightThird: 3,
-        properties: {
-            1: {name: "LeftThird"},
-            2: {name: "MidThird"},
-            3: {name: "RightThird"}
-        }
-};
-
-var VertPos = {
-        TopRung: 1,
-        MidRung: 2,
-        BottomRung: 3,
-        properties: {
-            1: {name: "TopRung"},
-            2: {name: "MidRung"},
-            3: {name: "BottomRung"}
-        }
-};
-
-function _monochrome_manipulation(geneboxIndex, leftRightPos, rung) {
-    var str = geneboxIndex;
-
-    var leftRightPosProperties = HorizPos.properties[leftRightPos];
-    if(leftRightPosProperties != null) {
-        str += ',' + leftRightPosProperties.name;
-    }
-    str += ' v:' + rung
-    var rungProperties = VertPos.properties[rung];
-    if(rungProperties != null) {
-        str += ',' + rungProperties.name;
-    }
-    console.log(str);
-    switch(geneboxIndex) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.gene[geneboxIndex - 1] -= this.mutSizeGene;
-            break;
-        case HorizPos.RightThird: 
-            this.gene[geneboxIndex - 1] += this.mutSizeGene;
-            break;
-        case HorizPos.MidThird: 
-            switch(rung) {
-            case VertPos.TopRung: 
-                this.dGene[geneboxIndex - 1] = SwellType.Swell;
-                break;
-            case VertPos.MidRung: 
-                this.dGene[geneboxIndex - 1] = SwellType.Same;
-                break;
-            case VertPos.BottomRung: 
-                this.dGene[geneboxIndex - 1] = SwellType.Shrink;
-                break;
-            }
-            break;
-        }
-        break;
-    case 9:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.gene[8]--;
-            break;
-        case HorizPos.RightThird: 
-            // The Pascal original incremented gene 9 unconditionally,
-            // then backed off the change if the 2^gene9 times the segment
-            // number gene value exceeded 4095.
-            // This version does the test first, then increments gene 9 only
-            // if it is safe to do so.
-            var sizeWorry = this.segNoGene * twoToThe(this.gene[8] + 1);
-            if(sizeWorry <= WORRYMAX)
-                this.gene[8]++;
-            break;
-        case HorizPos.MidThird:
-            switch(rung) {
-            case VertPos.TopRung: 
-                this.dGene[8] = SwellType.Swell;
-                break;
-            case VertPos.MidRung: 
-                this.dGene[8] = SwellType.Same;
-                break;
-            case VertPos.BottomRung: 
-                this.dGene[8] = SwellType.Shrink;
-                break;
-            }
-            break;
-        }
-        break;
-    case 10: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.segNoGene--;
-            break;
-        case HorizPos.MidThird: 
-            break; //{No Action}
-        case HorizPos.RightThird: 
-            var sizeWorry = (this.segNoGene + 1) * twoToThe(this.gene[8]);
-            if(sizeWorry <= WORRYMAX) {
-                this.segNoGene++;
-            }
-            break;
-        }
-        break;
-    case 11: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.segDistGene -= this.trickleGene;
-            break;
-        case HorizPos.MidThird:
-            switch(rung) {
-            case VertPos.TopRung: 
-                this.dGene[9] = SwellType.Swell;
-                break;
-            case VertPos.MidRung: 
-                this.dGene[9] = SwellType.Same;
-            case VertPos.BottomRung: 
-                this.dGene[9] = SwellType.Shrink;
-            }
-            break;
-        case HorizPos.RightThird: 
-            this.segDistGene += this.trickleGene;
-            break;
-        }
-        break;
-    case 12: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.completenessGene = CompletenessType.Single;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No Action}
-        case HorizPos.RightThird: 
-            this.completenessGene = CompletenessType.Double;
-            break;
-        }
-        break;
-    case 13: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.spokesGene = SpokesType.NorthOnly;
-            break;
-        case HorizPos.MidThird: 
-            this.spokesGene = SpokesType.NSouth;
-            break;
-        case HorizPos.RightThird: 
-            this.spokesGene = SpokesType.Radial;
-            break;
-        }
-        break;
-    case 14: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.trickleGene > 1)
-                this.trickleGene--;
-            break;
-        case HorizPos.RightThird: 
-            this.trickleGene++;
-            break;
-        case HorizPos.MidThird: 
-            break;// {No action}
-        }
-        break;
-    case 15: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.mutSizeGene > 1)
-                this.mutSizeGene--;
-            break;
-        case HorizPos.RightThird: 
-            this.mutSizeGene++;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No action}
-        }
-        break;
-    case 16: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.mutProbGene > 1) {
-                this.mutProbGene--;
-            }
-            break;
-        case HorizPos.RightThird: 
-            if(this.mutProbGene < 100)
-                this.mutProbGene++;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No action}
-            break;
-        }
-    }
-    if(this.gene[8] < 1) {
-        this.gene[8] = 1;
-    }
-
-    if(this.segNoGene < 1) {
-        this.segNoGene = 1;
-    }
-//  Alert subscribers that the genome has changed here.
-}
-
-function _monochrome_reproduce(parent) {
-    // // console.log("Reproduce");
-    var child = new Person();
-    this.copyBiomorph(child, parent);
-    if(mut[6]) 
-        if(randInt(100) < child.mutProbGene) 
-            do 
-                child.mutProbGene += this.direction9();
-            while ((Math.abs(child.mutProbGene) > 100) || (child.mutProbGene == 0));
-    for(j = 0; j<8; j++) 
-        if(randInt(100) < child.mutProbGene) 
-            child.gene[j] += this.direction(child);
-    if(randInt(100) < child.mutProbGene) 
-        child.gene[8] += this.direction9();
-    if(child.gene[8] < 1) 
-        child.gene[8] = 1;
-    var sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
-    // // console.log("Gene9: " + child.gene[8] + "SegNoGene: " + child.segNoGene + " SizeWorry: " + sizeWorry);
-    if(sizeWorry > WORRYMAX)  
-    {child.gene[8]--; 
-    // // console.log("Decrementing segNoGene");
-    }
-    if(mut[0]) 
-        if(randInt(100) < child.mutProbGene) {
-            var j = this.direction9();
-            child.segNoGene += j;
-            if(j > 0) {
-                sizeWorry = child.segNoGene * twoToThe(child.gene[8]);
-                if(sizeWorry > WORRYMAX) 
-                    child.segNoGene--;
-            }
-        }
-    if(child.segNoGene < 1) 
-        child.segNoGene = 1;
-    if((mut[1]) && (child.segNoGene > 1)) {
-        for(j = 0; j<8; j++) 
-            if(randInt(100) < child.mutProbGene/2>>0) 
-                child.dGene[j] = this.randSwell(child.dGene[j]);
-        if(randInt(100) < child.mutProbGene/2>>0) 
-            child.dGene[9] = this.randSwell(child.dGene[9]);
-    }
-    if(mut[7])
-        if((mut[8] && (randInt(100) < child.mutProbGene))) 
-            child.dGene[8] = this.randSwell(child.dGene[8]);
-    if((mut[0]) && (child.segNoGene > 1)) 
-        if(randInt(100) < child.mutProbGene) 
-            child.segDistGene = child.segDistGene + this.direction9();
-    if(mut[2]) 
-        if(randInt(100) < child.mutProbGene/2>>0) 
-            if(child.completenessGene == CompletenessType.Single) 
-                child.completenessGene = CompletenessType.Double;
-            else 
-                child.completenessGene = CompletenessType.Single;
-    if(mut[3]) 
-        if(randInt(100) < child.mutProbGene/2>>0) 
-            switch(child.spokesGene) {
-            case SpokesType.NorthOnly: 
-                child.spokesGene = SpokesType.NSouth;
-                break;
-            case SpokesType.NSouth: 
-                if(this.direction9() == 1) 
-                    child.spokesGene = SpokesType.Radial;
-                else 
-                    child.spokesGene = SpokesType.NorthOnly;
-                break;
-            case SpokesType.Radial: 
-                child.spokesGene = SpokesType.NSouth;
-                break;
-            }
-    if(mut[4]) 
-        if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.trickleGene += this.direction9();
-            if(child.trickleGene < 1) 
-                child.trickleGene = 1;
-        }
-    if(mut[5]) 
-        if(randInt(100) < Math.abs(child.mutProbGene)) {
-            child.mutSizeGene += this.direction9();
-            if(child.mutSizeGene < 1) 
-                child.mutSizeGene = 1;
-        }
-    return child;
-} // reproduce
-
-
 function pointToString() {
         return "(" + this.h + "," + this.v + ")";
 }
@@ -1660,611 +955,85 @@ function Rect() {
         this.top = 0;
         this.bottom = 0;
         this.toString = rectToString;
+}function SpeciesFactory() {
+    this.constructorFunctions = {}
+    this.sessionInitializers = {}
+    this.geneboxesWidgets = {}
 }
 
-var myPenSize = 1;
-
-
-
-/*
- * Globals, line 247.
- * 
- * Lin = RECORD
- *     StartPt, EndPt: Point;
- *     Thickness: 1..8;
- * END;
- * LinPtr = ^Lin;
- * LinHandle = ^LinPtr;
- */
-
-function linToString() {
-	return "Lin " + this.startPt.toString() + " -> " + this.endPt.toString() + " thickness " + this.thickness;
-}
-
-function Lin(x, y, xnew, ynew, thick) {
-    this.startPt = new Point(x,y);
-    this.endPt = new Point(xnew,ynew);
-    this.thickness = thick;
-    this.nextLin = null;    
-    this.toString = linToString;
-}
-
-/*
- * Globals, line 253.
- *     Pic = RECORD
- *          BasePtr: Ptr;
- *          MovePtr: LinPtr;
- *          Origin: Point;
- *          PicSize: Integer;
- *          PicPerson: person
- *      END;
- *      
- * 
- */
-function Pic() {
-    this.basePtr = null; // The first Lin
-    this.movePtr = null; // The current Lin (used in walking the array)
-    this.origin = new Point(0,0); // a Point
-    this.picSize = 0; // Number of Lins
-    this.picPerson = null; // the biomorph that this is a picture of.
-    this.margin = new Rect();
-}
-/*
- PROCEDURE ZeroPic (VAR thisPic: Pic; Here: Point);
-    BEGIN
-        WITH thisPic DO
-            BEGIN
-                MovePtr = LinPtr(BasePtr);
-                PicSize = 0;
-                Origin = Here
-            END
-    END; {ZeroPic}
- */
-function _monochrome_zeroPic(thisPic, here) {
-    if(thisPic.basePtr != null) { 
-        // Pic has lines. Walk the singly linked list all the way to the end,
-        // disconnect each Lin from the next.
-        var walkPtr = thisPic.basePtr;
-        while(walkPtr != null) {
-            // Gotta grab a reference to the next element in the list 
-            // before we disconnect it from the current one.
-            var nextLin = walkPtr.nextLin
-            walkPtr.nextLin = null;
-            walkPtr = nextLin;
-        }
-        thisPic.picSize = 0;
-        thisPic.origin = here;
-    }
-    thisPic.margin = new Rect();
-}
-/*
- * Globals, line 28.
- */
-const PICSIZEMAX = 4095;
-
-
-/*
- * PROCEDURE PicLine (VAR thisPic: Pic; x, y, xnew, ynew, thick: Integer);
-    BEGIN
-        IF thick > 8 THEN
-            thick = 8;
-        WITH thisPic DO
-            BEGIN
-                IF PicSize >= PicSizeMax THEN
-                    BEGIN
-{Message(GetString(TooLargeString));}
- {used the help dialog! v1.1 changed to alert}
-                        DisplayError(-147, 'Biomorph too large, or other problem', ' ', StopError);
-                        ExitToShell
-                    END
-                ELSE
-                    WITH MovePtr^ DO
-                        BEGIN
-                            StartPt.h = x;
-                            StartPt.v = y;
-                            EndPt.h = xnew;
-                            EndPt.v = ynew;
-                            Thickness = Thick
-                        END;
-                MovePtr = linptr(size(MovePtr) + 10);  {advance 'array subscript' by number}
-{                                    of bytes occupied by one lin}
-                PicSize = PicSize + 1
-            END
-    END; {PicLine}
-
- */
-function _monochrome_picLine(thisPic, x, y, xnew, ynew, thick) {
-//	   // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
-    if(thick > 8)
-        thick = 8;
-    if(thisPic.PicSize >= PICSIZEMAX) {
-        // {Message(GetString(TooLargeString));}
-        // {used the help dialog! v1.1 changed to alert}
-        alert('Biomorph too large, or other problem');
-        return;
-    } else {
-        newLin = new Lin(x, y, xnew, ynew, thick);
-        if(thisPic.basePtr == null) { // First Lin in the Pic.
-            thisPic.basePtr = newLin; // set the base pointer to the new Lin
-        } else { // Pic already has at least one Lin.
-            // Link the new Lin onto the Lin at end of the Pic
-            thisPic.movePtr.nextLin = newLin; 
-        }
-        thisPic.movePtr = newLin; // Point to the new end of the list
-
-        thisPic.picSize++;
-        var margin = thisPic.margin;
-    	if(x < margin.left)
-    		margin.left = x;
-    	else if(x > margin.right)
-    		margin.right = x;
-    	if(y > margin.bottom)
-    		margin.bottom = y;
-    	else if(y < margin.top)
-    		margin.top = y;
-    	if(xnew < margin.left)
-    		margin.left = xnew;
-    	else if(xnew > margin.right)
-    		margin.right = xnew;
-    	if(ynew > margin.bottom)
-    		margin.bottom = ynew;
-    	else if(ynew < margin.top)
-    		margin.top = ynew;
-
-    }
-} // {PicLine}
-
-function newFunction() {
-	
-}
-
-function picToHtml() {
-	var html = PicStyleType.properties[this.picStyle].name;
-	return html;
-}
-
-var PicStyleType = {LF: 1, RF: 2, FF: 3, LUD: 4, RUD:5, FUD:6, LSW:7, RSW:8, FSW:9,
-		properties: {
-            1: {name: "LF"},
-            2: {name: "RF"},
-            3: {name: "FF"},
-            4: {name: "LUD"},
-            5: {name: "RUD"},
-            6: {name: "FUD"},
-            7: {name: "LSW"},
-            8: {name: "RSW"},
-            9: {name: "FSW"}
-          }
-};
-var Compass = {NorthSouth:1, EastWest:2, properties: {
-	1: {name: "NorthSouth"}, 2:{name: "EastWest"}
-}};
-
-
-
-var orientation = Compass.NorthSouth;
-
-
-
-function _monochrome_actualLine(picStyle, orientation, thisPic, drawer) {
-    var origin = thisPic.origin;
-    var movePtr = thisPic.movePtr;
-//    console.log("actualLine Style:" + PicStyleType.properties[picStyle].name + " movePtr:" + movePtr.toString() + " Origin:" + origin.toString() + " Place:" + place.toString());
-    
-    drawer.penSize(movePtr.thickness);
-    var x0;
-    var x1;
-    var y0;
-    var y1;
-    var startPt = movePtr.startPt;
-    var endPt = movePtr.endPt;
-    if(orientation == Compass.NorthSouth) {
-        y0 = startPt.v;
-        y1 = endPt.v;
-        x0 = startPt.h;
-        x1 = endPt.h;
-    } else {
-        y0 = startPt.h;
-        y1 = endPt.h;
-        x0 = startPt.v;
-        x1 = endPt.v;
-    }
-    switch(picStyle) {
-    case PicStyleType.LF: 
-        drawer.drawLine(x0, y0, x1, y1);
-    break;
-    case PicStyleType.RF: 
-    	drawer.drawLine(-x0, y0, -x1, y1);
-    break;
-    case PicStyleType.FF: 
-    	drawer.drawLine(x0, y0, x1, y1);
-    	drawer.drawLine(-x0, y0, -x1, y1);
-    break;
-    case PicStyleType.LUD: 
-    	drawer.drawLine(x0, y0, x1, y1);
-    	drawer.drawLine(-x0, -y0, -x1, -y1);
-    break;
-    case PicStyleType.RUD: 
-    	drawer.drawLine(-x0, y0, -x1, y1);
-    	drawer.drawLine(x0, -y0, x1, -y1);
-    break;
-    case PicStyleType.FUD: 
-    	drawer.drawLine(x0, y0, x1, y1);
-    	drawer.drawLine(-x0, y0, -x1, y1);
-    	drawer.drawLine(x0, -y0, x1, -y1);
-    	drawer.drawLine(-x0, -y0, -x1, -y1);
-    break;
-    } // {CASES}
-} // {ActualLine}
-
-//{Pic already contains its own origin, meaning the coordinates at which}
-//{ it was originally drawn. Now draw it at place}
-
-function _monochrome_drawPic(thisPic, place, biomorph, drawer, drawMargin) {
-//    if(biomorph.dGene[8] == SwellType.Swell) {
-//        alert("Gradient Gene 9 is Swell");
-//    }
-//    console.log('drawPic' + drawer.penSize());
-	// {To correct initialisation bug, due to call in DoUpdate}
-	drawer.save();
-	drawer.translate(-place.h,-place.v);
-	if(drawMargin) {
-		var margin = thisPic.margin;
-		drawer.setColor("red");
-		drawer.frameRect(margin);
-	}
-    var picStyle = PicStyleType.FF; 
-    // console.log("Completeness " + CompletenessType.properties[biomorph.completenessGene].name +
-//    		"SpokesType " + SpokesType.properties[biomorph.spokesGene].name);
-    switch(biomorph.completenessGene) {
-    case CompletenessType.Single: 
-        switch(biomorph.spokesGene) {
-        case SpokesType.NorthOnly: 
-        	picStyle = PicStyleType.LF;
-        	break;
-        case SpokesType.NSouth: 
-            picStyle = PicStyleType.LUD;
-        	break;
-        case SpokesType.Radial: 
-            picStyle = PicStyleType.LUD;
-            break;
-        }
-        break;
-    case CompletenessType.Double: 
-        switch(biomorph.spokesGene) {
-        case SpokesType.NorthOnly: 
-            picStyle = PicStyleType.FF;
-            break;
-        case SpokesType.NSouth: 
-            picStyle = PicStyleType.FUD;
-            break;
-        case SpokesType.Radial: 
-        	picStyle = PicStyleType.FUD;
-        	break;
-        }
-        break;
-    }
-    drawer.penSize(myPenSize);
-    // {reposition at base of grabbed space}
-    thisPic.movePtr = thisPic.basePtr; 
-    drawer.setColor("black");
-
-    while(true) {
-    	this.actualLine(picStyle, Compass.NorthSouth, thisPic, drawer); // {sometimes rangecheck error}
-        if(biomorph.spokesGene == SpokesType.Radial) 
-        	if(biomorph.completenessGene = CompletenessType.Single) 
-                this.actualLine(PicStyleType.RUD, Compass.EastWest, thisPic, drawer);
-            else
-            	this.actualLine(picStyle, Compass.EastWest, thisPic, drawer);
-        if(thisPic.movePtr.nextLin == null)
-        	break; // Leave iteration with thisPic.movePtr pointing to the last Lin.
-        // Advance to next Lin.
-        thisPic.movePtr = thisPic.movePtr.nextLin;
-    }
-//    drawer.stroke();
-//	drawer.closePath();
-//	drawer.penSize(1);
-} // {DrawPic}
-function _monochrome_tree(x, y, lgth, dir, biomorph, dx, dy, thick, myPic, oddOne, order) {
-    if(dir < 0)
-        dir = dir + 8;
-    if(dir >= 8)
-        dir = dir - 8;
-
-    if(biomorph.trickleGene < 1)
-        biomorph.trickleGene = 1;
-
-    var xnew = x + Math.trunc(lgth * dx[dir] / biomorph.trickleGene);
-    var ynew = y + Math.trunc(lgth * dy[dir] / biomorph.trickleGene);
-
-    if(biomorph.dGene[8] == SwellType.Shrink) 
-        thick = lgth;
-    else if(biomorph.dGene[8] == SwellType.Swell) 
-        thick = 1 + biomorph.gene[8] - lgth; // Make thicker the shorter the segment
-    else {
-        thick = 1;
-    }
-
-    this.picLine(myPic, x, y, xnew, ynew, thick * myPenSize);
-
-    if(lgth > 1)
-        if(oddOne) {
-            
-            this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
-            if(lgth < order)
-                this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
-        } else {
-            this.tree(xnew, ynew, lgth - 1, dir - 1, biomorph, dx, dy, thick, myPic, oddOne, order);
-            if(lgth < order)
-                this.tree(xnew, ynew, lgth - 1, dir + 1, biomorph, dx, dy, thick, myPic, oddOne, order);
-        }
-} // {tree}
-/*
- Pascal original has order passed-by-reference.
- Since JavaScript passes simple types by value,
- the dirty workaround (in this and the Java edition) is to 
- return the new value for order, and pray the calling
- routine assigns the return value to order.
- */
-function _monochrome_plugIn(gene, dx, dy) {
-    var order = gene[8]; 
-    dx[3] = gene[0];
-    dx[4] = gene[1];
-    dx[5] = gene[2];
-    dy[2] = gene[3];
-    dy[3] = gene[4];
-    dy[4] = gene[5];
-    dy[5] = gene[6];
-    dy[6] = gene[7];
-    dx[1] = -dx[3];
-    dy[1] = dy[3];
-    dx[0] = -dx[4];
-    dy[0] = dy[4];
-    dx[7] = -dx[5];
-    dy[7] = dy[5];
-    dx[2] = 0;
-    dx[6] = 0;
-    return order;
-} // {PlugIn}
-
-var clipBoarding = false;
-
-
-var Mode = {
-        Preliminary:1, 
-        Breeding:2, 
-        Albuming:3, 
-        Phyloging:4, 
-        Killing:5, 
-        Moving:6, 
-        Detaching:7, 
-        Randoming:8, 
-        Engineering:9, 
-        Drifting:10, 
-        Highlighting:11, 
-        PlayingBack:12, 
-        Triangling:13, 
-        Sweeping:14
-};
-
-var theMode = Mode.Breeding;
-function _monochrome_develop(biomorph, drawingObject, drawMargin) {
-    var drawer = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
-
-    // Use the identity matrix while clearing the canvas
-    drawer.setTransform(1, 0, 0, 1, 0, 0);
-    drawer.clearRect(0, 0, drawingObject.width, drawingObject.height);
-    drawer.translate(drawingObject.width / 2 + 0.5, drawingObject.height / 2 + 0.5);
-    var myPic = new Pic();
-    // console.log("Develop here:" + here.toString() + " Margin:" + margin.toString() + " Delayed:" + delayedDrawing);
-    var dx = [0,0,0,0,0,0,0,0];
-    var dy = [0,0,0,0,0,0,0,0];
-
-    var x; 
-    var y; 
-    var seg; 
-    var upExtent; 
-    var downExtent;
-    var wid; 
-    var ht; 
-    var thick;
-
-    var oldHere;
-
-    clipBoarding = false;
-    here = new Point(0,0);
-    var centre = here.copy();
-    var order = this.plugIn(biomorph.gene, dx, dy); // Pass-by value workaround returns order as result.
-    // // // // console.log("develop order:" + order)
-    this.zeroPic(myPic, here);
-
-    if(biomorph.segNoGene < 1)
-        biomorph.segNoGene = 1;
-
-    var	extraDistance;
-    if(biomorph.dGene[9] == SwellType.Swell)
-        extraDistance = biomorph.trickleGene;
-    else if(biomorph.dGene[9] == SwellType.Shrink)
-        extraDistance = -biomorph.trickleGene;
-    else
-        extraDistance = 0;
-
-    var running = biomorph.gene.slice();
-    // // // console.log("biomorph.gene " + biomorph.gene + "running:" + running);
-    var incDistance = 0;
-    // // console.log("biomorph.segNoGene " + biomorph.segNoGene);
-    // { FOR seg := 1 TO SegNoGene DO}
-    var segNoGeneLimit = biomorph.segNoGene + 1;
-    for(seg = 1; seg < segNoGeneLimit; seg++) {
-        var oddOne = (seg % 2) == 1;
-        // // console.log("oddOne " + oddOne + " seg" + seg);
-        if(seg > 1) {
-            oldHere = here.copy();
-            here.v += (biomorph.segDistGene + incDistance)/biomorph.trickleGene>>0;
-            incDistance += extraDistance;
-            if(biomorph.dGene[8] == SwellType.Shrink)
-                thick = biomorph.gene[8];
-            else
-                thick = 1;
-            // // // // console.log("picLine A");
-            this.picLine(myPic, oldHere.h, oldHere.v, here.h, here.v, thick);
-            var dGene = biomorph.dGene;
-            for(j = 0; j<8; j++) {
-                // // console.log("SwellType[" + j + "] " + SwellType.properties[dGene[j]].name);
-                if(dGene[j] == SwellType.Swell) {
-                    // // console.log("Swell[" + j + "] trickle: " + biomorph.trickleGene);
-                    running[j] += biomorph.trickleGene;
-                }
-                if(dGene[j] == SwellType.Shrink) {
-                    // // console.log("Shrink[" + j + "] trickle: " + biomorph.trickleGene);
-                    running[j] -= biomorph.trickleGene;
-                }
-            }
-            if(running[8] < 1) {
-                running[8] = 1;
-            }
-            // // console.log("before plugin running " + running + " dx" + dx + "dy " + dy + " order" + order);
-
-            order = this.plugIn(running, dx, dy);
-            // // console.log("running " + running + " dx" + dx + "dy " + dy + " order" + order);
-        }	
-        var sizeWorry = biomorph.segNoGene * twoToThe(biomorph.gene[8]);
-        if(sizeWorry > WORRYMAX)
-            biomorph.gene[8] = biomorph.gene[8] - 1;
-        if(biomorph.gene[8] < 1) {
-            biomorph.gene[8] = 1;
-        }
-        // // console.log("call to tree order " + order + " gene8" + biomorph.gene[8]);
-        this.tree(here.h, here.v, order, 2, biomorph, dx, dy, thick, myPic, oddOne, order);
-    }
-    var spokesGene = biomorph.spokesGene;
-
-
-    var margin = myPic.margin;
-
-    if(! (spokesGene == SpokesType.NorthOnly && biomorph.completenessGene == CompletenessType.Single)) {
-
-        if(centre.h - margin.left > margin.right - centre.h)
-            margin.right = centre.h + (centre.h - margin.left)
-            else
-                margin.left = centre.h - (margin.right - centre.h);
-        var upExtent = centre.v - margin.top; //{can be zero if biomorph goes down}
-        var downExtent = margin.bottom - centre.v;
-
-        if(((spokesGene == SpokesType.NSouth) || (spokesGene == SpokesType.Radial)) || 
-                (theMode == Mode.Engineering)) // {Obscurely necessary to cope with erasing last Rect in Manipulation}
-            if(upExtent > downExtent)
-                margin.bottom = centre.v + upExtent;
-            else
-                margin.top = centre.v - downExtent;
-
-        if(spokesGene == SpokesType.Radial) {
-            wid = margin.right - margin.left;
-            ht = margin.bottom - margin.top;
-            if(wid > ht) {
-                margin.top = centre.v - Math.trunc(wid/2) - 1;
-                margin.bottom = centre.v + Math.trunc(wid/2) + 1;
-            } else {
-                margin.left = centre.h - Math.trunc(ht/2) - 1;
-                margin.right = centre.h + Math.trunc(ht/2) + 1;
-            }
-        }
-    }
-    myPic.picPerson = biomorph;
-    biomorph.pic = myPic;
-
-    margin = myPic.margin;
-    // console.log("Margin " + margin.toString());
-    var     offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
-    // console.log("offCentre " + offCentre.toString());
-    this.drawPic(myPic, offCentre, biomorph, drawer, drawMargin);
-
-}// {develop}
-
-
-
-function speciesFactory_registerSpeciesType(speciesType, constructorFunction) {
-    this.properties[speciesType] = constructorFunction;
+SpeciesFactory.prototype.registerSpeciesType = function(speciesType, 
+        constructorFunction, 
+        sessionInitializer,
+        geneboxesWidget) {
+    this.constructorFunctions[speciesType] = constructorFunction
+    this.sessionInitializers[speciesType] = sessionInitializer
+    this.geneboxesWidgets[speciesType] = geneboxesWidget
     console.log("Registered Species Type " + speciesType);
+    console.log("Constructor")
+    console.log(this.constructorFunctions[speciesType])
+    console.log("Session initializer ")
+    console.log(this.sessionInitializers[speciesType])
 }
 
-function speciesFactory_getSpecies(speciesFactoryType) {
+SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canvas) {
     var species = null;
     try {
-        species = this.properties[speciesFactoryType]();
+        species = this.constructorFunctions[speciesFactoryType](session, canvas)
     } catch (err) {
+        console.error(err)
         console.error("SpeciesFactory can't find a registered species for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
-        for(var propt in this.properties){
-            console.log(propt + ': ' + this.properties[propt]);
+        console.error('session')
+        console.error(session)
+        console.error('drawer')
+        console.error(drawer)
+        console.error('geneboxes')
+        console.error(geneboxes)
+        for(let propt in this.constructorFunctions) {
+            console.log(propt + ': ' + this.constructorFunctions[propt]);
         }
-        console.log("err: " + err);
+        
     }
     if(species != null)
         console.log("Got species for " + speciesFactoryType);
     return species;
 }
-
-function SpeciesFactory() {
-    this.properties = {};
-    this.registerSpeciesType = speciesFactory_registerSpeciesType;
-    this.getSpecies = speciesFactory_getSpecies;
+SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
+    var species = null;
+    try {
+        species = this.sessionInitializers[speciesFactoryType](session);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered session initializer for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        for(let propt in this.sessionInitializers){
+            console.log(propt + ': ' + this.sessionInitializers[propt]);
+        }
+        console.log("err: " + err);
+    }
+    if(species != null)
+        console.log("Got session initializer for " + speciesFactoryType);
+    return species;
 }
+
+SpeciesFactory.prototype.geneboxes = function(speciesFactoryType, 
+        geneboxes, geneboxes_options) {
+    var species = null;
+    try {
+        species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered session initializer for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        for(let propt in this.sessionInitializers){
+            console.log(propt + ': ' + this.sessionInitializers[propt]);
+        }
+        console.log("err: " + err);
+    }
+    if(species != null)
+        console.log("Got session initializer for " + speciesFactoryType);
+    return species;
+}
+
 
 
 var _speciesFactorySingleton = new SpeciesFactory();
-function _monochrome_doPerson(biomorphType, canvas) {
-    
-    var genotype = new Person();
-    switch(biomorphType) {
-    case "Chess": this.chess(genotype); break;
-    case "BasicTree": this.basicTree(genotype); break;
-    case "Insect": this.insect(genotype); break;
-    case "Saltation": this.doSaltation(genotype); break;
-    }
-    this.develop(genotype, canvas, drawCrossHairs); 
-    jQuery.data(canvas, "genotype", genotype);
-    $(canvas).trigger('mouseover');
 
-    return genotype;
-}
-
-
-
-
-function Monochrome() {
-    this.basicTree = _monochrome_basicTree;
-    this.chess = _monochrome_chess;
-    this.insect = _monochrome_insect;
-    this.doSaltation = _monochrome_doSaltation;
-    this.geneboxes = $.fn.monochrome_geneboxes;
-    this.doPerson = _monochrome_doPerson;
-    this.tree = _monochrome_tree;
-    this.plugIn = _monochrome_plugIn;
-    this.develop = _monochrome_develop;
-    this.drawPic = _monochrome_drawPic;
-    this.actualLine = _monochrome_actualLine;
-    this.picLine = _monochrome_picLine;
-    this.zeroPic = _monochrome_zeroPic;
-    this.reproduce = _monochrome_reproduce;
-    this.makeGenes = _monochrome_makeGenes;
-//    this.manipulation = _monochrome_manipulation;
-    this.randSwell = _monochrome_randSwell;
-    this.copyBiomorph = _monochrome_copyBiomorph;
-    this.direction9 =_monochrome_direction9;
-    this.direction = _monochrome_direction;
-}
-
-_speciesFactorySingleton.registerSpeciesType("Monochrome", (
-        function() { 
-            return new Monochrome();}));
-
-
-//test
-var monochrome = _speciesFactorySingleton.getSpecies("Monochrome");
-console.log("monochrome");
-console.log(monochrome);
-
-initializeMut();
 
 var drawCrossHairs = false;
 
@@ -2343,7 +1112,7 @@ $.widget('dawk.blindWatchmaker', {
     raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
     
     newWatchmakerSession: function(species) {
-        console.log('new Watchmaker session ' + species);
+//        console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
@@ -2357,7 +1126,7 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(div);
         div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-        console.log('watchmaker session tabcount '+ tabcount);
+//        console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
@@ -2420,113 +1189,125 @@ $.widget('dawk.blindWatchmaker', {
         this.element.tabs("refresh");
     }
 });$.widget('dawk.watchmakerSession', {
-   options: {
-       species: null,
-       speciesFactory: null,
-       name: 'Default Session',
-       blindWatchmaker: null
-   },
-   raiseAlert: function(newMenu) {
-       console.log('raise alert in watchmaker session')
-       console.log(newMenu);
-       var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
-       $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
-   },
-   buildMenu: function(menuContents) {
-       var li;
-       li = $('<li><div>New Breeding</div></li>');
-       menuContents.append(li);
-       this._on(li, {click: 'newBreedingWindow'});
+    options: {
+        species: null,
+        session: null,
+        name: 'Default Session',
+        blindWatchmaker: null
+    },
+    raiseAlert: function(newMenu) {
+        console.log('raise alert in watchmaker session')
+        console.log(newMenu);
+        var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
+        $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
+    },
+    buildMenu: function(menuContents) {
+        var li;
+        li = $('<li><div>New Breeding</div></li>');
+        menuContents.append(li);
+        this._on(li, {click: 'newBreedingWindow'});
 
-       li = $('<li><div>New Engineering</div></li>');
-       menuContents.append(li);
-       this._on(li, {click: 'newEngineeringWindow'});
-       var activeIndex = $(this.element).tabs("option", "active");
-       var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
-       
-   },
-   on_activate: function (event, ui) {
-       // One of the session's views, like Breeding, has just become active.
-       var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
-//       $(parents).watchmakerView('buildMenu');
-//       console.log(ui.newPanel);
-       $(ui.newPanel).trigger('dawk:viewGainedFocus');
-       
-   },   
-   _create: function () {
-       this.options.speciesFactory = _speciesFactorySingleton.getSpecies(this.options.species);
-       
-       console.log('new WatchmakerSession');
-       console.log(this.options.speciesFactory);
-       this.element.addClass('watchmakerSession');
-       var ul = $('<ul class="watchmakerViewTabs"></ul>');
-       this.element.append(ul);
-       this.element.tabs({activate: this.on_activate});
-       this.newBreedingWindow(this.options.speciesFactory);
-       this.newEngineeringWindow(this.options.speciesFactory);
-       this.element.tabs('option', 'active', 0);
-       this.element.tabs("refresh");
-  },
-  newBreedingWindow: function(speciesFactory) {
-      var uuid = uuidv4();
-      var string = '<li><a href="#' + uuid + '">Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-      var newTabLi = $(string);
-      var ul = this.element.find('ul').get(0);
-      $(ul).append(newTabLi);
-      var div = $('<div id="' + uuid + '"></div>');
-      this.element.append(div);
-      div.breedingWindow({hi: 'there', test: 'data', watchmakerSession: this, speciesFactory: speciesFactory});
-      $('.ui-closable-tab').click(
-              function() {
-                  var tabContainerDiv = $(this).closest(".ui-tabs")
-                          .attr("id");
-                  var panelId = $(this).closest("li").remove().attr(
-                          "aria-controls");
-                  $("#" + panelId).remove();
-                  $("#" + tabContainerDiv).tabs("refresh");
-                  var tabCount = $("#" + tabContainerDiv).find(
-                          ".ui-closable-tab").length;
-                  if (tabCount < 1) {
-                      $("#" + tabContainerDiv).hide();
-                  }
-              });    
-      this.element.tabs("refresh");
-      var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-      console.log('watchmaker view tabcount '+ tabcount);
-      this.element.tabs("refresh");
-      this.element.tabs("option", "active", tabcount - 1);
+        li = $('<li><div>New Engineering</div></li>');
+        menuContents.append(li);
+        this._on(li, {click: 'newEngineeringWindow'});
+        var activeIndex = $(this.element).tabs("option", "active");
+        var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
 
-  },
-  newEngineeringWindow: function(speciesFactory) {
-      var uuid = uuidv4();
-      var string = '<li><a href="#' + uuid + '">Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-      var newTabLi = $(string);
-      var ul = this.element.find('ul').get(0);
-      $(ul).append(newTabLi);
-      var div = $('<div id="' + uuid + '"></div>');
-      this.element.append(div);
-      div.engineeringWindow({watchmakerSession: this, speciesFactory: speciesFactory});
-      $('.ui-closable-tab').click(
-              function() {
-                  var tabContainerDiv = $(this).closest(".ui-tabs")
-                          .attr("id");
-                  var panelId = $(this).closest("li").remove().attr(
-                          "aria-controls");
-                  $("#" + panelId).remove();
-                  $("#" + tabContainerDiv).tabs("refresh");
-                  var tabCount = $("#" + tabContainerDiv).find(
-                          ".ui-closable-tab").length;
-                  if (tabCount < 1) {
-                      $("#" + tabContainerDiv).hide();
-                  }
-              });    
-      
-      var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-      console.log('watchmaker view tabcount '+ tabcount);
-      this.element.tabs("refresh");
-      this.element.tabs("option", "active", tabcount - 1);
-  }
-});$( function() { 
+    },
+    on_activate: function (event, ui) {
+        // One of the session's views, like Breeding, has just become active.
+        var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
+//      $(parents).watchmakerView('buildMenu');
+//      console.log(ui.newPanel);
+        $(ui.newPanel).trigger('dawk:viewGainedFocus');
+
+    },   
+    _create: function () {
+        var species = this.options.species
+        this.options.session = new WatchmakerSession(species)
+        console.log('new WatchmakerSession species ' + species);
+        this.element.addClass('watchmakerSession');
+        var ul = $('<ul class="watchmakerViewTabs"></ul>');
+        this.element.append(ul);
+        this.element.tabs({activate: this.on_activate});
+        this.newBreedingWindow(this.options.session, species);
+        this.newEngineeringWindow(this.options.session, species);
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+    },
+    newBreedingWindow: function(species) {
+        var uuid = uuidv4();
+        var string = '<li><a href="#' + uuid + '">Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.breedingWindow({
+            session: this.options.session, 
+            watchmakerSession: this, 
+            species: species});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+        this.element.tabs("refresh");
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        console.log('watchmaker view tabcount '+ tabcount);
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+
+    },
+    newEngineeringWindow: function(species) {
+        var uuid = uuidv4();
+        var string = '<li><a href="#' + uuid + '">Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.engineeringWindow({session: this.options.session, 
+            
+            watchmakerSession: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        console.log('watchmaker view tabcount '+ tabcount);
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    }
+});
+
+function WatchmakerSession(species) {
+    this.options = {}
+    this.myPenSize = 1;
+
+    this.species = species
+    _speciesFactorySingleton.initializeSession(species, this)
+}$( function() { 
     $.widget( "dawk.breedingAutoReproduceControl", {
         options: {
             startButton: null,
@@ -2608,23 +1389,23 @@ $.widget('dawk.blindWatchmaker', {
 });
 $.widget('dawk.watchmakerView', {
   options: {
-      speciesFactory: null,
+      session: null
   },
   _create: function() {
-      
-      $(this.element).addClass('watchmakerView');
-      
+      this._super("_create")
+      $(this.element).addClass('watchmakerView')
   },
   _init: function() {
-      $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus);
+      $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
   },
-  viewGainedFocus: function(event) {console.log('View gained focus');}
-  ,
+  viewGainedFocus: function(event) {
+      console.log('View gained focus');
+  },
   buildMenu: function(menuContents) {
-      console.log('in view buildmenu');
-      var li;
-      li = $('<li><div>Close View</div></li>');
-      menuContents.append(li);
+      console.log('in view buildmenu')
+      var li
+      li = $('<li><div>Close View</div></li>')
+      menuContents.append(li)
   },
 })
 
@@ -2681,10 +1462,11 @@ $( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
     $.widget( "dawk.breedingWindow", $.dawk.watchmakerView, {
-        options: { watchmakerSession: null},
+        options: { 
+            watchmakerSession: null,
+            biomorph: null
+        },
         viewGainedFocus: function(event) {
-            console.log($(this).breedingWindow("option", "test"));
-            console.log($(this).breedingWindow("option", "hi"));
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
             console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
             var newMenu = $('<ul></ul>');
@@ -2698,27 +1480,26 @@ $( function() {
         },
 
         _create: function () {
-            this._super("_create");
-            $(this.element).addClass('breedingWindow');
-            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
-            $("<div></div>").breedingControl().appendTo(this.element);
-            $("<div></div>").breedingOffspringCounter().appendTo(this.element);
-            var speciesFactory = this.options.speciesFactory;
+            this._super("_create")
+            var species = this.options.session.species
+            $(this.element).addClass('breedingWindow')
+            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
+            $("<div></div>").breedingControl().appendTo(this.element)
+            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
             var geneboxes_options = {
                 engineering : false
             }
             var geneboxes = $("<div></div>");
-            speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
+            _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options);
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes({speciesFactory: speciesFactory});
+            var boxes = $("<div></div>").breedingBoxes({session: this.options.session});
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
             container.append(boxes);
             var overlayCanvas = $('<canvas></canvas>');
-            overlayCanvas.attr('id', 'overlayCanvas');
             overlayCanvas.attr('width', 1000);
             overlayCanvas.attr('height', 600);
             overlayCanvas.addClass('overlayCanvas');
@@ -2728,30 +1509,33 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            speciesFactory.doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
             $(midCanvas).trigger('click');
         }})});
 
 
 $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
-    options: {},
     _create: function() {
-        this._super("_create");
-        $(this.element).addClass('engineeringWindow');
-        var speciesFactory = this.options.speciesFactory;
+        this._super("_create")
+        $(this.element).addClass('engineeringWindow')
+        var species = this.options.session.species
+        console.log('EW species ' + species)
         var geneboxes_options = {
             engineering : true,
-            speciesFactory: speciesFactory,
+            species: species,
         }
-        var geneboxes = $("<div></div>");
-        speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
-        this.element.append(geneboxes);
+        var geneboxes = $("<div></div>")
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
         var engineeringDiv = $("<div></div>").engineeringBox({ 
             height: 600,
-            width: 1000});
-        this.element.append(engineeringDiv);
-        speciesFactory.doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
+            width: 1000})
+        this.element.append(engineeringDiv)
+        var canvas = $(engineeringDiv).find('canvas').get(0)
+        var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
+        biomorph.doPerson("BasicTree")
+        $(canvas).data('genotype', biomorph)
+        
     },
 
     // Called when created, and later when changing options
@@ -2799,7 +1583,7 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
 //            console.log(geneboxes);
-            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas.get(0));
         },
         _doCanvasClicked: function(event) {
             // Raise the hypodermic message TODO

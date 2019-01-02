@@ -1,4 +1,4 @@
-initializeMut();
+
 
 var drawCrossHairs = false;
 

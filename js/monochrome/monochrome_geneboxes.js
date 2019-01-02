@@ -3,21 +3,22 @@ $.widget('dawk.monochrome_geneboxes', {
     options : {
         engineering: true,
         numGeneBoxes : 16,
-        genotype: null,
+        biomorph: null,
     },
 
     updateFromCanvas: function(canvas) {
         
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
+            console.log('updateFromCanvas: no biomorph on canvas.')
+            console.log(canvas);
             return;
         }
-        this.options.genotype = biomorph;
-//        console.log('update from ' + id + ' biomorph ' + biomorph);
+        this.options.biomorph = biomorph;
         geneboxes = $(this.element).find('.monochromeGenebox');
-//        console.log('update from ' + id + ' nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
+//        console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
-        for(i = 0; i < 9; i++) {
+        for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
             genebox.gene1to9box("option", "value", biomorph.gene[i]);
             genebox.gene1to9box("option", "gradientValue", biomorph.dGene[i]);
@@ -49,11 +50,7 @@ $.widget('dawk.monochrome_geneboxes', {
     },
     _create : function(options) {
         this._setOptions(options);
-//        for (var k in this.options){
-//            if (typeof this.options[k] !== 'function') {
-//                 console.log("Key is " + k + ", value is" + this.options[k]);
-//            }
-//        }
+
         this.element.addClass("monochromeGeneboxes");
         var i;
         for (i = 0; i < 9; i++) {
@@ -110,12 +107,11 @@ $.widget('dawk.monochrome_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-        console.log('manipulate ' + geneboxIndex);
-       this.options.genotype.manipulation(geneboxIndex, leftRightPos, rung);
+//       console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
+       this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
        var canvas = $(this.element).parent().find('canvas').get(0);
        this.updateFromCanvas(canvas);
-       this.options.speciesFactory.develop(this.options.genotype, canvas,
-               drawCrossHairs);
+       this.options.biomorph.develop();
     },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");

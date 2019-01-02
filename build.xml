@@ -31,14 +31,8 @@
         	<fileset file="js/drawing_context_svg.js" />
             <fileset file="js/breeding_box.js" />
             <fileset file="js/breeding_boxes.js" />
-        	<fileset file="js/monochrome/biomorph_genotype.js" />
         	<fileset file="js/watchmaker_geom.js" />
-        	<fileset file="js/monochrome/biomorph_pic.js" />
-        	<fileset file="js/monochrome/biomorph_develop.js" />
-            <fileset file="js/monochrome/monochrome_genebox.js" />
-            <fileset file="js/monochrome/biomorph/geneboxes.js" />
             <fileset file="js/species_factory.js" />
-            <fileset file="js/monochrome/species_factory_monochrome.js" />
             <fileset file="js/app.js" />
             <fileset file="js/blind_watchmaker.js" />
             <fileset file="js/watchmaker_session.js" />
@@ -48,6 +42,17 @@
         	<fileset file="js/engineering_window.js" />
             <fileset file="js/engineering_box.js" />
         </concat>
+        <concat destfile="docs/js/monochrome.js">
+            <fileset file="js/monochrome/monochrome_manipulation.js" />
+            <fileset file="js/monochrome/monochrome_genotype.js" />
+            <fileset file="js/monochrome/monochrome_mutate.js" />
+        <fileset file="js/monochrome/monochrome_pic.js" />
+        <fileset file="js/monochrome/monochrome_develop.js" />
+        <fileset file="js/monochrome/monochrome_genebox.js" />
+        <fileset file="js/monochrome/monochrome_geneboxes.js" />
+        <fileset file="js/monochrome/monochrome.js" />
+            </concat>
+
         <concat destfile="docs/css/watchmaker.css">
             <fileset file="css/watchmaker_boxes.css" />
             <fileset file="css/style.css" />

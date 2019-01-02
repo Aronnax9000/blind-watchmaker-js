@@ -14,10 +14,10 @@ $( function() {
             this.element.addClass('boxDiv');
             var canvasId = "canvas" + this.options.boxIndex;
             var canvas = $("<canvas></canvas>");
-            this.options.canvas = canvas;
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
+            this.options.canvas = canvas;
             this.element.append(canvas);
             if (this.options.isMidBox) {
                 canvas.addClass('midBox');
@@ -69,8 +69,7 @@ $( function() {
                             jQuery.data(midCanvas, 'genotype', genotype);
                             $(midCanvas).css({left:0,top:0});
                             var midCanvasPos = $(midCanvas).position();
-                            breedingBoxes.options.speciesFactory.develop(genotype, midCanvas,
-                                    drawCrossHairs);
+                            genotype.develop();
                             breedingBoxes.produceLitter(numBoxes, midBox);
                         } });
                 } else {

@@ -1,22 +1,26 @@
 
 $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
-    options: {},
     _create: function() {
-        this._super("_create");
-        $(this.element).addClass('engineeringWindow');
-        var speciesFactory = this.options.speciesFactory;
+        this._super("_create")
+        $(this.element).addClass('engineeringWindow')
+        var species = this.options.session.species
+        console.log('EW species ' + species)
         var geneboxes_options = {
             engineering : true,
-            speciesFactory: speciesFactory,
+            species: species,
         }
-        var geneboxes = $("<div></div>");
-        speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
-        this.element.append(geneboxes);
+        var geneboxes = $("<div></div>")
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
         var engineeringDiv = $("<div></div>").engineeringBox({ 
             height: 600,
-            width: 1000});
-        this.element.append(engineeringDiv);
-        speciesFactory.doPerson("BasicTree", $(engineeringDiv).find('canvas').get(0));
+            width: 1000})
+        this.element.append(engineeringDiv)
+        var canvas = $(engineeringDiv).find('canvas').get(0)
+        var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
+        biomorph.doPerson("BasicTree")
+        $(canvas).data('genotype', biomorph)
+        
     },
 
     // Called when created, and later when changing options

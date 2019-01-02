@@ -53,10 +53,11 @@ $( function() {
     // the widget definition, where "custom" is the namespace,
     // "colorize" the widget name
     $.widget( "dawk.breedingWindow", $.dawk.watchmakerView, {
-        options: { watchmakerSession: null},
+        options: { 
+            watchmakerSession: null,
+            biomorph: null
+        },
         viewGainedFocus: function(event) {
-            console.log($(this).breedingWindow("option", "test"));
-            console.log($(this).breedingWindow("option", "hi"));
             var watchmakerSession = $(this).breedingWindow("option", "watchmakerSession");
             console.log($(watchmakerSession.element).watchmakerSession('option', 'name'));
             var newMenu = $('<ul></ul>');
@@ -70,27 +71,26 @@ $( function() {
         },
 
         _create: function () {
-            this._super("_create");
-            $(this.element).addClass('breedingWindow');
-            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element);
-            $("<div></div>").breedingControl().appendTo(this.element);
-            $("<div></div>").breedingOffspringCounter().appendTo(this.element);
-            var speciesFactory = this.options.speciesFactory;
+            this._super("_create")
+            var species = this.options.session.species
+            $(this.element).addClass('breedingWindow')
+            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
+            $("<div></div>").breedingControl().appendTo(this.element)
+            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
             var geneboxes_options = {
                 engineering : false
             }
             var geneboxes = $("<div></div>");
-            speciesFactory.geneboxes.call(geneboxes, geneboxes_options);
+            _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options);
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes({speciesFactory: speciesFactory});
+            var boxes = $("<div></div>").breedingBoxes({session: this.options.session});
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
             container.append(boxes);
             var overlayCanvas = $('<canvas></canvas>');
-            overlayCanvas.attr('id', 'overlayCanvas');
             overlayCanvas.attr('width', 1000);
             overlayCanvas.attr('height', 600);
             overlayCanvas.addClass('overlayCanvas');
@@ -100,7 +100,6 @@ $( function() {
             var cols = boxes.breedingBoxes("option", 'cols');
 
             var midCanvas = $(this.element).find('.midBox').get(0);
-            speciesFactory.doPerson("BasicTree", midCanvas);
             $(midCanvas).trigger('mouseover');
             $(midCanvas).trigger('click');
         }})});

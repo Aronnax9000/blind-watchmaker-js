@@ -13,7 +13,9 @@ $( function() {
         },
 
         sparkLine: function(destinationCanvas) {
-            var canvas = document.getElementById('overlayCanvas');
+            var canvas = $(this.element).parent().find('.overlayCanvas')[0];
+//            console.log(canvas);
+
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
             var parents = $(destinationCanvas).parent();
@@ -41,20 +43,21 @@ $( function() {
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
-            var speciesFactory = this.options.speciesFactory;
             if(genotype != null) {
-                var childGenotype = speciesFactory.reproduce(genotype);
+                var childGenotype = genotype.reproduce(targetCanvas);
                 jQuery.data(targetCanvas, 'genotype', childGenotype);
-                speciesFactory.develop(childGenotype, targetCanvas, drawCrossHairs); 
+                childGenotype.develop(); 
             }
             else  
                 alert("Genotype is null");
-            return genotype;
+//            return genotype;
         },
 
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
+                console.log('produceKthOffspring ' + k)
+                console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -81,7 +84,9 @@ $( function() {
 //                              $('#progress').html(targetCanvas.attr('width') + " " + (100 * progress) + "%");
                             },
                             complete: function() {
-                                eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
+                                var overlayCanvas = $(targetCanvas).parents('.watchmakerView').find('.overlayCanvas')[0];
+                                
+                                eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
 //                                console.log('finished recursive animate Offspring ' + k);
@@ -123,23 +128,33 @@ $( function() {
 
         // The constructor
         _create: function() {
-            var boxes = this.element;
-            $(boxes).attr('id', 'boxes').addClass('boxes');
-            this.element.append(boxes);
-            var numBoxes = this.options.numBoxes;
-            var midBox = Math.trunc(numBoxes / 2);
+            var session = this.options.session
+            var species = this.options.session.species
+            var boxes = this.element
+            $(boxes).attr('id', 'boxes').addClass('boxes')
+            this.element.append(boxes)
+            var numBoxes = this.options.numBoxes
+            var midBox = Math.trunc(numBoxes / 2)
             for (j = 0; j < numBoxes; j++) {
-                var isMidBox = j == midBox;
+                var isMidBox = j == midBox
                 var canvasDiv = $("<div></div>").breedingBox({ 
                     boxIndex: j, 
                     isMidBox: isMidBox, 
-                    breedingBoxes: this}).appendTo(boxes);
+                    breedingBoxes: this}).appendTo(boxes)
+                console.log('adding canvas ' + j)
                 if(isMidBox) {
-                    this.options.midCanvasDiv = canvasDiv;
+                    // Create a biomorph and render it on the middle canvas.
+                    this.options.midCanvasDiv = canvasDiv
+                    var canvas = $(canvasDiv).find('canvas').get(0)
+                    var biomorph = _speciesFactorySingleton.getSpecies(
+                            species, session, canvas)
+                    $(canvas).data('genotype', biomorph)        
+                    biomorph.doPerson('BasicTree')
+                    biomorph.develop()
                 }
             }
 
-            this._refresh();
+            this._refresh()
         },
 
         // Called when created, and later when changing options
@@ -158,8 +173,8 @@ $( function() {
         // always refresh when changing options
         _setOptions: function() {
             // _super and _superApply handle keeping the right this-context
-            this._superApply( arguments );
-            this._refresh();
+            this._superApply( arguments )
+            this._refresh()
         },
 
         // _setOption is called for each individual option that is changing

@@ -19,7 +19,7 @@ $.widget('dawk.blindWatchmaker', {
     raiseAlert: function() { console.log('Blindwatchmaker callback from view'); },
     
     newWatchmakerSession: function(species) {
-        console.log('new Watchmaker session ' + species);
+//        console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
@@ -33,7 +33,7 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(div);
         div.watchmakerSession({'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-        console.log('watchmaker session tabcount '+ tabcount);
+//        console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
