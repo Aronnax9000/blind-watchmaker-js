@@ -974,7 +974,7 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.constructorFunctions[speciesType] = constructorFunction
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
-    // console.log("Registered Species Type " + speciesType);
+     console.log("Registered Species Type " + speciesType);
     // console.log("Constructor")
     // console.log(this.constructorFunctions[speciesType])
     // console.log("Session initializer ")
@@ -1081,7 +1081,7 @@ function eraseCanvas(canvas) {
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     drawingContext.clearRect(0, 0, canvas.width, canvas.height);
-    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
+//    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
 
     if(drawCrossHairs) {
         drawingContext.beginPath();
@@ -1107,6 +1107,8 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
         this.newWatchmakerSession('Monochrome');
+        this.newWatchmakerSession('MinimalSpecies');
+        this.newWatchmakerSession('Shells');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
         this.buildMenu();

@@ -40,7 +40,7 @@ function eraseCanvas(canvas) {
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     drawingContext.clearRect(0, 0, canvas.width, canvas.height);
-    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
+//    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
 
     if(drawCrossHairs) {
         drawingContext.beginPath();

@@ -46,11 +46,19 @@
             <fileset file="js/monochrome/monochrome_manipulation.js" />
             <fileset file="js/monochrome/monochrome_genotype.js" />
             <fileset file="js/monochrome/monochrome_mutate.js" />
+            <fileset file="js/monochrome/monochrome_dosaltation.js" />
         <fileset file="js/monochrome/monochrome_pic.js" />
         <fileset file="js/monochrome/monochrome_develop.js" />
         <fileset file="js/monochrome/monochrome_genebox.js" />
         <fileset file="js/monochrome/monochrome_geneboxes.js" />
         <fileset file="js/monochrome/monochrome.js" />
+            </concat>
+        <concat destfile="docs/js/minimal.js">
+            <fileset file="js/minimal/species_minimal.js" />
+            </concat>
+        <concat destfile="docs/js/shells.js">
+            <fileset file="js/shells/shells.js" />
+            <fileset file="js/snail/shell-bundle.js" />
             </concat>
 
         <concat destfile="docs/css/watchmaker.css">

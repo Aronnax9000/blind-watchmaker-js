@@ -11,7 +11,7 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.constructorFunctions[speciesType] = constructorFunction
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
-    // console.log("Registered Species Type " + speciesType);
+     console.log("Registered Species Type " + speciesType);
     // console.log("Constructor")
     // console.log(this.constructorFunctions[speciesType])
     // console.log("Session initializer ")
