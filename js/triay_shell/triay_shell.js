@@ -47,7 +47,7 @@ $.widget('dawk.shells_geneboxes', {
             this.element.append(geneBox);
         }
         
-        this.refresh();
+//        this.refresh();
     },
 
     updateFromCanvas: function(canvas) {
@@ -92,7 +92,7 @@ Shells.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
 }
 
 //Register the Monochrome biomorph species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("Shells", 
+_speciesFactorySingleton.registerSpeciesType("TriayShell", 
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 

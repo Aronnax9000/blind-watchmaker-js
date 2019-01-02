@@ -1,26 +1,26 @@
-
-function main() {
-
-    var canvas = document.getElementById("canvas")
-    var wWidth = window.innerWidth
-    var wHeight = window.innerHeight
-
-    canvas.width = wWidth
-    canvas.height = wHeight
-
-    var ctx = canvas.getContext('2d')
-
-    var bio = new Shell(ctx, wWidth, wHeight, null)
-
-    bio.draw()
-
-    canvas.addEventListener('click', function () {
-
-        bio.randomize()
-        bio.draw()
-    })
-
-}
+//
+//function main() {
+//
+//    var canvas = document.getElementById("canvas")
+//    var wWidth = window.innerWidth
+//    var wHeight = window.innerHeight
+//
+//    canvas.width = wWidth
+//    canvas.height = wHeight
+//
+//    var ctx = canvas.getContext('2d')
+//
+//    var bio = new Shell(ctx, wWidth, wHeight, null)
+//
+//    bio.draw()
+//
+//    canvas.addEventListener('click', function () {
+//
+//        bio.randomize()
+//        bio.draw()
+//    })
+//
+//}
 
 // A shell is a set of genes which control roughly what Dawkins called
 // flare, spire and verm, as discussed in Climbing Mount Improbable. 

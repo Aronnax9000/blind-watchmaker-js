@@ -7,8 +7,9 @@ $.widget('dawk.blindWatchmaker', {
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
+        this.newWatchmakerSession('TriayShell');
+        this.newWatchmakerSession('TriayBiomorph');
         this.newWatchmakerSession('Monochrome');
-        this.newWatchmakerSession('Shells');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
         this.buildMenu();
@@ -25,7 +26,7 @@ $.widget('dawk.blindWatchmaker', {
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
-        var sessionName = species + ' ' + index;
+        var sessionName = species //+ ' ' + index;
         
         var string = '<li><a href="#' + uuid + '">' + sessionName + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);

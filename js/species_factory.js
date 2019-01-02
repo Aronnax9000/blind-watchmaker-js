@@ -65,11 +65,11 @@ SpeciesFactory.prototype.geneboxes = function(speciesFactoryType,
     try {
         species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
     } catch (err) {
-        console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
-        for(let propt in this.sessionInitializers){
-            // console.log(propt + ': ' + this.sessionInitializers[propt]);
-        }
-        // console.log("err: " + err);
+        console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType + "'. Valid values are ")
+//        for(let propt in this.sessionInitializers.keys){
+//             console.error(propt + ': ' + this.sessionInitializers[propt]);
+//        }
+        console.error(err);
     }
     if(species != null)
         // console.log("Got session initializer for " + speciesFactoryType);
