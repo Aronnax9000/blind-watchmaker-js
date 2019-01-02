@@ -690,8 +690,8 @@ Shell.prototype.breed = function (element) {
     if (Shell.rand100() < child.mutProbGene) {
         child.reach += Shell.randomSign() * child.mutSize.reach
     }
-
-    if (Shell.rand100() < 5) {
+    // Changed threshold to 100 from 5 for demo purposes. 
+    if (Shell.rand100() < 100) {
         var patternKeys = Object.keys(Shell.patterns);
         child.pattern = patternKeys[Math.trunc(Math.random() * patternKeys.length)]
     }

@@ -1,6 +1,7 @@
 $( function() {
     $.widget('dawk.engineeringBox', {
         options: {
+            species: null,
             canvas: null,
             width: 200,
             height: 200,
@@ -24,7 +25,8 @@ $( function() {
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
 //            // console.log(geneboxes);
-            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas.get(0));
+            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                    this.options.canvas.get(0))
         },
         _doCanvasClicked: function(event) {
             // Raise the hypodermic message TODO

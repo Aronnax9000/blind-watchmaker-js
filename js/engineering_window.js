@@ -13,6 +13,7 @@ $.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
         _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
         this.element.append(geneboxes)
         var engineeringDiv = $("<div></div>").engineeringBox({ 
+            species: species,
             height: 600,
             width: 1000})
         this.element.append(engineeringDiv)

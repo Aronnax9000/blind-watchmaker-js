@@ -135,6 +135,7 @@ $( function() {
                 var canvasDiv = $("<div></div>").breedingBox({ 
                     boxIndex: j, 
                     isMidBox: isMidBox, 
+                    species: species,
                     breedingBoxes: this}).appendTo(boxes)
                 // console.log('adding canvas ' + j)
                 if(isMidBox) {

@@ -3,6 +3,7 @@ var stillBreeding = false;
 $( function() {
     $.widget('dawk.breedingBox', {
         options: {
+            species: null,
             canvas: null,
             boxIndex: null,
             isMidBox: false,
@@ -32,7 +33,9 @@ $( function() {
             var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-            _speciesFactorySingleton.updateFromCanvas(geneboxes, this.options.canvas)
+            _speciesFactorySingleton.updateFromCanvas(
+                    this.options.species,
+                    geneboxes, this.options.canvas)
 //            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
