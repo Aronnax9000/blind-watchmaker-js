@@ -14,11 +14,7 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
     this.geneboxesCallbacks[speciesType] = geneboxesCallback
-     console.log("Registered Species Type " + speciesType);
-    // console.log("Constructor")
-    // console.log(this.constructorFunctions[speciesType])
-    // console.log("Session initializer ")
-    // console.log(this.sessionInitializers[speciesType])
+    console.log("Registered Species Type " + speciesType)
 }
 
 SpeciesFactory.prototype.getRegisteredSpecies = function() {
@@ -39,13 +35,13 @@ SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canv
         console.error('geneboxes')
         console.error(geneboxes)
         for(let propt in this.constructorFunctions) {
-            // console.log(propt + ': ' + this.constructorFunctions[propt]);
+            // console.log(propt + ': ' + this.constructorFunctions[propt])
         }
-        
+
     }
     if(species != null)
         // console.log("Got species for " + speciesFactoryType);
-    return species;
+        return species;
 }
 SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
     var species = null;
@@ -60,7 +56,7 @@ SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, sessio
     }
     if(species != null)
         // console.log("Got session initializer for " + speciesFactoryType);
-    return species;
+        return species;
 }
 
 SpeciesFactory.prototype.geneboxes = function(speciesFactoryType, 
@@ -70,14 +66,14 @@ SpeciesFactory.prototype.geneboxes = function(speciesFactoryType,
         species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
     } catch (err) {
         console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType + "'. Valid values are ")
-//        for(let propt in this.sessionInitializers.keys){
-//             console.error(propt + ': ' + this.sessionInitializers[propt]);
-//        }
+//      for(let propt in this.sessionInitializers.keys){
+//      console.error(propt + ': ' + this.sessionInitializers[propt]);
+//      }
         console.error(err);
     }
     if(species != null)
         // console.log("Got session initializer for " + speciesFactoryType);
-    return species;
+        return species;
 }
 
 SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType, 
@@ -87,6 +83,7 @@ SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType,
         species = this.geneboxesCallbacks[speciesFactoryType](geneboxes, canvas);
     } catch (err) {
         console.error("SpeciesFactory can't find a registered geneboxes callback for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        console.error(err);
         for(let propt in this.geneboxesCallbacks){
             // console.log(propt + ': ' + this.geneboxesCallbacks[propt]);
         }
@@ -94,7 +91,7 @@ SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType,
     }
     if(species != null)
         // console.log("Got sgeneboxes callback for " + speciesFactoryType);
-    return species;
+        return species;
 }
 
 var _speciesFactorySingleton = new SpeciesFactory();

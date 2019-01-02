@@ -12,9 +12,6 @@ $.widget('dawk.blindWatchmaker', {
         availableSpecies.forEach(availableSpecie => {
             this.newWatchmakerSession(availableSpecie)
         })
-//        this.newWatchmakerSession('TriayShell');
-//        this.newWatchmakerSession('TriayBiomorph');
-//        this.newWatchmakerSession('Monochrome');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
         this.buildMenu();

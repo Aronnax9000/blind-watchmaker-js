@@ -92,7 +92,7 @@ Shells.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
 }
 
 //Register the Monochrome biomorph species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("TriayShell", 
+_speciesFactorySingleton.registerSpeciesType("Triay Shell", 
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 

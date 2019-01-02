@@ -8,35 +8,6 @@ TriayBiomorphs.initializeSession = function(session) {
     console.log('TriayBiomorphs.initializeSession')
 }
 
-$.widget('dawk.triay_biomorph_geneboxes', {
-    options : {
-        engineering: true,
-        biomorph: null,
-    },
-    _create : function(options) {
-        this._setOptions(options);
-
-        this.element.addClass("monochromeGeneboxes");
-        
-        for(let i = 0; i < 4; i++) {
-            var geneBoxTitle = 'Gene '+(i+1);
-            if(i == 8) {
-                geneBoxTitle += '. Floating point';
-            }
-            var geneBox = $("<div></div>").gene1to9box({
-                geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
-        }
-        
-//        this.refresh();
-    },
-
-    updateFromCanvas: function(canvas) {
-    },
-});
-
 // initializes the biomorph's genotype as one of a named set of types.
 TriayBiomorphs.prototype.doPerson = function(morphType) {
     console.log('TriayBiomorphs doPerson ' + morphType)
@@ -75,7 +46,7 @@ TriayBiomorphs.prototype.manipulate = function(geneboxIndex, leftRightPos, rung)
 }
 
 //Register the Monochrome biomorph species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("TriayBiomorph", 
+_speciesFactorySingleton.registerSpeciesType("Triay Biomorph", 
         (function(session, drawer) { return new TriayBiomorphs(session, drawer)}),
         (function(session) { TriayBiomorphs.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
