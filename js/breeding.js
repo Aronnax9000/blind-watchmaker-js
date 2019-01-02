@@ -25,7 +25,7 @@ $( function() {
             var string = '<span>\
                 <input type="checkbox" class="useFitness" /> <span>Use Fitness\
                 (Breed based on how well biomorph fits its box)\
-                </span> <input type="checkbox" id="explosiveBreeding" /> <span>Explosive\
+                </span> <input type="checkbox" class="explosiveBreeding" /> <span>Explosive\
                 Breeding </span>\
                 </span>';
             var div = $($.parseHTML(string));

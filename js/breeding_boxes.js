@@ -110,7 +110,10 @@ $( function() {
         produceLitter: function(numBoxes, midBox) {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
-            var recursive = ! document.getElementById('explosiveBreeding').checked;
+            var explosiveBreeding = $(this.element).parents('.breedingWindow').find('.explosiveBreeding').get(0)
+            console.log(explosiveBreeding);
+//                .find('.explosiveBreeding').get(0)
+            var recursive = ! explosiveBreeding.checked;
             if(recursive) {
                 this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
             } else {

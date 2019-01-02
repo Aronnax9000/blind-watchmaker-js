@@ -21,6 +21,10 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     // console.log(this.sessionInitializers[speciesType])
 }
 
+SpeciesFactory.prototype.getRegisteredSpecies = function() {
+    return Object.keys(this.constructorFunctions)
+}
+
 SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canvas) {
     var species = null;
     try {

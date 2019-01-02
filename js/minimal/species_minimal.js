@@ -63,5 +63,7 @@ _speciesFactorySingleton.registerSpeciesType("MinimalSpecies",
         (function(session, drawer) { return new MinimalSpecies(session, drawer)}),
         (function(session) { MinimalSpecies.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.minimalspecies_geneboxes.call(geneboxes, geneboxes_options) }));
+            $.fn.minimalspecies_geneboxes.call(geneboxes, geneboxes_options) }),
+        (function(geneboxes, canvas) { 
+            $(geneboxes).minimalspecies_geneboxes('updateFromCanvas', canvas)}));
 
