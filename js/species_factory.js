@@ -2,15 +2,18 @@ function SpeciesFactory() {
     this.constructorFunctions = {}
     this.sessionInitializers = {}
     this.geneboxesWidgets = {}
+    this.geneboxesCallbacks = {}
 }
 
 SpeciesFactory.prototype.registerSpeciesType = function(speciesType, 
         constructorFunction, 
         sessionInitializer,
-        geneboxesWidget) {
+        geneboxesWidget,
+        geneboxesCallback) {
     this.constructorFunctions[speciesType] = constructorFunction
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
+    this.geneboxesCallbacks[speciesType] = geneboxesCallback
      console.log("Registered Species Type " + speciesType);
     // console.log("Constructor")
     // console.log(this.constructorFunctions[speciesType])
@@ -62,7 +65,7 @@ SpeciesFactory.prototype.geneboxes = function(speciesFactoryType,
     try {
         species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
     } catch (err) {
-        console.error("SpeciesFactory can't find a registered session initializer for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
         for(let propt in this.sessionInitializers){
             // console.log(propt + ': ' + this.sessionInitializers[propt]);
         }
@@ -73,6 +76,21 @@ SpeciesFactory.prototype.geneboxes = function(speciesFactoryType,
     return species;
 }
 
-
+SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType, 
+        geneboxes, canvas) {
+    var species = null;
+    try {
+        species = this.geneboxesCallbacks[speciesFactoryType](geneboxes, canvas);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered geneboxes callback for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        for(let propt in this.geneboxesCallbacks){
+            // console.log(propt + ': ' + this.geneboxesCallbacks[propt]);
+        }
+        // console.log("err: " + err);
+    }
+    if(species != null)
+        // console.log("Got sgeneboxes callback for " + speciesFactoryType);
+    return species;
+}
 
 var _speciesFactorySingleton = new SpeciesFactory();

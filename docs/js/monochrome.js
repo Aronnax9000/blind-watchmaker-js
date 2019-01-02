@@ -1528,8 +1528,8 @@ $.widget('dawk.monochrome_geneboxes', {
         this._setOptions(options);
 
         this.element.addClass("monochromeGeneboxes");
-        var i;
-        for (i = 0; i < 9; i++) {
+        
+        for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
             if(i == 8) {
                 geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
@@ -1637,4 +1637,6 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
         (function(session, drawer) { return new Monochrome(session, drawer);}),
         (function(session) { Monochrome.initializeMut(session);}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }));
+            $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
+        (function(geneboxes, canvas) { 
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)}));

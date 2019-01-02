@@ -30,6 +30,26 @@ $.widget('dawk.shells_geneboxes', {
         engineering: true,
         biomorph: null,
     },
+    _create : function(options) {
+        this._setOptions(options);
+
+        this.element.addClass("monochromeGeneboxes");
+        
+        for(let i = 0; i < 4; i++) {
+            var geneBoxTitle = 'Gene '+(i+1);
+            if(i == 8) {
+                geneBoxTitle += '. Floating point';
+            }
+            var geneBox = $("<div></div>").gene1to9box({
+                geneboxCollection: this, 
+                title: geneBoxTitle});
+            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
+            this.element.append(geneBox);
+        }
+        
+        this.refresh();
+    },
+
     updateFromCanvas: function(canvas) {
     },
 });
@@ -42,6 +62,8 @@ Shells.prototype.doPerson = function(morphType) {
             drawer.width,
             drawer.height,
             null)
+    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
+//    this.shell.mutProbGene = 100
 
 } 
 Shells.prototype.doSaltation = function() {
@@ -74,7 +96,9 @@ _speciesFactorySingleton.registerSpeciesType("Shells",
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }));
+            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
+        (function(geneboxes, canvas) { 
+            $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
 
 
 function main() {
@@ -156,7 +180,13 @@ function Shell (ctx, width, height, genes) {
             this.pattern = genes.pattern
             this.handedness = genes.handedness
             this.translationGradient = genes.translationGradient
-
+            this.mutSize = {
+                    displacement: genes.mutSize.displacement,
+                    translation: genes.mutSize.translation,
+                    shape: genes.mutSize.shape,
+                    reach: genes.mutSize.reach
+            }
+            this.mutProbGene = genes.mutProbGene
             this.generate()
         }
         else {
@@ -719,7 +749,7 @@ Shell.prototype.getGenes = function () {
 }
 
 Shell.rand100 = function() {
-    return Math.trunc(Math.random * 100)
+    return Math.trunc(Math.random() * 100)
 }
 
 
@@ -733,9 +763,8 @@ Shell.randInt = function(lower, upper) {
 // The original program's mutations were pretty limited, so to accentuate them
 // we've added more parameters and a higher size mutation
 Shell.prototype.breed = function (element) {
-
     var child = this.getGenes()
-
+    console.log(child)
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
     }
@@ -765,7 +794,7 @@ Shell.prototype.breed = function (element) {
     }
 
     if (Shell.rand100() < 5) {
-        var patternKeys = Shell.patterns.keys();
+        var patternKeys = Object.keys(Shell.patterns);
         child.pattern = patternKeys[Math.trunc(Math.random() * patternKeys.length)]
     }
     var newShell

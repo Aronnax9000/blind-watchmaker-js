@@ -41,4 +41,6 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
         (function(session, drawer) { return new Monochrome(session, drawer);}),
         (function(session) { Monochrome.initializeMut(session);}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }));
+            $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
+        (function(geneboxes, canvas) { 
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)}));

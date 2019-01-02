@@ -32,7 +32,8 @@ $( function() {
             var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
             var geneboxes = $(parentBreedingWindow)
                 .find('.monochromeGeneboxes').get(0);
-            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
+            _speciesFactorySingleton.updateFromCanvas(geneboxes, this.options.canvas)
+//            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;

@@ -8,7 +8,6 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
         this.newWatchmakerSession('Monochrome');
-        this.newWatchmakerSession('MinimalSpecies');
         this.newWatchmakerSession('Shells');
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");

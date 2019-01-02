@@ -78,7 +78,13 @@ function Shell (ctx, width, height, genes) {
             this.pattern = genes.pattern
             this.handedness = genes.handedness
             this.translationGradient = genes.translationGradient
-
+            this.mutSize = {
+                    displacement: genes.mutSize.displacement,
+                    translation: genes.mutSize.translation,
+                    shape: genes.mutSize.shape,
+                    reach: genes.mutSize.reach
+            }
+            this.mutProbGene = genes.mutProbGene
             this.generate()
         }
         else {
@@ -641,7 +647,7 @@ Shell.prototype.getGenes = function () {
 }
 
 Shell.rand100 = function() {
-    return Math.trunc(Math.random * 100)
+    return Math.trunc(Math.random() * 100)
 }
 
 
@@ -655,9 +661,8 @@ Shell.randInt = function(lower, upper) {
 // The original program's mutations were pretty limited, so to accentuate them
 // we've added more parameters and a higher size mutation
 Shell.prototype.breed = function (element) {
-
     var child = this.getGenes()
-
+    console.log(child)
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
     }
@@ -687,7 +692,7 @@ Shell.prototype.breed = function (element) {
     }
 
     if (Shell.rand100() < 5) {
-        var patternKeys = Shell.patterns.keys();
+        var patternKeys = Object.keys(Shell.patterns);
         child.pattern = patternKeys[Math.trunc(Math.random() * patternKeys.length)]
     }
     var newShell

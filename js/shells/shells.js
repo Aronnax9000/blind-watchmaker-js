@@ -30,6 +30,26 @@ $.widget('dawk.shells_geneboxes', {
         engineering: true,
         biomorph: null,
     },
+    _create : function(options) {
+        this._setOptions(options);
+
+        this.element.addClass("monochromeGeneboxes");
+        
+        for(let i = 0; i < 4; i++) {
+            var geneBoxTitle = 'Gene '+(i+1);
+            if(i == 8) {
+                geneBoxTitle += '. Floating point';
+            }
+            var geneBox = $("<div></div>").gene1to9box({
+                geneboxCollection: this, 
+                title: geneBoxTitle});
+            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
+            this.element.append(geneBox);
+        }
+        
+        this.refresh();
+    },
+
     updateFromCanvas: function(canvas) {
     },
 });
@@ -42,6 +62,8 @@ Shells.prototype.doPerson = function(morphType) {
             drawer.width,
             drawer.height,
             null)
+    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
+//    this.shell.mutProbGene = 100
 
 } 
 Shells.prototype.doSaltation = function() {
@@ -74,5 +96,7 @@ _speciesFactorySingleton.registerSpeciesType("Shells",
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }));
+            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
+        (function(geneboxes, canvas) { 
+            $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
 
