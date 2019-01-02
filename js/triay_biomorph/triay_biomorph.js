@@ -39,11 +39,10 @@ TriayBiomorphs.prototype.reproduce = function(element) {
 TriayBiomorphs.prototype.develop = function() {
     console.log('TriayBiomorphs.develop')
     this.triay_biomorph.ctx = this.drawer.getContext('2d')
+    this.triay_biomorph.generate()
     this.triay_biomorph.drawWithImages()
 }
-TriayBiomorphs.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('TriayBiomorphs.manipulate')
-}
+
 
 //Register the Monochrome biomorph species with the SpeciesFactory.
 _speciesFactorySingleton.registerSpeciesType("Triay Biomorph", 

@@ -68,7 +68,7 @@ function Biomorph (ctx, width, height, genes) {
             this.trickleGene = genes.trickleGene
             this.mutSizeGene = genes.mutSizeGene
             this.mutProbGene = genes.mutProbGene
-            this.generate()
+//            this.generate()
         }
         else {
             this.randomize()
@@ -90,7 +90,7 @@ Biomorph.prototype.randomize = function () {
     this.trickleGene = randomGenes.trickleGene
     this.mutSizeGene = randomGenes.mutSizeGene
     this.mutProbGene = randomGenes.mutProbGene
-    this.generate()
+//    this.generate()
 }
 
 Biomorph.prototype.resetCentre = function () {

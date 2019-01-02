@@ -63,6 +63,7 @@
         <concat destfile="docs/js/triay_biomorph.js">
             <fileset file="js/triay_biomorph/triay_biomorph_geneboxes.js" />
             <fileset file="js/triay_biomorph/triay_biomorph.js" />
+            <fileset file="js/triay_biomorph/triay_biomorph_manipulation.js" />
             <fileset file="js/triay_biomorph/biomorph-bundle.js" />
             </concat>
 
