@@ -112,6 +112,10 @@ div {
 
 .ui-icon-circle-close {
     cursor: pointer;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
 }.monochromeGeneboxes {
     width: 1000px;
     height: 20px;
