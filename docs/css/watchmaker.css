@@ -114,8 +114,20 @@ div {
     cursor: pointer;
 }
 
+.ui-widget.ui-widget-content {
+    border: 0px none;
+}
+.ui-widget-content {
+    border: 0px none;
+    background: #ffffff;
+    color: #333333;
+}
+
 .ui-tabs .ui-tabs-panel {
     padding: 0px;
+    margin: 0px;
+    border-style: none;
+    border-width: 0px;
 }.monochromeGeneboxes {
     width: 1000px;
     height: 20px;

@@ -14,13 +14,11 @@
  * LinPtr = ^Lin;
  * LinHandle = ^LinPtr;
  */
-
 function Lin(x, y, xnew, ynew, thick) {
-    this.startPt = new Point(x,y);
-    this.endPt = new Point(xnew,ynew);
-    this.thickness = thick;
-    this.nextLin = null;    
-//    this.id = 0;
+    this.startPt = new Point(x,y); // start point of the line segment
+    this.endPt = new Point(xnew,ynew); // end point of the line segment
+    this.thickness = thick; // thickness of the line segment
+    this.nextLin = null; // Pascal had implicit pointer to next element.
 }
 
 Lin.prototype.linToString = function() {
@@ -54,18 +52,14 @@ var Compass = {NorthSouth:1, EastWest:2, properties: {
  *          PicSize: Integer;
  *          PicPerson: person
  *      END;
- *      
- * 
  */
 function Pic(biomorph) {
-    this.biomorph = biomorph
-
     this.basePtr = null // The first Lin
     this.movePtr = null // The current Lin (used in walking the array)
     this.origin = new Point(0,0) // a Point
     this.picSize = 0 // Number of Lins
-    this.picPerson = null // the biomorph that this is a picture of.
-    this.margin = new Rect()
+    this.picPerson = biomorph // the biomorph that this is a picture of.
+    this.margin = new Rect() // used to compute bounding rectangle.
 }
 
 
@@ -247,17 +241,17 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
 //{ it was originally drawn. Now draw it at place}
 
 Pic.prototype.drawPic = function(place) {
-    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', this.biomorph.drawer);
+    var biomorph = this.picPerson
+    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', biomorph.drawer);
 
     // console.log('drawPic picSize ' + this.picSize)
     // console.log(this)
     var drawer = this.drawer
-    var biomorph = this.biomorph
     drawer.save()
-    drawer.translate(-place.h,-place.v);
+    drawer.translate(-place.h,-place.v)
     if(false) { // draw bounding rectangle for debugging centring
-        drawer.setColor("red");
-        drawer.frameRect(this.margin);
+        drawer.setColor("red")
+        drawer.frameRect(this.margin)
     }
     var picStyle = PicStyleType.FF; 
     switch(biomorph.completenessGene) {

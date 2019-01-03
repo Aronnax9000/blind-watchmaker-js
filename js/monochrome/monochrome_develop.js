@@ -165,9 +165,11 @@ Monochrome.prototype.develop = function() {
         }
         this.tree(here.h, here.v, order, 2, dx, dy, thick, oddOne, order);
     }
-    var spokesGene = this.spokesGene;
+    
     var margin = this.pic.margin;
 
+    var spokesGene = this.spokesGene;
+    
     if(! (spokesGene == SpokesType.NorthOnly && this.completenessGene == CompletenessType.Single)) {
 
         if(centre.h - margin.left > margin.right - centre.h)
@@ -196,13 +198,9 @@ Monochrome.prototype.develop = function() {
             }
         }
     }
-    this.pic.picPerson = this;
-    
 
-    margin = this.pic.margin;
-    // // console.log("Margin " + margin.toString());
     var offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
-    // // console.log("offCentre " + offCentre.toString());
+
     this.pic.drawPic(offCentre);
 
 }// {develop}
