@@ -99,8 +99,10 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
                 break;
             case VertPos.MidRung: 
                 this.dGene[9] = SwellType.Same;
+                break;
             case VertPos.BottomRung: 
                 this.dGene[9] = SwellType.Shrink;
+                break;
             }
             break;
         case HorizPos.RightThird: 

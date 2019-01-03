@@ -7,6 +7,7 @@ $( function() {
             height: 200,
         },
         _create: function() {
+            this.element.addClass('engineeringBox');
             this.element.addClass('boxDiv');
             var canvas = $("<canvas></canvas>");
             this.options.canvas = canvas;
@@ -21,8 +22,8 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var parentBreedingWindow = this.element.parents('.engineeringWindow').get(0);
-            var geneboxes = $(parentBreedingWindow)
+            var parentbreedingView = this.element.parents('.engineeringView').get(0);
+            var geneboxes = $(parentbreedingView)
                 .find('.monochromeGeneboxes').get(0);
 //            // console.log(geneboxes);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,

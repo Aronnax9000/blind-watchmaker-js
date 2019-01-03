@@ -9,9 +9,11 @@
 	color: #000;
 }
 
+.engineeringBox {
+    cursor: url(cursor/hypodermic.png), auto;
+}
 
-
-.engineeringWindow, .engineering {
+.engineeringView, .engineering {
     width: 1000px;
     height: 600px;
     display: grid;
@@ -23,6 +25,7 @@
   width: 1000px;
   height: 600px;
   position: relative;
+  cursor: url(cursor/breed.png), auto;
 }
 .boxes, .overlay {
   width: 100%;

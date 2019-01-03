@@ -99,8 +99,10 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
                 break;
             case VertPos.MidRung: 
                 this.dGene[9] = SwellType.Same;
+                break;
             case VertPos.BottomRung: 
                 this.dGene[9] = SwellType.Shrink;
+                break;
             }
             break;
         case HorizPos.RightThird: 
@@ -188,10 +190,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
 const TRICKLE = 10;
 const MutTypeNo = 9;
 
-
-// Really belongs on the session
 Monochrome.initializeMut = function(session) {
-    // console.log('initializeMut')
     var mut = new Array(MutTypeNo);
     mut[0] = true;  // Segmentation // {** changed 1.1 **}
     mut[1] = true;  // Gradient {** changed 1.1 **}
@@ -203,6 +202,13 @@ Monochrome.initializeMut = function(session) {
     mut[7] = true;  // Tapering Twigs
     mut[8] = true;
     session.options.mut = mut;
+}
+
+// Really belongs on the session
+Monochrome.initializeSession = function(session) {
+    // console.log('initializeMut')
+    Monochrome.initializeMut(session)
+    session.options['sessionIcon'] = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png'
 }
 
 var SwellType = {
@@ -706,13 +712,11 @@ Monochrome.prototype.doSaltation = function() {
  * LinPtr = ^Lin;
  * LinHandle = ^LinPtr;
  */
-
 function Lin(x, y, xnew, ynew, thick) {
-    this.startPt = new Point(x,y);
-    this.endPt = new Point(xnew,ynew);
-    this.thickness = thick;
-    this.nextLin = null;    
-//    this.id = 0;
+    this.startPt = new Point(x,y); // start point of the line segment
+    this.endPt = new Point(xnew,ynew); // end point of the line segment
+    this.thickness = thick; // thickness of the line segment
+    this.nextLin = null; // Pascal had implicit pointer to next element.
 }
 
 Lin.prototype.linToString = function() {
@@ -746,18 +750,14 @@ var Compass = {NorthSouth:1, EastWest:2, properties: {
  *          PicSize: Integer;
  *          PicPerson: person
  *      END;
- *      
- * 
  */
 function Pic(biomorph) {
-    this.biomorph = biomorph
-
     this.basePtr = null // The first Lin
     this.movePtr = null // The current Lin (used in walking the array)
     this.origin = new Point(0,0) // a Point
     this.picSize = 0 // Number of Lins
-    this.picPerson = null // the biomorph that this is a picture of.
-    this.margin = new Rect()
+    this.picPerson = biomorph // the biomorph that this is a picture of.
+    this.margin = new Rect() // used to compute bounding rectangle.
 }
 
 
@@ -939,17 +939,17 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
 //{ it was originally drawn. Now draw it at place}
 
 Pic.prototype.drawPic = function(place) {
-    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', this.biomorph.drawer);
+    var biomorph = this.picPerson
+    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', biomorph.drawer);
 
     // console.log('drawPic picSize ' + this.picSize)
     // console.log(this)
     var drawer = this.drawer
-    var biomorph = this.biomorph
     drawer.save()
-    drawer.translate(-place.h,-place.v);
+    drawer.translate(-place.h,-place.v)
     if(false) { // draw bounding rectangle for debugging centring
-        drawer.setColor("red");
-        drawer.frameRect(this.margin);
+        drawer.setColor("red")
+        drawer.frameRect(this.margin)
     }
     var picStyle = PicStyleType.FF; 
     switch(biomorph.completenessGene) {
@@ -1166,9 +1166,11 @@ Monochrome.prototype.develop = function() {
         }
         this.tree(here.h, here.v, order, 2, dx, dy, thick, oddOne, order);
     }
-    var spokesGene = this.spokesGene;
+    
     var margin = this.pic.margin;
 
+    var spokesGene = this.spokesGene;
+    
     if(! (spokesGene == SpokesType.NorthOnly && this.completenessGene == CompletenessType.Single)) {
 
         if(centre.h - margin.left > margin.right - centre.h)
@@ -1197,13 +1199,9 @@ Monochrome.prototype.develop = function() {
             }
         }
     }
-    this.pic.picPerson = this;
-    
 
-    margin = this.pic.margin;
-    // // console.log("Margin " + margin.toString());
     var offCentre = new Point((margin.left + margin.right) / 2, (margin.top + margin.bottom) / 2);
-    // // console.log("offCentre " + offCentre.toString());
+
     this.pic.drawPic(offCentre);
 
 }// {develop}
@@ -1635,7 +1633,7 @@ function Monochrome(session, drawer) {
 // Register the Monochrome biomorph species with the SpeciesFactory.
 _speciesFactorySingleton.registerSpeciesType("Monochrome", 
         (function(session, drawer) { return new Monochrome(session, drawer);}),
-        (function(session) { Monochrome.initializeMut(session);}),
+        (function(session) { Monochrome.initializeSession(session);}),
         (function(geneboxes, geneboxes_options) { 
             $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
         (function(geneboxes, canvas) { 

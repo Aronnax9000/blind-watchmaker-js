@@ -31,14 +31,14 @@ $( function() {
             $(startButton).attr('disabled', 'disabled');
             this.options.autoRunning = true;
             this.autoBreed();
-            var generations = $(this.element).parents('.breedingWindow').find('.generations').get(0);
+            var generations = $(this.element).parents('.breedingView').find('.generations').get(0);
             this.measureGenerationRate(Number(generations.value));
         },
         autoBreed: function() {
-            var breedingWindow = $(this.element).parent();
+            var breedingView = $(this.element).parent();
             var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
             if (this.options.autoRunning) {
-                var useFitness = $(breedingWindow).find('.useFitness').get(0).checked;
+                var useFitness = $(breedingView).find('.useFitness').get(0).checked;
                 var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
                 if (useFitness) {
                     var canvas = $(breedingBoxes).find('.box').get(0);
@@ -60,7 +60,7 @@ $( function() {
                     var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
                     $(luckyCanvas).trigger('click');
                 }
-                var interval = Number($(this.element).parents('.breedingWindow')
+                var interval = Number($(this.element).parents('.breedingView')
                         .find('.autoReproduceInterval').get(0).value);
                 this._delay(this.autoBreed, interval);
                 

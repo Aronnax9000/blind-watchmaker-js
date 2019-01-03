@@ -30,8 +30,8 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var parentBreedingWindow = this.element.parents('.breedingWindow').get(0);
-            var geneboxes = $(parentBreedingWindow)
+            var parentbreedingView = this.element.parents('.breedingView').get(0);
+            var geneboxes = $(parentbreedingView)
                 .find('.monochromeGeneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.species,
@@ -55,8 +55,8 @@ $( function() {
             var clickedBoxIndex =  this.options.boxIndex;
             if (genotype != null) {
                 // erase the other canvases
-                var breedingWindowCanvases = $(canvas).parents('.boxes').find('canvas');
-                $(breedingWindowCanvases).each(function(index) {
+                var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
+                $(breedingViewCanvases).each(function(index) {
                     if(index != clickedBoxIndex) {
                         // console.log('erase ' + index)
                         eraseCanvas(this);

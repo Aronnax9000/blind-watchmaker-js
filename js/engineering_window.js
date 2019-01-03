@@ -1,8 +1,8 @@
 
-$.widget('dawk.engineeringWindow', $.dawk.watchmakerView, {
+$.widget('dawk.engineeringView', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create")
-        $(this.element).addClass('engineeringWindow')
+        $(this.element).addClass('engineeringView')
         var species = this.options.session.species
         // console.log('EW species ' + species)
         var geneboxes_options = {

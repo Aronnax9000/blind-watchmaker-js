@@ -58,7 +58,7 @@ var LimbFillType = {
  * 
  */
 function ColourBiomorph(session, drawer) {
-    console.log('new ColourBiomorph')
+//    console.log('new ColourBiomorph')
     this.session = session
     this.drawer = drawer
     this.gene = chromosome()
@@ -83,7 +83,7 @@ function ColourBiomorph(session, drawer) {
 }
 
 ColourBiomorph.initializeSession = function(session) {
-    console.log('ColourBiomorph.initializeSession')
+    session.options['sessionIcon'] = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
 }
 
 $.widget('dawk.colourbiomorph_geneboxes', {
@@ -97,15 +97,15 @@ $.widget('dawk.colourbiomorph_geneboxes', {
 
 // initializes the biomorph's genotype as one of a named set of types.
 ColourBiomorph.prototype.doPerson = function(morphType) {
-    console.log('ColourBiomorph doPerson ' + morphType)
+//    console.log('ColourBiomorph doPerson ' + morphType)
 } 
 ColourBiomorph.prototype.doSaltation = function() {
-    console.log('ColourBiomorph.doSaltation')
+//    console.log('ColourBiomorph.doSaltation')
 }
 // initializes the biomorph's genotype to a random set of values
 // causes the biomorph's genotype to undergo a random mutation
 ColourBiomorph.prototype.mutate = function() {
-    console.log('ColourBiomorph.mutate')
+//    console.log('ColourBiomorph.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 ColourBiomorph.prototype.reproduce = function(element) {
@@ -113,10 +113,10 @@ ColourBiomorph.prototype.reproduce = function(element) {
 }
 // called when it is time for the biomorph to draw itself. 
 ColourBiomorph.prototype.develop = function() {
-    console.log('ColourBiomorph.develop')
+//    console.log('ColourBiomorph.develop')
 }
 ColourBiomorph.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('ColourBiomorph.manipulate')
+//    console.log('ColourBiomorph.manipulate')
 }
 
 //Register the Colour biomorph species with the SpeciesFactory.
@@ -135,44 +135,24 @@ _speciesFactorySingleton.registerSpeciesType("Colour",
 
 
 /*
- * Globals, line 247.
- * 
- * ColourLin = RECORD
+ * Lin = RECORD
  *     StartPt, EndPt: Point;
- *     Thickness: 1..8;
+ *     Col: INTEGER;
  * END;
- * LinPtr = ^ColourLin;
+ * LinPtr = ^Lin;
  * LinHandle = ^LinPtr;
  */
 
-function ColourLin(x, y, xnew, ynew, thick) {
+function ColourLin(x, y, xnew, ynew, col) {
     this.startPt = new Point(x,y);
     this.endPt = new Point(xnew,ynew);
-    this.thickness = thick;
+    this.col = col;
     this.nextLin = null;    
-//    this.id = 0;
 }
 
 ColourLin.prototype.linToString = function() {
     return "ColourLin " + this.startPt.toString() + " -> " + this.endPt.toString() + " thickness " + this.thickness;
 }
-
-var PicStyleType = {LF: 1, RF: 2, FF: 3, LUD: 4, RUD:5, FUD:6, LSW:7, RSW:8, FSW:9,
-        properties: {
-            1: {name: "LF"},
-            2: {name: "RF"},
-            3: {name: "FF"},
-            4: {name: "LUD"},
-            5: {name: "RUD"},
-            6: {name: "FUD"},
-            7: {name: "LSW"},
-            8: {name: "RSW"},
-            9: {name: "FSW"}
-        }
-};
-var Compass = {NorthSouth:1, EastWest:2, properties: {
-    1: {name: "NorthSouth"}, 2:{name: "EastWest"}
-}};
 
 
 /*
@@ -188,14 +168,12 @@ var Compass = {NorthSouth:1, EastWest:2, properties: {
  * 
  */
 function ColourPic(biomorph) {
-    this.biomorph = biomorph
-
     this.basePtr = null // The first ColourLin
     this.movePtr = null // The current ColourLin (used in walking the array)
     this.origin = new Point(0,0) // a Point
     this.picSize = 0 // Number of Lins
     this.picPerson = null // the biomorph that this is a picture of.
-    this.margin = new Rect()
+    this.margin = new Rect() // bounding rectangle
 }
 
 
@@ -233,50 +211,15 @@ ColourPic.prototype.zeroPic = function (here) {
     // console.log(this)
 }
 
-
-/*
- * PROCEDURE PicLine (VAR thisPic: ColourPic; x, y, xnew, ynew, thick: Integer);
-    BEGIN
-        IF thick > 8 THEN
-            thick = 8;
-        WITH thisPic DO
-            BEGIN
-                IF PicSize >= PicSizeMax THEN
-                    BEGIN
-{Message(GetString(TooLargeString));}
- {used the help dialog! v1.1 changed to alert}
-                        DisplayError(-147, 'Biomorph too large, or other problem', ' ', StopError);
-                        ExitToShell
-                    END
-                ELSE
-                    WITH MovePtr^ DO
-                        BEGIN
-                            StartPt.h = x;
-                            StartPt.v = y;
-                            EndPt.h = xnew;
-                            EndPt.v = ynew;
-                            Thickness = Thick
-                        END;
-                MovePtr = linptr(size(MovePtr) + 10);  {advance 'array subscript' by number}
-{                                    of bytes occupied by one lin}
-                PicSize = PicSize + 1
-            END
-    END; {PicLine}
-
- */
-ColourPic.prototype.picLine = function(x, y, xnew, ynew, thick) {
+ColourPic.prototype.picLine = function(x, y, xnew, ynew, color) {
 //  // // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
     if(this.picSize >= PICSIZEMAX) {
-        // {Message(GetString(TooLargeString));}
-        // {used the help dialog! v1.1 changed to alert}
-        alert('Biomorph too large, or other problem');
+        alert('Biomorph too Large. No recovery possible')
         return
     } else {
-        newLin = new ColourLin(x, y, xnew, ynew, thick)
-//        newLin.id = this.picSize++
-//        // console.log('added line ' + newLin.id)
+        newLin = new ColourLin(x, y, xnew, ynew, color)
         if(this.basePtr == null) { // First ColourLin in the ColourPic.
             this.basePtr = newLin; // set the base pointer to the new ColourLin
         } else { // ColourPic already has at least one ColourLin.
@@ -317,11 +260,6 @@ ColourPic.prototype.actualLine = function(picStyle, orientation) {
     var origin = this.origin;
     var movePtr = this.movePtr;
     var drawer = this.drawer;
-//    
-//  // console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
-//          + " id " + movePtr.id 
-//          + " movePtr:" + movePtr.toString() 
-//          + " Origin:" + origin.toString())
 
     drawer.penSize(movePtr.thickness);
     var x0;

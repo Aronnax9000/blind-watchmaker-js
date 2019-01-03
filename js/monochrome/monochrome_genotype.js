@@ -2,10 +2,7 @@
 const TRICKLE = 10;
 const MutTypeNo = 9;
 
-
-// Really belongs on the session
 Monochrome.initializeMut = function(session) {
-    // console.log('initializeMut')
     var mut = new Array(MutTypeNo);
     mut[0] = true;  // Segmentation // {** changed 1.1 **}
     mut[1] = true;  // Gradient {** changed 1.1 **}
@@ -17,6 +14,13 @@ Monochrome.initializeMut = function(session) {
     mut[7] = true;  // Tapering Twigs
     mut[8] = true;
     session.options.mut = mut;
+}
+
+// Really belongs on the session
+Monochrome.initializeSession = function(session) {
+    // console.log('initializeMut')
+    Monochrome.initializeMut(session)
+    session.options['sessionIcon'] = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png'
 }
 
 var SwellType = {

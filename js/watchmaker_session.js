@@ -1,4 +1,4 @@
-$.widget('dawk.watchmakerSession', {
+$.widget('dawk.watchmakerSessionTab', {
     options: {
         species: null,
         session: null,
@@ -8,18 +8,18 @@ $.widget('dawk.watchmakerSession', {
     raiseAlert: function(newMenu) {
         // console.log('raise alert in watchmaker session')
         // console.log(newMenu);
-        var blindWatchmaker = $(this.element).watchmakerSession('option', 'blindWatchmaker');
+        var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
     },
     buildMenu: function(menuContents) {
         var li;
         li = $('<li><div>New Breeding</div></li>');
         menuContents.append(li);
-        this._on(li, {click: 'newBreedingWindow'});
+        this._on(li, {click: 'newbreedingView'});
 
         li = $('<li><div>New Engineering</div></li>');
         menuContents.append(li);
-        this._on(li, {click: 'newEngineeringWindow'});
+        this._on(li, {click: 'newengineeringView'});
         var activeIndex = $(this.element).tabs("option", "active");
         var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
 
@@ -30,32 +30,33 @@ $.widget('dawk.watchmakerSession', {
 //      $(parents).watchmakerView('buildMenu');
 //      // console.log(ui.newPanel);
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
-
     },   
     _create: function () {
         var species = this.options.species
-        this.options.session = new WatchmakerSession(species)
         // console.log('new WatchmakerSession species ' + species);
-        this.element.addClass('watchmakerSession');
+        this.element.addClass('watchmakerSessionTab');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        this.newBreedingWindow(this.options.session, species);
-        this.newEngineeringWindow(this.options.session, species);
+        this.newbreedingView(this.options.session, species);
+        this.newengineeringView(this.options.session, species);
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newBreedingWindow: function(species) {
+    newbreedingView: function(species) {
         var uuid = uuidv4();
-        var string = '<li><a href="#' + uuid + '">Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        div.breedingWindow({
+        div.breedingView({
             session: this.options.session, 
-            watchmakerSession: this, 
+            watchmakerSessionTab: this, 
             species: species});
         $('.ui-closable-tab').click(
                 function() {
@@ -78,17 +79,19 @@ $.widget('dawk.watchmakerSession', {
         this.element.tabs("option", "active", tabcount - 1);
 
     },
-    newEngineeringWindow: function(species) {
+    newengineeringView: function(species) {
         var uuid = uuidv4();
-        var string = '<li><a href="#' + uuid + '">Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        div.engineeringWindow({session: this.options.session, 
-            
-            watchmakerSession: this});
+        div.engineeringView({session: this.options.session, 
+            watchmakerSessionTab: this});
         $('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -112,7 +115,7 @@ $.widget('dawk.watchmakerSession', {
 });
 
 function WatchmakerSession(species) {
-    this.options = {}
+    this.options = []
     this.myPenSize = 1;
 
     this.species = species

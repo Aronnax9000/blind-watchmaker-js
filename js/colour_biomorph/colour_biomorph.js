@@ -58,7 +58,7 @@ var LimbFillType = {
  * 
  */
 function ColourBiomorph(session, drawer) {
-    console.log('new ColourBiomorph')
+//    console.log('new ColourBiomorph')
     this.session = session
     this.drawer = drawer
     this.gene = chromosome()
@@ -83,7 +83,7 @@ function ColourBiomorph(session, drawer) {
 }
 
 ColourBiomorph.initializeSession = function(session) {
-    console.log('ColourBiomorph.initializeSession')
+    session.options['sessionIcon'] = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
 }
 
 $.widget('dawk.colourbiomorph_geneboxes', {
@@ -97,15 +97,15 @@ $.widget('dawk.colourbiomorph_geneboxes', {
 
 // initializes the biomorph's genotype as one of a named set of types.
 ColourBiomorph.prototype.doPerson = function(morphType) {
-    console.log('ColourBiomorph doPerson ' + morphType)
+//    console.log('ColourBiomorph doPerson ' + morphType)
 } 
 ColourBiomorph.prototype.doSaltation = function() {
-    console.log('ColourBiomorph.doSaltation')
+//    console.log('ColourBiomorph.doSaltation')
 }
 // initializes the biomorph's genotype to a random set of values
 // causes the biomorph's genotype to undergo a random mutation
 ColourBiomorph.prototype.mutate = function() {
-    console.log('ColourBiomorph.mutate')
+//    console.log('ColourBiomorph.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 ColourBiomorph.prototype.reproduce = function(element) {
@@ -113,10 +113,10 @@ ColourBiomorph.prototype.reproduce = function(element) {
 }
 // called when it is time for the biomorph to draw itself. 
 ColourBiomorph.prototype.develop = function() {
-    console.log('ColourBiomorph.develop')
+//    console.log('ColourBiomorph.develop')
 }
 ColourBiomorph.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('ColourBiomorph.manipulate')
+//    console.log('ColourBiomorph.manipulate')
 }
 
 //Register the Colour biomorph species with the SpeciesFactory.

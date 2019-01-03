@@ -373,18 +373,18 @@ $.widget('dawk.triay_biomorph_geneboxes', {
     
 });
 function TriayBiomorphs(session, drawer) {
-    console.log('new TriayBiomorphs')
+//    console.log('new TriayBiomorphs')
     this.session = session
     this.drawer = drawer
 }
 
 TriayBiomorphs.initializeSession = function(session) {
-    console.log('TriayBiomorphs.initializeSession')
+    session.options['sessionIcon'] = 'img/BWSpiderLogoMono_ICNO_23096_32x32.png'
 }
 
 // initializes the biomorph's genotype as one of a named set of types.
 TriayBiomorphs.prototype.doPerson = function(morphType) {
-    console.log('TriayBiomorphs doPerson ' + morphType)
+//    console.log('TriayBiomorphs doPerson ' + morphType)
     var drawer = this.drawer
     this.triay_biomorph = new Biomorph(drawer.getContext('2d'), 
             drawer.width,
@@ -395,13 +395,13 @@ TriayBiomorphs.prototype.doPerson = function(morphType) {
 
 } 
 TriayBiomorphs.prototype.doSaltation = function() {
-    console.log('TriayBiomorphs.doSaltation')
+//    console.log('TriayBiomorphs.doSaltation')
     this.triay_biomorph.randomize()
 }
 // initializes the biomorph's genotype to a random set of values
 // causes the biomorph's genotype to undergo a random mutation
 TriayBiomorphs.prototype.mutate = function() {
-    console.log('TriayBiomorphs.mutate')
+//    console.log('TriayBiomorphs.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 TriayBiomorphs.prototype.reproduce = function(element) {
@@ -411,7 +411,7 @@ TriayBiomorphs.prototype.reproduce = function(element) {
 }
 // called when it is time for the biomorph to draw itself. 
 TriayBiomorphs.prototype.develop = function() {
-    console.log('TriayBiomorphs.develop')
+//    console.log('TriayBiomorphs.develop')
     this.triay_biomorph.ctx = this.drawer.getContext('2d')
     this.triay_biomorph.generate()
     this.triay_biomorph.drawWithImages()
@@ -546,7 +546,7 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         case HorizPos.RightThird: 
             var sizeWorry = (biomorph.segNoGene + 1) * this.twoToThe(biomorph.genes[8]);
             if(sizeWorry <= WORRYMAX) {
-                biomorph.segNoGene++;
+                biomorph.segNoGene++
             }
             break;
         }
@@ -554,7 +554,7 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
     case 11: 
         switch(leftRightPos) {
         case HorizPos.LeftThird:
-            biomorph.segDistGene -= biomorph.trickleGene;
+            biomorph.segDistGene -= biomorph.trickleGene
             break;
         case HorizPos.MidThird:
             switch(rung) {
@@ -563,22 +563,24 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
                 break;
             case VertPos.MidRung: 
                 biomorph.dGenes[9] = Biomorph.swellTypes[1]
+                break;
             case VertPos.BottomRung: 
                 biomorph.dGenes[9] = Biomorph.swellTypes[2]
+                break;
             }
             break;
         case HorizPos.RightThird: 
-            biomorph.segDistGene += biomorph.trickleGene;
+            biomorph.segDistGene += biomorph.trickleGene
             break;
         }
         break;
     case 12: 
         switch(leftRightPos) {
         case HorizPos.LeftThird:
-            biomorph.symmetrical = false;
-            break;
+            biomorph.symmetrical = false
+            break
         case HorizPos.MidThird: 
-            break; // {No Action}
+            break // {No Action}
         case HorizPos.RightThird: 
             biomorph.symmetrical = true;
             break;
@@ -601,13 +603,13 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             if(biomorph.trickleGene > 1)
-                biomorph.trickleGene--;
-            break;
+                biomorph.trickleGene--
+            break
         case HorizPos.RightThird: 
-            biomorph.trickleGene++;
-            break;
+            biomorph.trickleGene++
+            break
         case HorizPos.MidThird: 
-            break;// {No action}
+            break // {No action}
         }
         break;
     case 15: 

@@ -22,9 +22,14 @@ function Shells(session, drawer) {
 }
 
 Shells.initializeSession = function(session) {
-    console.log('Shells.initializeSession')
+    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
 }
 
+// Classic Snailmaker displayed only these:
+// Opening
+// Displacement
+// Shape
+// Translation
 $.widget('dawk.shells_geneboxes', {
     options : {
         engineering: true,
