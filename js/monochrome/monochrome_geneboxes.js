@@ -1,13 +1,29 @@
-
-$.widget('dawk.monochrome_geneboxes', {
+$.widget('dawk.geneboxes', {
     options : {
         engineering: true,
         numGeneBoxes : 16,
         biomorph: null,
+    },    
+    manipulate: function(geneboxIndex, leftRightPos, rung) {
+        console.log(this.options.biomorph)
+        this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
+        console.log('geneboxes widget finished calling manipulation on geneboxIndex ' + geneboxIndex);
+        var canvas = $(this.element).parent().find('canvas').get(0);
+        this.updateFromCanvas(canvas);
+        console.log('geneboxes widget calling develop on ');
+        console.log(this.options.biomorph)
+        this.options.biomorph.develop();
+    },
+
+})
+
+$.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
+    options : {
+        numGeneBoxes : 16,
     },
 
     updateFromCanvas: function(canvas) {
-        
+
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
             // console.log('updateFromCanvas: no biomorph on canvas.')
@@ -16,7 +32,7 @@ $.widget('dawk.monochrome_geneboxes', {
         }
         this.options.biomorph = biomorph;
         geneboxes = $(this.element).find('.monochromeGenebox');
-//        // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
+//      // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
@@ -46,13 +62,13 @@ $.widget('dawk.monochrome_geneboxes', {
         genebox = geneboxes.eq(15);
         genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
         genebox.segNoGenebox("refresh");
-        
+
     },
     _create : function(options) {
         this._setOptions(options);
 
         this.element.addClass("monochromeGeneboxes");
-        
+
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
             if(i == 8) {
@@ -93,11 +109,11 @@ $.widget('dawk.monochrome_geneboxes', {
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 16);
         this.element.append(geneBox);
-        
+
         this.refresh();
     },
     _setOption : function(key, value) {
-//        // // console.log('setOption ' + key + ": " + value);
+//      // // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {
@@ -106,15 +122,9 @@ $.widget('dawk.monochrome_geneboxes', {
     },
     refresh : function() {
     },
-    manipulate: function(geneboxIndex, leftRightPos, rung) {
-//       // console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
-       this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
-       var canvas = $(this.element).parent().find('canvas').get(0);
-       this.updateFromCanvas(canvas);
-       this.options.biomorph.develop();
-    },
+
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");
     }
-    
+
 });

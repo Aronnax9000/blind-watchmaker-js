@@ -2,8 +2,7 @@
 <!-- ====================================================================== 
      Dec 12, 2018 10:46:21 PM                                                        
 
-     project    
-     description
+     Build file for WatchmakerJS
                    
      alan                                                                
      ====================================================================== -->
@@ -61,6 +60,8 @@
             <fileset file="js/colour_biomorph/colour_pic.js" />
             </concat>
         <concat destfile="docs/js/triay_shell.js">
+            <fileset file="js/triay_shell/triay_shell_genebox.js" />
+            <fileset file="js/triay_shell/triay_shell_geneboxes.js" />
             <fileset file="js/triay_shell/triay_shell.js" />
             <fileset file="js/triay_shell/shell-bundle.js" />
             </concat>

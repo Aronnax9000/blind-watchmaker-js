@@ -15,6 +15,7 @@
  * Scalable Vector Graphic. 
  * 
  */
+
 function Shells(session, drawer) {
     console.log('new Shells')
     this.session = session
@@ -25,41 +26,7 @@ Shells.initializeSession = function(session) {
     session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
 }
 
-// Classic Snailmaker displayed only these:
-// Opening
-// Displacement
-// Shape
-// Translation
-$.widget('dawk.shells_geneboxes', {
-    options : {
-        engineering: true,
-        biomorph: null,
-    },
-    _create : function(options) {
-        this._setOptions(options);
-
-        this.element.addClass("monochromeGeneboxes");
-        
-        for(let i = 0; i < 4; i++) {
-            var geneBoxTitle = 'Gene '+(i+1);
-            if(i == 8) {
-                geneBoxTitle += '. Floating point';
-            }
-            var geneBox = $("<div></div>").gene1to9box({
-                geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
-        }
-        
-//        this.refresh();
-    },
-
-    updateFromCanvas: function(canvas) {
-    },
-});
-
-// initializes the biomorph's genotype as one of a named set of types.
+//initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
     console.log('Shells doPerson ' + morphType)
     var drawer = this.drawer
@@ -68,15 +35,15 @@ Shells.prototype.doPerson = function(morphType) {
             drawer.height,
             null)
     // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
-//    this.shell.mutProbGene = 100
+//  this.shell.mutProbGene = 100
 
 } 
 Shells.prototype.doSaltation = function() {
     console.log('Shells.doSaltation')
     this.shell.randomize()
 }
-// initializes the biomorph's genotype to a random set of values
-// causes the biomorph's genotype to undergo a random mutation
+//initializes the biomorph's genotype to a random set of values
+//causes the biomorph's genotype to undergo a random mutation
 Shells.prototype.mutate = function() {
     console.log('Shells.mutate')
 }
@@ -86,22 +53,240 @@ Shells.prototype.reproduce = function(element) {
     child.shell = this.shell.breed(element)
     return child
 }
-// called when it is time for the biomorph to draw itself. 
+//called when it is time for the biomorph to draw itself. 
 Shells.prototype.develop = function() {
-    console.log('Shells.develop')
+//    alert('Shells.develop')
+    this.shell.generate()
     this.shell.ctx = this.drawer.getContext('2d')
     this.shell.draw()
 }
-Shells.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('Shells.manipulate')
+
+//FUNCTION margarine (W: real; direction: integer): real;
+//{we want to change by large amounts when low, small amounts when large}
+//VAR
+//m, logged, logchanged, WMutSize: real;
+//BEGIN
+//WMutSize := 0.1;
+//logged := ln(W);
+//logchanged := logged + WMutSize * direction;
+//IF logchanged > 20 THEN
+//logchanged := 20;
+//m := exp(logchanged);
+//IF m < 1 THEN
+//m := 1;
+//margarine := m
+//END;
+
+
+Shells.margarine = function (w, direction) {
+    // {we want to change by large amounts when low, small amounts when large}
+    var wMutSize = 0.1
+    var logged = Math.log(w)
+    var logchanged = logged + wMutSize * direction
+    if(logchanged > 20) {
+        logchanged = 20
+    }
+    var m = Math.exp(logchanged)
+
+    if(m < 1) {
+        m = 1
+    }
+    return m
 }
 
-//Register the Monochrome biomorph species with the SpeciesFactory.
+Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
+    // geneboxIndex is one-based
+    var str = "Manipulation one-based geneBoxIndex:" + geneboxIndex;
+
+    var leftRightPosProperties = HorizPos.properties[leftRightPos];
+    if(leftRightPosProperties != null) {
+        str += ',' + leftRightPosProperties.name;
+    }
+    str += ' v:' + rung
+    var rungProperties = VertPos.properties[rung];
+    if(rungProperties != null) {
+        str += ',' + rungProperties.name;
+    }
+    var shell = this.shell
+    switch(geneboxIndex) {
+    case 1:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.opening = Shells.margarine(shell.opening, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.opening = Shells.margarine(shell.opening, 1)
+            break;
+        }
+        break;;
+    case 2:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.displacement -= shell.mutSize.displacement
+            break;
+        case HorizPos.RightThird: 
+            shell.displacement += shell.mutSize.displacement
+            break;
+        }
+        break;;
+    case 3:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.shape -= shell.mutSize.shape
+            break;
+        case HorizPos.RightThird: 
+            shell.shape += shell.mutSize.shape
+            break;
+        }
+        break;;
+    case 4:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translation -= shell.mutSize.translation
+            break;
+        case HorizPos.RightThird: 
+            shell.translation += shell.mutSize.translation
+            break;
+        }
+        break;
+    case 5:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.handedness = -1
+            break;
+        case HorizPos.RightThird: 
+            shell.handedness = 1
+            break;
+        }
+        break;
+    case 6:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.displacement -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.displacement += 0.1
+            break;
+        }
+        break;
+    case 7:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.translation -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.translation += 0.1
+            break;
+        }
+        break;
+    case 8:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.coarsegraininess--
+            break;
+        case HorizPos.RightThird: 
+            shell.coarsegraininess++
+            break;
+        }
+        break;
+    case 9:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.reach--
+            break;
+        case HorizPos.RightThird: 
+            shell.reach++
+            break;
+        }
+        break;
+    case 10:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, 1)
+            break;
+        }
+        break;
+    case 11:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.shape > 0) {
+                shell.mutSize.shape--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.shape++
+            break;
+        }
+        break;
+    case 12:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.reach > 0) {
+                shell.mutSize.reach--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.reach++
+            break;
+        }
+        break;
+    case 13:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(shell.mutProbGene > 0) {
+                shell.mutProbGene--
+            }
+            break;
+        case HorizPos.RightThird:
+            if(shell.mutProbGene < 100) {
+                shell.mutProbGene++
+            }
+            break;
+        }
+        break;
+    case 14:
+        var keys = Object.keys(Shell.patterns)
+        var pattern;
+        for(let i = 0; i < keys.length; i++) {
+            if(keys[i] == shell.pattern) {
+                pattern = i
+                break;
+            }
+        }
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(pattern > 0) {
+                pattern--
+            }
+            break;
+        case HorizPos.RightThird: 
+            if(pattern < keys.length - 1) {
+                pattern++
+            }
+            break;
+        }
+        shell.pattern = keys[pattern]
+//        alert("Pattern " + pattern + ":" + shell.pattern)
+        break;
+    }
+    
+    if(shell.displacement < 0) {
+        shell.displacement = 0
+    } else if(shell.displacement > 100) {
+        shell.displacement = 100
+    }
+    
+}
+
+//Register the species with the SpeciesFactory.
 _speciesFactorySingleton.registerSpeciesType("Triay Shell", 
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
             $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
-        (function(geneboxes, canvas) { 
-            $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
+            (function(geneboxes, canvas) { 
+                $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
 
