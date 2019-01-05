@@ -1,5 +1,5 @@
 /*
- * Constructor for the Minimal biomorph species.
+ * Constructor for the Triay Shell biomorph species.
  * 
  * A biomorph is associated with a watchmaker session, and a drawing object.
  * 
@@ -192,7 +192,9 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     case 9:
         switch(leftRightPos) {
         case HorizPos.LeftThird: 
-            shell.reach--
+            if(shell.reach > 1) {
+                shell.reach--
+            }
             break;
         case HorizPos.RightThird: 
             shell.reach++
@@ -224,7 +226,7 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     case 12:
         switch(leftRightPos) {
         case HorizPos.LeftThird: 
-            if(shell.mutSize.reach > 0) {
+            if(shell.mutSize.reach > 1) {
                 shell.mutSize.reach--
             }
             break;
@@ -236,7 +238,7 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     case 13:
         switch(leftRightPos) {
         case HorizPos.LeftThird:
-            if(shell.mutProbGene > 0) {
+            if(shell.mutProbGene > 1) {
                 shell.mutProbGene--
             }
             break;
