@@ -1,3 +1,7 @@
+Monochrome.concoct = function(a, b, c) {
+    
+}
+
 Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     var str = "Manipulation geneBoxIndex:" + geneboxIndex;
 
@@ -1647,4 +1651,7 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
         (function(geneboxes, geneboxes_options) { 
             $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
         (function(geneboxes, canvas) { 
-            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)}));
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)}),
+        (function(a, b, c) { return Monochrome.concoct(a, b, c)}),
+
+);
