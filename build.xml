@@ -42,6 +42,7 @@
             <fileset file="js/engineering_box.js" />
         </concat>
         <concat destfile="docs/js/monochrome.js">
+            <fileset file="js/monochrome/monochrome_swelltype.js" />
             <fileset file="js/monochrome/monochrome_triangle.js" />
             <fileset file="js/monochrome/monochrome_manipulation.js" />
             <fileset file="js/monochrome/monochrome_genotype.js" />

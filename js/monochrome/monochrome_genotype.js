@@ -23,16 +23,7 @@ Monochrome.initializeSession = function(session) {
     session.options['sessionIcon'] = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png'
 }
 
-var SwellType = {
-        Swell: 1,
-        Shrink: 2,
-        Same: 3,
-        properties: {
-            1: {name: "Swell"},
-            2: {name: "Shrink"},
-            3: {name: "Same"}
-        }
-};
+
 
 
 
