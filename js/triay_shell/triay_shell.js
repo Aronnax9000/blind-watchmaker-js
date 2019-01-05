@@ -251,11 +251,12 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         break;
     case 14:
         var keys = Object.keys(Shell.patterns)
-        var pattern;
+        keys.push('circle')
+        var pattern
         for(let i = 0; i < keys.length; i++) {
             if(keys[i] == shell.pattern) {
                 pattern = i
-                break;
+                break
             }
         }
         switch(leftRightPos) {

@@ -24,10 +24,6 @@ Monochrome.initializeSession = function(session) {
 }
 
 
-
-
-
-
 function chromosome() {
     var chrome = new Array(9);
     for(let i = 0; i < 9; i++)
@@ -91,8 +87,6 @@ Monochrome.prototype.toHtml = function() {
     breaktag + "MutProbGene: " + this.mutProbGene;
     return htmlResult;
 }
-
-
 
 
 Monochrome.prototype.basicTree = function () {

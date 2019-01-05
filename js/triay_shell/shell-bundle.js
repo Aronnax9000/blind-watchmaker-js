@@ -49,7 +49,6 @@ function Shell (ctx, width, height, genes) {
     this.canvasHeight = height
 
     this.centre = { x: Math.round(this.canvasWidth/2), y: Math.round(this.canvasHeight/2) }
-//  this.origin = _.cloneDeep(this.centre)
     this.origin = { x: this.centre.x, y: this.centre.y }
 
     // How much and how often the genes mutate is set per shell

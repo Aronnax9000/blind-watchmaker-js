@@ -10,15 +10,11 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
         constructorFunction, 
         sessionInitializer,
         geneboxesWidget,
-        geneboxesCallback,
-        concoctr) {
+        geneboxesCallback) {
     this.constructorFunctions[speciesType] = constructorFunction
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
     this.geneboxesCallbacks[speciesType] = geneboxesCallback
-    if(concoctr) {
-        this.concoctors[speciesType] = concoctors
-    }
     console.log("Registered Species Type " + speciesType)
 }
 
@@ -61,19 +57,6 @@ SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, sessio
     if(species != null)
         // console.log("Got session initializer for " + speciesFactoryType);
         return species;
-}
-
-SpeciesFactory.prototype.concoct = function(speciesFactoryType, a, b, c) {
-    var concoction = null;
-    try {
-        concoction = this.concoctors[speciesFactoryType](a, b, c);
-    } catch (err) {
-        console.error("SpeciesFactory can't find a registered session initializer for type '" 
-                + speciesFactoryType + "'. Valid values are " + 
-                Object.keys(this.concoctors));
-        console.error(err);
-    }
-    return concoction;
 }
 
 SpeciesFactory.prototype.geneboxes = function(speciesFactoryType, 
