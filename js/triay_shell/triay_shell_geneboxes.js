@@ -10,10 +10,11 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         biomorph: null,
     },
     _create : function(options) {
+        this._super(options)
         console.log('creating shell geneboxes')
         this._setOptions(options);
 
-        this.element.addClass("monochromeGeneboxes");
+        this.element.addClass("shellGeneboxes");
         
         var genebox
         genebox = $("<div></div>").floatGenebox({
@@ -104,14 +105,15 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
     },
 
     updateFromCanvas: function(canvas) {
+        console.log('shell update from canvas')
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-            // console.log('updateFromCanvas: no biomorph on canvas.')
-            // console.log(canvas);
+             console.log('updateFromCanvas: no biomorph on canvas.')
+             console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;
-        geneboxes = $(this.element).find('.monochromeGenebox');
+        geneboxes = $(this.element).find('.genebox');
         var shell = biomorph.shell
         var genebox 
         // Opening
@@ -170,18 +172,6 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         genebox = geneboxes.eq(13); 
         genebox.monochrome_genebox("option", "value", shell.pattern);
         genebox.monochrome_genebox("refresh");
-        
-//        this.pattern = genes.pattern
-//        this.translationGradient = genes.translationGradient
-//        this.mutSize = {
-//                displacement: genes.mutSize.displacement,
-//                translation: genes.mutSize.translation,
-//                shape: genes.mutSize.shape,
-//                reach: genes.mutSize.reach
-//        }
-//        this.mutProbGene = genes.mutProbGene
-
-        
 
     },
 });

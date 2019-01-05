@@ -1308,7 +1308,7 @@ $.widget("dawk.monochrome_genebox", {
     _create : function(options) {
         this._setOptions(options);
         
-        this.element.addClass("monochromeGenebox");
+        this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);
     },
@@ -1452,7 +1452,6 @@ $.widget("dawk.monochrome_genebox", {
 
 $.widget( "dawk.gene1to9box", $.dawk.monochrome_genebox, {
     _init : function() {
-        
         this.options.hasLeftRight = true;
         this.options.hasMid = true;
         this.options.hasColor = false;
@@ -1555,6 +1554,10 @@ $.widget('dawk.geneboxes', {
         numGeneBoxes : 16,
         biomorph: null,
     },    
+    _create: function(options) {
+        this._setOptions(options);
+        $(this.element).addClass('geneboxes')
+    },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
         console.log(this.options.biomorph)
         this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
@@ -1582,7 +1585,7 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
             return;
         }
         this.options.biomorph = biomorph;
-        geneboxes = $(this.element).find('.monochromeGenebox');
+        geneboxes = $(this.element).find('.genebox');
 //      // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
@@ -1616,8 +1619,7 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
 
     },
     _create : function(options) {
-        this._setOptions(options);
-
+        this._super(options)
         this.element.addClass("monochromeGeneboxes");
 
         for(let i = 0; i < 9; i++) {
@@ -1664,7 +1666,6 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
         this.refresh();
     },
     _setOption : function(key, value) {
-//      // // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {

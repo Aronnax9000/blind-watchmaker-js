@@ -21,7 +21,7 @@ $.widget("dawk.triay_biomorph_genebox", {
     _create : function(options) {
         this._setOptions(options);
         
-        this.element.addClass("monochromeGenebox");
+        this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);
     },
@@ -269,7 +269,7 @@ $.widget('dawk.triay_biomorph_geneboxes', {
         
         biomorph = biomorph.triay_biomorph
         
-        geneboxes = $(this.element).find('.monochromeGenebox');
+        geneboxes = $(this.element).find('.genebox');
 //        // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
@@ -303,9 +303,10 @@ $.widget('dawk.triay_biomorph_geneboxes', {
         
     },
     _create : function(options) {
-        this._setOptions(options);
+        this._super(options)
 
         this.element.addClass("monochromeGeneboxes");
+        this.element.addClass("geneboxes");
         
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);

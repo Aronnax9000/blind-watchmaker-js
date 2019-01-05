@@ -681,11 +681,10 @@ $( function() {
         _doMouseOver: function(event) {
             var parentbreedingView = this.element.parents('.breedingView').get(0);
             var geneboxes = $(parentbreedingView)
-                .find('.monochromeGeneboxes').get(0);
+                .find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.species,
                     geneboxes, this.options.canvas)
-//            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
@@ -1476,10 +1475,11 @@ $( function() {
     $.widget( "dawk.breedingControl", {
         _create: function() {
             $(this.element).addClass('breedingControl');
-            var string = '<span>\
-                <input type="checkbox" class="useFitness" /> <span>Use Fitness\
-                (Breed based on how well biomorph fits its box)\
-                </span> <input type="checkbox" checked class="explosiveBreeding" /> <span>Explosive\
+//            <span>\
+//            <input type="checkbox" class="useFitness" /> <span>Use Fitness\
+//            (Breed based on how well biomorph fits its box)\
+//            </span> 
+            var string = '<input type="checkbox" checked class="explosiveBreeding" /> <span>Explosive\
                 Breeding </span>\
                 </span>';
             var div = $($.parseHTML(string));
@@ -1632,7 +1632,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         _doMouseOver: function(event) {
             var parentbreedingView = this.element.parents('.engineeringView').get(0);
             var geneboxes = $(parentbreedingView)
-                .find('.monochromeGeneboxes').get(0);
+                .find('.geneboxes').get(0);
 //            // console.log(geneboxes);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     this.options.canvas.get(0))

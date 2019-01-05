@@ -1,5 +1,8 @@
 // Number.parseFloat(x).toFixed(2);
 $.widget( "dawk.floatGenebox", $.dawk.monochrome_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
     _init : function() {
         
         this.options.hasLeftRight = true;
@@ -18,6 +21,9 @@ $.widget( "dawk.floatGenebox", $.dawk.monochrome_genebox, {
 } );
 
 $.widget( "dawk.handednessGenebox", $.dawk.monochrome_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
     _init : function() {
         
         this.options.hasLeftRight = true;

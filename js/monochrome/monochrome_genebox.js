@@ -21,7 +21,7 @@ $.widget("dawk.monochrome_genebox", {
     _create : function(options) {
         this._setOptions(options);
         
-        this.element.addClass("monochromeGenebox");
+        this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);
     },
@@ -165,7 +165,6 @@ $.widget("dawk.monochrome_genebox", {
 
 $.widget( "dawk.gene1to9box", $.dawk.monochrome_genebox, {
     _init : function() {
-        
         this.options.hasLeftRight = true;
         this.options.hasMid = true;
         this.options.hasColor = false;

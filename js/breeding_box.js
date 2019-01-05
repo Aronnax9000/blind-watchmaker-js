@@ -32,11 +32,10 @@ $( function() {
         _doMouseOver: function(event) {
             var parentbreedingView = this.element.parents('.breedingView').get(0);
             var geneboxes = $(parentbreedingView)
-                .find('.monochromeGeneboxes').get(0);
+                .find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.species,
                     geneboxes, this.options.canvas)
-//            $(geneboxes).monochrome_geneboxes('updateFromCanvas', this.options.canvas);
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
