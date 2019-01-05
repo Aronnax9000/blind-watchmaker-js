@@ -43,7 +43,6 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
         (function(geneboxes, geneboxes_options) { 
             $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
         (function(geneboxes, canvas) { 
-            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)}),
-        (function(a, b, c) { return Monochrome.concoct(a, b, c)}),
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)})
 
 );

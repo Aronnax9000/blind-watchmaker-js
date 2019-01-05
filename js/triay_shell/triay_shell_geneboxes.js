@@ -26,13 +26,13 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         genebox = $("<div></div>").floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 2,
-            title: 'Shape'});
+            title: 'Displacement'});
         this.element.append(genebox);
 
         genebox = $("<div></div>").floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 3,
-            title: 'Displacement'});
+            title: 'Shape'});
         this.element.append(genebox);
 
         genebox = $("<div></div>").floatGenebox({
