@@ -1376,10 +1376,15 @@ function WatchmakerSession(species) {
             this._on(button, {'click': this.startAutoBreeding});
             var string = '<span> with delay of <input type="text"\
                 class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                milliseconds.</span>';
-            div.append($(string));
-            var stopButton = $("<button>Stop</button>");
+                milliseconds.</span>'
+                var stopButton = $("<button>Stop</button>");
             div.append(stopButton);
+                
+            $(string).appendTo(div)
+            var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
+            $(useFitness).tooltip();
+            $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
+            $(useFitness).appendTo(div)
             string = '<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
                 Breeding</span>'
 
@@ -1407,17 +1412,21 @@ function WatchmakerSession(species) {
             var breedingView = $(this.element).parent();
             var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
             if (this.options.autoRunning) {
-                var useFitness = $(breedingView).find('.useFitness').get(0).checked;
+                var useFitnessCheckbox = $(breedingView).find('.useFitness').get(0)
+                var useFitness = false
+                if(useFitnessCheckbox) {
+                    useFitness = useFitnessCheckbox.checked;
+                }
                 var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
                 if (useFitness) {
                     var canvas = $(breedingBoxes).find('.box').get(0);
                     var biomorph = getBiomorphFromCanvas(canvas);
                     var bestSoFar = canvas;
-                    var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
+                    
+                    var errorToBeat = biomorph.fitness(canvas);
                     $(breedingBoxes).find('.box').each( function(index) {
                         canvas = this;
-                        var currentError = fitness(getBiomorphFromCanvas(canvas),
-                                canvas.width, canvas.height);
+                        var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
                         if (currentError < errorToBeat) {
                             bestSoFar = canvas;
                             errorToBeat = currentError;
@@ -1470,15 +1479,7 @@ $.widget('dawk.watchmakerView', {
 })
 
 
-function fitness(biomorph, targetWidth, targetHeight) {
-    var margin = biomorph.pic.margin;
-    var marginWidth = margin.right - margin.left;
-    var marginHeight = margin.bottom - margin.top;
-    var widthError = Math.abs(targetWidth - marginWidth) / targetWidth;
-    var heightError = Math.abs(targetHeight - marginHeight) / targetHeight;
-    var averageError = (widthError + heightError) / 2;
-    return averageError;
-}
+
 
 function getBiomorphFromCanvas(canvas) {
     var biomorph = jQuery.data(canvas, 'genotype');
@@ -1494,10 +1495,6 @@ $( function() {
         },
         _create: function() {
             $(this.element).addClass('breedingControl');
-//            <span>\
-//            <input type="checkbox" class="useFitness" /> <span>Use Fitness\
-//            (Breed based on how well biomorph fits its box)\
-//            </span> 
             var button 
             $('<span>Clone in new window:</span>').appendTo(this.element)
             
@@ -1586,16 +1583,15 @@ $( function() {
             overlay.addClass("overlay");
             container.append(overlay);
             container.append(boxes);
+
             var overlayCanvas = $('<canvas></canvas>');
             overlayCanvas.attr('width', 1000);
             overlayCanvas.attr('height', 600);
             overlayCanvas.addClass('overlayCanvas');
             overlay.append(overlayCanvas);
             this.element.append(container);
-            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
 
-//            var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
-//            var cols = boxes.breedingBoxes("option", 'cols');
+            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
 
             var midCanvas = $(this.element).find('.midBox').get(0);
             $(midCanvas).trigger('mouseover');
@@ -1693,6 +1689,27 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         },
         _doCanvasClicked: function(event) {
             // raise hypo dialog here.
+            var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
+            		<span style='float:none; display: inline' >\
+                    The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
+                    		<br>to get a usable cursor. If in doubt pull down<br>'Help with current operation'</span></div>")
+            $(hypo).dialog({
+                dialogClass: "no-close",
+                resizeable: false,
+                modal: true,
+                
+                position: { my: "left top", at: "left+312 top+104", of: this.element },
+                width: 450,
+                buttons: [
+                    {
+                      text: "Okay",
+                      click: function() {
+                        $( this ).dialog( "close" );
+                      }
+                    }
+                  ],
+                }
+            )
             return false;
         },
     });

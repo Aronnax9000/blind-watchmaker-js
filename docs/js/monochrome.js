@@ -282,6 +282,20 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
 const TRICKLE = 10;
 const MutTypeNo = 9;
 
+Monochrome.prototype.fitness = function(environment) {
+    console.log(environment)
+    var targetHeight = environment.height;
+    var targetWidth = environment.width;
+    
+    var margin = this.pic.margin;
+    var marginWidth = margin.right - margin.left;
+    var marginHeight = margin.bottom - margin.top;
+    var widthError = Math.abs(targetWidth - marginWidth) / targetWidth;
+    var heightError = Math.abs(targetHeight - marginHeight) / targetHeight;
+    var averageError = (widthError + heightError) / 2;
+    return averageError;
+}
+
 Monochrome.initializeMut = function(session) {
     var mut = new Array(MutTypeNo);
     mut[0] = true;  // Segmentation // {** changed 1.1 **}

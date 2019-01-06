@@ -1,15 +1,7 @@
 
 
 
-function fitness(biomorph, targetWidth, targetHeight) {
-    var margin = biomorph.pic.margin;
-    var marginWidth = margin.right - margin.left;
-    var marginHeight = margin.bottom - margin.top;
-    var widthError = Math.abs(targetWidth - marginWidth) / targetWidth;
-    var heightError = Math.abs(targetHeight - marginHeight) / targetHeight;
-    var averageError = (widthError + heightError) / 2;
-    return averageError;
-}
+
 
 function getBiomorphFromCanvas(canvas) {
     var biomorph = jQuery.data(canvas, 'genotype');
@@ -25,10 +17,6 @@ $( function() {
         },
         _create: function() {
             $(this.element).addClass('breedingControl');
-//            <span>\
-//            <input type="checkbox" class="useFitness" /> <span>Use Fitness\
-//            (Breed based on how well biomorph fits its box)\
-//            </span> 
             var button 
             $('<span>Clone in new window:</span>').appendTo(this.element)
             
@@ -117,16 +105,15 @@ $( function() {
             overlay.addClass("overlay");
             container.append(overlay);
             container.append(boxes);
+
             var overlayCanvas = $('<canvas></canvas>');
             overlayCanvas.attr('width', 1000);
             overlayCanvas.attr('height', 600);
             overlayCanvas.addClass('overlayCanvas');
             overlay.append(overlayCanvas);
             this.element.append(container);
-            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
 
-//            var numBoxes = boxes.breedingBoxes("option", 'numBoxes');
-//            var cols = boxes.breedingBoxes("option", 'cols');
+            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
 
             var midCanvas = $(this.element).find('.midBox').get(0);
             $(midCanvas).trigger('mouseover');

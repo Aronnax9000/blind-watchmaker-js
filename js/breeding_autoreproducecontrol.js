@@ -14,10 +14,15 @@ $( function() {
             this._on(button, {'click': this.startAutoBreeding});
             var string = '<span> with delay of <input type="text"\
                 class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                milliseconds.</span>';
-            div.append($(string));
-            var stopButton = $("<button>Stop</button>");
+                milliseconds.</span>'
+                var stopButton = $("<button>Stop</button>");
             div.append(stopButton);
+                
+            $(string).appendTo(div)
+            var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
+            $(useFitness).tooltip();
+            $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
+            $(useFitness).appendTo(div)
             string = '<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
                 Breeding</span>'
 
@@ -45,17 +50,21 @@ $( function() {
             var breedingView = $(this.element).parent();
             var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
             if (this.options.autoRunning) {
-                var useFitness = $(breedingView).find('.useFitness').get(0).checked;
+                var useFitnessCheckbox = $(breedingView).find('.useFitness').get(0)
+                var useFitness = false
+                if(useFitnessCheckbox) {
+                    useFitness = useFitnessCheckbox.checked;
+                }
                 var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
                 if (useFitness) {
                     var canvas = $(breedingBoxes).find('.box').get(0);
                     var biomorph = getBiomorphFromCanvas(canvas);
                     var bestSoFar = canvas;
-                    var errorToBeat = fitness(biomorph, canvas.width, canvas.height);
+                    
+                    var errorToBeat = biomorph.fitness(canvas);
                     $(breedingBoxes).find('.box').each( function(index) {
                         canvas = this;
-                        var currentError = fitness(getBiomorphFromCanvas(canvas),
-                                canvas.width, canvas.height);
+                        var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
                         if (currentError < errorToBeat) {
                             bestSoFar = canvas;
                             errorToBeat = currentError;
