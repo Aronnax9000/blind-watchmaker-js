@@ -1370,43 +1370,42 @@ function WatchmakerSession(species) {
             $(this.element).addClass('autoReproduceControl');
             var div = $('<span></span>');
             this.element.append(div);
-            var button = $('<button class="startAutoReproduce">Auto Reproduce</button>');
+            var button = $('<button class="startAutoReproduce">Start</button>');
             this.options.startButton = button;
             div.append(button);
             this._on(button, {'click': this.startAutoBreeding});
-            var string = '<span> with delay of <input type="text"\
+            var string = '<span> autobreeding every <input type="text"\
                 class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                milliseconds.</span>'
-                var stopButton = $("<button>Stop</button>");
-            div.append(stopButton);
+                ms.</span>'
                 
             $(string).appendTo(div)
             var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
             $(useFitness).tooltip();
             $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
             $(useFitness).appendTo(div)
-            string = '<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
-                Breeding</span>'
+            var explosiveBreeding = $('<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
+                Breeding</span>')
 
-            var explosiveDiv = $($.parseHTML(string));
-            this.element.append(explosiveDiv);
+            this.element.append(explosiveBreeding);
+            $(explosiveBreeding).tooltip();
+            $(explosiveBreeding).attr('title', 'Whether breeding happens all-at-once or one-at-a time. Uncheck for classic Blind Watchmaker breeding animation');
 
             
-            this._on(stopButton, {'click': this.stopAutoBreeding});
             
-        },
-        stopAutoBreeding: function(event) {
-            this.options.autoRunning = false;
-            var startButton = $(this.element).find('.startAutoReproduce').get(0);
-            $(startButton).removeAttr('disabled');
         },
         startAutoBreeding: function(event) {
             var startButton = $(this.element).find('.startAutoReproduce').get(0);
-            $(startButton).attr('disabled', 'disabled');
-            this.options.autoRunning = true;
-            this.autoBreed();
-            var generations = $(this.element).parents('.breedingView').find('.generations').get(0);
-            this.measureGenerationRate(Number(generations.value));
+            var text = $(startButton).text()
+            if(text == 'Stop') {
+                this.options.autoRunning = false;
+                $(startButton).text('Start');
+            } else {
+                $(startButton).text('Stop');
+                this.options.autoRunning = true;
+                this.autoBreed();
+                var generations = $(this.element).parents('.breedingView').find('.generations').get(0);
+                this.measureGenerationRate(Number(generations.value));
+            }
         },
         autoBreed: function() {
             var breedingView = $(this.element).parent();
