@@ -378,6 +378,12 @@ function TriayBiomorphs(session, drawer) {
     this.session = session
     this.drawer = drawer
 }
+TriayBiomorphs.prototype.copyBiomorph = function(child) {
+    
+    child.triay_biomorph = new Biomorph (child.drawer.getContext('2d'), 
+            child.drawer.width, child.drawer.height, this.triay_biomorph)
+
+}
 
 TriayBiomorphs.initializeSession = function(session) {
     session.options['sessionIcon'] = 'img/BWSpiderLogoMono_ICNO_23096_32x32.png'

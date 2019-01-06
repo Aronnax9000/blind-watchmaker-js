@@ -38,12 +38,13 @@ $.widget('dawk.watchmakerSessionTab', {
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        this.newbreedingView(this.options.session, species);
-        this.newengineeringView(this.options.session, species);
+        this.newBreedingView();
+        this.newEngineeringView();
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newbreedingView: function(species) {
+    newBreedingView: function(biomorph) {
+        var species = this.options.species
         var uuid = uuidv4();
         var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
         var string = '<li><a href="#' + uuid + '">'
@@ -57,7 +58,8 @@ $.widget('dawk.watchmakerSessionTab', {
         div.breedingView({
             session: this.options.session, 
             watchmakerSessionTab: this, 
-            species: species});
+            species: species,
+            biomorph: biomorph});
         $('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -79,7 +81,7 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs("option", "active", tabcount - 1);
 
     },
-    newengineeringView: function(species) {
+    newEngineeringView: function(biomorph) {
         var uuid = uuidv4();
         var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
         var string = '<li><a href="#' + uuid + '">'
@@ -91,6 +93,7 @@ $.widget('dawk.watchmakerSessionTab', {
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
         div.engineeringView({session: this.options.session, 
+            biomorph: biomorph,
             watchmakerSessionTab: this});
         $('.ui-closable-tab').click(
                 function() {

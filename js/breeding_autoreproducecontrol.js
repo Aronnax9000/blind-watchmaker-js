@@ -18,6 +18,13 @@ $( function() {
             div.append($(string));
             var stopButton = $("<button>Stop</button>");
             div.append(stopButton);
+            string = '<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
+                Breeding</span>'
+
+            var explosiveDiv = $($.parseHTML(string));
+            this.element.append(explosiveDiv);
+
+            
             this._on(stopButton, {'click': this.stopAutoBreeding});
             
         },

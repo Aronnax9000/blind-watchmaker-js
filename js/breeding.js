@@ -12,25 +12,49 @@ function fitness(biomorph, targetWidth, targetHeight) {
 }
 
 function getBiomorphFromCanvas(canvas) {
-
     var biomorph = jQuery.data(canvas, 'genotype');
     return biomorph;
 }
 
 
+
 $( function() {
-    $.widget( "dawk.breedingControl", {
+    $.widget( "dawk.modeToolbar", {
+        options: {
+            species: null
+        },
         _create: function() {
             $(this.element).addClass('breedingControl');
 //            <span>\
 //            <input type="checkbox" class="useFitness" /> <span>Use Fitness\
 //            (Breed based on how well biomorph fits its box)\
 //            </span> 
-            var string = '<input type="checkbox" checked class="explosiveBreeding" /> <span>Explosive\
-                Breeding </span>\
-                </span>';
-            var div = $($.parseHTML(string));
-            this.element.append(div);
+            var button 
+            $('<span>Clone in new window:</span>').appendTo(this.element)
+            
+            button = $('<button>Breed</button>')
+            this._on($(button), {'click': this.breedInNewWindow})
+            $(this.element).append(button)
+
+            button = $('<button>Engineer</button>')
+            this._on($(button), {'click': this.engineer})
+            $(this.element).append(button)
+        },
+        breedInNewWindow: function() {
+            console.log('breedInNewWindow')
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph)
+        },
+        engineer: function() {
+            console.log('engineer')
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph)
         }
     });
 });
@@ -55,6 +79,7 @@ $( function() {
     // "colorize" the widget name
     $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         options: { 
+            species: null,
             watchmakerSessionTab: null,
             biomorph: null
         },
@@ -71,12 +96,14 @@ $( function() {
             $(watchmakerSessionTab.element).watchmakerSessionTab('raiseAlert', newMenu);
         },
 
-        _create: function () {
+        _create: function (options) {
             this._super("_create")
             var species = this.options.session.species
             $(this.element).addClass('breedingView')
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
-            $("<div></div>").breedingControl().appendTo(this.element)
+            $("<div></div>").modeToolbar({ 
+                species: this.options.session.species}
+            ).appendTo(this.element)
             var geneboxes_options = {
                 engineering : false
             }
@@ -85,7 +112,7 @@ $( function() {
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes({session: this.options.session})
+            var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);

@@ -125,7 +125,7 @@ $( function() {
         },
 
         // The constructor
-        _create: function() {
+        _create: function(options) {
             var session = this.options.session
             var species = this.options.session.species
             var boxes = this.element
@@ -147,8 +147,14 @@ $( function() {
                     var canvas = $(canvasDiv).find('canvas').get(0)
                     var biomorph = _speciesFactorySingleton.getSpecies(
                             species, session, canvas)
+                    if(this.options.biomorph) {
+                        console.log('copyBiomorph')
+                        console.log(this.options.biomorph);
+                        this.options.biomorph.copyBiomorph(biomorph)
+                    } else {
+                        biomorph.doPerson('BasicTree')
+                    }
                     $(canvas).data('genotype', biomorph)        
-                    biomorph.doPerson('BasicTree')
                     biomorph.develop()
                 }
             }

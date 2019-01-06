@@ -14,6 +14,8 @@ $( function() {
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
+            canvas.addClass('midBox');
+
             this.element.append(canvas);
 
             this._on( canvas, {
@@ -30,7 +32,7 @@ $( function() {
                     this.options.canvas.get(0))
         },
         _doCanvasClicked: function(event) {
-            // Raise the hypodermic message TODO
+            // raise hypo dialog here.
             return false;
         },
     });

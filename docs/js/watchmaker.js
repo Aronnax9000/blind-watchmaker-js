@@ -873,7 +873,7 @@ $( function() {
         },
 
         // The constructor
-        _create: function() {
+        _create: function(options) {
             var session = this.options.session
             var species = this.options.session.species
             var boxes = this.element
@@ -895,8 +895,14 @@ $( function() {
                     var canvas = $(canvasDiv).find('canvas').get(0)
                     var biomorph = _speciesFactorySingleton.getSpecies(
                             species, session, canvas)
+                    if(this.options.biomorph) {
+                        console.log('copyBiomorph')
+                        console.log(this.options.biomorph);
+                        this.options.biomorph.copyBiomorph(biomorph)
+                    } else {
+                        biomorph.doPerson('BasicTree')
+                    }
                     $(canvas).data('genotype', biomorph)        
-                    biomorph.doPerson('BasicTree')
                     biomorph.develop()
                 }
             }
@@ -1269,12 +1275,13 @@ $.widget('dawk.blindWatchmaker', {
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
-        this.newbreedingView(this.options.session, species);
-        this.newengineeringView(this.options.session, species);
+        this.newBreedingView();
+        this.newEngineeringView();
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newbreedingView: function(species) {
+    newBreedingView: function(biomorph) {
+        var species = this.options.species
         var uuid = uuidv4();
         var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
         var string = '<li><a href="#' + uuid + '">'
@@ -1288,7 +1295,8 @@ $.widget('dawk.blindWatchmaker', {
         div.breedingView({
             session: this.options.session, 
             watchmakerSessionTab: this, 
-            species: species});
+            species: species,
+            biomorph: biomorph});
         $('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -1310,7 +1318,7 @@ $.widget('dawk.blindWatchmaker', {
         this.element.tabs("option", "active", tabcount - 1);
 
     },
-    newengineeringView: function(species) {
+    newEngineeringView: function(biomorph) {
         var uuid = uuidv4();
         var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
         var string = '<li><a href="#' + uuid + '">'
@@ -1322,6 +1330,7 @@ $.widget('dawk.blindWatchmaker', {
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
         div.engineeringView({session: this.options.session, 
+            biomorph: biomorph,
             watchmakerSessionTab: this});
         $('.ui-closable-tab').click(
                 function() {
@@ -1371,6 +1380,13 @@ function WatchmakerSession(species) {
             div.append($(string));
             var stopButton = $("<button>Stop</button>");
             div.append(stopButton);
+            string = '<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
+                Breeding</span>'
+
+            var explosiveDiv = $($.parseHTML(string));
+            this.element.append(explosiveDiv);
+
+            
             this._on(stopButton, {'click': this.stopAutoBreeding});
             
         },
@@ -1465,25 +1481,49 @@ function fitness(biomorph, targetWidth, targetHeight) {
 }
 
 function getBiomorphFromCanvas(canvas) {
-
     var biomorph = jQuery.data(canvas, 'genotype');
     return biomorph;
 }
 
 
+
 $( function() {
-    $.widget( "dawk.breedingControl", {
+    $.widget( "dawk.modeToolbar", {
+        options: {
+            species: null
+        },
         _create: function() {
             $(this.element).addClass('breedingControl');
 //            <span>\
 //            <input type="checkbox" class="useFitness" /> <span>Use Fitness\
 //            (Breed based on how well biomorph fits its box)\
 //            </span> 
-            var string = '<input type="checkbox" checked class="explosiveBreeding" /> <span>Explosive\
-                Breeding </span>\
-                </span>';
-            var div = $($.parseHTML(string));
-            this.element.append(div);
+            var button 
+            $('<span>Clone in new window:</span>').appendTo(this.element)
+            
+            button = $('<button>Breed</button>')
+            this._on($(button), {'click': this.breedInNewWindow})
+            $(this.element).append(button)
+
+            button = $('<button>Engineer</button>')
+            this._on($(button), {'click': this.engineer})
+            $(this.element).append(button)
+        },
+        breedInNewWindow: function() {
+            console.log('breedInNewWindow')
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph)
+        },
+        engineer: function() {
+            console.log('engineer')
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph)
         }
     });
 });
@@ -1508,6 +1548,7 @@ $( function() {
     // "colorize" the widget name
     $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         options: { 
+            species: null,
             watchmakerSessionTab: null,
             biomorph: null
         },
@@ -1524,12 +1565,14 @@ $( function() {
             $(watchmakerSessionTab.element).watchmakerSessionTab('raiseAlert', newMenu);
         },
 
-        _create: function () {
+        _create: function (options) {
             this._super("_create")
             var species = this.options.session.species
             $(this.element).addClass('breedingView')
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
-            $("<div></div>").breedingControl().appendTo(this.element)
+            $("<div></div>").modeToolbar({ 
+                species: this.options.session.species}
+            ).appendTo(this.element)
             var geneboxes_options = {
                 engineering : false
             }
@@ -1538,7 +1581,7 @@ $( function() {
             this.element.append(geneboxes);
             var container = $("<div></div>");
             container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes({session: this.options.session})
+            var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
@@ -1570,6 +1613,10 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             engineering : true,
             species: species,
         }
+        $("<div></div>").modeToolbar({ 
+            species: this.options.session.species}
+        ).appendTo(this.element)
+        
         var geneboxes = $("<div></div>")
         _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
         this.element.append(geneboxes)
@@ -1580,7 +1627,12 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this.element.append(engineeringDiv)
         var canvas = $(engineeringDiv).find('canvas').get(0)
         var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
-        biomorph.doPerson("BasicTree")
+        if(this.options.biomorph) {
+            this.options.biomorph.copyBiomorph(biomorph)
+        } else {
+            biomorph.doPerson("BasicTree")
+        }
+            
         jQuery.data(canvas, 'genotype', biomorph)
         biomorph.develop()
         $(canvas).trigger('mouseover')
@@ -1622,6 +1674,8 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             canvas.attr('width', this.options.width);
             canvas.attr('height', this.options.height);
             canvas.addClass('box');
+            canvas.addClass('midBox');
+
             this.element.append(canvas);
 
             this._on( canvas, {
@@ -1638,7 +1692,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
                     this.options.canvas.get(0))
         },
         _doCanvasClicked: function(event) {
-            // Raise the hypodermic message TODO
+            // raise hypo dialog here.
             return false;
         },
     });

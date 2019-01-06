@@ -9,6 +9,10 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             engineering : true,
             species: species,
         }
+        $("<div></div>").modeToolbar({ 
+            species: this.options.session.species}
+        ).appendTo(this.element)
+        
         var geneboxes = $("<div></div>")
         _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
         this.element.append(geneboxes)
@@ -19,7 +23,12 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this.element.append(engineeringDiv)
         var canvas = $(engineeringDiv).find('canvas').get(0)
         var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
-        biomorph.doPerson("BasicTree")
+        if(this.options.biomorph) {
+            this.options.biomorph.copyBiomorph(biomorph)
+        } else {
+            biomorph.doPerson("BasicTree")
+        }
+            
         jQuery.data(canvas, 'genotype', biomorph)
         biomorph.develop()
         $(canvas).trigger('mouseover')
