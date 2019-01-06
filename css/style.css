@@ -69,3 +69,10 @@ div {
     border-style: none;
     border-width: 0px;
 }
+
+.no-close .ui-dialog-titlebar-close {
+  display: none;
+}
+
+.ui-dialog { border: 1px solid black;} 
+.ui-dialog-titlebar {  display: none; }
