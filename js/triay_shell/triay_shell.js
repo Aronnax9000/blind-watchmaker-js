@@ -39,13 +39,12 @@ Shells.prototype.doPerson = function(morphType) {
 
 } 
 Shells.prototype.doSaltation = function() {
-    console.log('Shells.doSaltation')
     this.shell.randomize()
 }
 //initializes the biomorph's genotype to a random set of values
 //causes the biomorph's genotype to undergo a random mutation
 Shells.prototype.mutate = function() {
-    console.log('Shells.mutate')
+//    console.log('Shells.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 Shells.prototype.reproduce = function(element) {
@@ -64,23 +63,6 @@ Shells.prototype.develop = function() {
 Shells.prototype.copyBiomorph = function(child) {
     child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
 }
-
-//FUNCTION margarine (W: real; direction: integer): real;
-//{we want to change by large amounts when low, small amounts when large}
-//VAR
-//m, logged, logchanged, WMutSize: real;
-//BEGIN
-//WMutSize := 0.1;
-//logged := ln(W);
-//logchanged := logged + WMutSize * direction;
-//IF logchanged > 20 THEN
-//logchanged := 20;
-//m := exp(logchanged);
-//IF m < 1 THEN
-//m := 1;
-//margarine := m
-//END;
-
 
 Shells.margarine = function (w, direction) {
     // {we want to change by large amounts when low, small amounts when large}
@@ -265,13 +247,18 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         switch(leftRightPos) {
         case HorizPos.LeftThird: 
-            if(pattern > 0) {
+            if(pattern > -1) {
                 pattern--
+                if(pattern < 0) {
+                    pattern = keys.length - 1
+                }
             }
             break;
         case HorizPos.RightThird: 
-            if(pattern < keys.length - 1) {
+            if(pattern < keys.length - 1) { 
                 pattern++
+            } else {
+                pattern = 0
             }
             break;
         }
