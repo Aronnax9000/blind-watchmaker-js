@@ -17,17 +17,18 @@ Monochrome.prototype.fitness = function(environment) {
 }
 
 Monochrome.initializeMut = function(session) {
-    var mut = new Array(MutTypeNo);
-    mut[0] = true;  // Segmentation // {** changed 1.1 **}
-    mut[1] = true;  // Gradient {** changed 1.1 **}
-    mut[2] = true;  // Asymmetry {** changed 1.1 **}
-    mut[3] = true;  // Radial Sym {** changed 1.1 **}
-    mut[4] = true;  // Scaling Factor {** changed 1.1 **}
-    mut[5] = false; // Mutation Size
-    mut[6] = false; // Mutation Rate
-    mut[7] = true;  // Tapering Twigs
-    mut[8] = true;
-    session.options.mut = mut;
+    var mut = []
+    
+    mut.push(true)  // Segmentation // {** changed 1.1 **}
+    mut.push(true)  // Gradient {** changed 1.1 **}
+    mut.push(true)  // Asymmetry {** changed 1.1 **}
+    mut.push(true)  // Radial Sym {** changed 1.1 **}
+    mut.push(true)  // Scaling Factor {** changed 1.1 **}
+    mut.push(false) // Mutation Size
+    mut.push(false) // Mutation Rate
+    mut.push(true)  // Tapering Twigs
+    mut.push(true)
+    session.options.mut = mut
 }
 
 // Really belongs on the session
@@ -196,18 +197,18 @@ Monochrome.prototype.makeGenes = function (a, b, c, d, e, f, g, h, i) {
 
 
 
-Monochrome.prototype.randInt = function(ceiling) {
+Monochrome.randInt = function(ceiling) {
     return Math.floor(Math.random() * ceiling) + 1;  
 }
 
 Monochrome.prototype.direction = function(child) {
-    if(this.randInt(2) == 2) 
+    if(Monochrome.randInt(2) == 2) 
         return child.mutSizeGene;
     else
         return -child.mutSizeGene;
 }
 Monochrome.prototype.direction9 = function() {
-    if(this.randInt(2) == 2)
+    if(Monochrome.randInt(2) == 2)
         return 1;
     else
         return -1;
@@ -234,7 +235,7 @@ Monochrome.prototype.copyBiomorph = function(child) {
  */
 const WORRYMAX = 4095;
 
-Monochrome.prototype.twoToThe = function(n) {
+Monochrome.twoToThe = function(n) {
     switch(n) {
     case 0: 
         return 1;
@@ -268,12 +269,12 @@ Monochrome.prototype.twoToThe = function(n) {
 }
 
 //Monochrome.prototype.manipulation = _monochrome_manipulation;
-Monochrome.prototype.randSwell = function(indGene) {
+Monochrome.randSwell = function(indGene) {
     switch(indGene) {
     case SwellType.Shrink:
         return SwellType.Same;
     case SwellType.Same:
-        if(this.randInt(2) == 1) {
+        if(Monochrome.randInt(2) == 1) {
             return SwellType.Shrink;
         } else {
             return SwellType.Swell;
@@ -309,22 +310,21 @@ var VertPos = {
 
 
 Monochrome.prototype.reproduce = function(childCanvas) {
-    // // // console.log("Reproduce");
     var child = new Monochrome(this.session, childCanvas);
     this.copyBiomorph(child);
     child.mutate();
     return child;
-} // reproduce
+} 
 
 Monochrome.prototype.doPerson = function(biomorphType) {
     switch(biomorphType) {
     case "Chess": this.chess(); break;
-    case "BasicTree": this.basicTree(); break;
     case "Insect": this.insect(); break;
     case "Saltation": this.doSaltation(); break;
+    case "BasicTree": 
+    default: 
+        this.basicTree()
     }
-//    this.develop(); 
-//    $(this.drawer).trigger('mouseover');
     return this;
 }
 

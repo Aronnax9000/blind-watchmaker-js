@@ -255,7 +255,13 @@ function testDrawer(drawerType, drawingObject) {
 
 
 var _drawerFactorySingleton = new DrawerFactory();
-function canvas2DDrawer_erase() {
+function Canvas2DDrawer(drawingObject) {
+    this.drawingObject = drawingObject;
+    this.drawingContext = drawingObject.getContext('2d');
+}
+
+
+Canvas2DDrawer.prototype.erase = function() {
     // Store the current transformation matrix
     //drawingContext.save();
     // Use the identity matrix while clearing the canvas
@@ -267,28 +273,17 @@ function canvas2DDrawer_erase() {
     // console.log('erase ' + width + 'x' + height);
 
     this.drawingContext.clearRect(0, 0, width, height);
-    this.setColor('#FF0000');
-    this.drawingContext.strokeStyle = 'red';
-    this.penSize(4);
-    this.moveTo(0,0);
-    this.lineTo(200,200);
+//    this.setColor('#FF0000');
+//    this.drawingContext.strokeStyle = 'red';
+//    this.penSize(4);
+//    this.moveTo(0,0);
+//    this.lineTo(200,200);
     
     this.drawingContext.translate(halfWidth + 0.5, halfHeight / 2 + 0.5);
-//    if(drawCrossHairs) {
-//        this.drawingContext.beginPath();
-//        // Draw crosshairs
-//        this.drawingContext.moveTo(-halfWidth, 0);
-//        this.drawingContext.lineTo(halfWidth,0);
-//        this.drawingContext.moveTo(0, -halfHeight);
-//        this.drawingContext.lineTo(0,halfHeight);
-//        this.drawingContext.closePath;
-//        this.drawingContext.lineWidth = 0.5;
-//        this.drawingContext.setColor = "red";
-//        this.drawingContext.stroke();
-//    }
+
 }
 
-function canvas2DDrawer_penSize(penSize) {
+Canvas2DDrawer.prototype.penSize = function(penSize) {
     if(penSize === undefined) {
         return this.drawingContext.lineWidth * 2;
     } else {
@@ -297,22 +292,25 @@ function canvas2DDrawer_penSize(penSize) {
     }
 }
 
-function canvas2DDrawer_setColor(color) {
-    this.drawingContext.strokeStyle = color;
-    this.drawingContext.fillStyle = color;
-//    // console.log('setColor ' + color);
+Canvas2DDrawer.prototype.setColor = function(color, report) {
+  this.drawingContext.strokeStyle = color;
+  this.drawingContext.fillStyle = color;
+  if(report) {
+      console.log('setColor ' + color)
+  }
 }
 
-function canvas2DDrawer_moveTo(x,y) {
+
+Canvas2DDrawer.prototype.moveTo = function(x,y) {
     this.drawingContext.beginPath();
     this.drawingContext.moveTo(x,y);
 }
-function canvas2DDrawer_lineTo(x,y) {
+Canvas2DDrawer.prototype.lineTo = function(x,y) {
     this.drawingContext.lineTo(x,y);
     this.drawingContext.stroke();
 }
 
-function canvas2DDrawer_frameOval(rect) {
+Canvas2DDrawer.prototype.frameOval = function(rect) {
     var cx = (rect.left + rect.right) / 2;
     var cy = (rect.top + rect.bottom) / 2;
     var rx = (rect.right - rect.left) / 2;
@@ -329,7 +327,7 @@ function canvas2DDrawer_frameOval(rect) {
     this.drawingContext.stroke();
 }
 
-function canvas2DDrawer_paintOval(rect) {
+Canvas2DDrawer.prototype.paintOval = function(rect) {
     var cx = (rect.left + rect.right) / 2;
     var cy = (rect.top + rect.bottom) / 2;
     var rx = (rect.right - rect.left) / 2;
@@ -347,44 +345,47 @@ function canvas2DDrawer_paintOval(rect) {
 }
 
 
-function canvas2DDrawer_paintRect(rect) {
+Canvas2DDrawer.prototype.paintRect = function(rect, report) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.fillRect(rect.left, rect.top, width, height);
+    if(report) {
+        console.log('PaintRect ' + rect + ' fillStyle ' + this.drawingContext.strokeStyle)
+    }
 }
-function canvas2DDrawer_frameRect(rect) {
+Canvas2DDrawer.prototype.frameRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.strokeRect(rect.left, rect.top, width, height);
     
 }
 
-function canvas2DDrawer_getHeight() {
+Canvas2DDrawer.prototype.getHeight = function() {
     return this.drawingObject.height;
 }
-function canvas2DDrawer_getWidth() {
+Canvas2DDrawer.prototype.getWidth = function() {
     return this.drawingObject.width;
 }
 
-function canvas2DDrawer_translate(x,y) {
+Canvas2DDrawer.prototype.translate = function(x,y) {
     this.drawingContext.translate(x,y);
 }
-function canvas2DDrawer_save() {
+Canvas2DDrawer.prototype.save = function() {
     this.drawingContext.save();
 }
-function canvas2DDrawer_restore() {
+Canvas2DDrawer.prototype.restore = function() {
     this.drawingContext.restore();
 }
-function canvas2DDrawer_setTransform(x1, x2, x3, x4, x5, x6) {
+Canvas2DDrawer.prototype.setTransform = function(x1, x2, x3, x4, x5, x6) {
     this.drawingContext.setTransform(x1, x2, x3, x4, x5, x6);
 }
-function canvas2DDrawer_clearRect(x1, x2, x3, x4) {
+Canvas2DDrawer.prototype.clearRect = function(x1, x2, x3, x4) {
     this.drawingContext.beginPath();
         
     this.drawingContext.clearRect(x1, x2, x3, x4);
 }
 
-function canvas2DDrawer_drawLine(x1, y1, x2, y2) {
+Canvas2DDrawer.prototype.drawLine = function(x1, y1, x2, y2) {
     var drawingContext = this.drawingContext;
     drawingContext.beginPath();
     drawingContext.moveTo(x1, y1);
@@ -392,36 +393,13 @@ function canvas2DDrawer_drawLine(x1, y1, x2, y2) {
     drawingContext.stroke();
 }
 
-function canvas2DDrawer_stroke() {
+Canvas2DDrawer.prototype.stroke = function() {
     this.drawingContext.stroke();
 }
 
 
 
 
-function Canvas2DDrawer(drawingObject) {
-    this.drawingObject = drawingObject;
-    this.drawingContext = drawingObject.getContext('2d');
-    this.getHeight = canvas2DDrawer_getHeight;
-    this.getWidth = canvas2DDrawer_getWidth;
-    this.penSize = canvas2DDrawer_penSize;
-    this.moveTo = canvas2DDrawer_moveTo;
-    this.lineTo = canvas2DDrawer_lineTo;
-    this.frameRect = canvas2DDrawer_frameRect;
-    this.paintRect = canvas2DDrawer_paintRect;
-    this.frameOval = canvas2DDrawer_frameOval;
-    this.paintOval = canvas2DDrawer_paintOval;
-    this.setColor = canvas2DDrawer_setColor;
-    this.translate = canvas2DDrawer_translate;
-    this.save = canvas2DDrawer_save;
-    this.restore = canvas2DDrawer_restore;
-    this.setTransform = canvas2DDrawer_setTransform;
-    this.erase = canvas2DDrawer_erase;
-    this.drawingContext.translate(0.5, 0.5);
-    this.clearRect = canvas2DDrawer_clearRect;
-    this.drawLine = canvas2DDrawer_drawLine;
-    this.stroke = canvas2DDrawer_stroke;
-}
 
 
 _drawerFactorySingleton.registerDrawerType("canvas2d", (
@@ -900,7 +878,7 @@ $( function() {
                         console.log(this.options.biomorph);
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
-                        biomorph.doPerson('BasicTree')
+                        biomorph.doPerson()
                     }
                     $(canvas).data('genotype', biomorph)        
                     biomorph.develop()
@@ -936,45 +914,63 @@ $( function() {
         }
     });
 } );
-function pointToString() {
-        return "(" + this.h + "," + this.v + ")";
-}
-
-function pointCopy() {
-        var child = new Point(this.h, this.v);
-        return child;
-}
-
-
 /* 
  * QuickDraw style point, with h (horizontal) and v (vertical) 
  */
 function Point(x,y) {
-   this.h = x;
-   this.v = y;
-   
-   this.toString = pointToString;
-   this.copy = pointCopy;
-   // // // // // console.log("Point" + this.toString());
+    this.h = x;
+    this.v = y;
 }
 
-
-function rectToString() {
-        return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
-                        
+Point.prototype.toString = function() {
+    return "(" + this.h + "," + this.v + ")";
 }
 
+Point.prototype.copy = function() {
+    var child = new Point(this.h, this.v);
+    return child;
+}
 
 /*
  * QuickDraw style Rect, with left, right, top and bottom
  */
-function Rect() {
+function Rect(left, top, right, bottom) {
+    
+    if(left) {
+        this.left = left;
+    } else {
         this.left = 0;
+    }
+    if(right) {
+        this.right = right;
+    } else {
         this.right = 0;
+    }
+    if(top) {
+        this.top = top;
+    } else {
         this.top = 0;
+    }
+    if(bottom) {
+        this.bottom = bottom;
+    } else {
         this.bottom = 0;
-        this.toString = rectToString;
-}function SpeciesFactory() {
+    }
+}
+
+
+
+Rect.prototype.toString = function() {
+    return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
+}
+
+Rect.prototype.setRect = function(left, top, right, bottom) {
+    this.left = left;
+    this.right = right;
+    this.top = top;
+    this.bottom = bottom;
+}
+function SpeciesFactory() {
     this.constructorFunctions = {}
     this.sessionInitializers = {}
     this.geneboxesWidgets = {}

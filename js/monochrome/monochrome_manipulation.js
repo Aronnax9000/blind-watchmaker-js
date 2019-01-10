@@ -53,7 +53,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             // number gene value exceeded 4095.
             // This version does the test first, then increments gene 9 only
             // if it is safe to do so.
-            var sizeWorry = this.segNoGene * this.twoToThe(this.gene[8] + 1);
+            var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8] + 1);
             if(sizeWorry <= WORRYMAX)
                 this.gene[8]++;
             break;
@@ -80,7 +80,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         case HorizPos.MidThird: 
             break; //{No Action}
         case HorizPos.RightThird: 
-            var sizeWorry = (this.segNoGene + 1) * this.twoToThe(this.gene[8]);
+            var sizeWorry = (this.segNoGene + 1) * Monochrome.twoToThe(this.gene[8]);
             if(sizeWorry <= WORRYMAX) {
                 this.segNoGene++;
             }

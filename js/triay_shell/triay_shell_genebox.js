@@ -4,7 +4,6 @@ $.widget( "dawk.floatGenebox", $.dawk.monochrome_genebox, {
         this._super(options)
     },
     _init : function() {
-        
         this.options.hasLeftRight = true;
         this.options.hasMid = false;
         this.options.hasColor = false;
@@ -25,7 +24,6 @@ $.widget( "dawk.handednessGenebox", $.dawk.monochrome_genebox, {
         this._super(options)
     },
     _init : function() {
-        
         this.options.hasLeftRight = true;
         this.options.hasMid = false;
         this.options.hasColor = false;
@@ -38,5 +36,4 @@ $.widget( "dawk.handednessGenebox", $.dawk.monochrome_genebox, {
         this.element.find('.geneValue')
         .text(this.options.value == -1 ? 'Left' : 'Right');
     },    
-
 } );

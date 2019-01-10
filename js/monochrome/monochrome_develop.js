@@ -157,7 +157,7 @@ Monochrome.prototype.develop = function() {
 
             order = this.plugIn(running, dx, dy);
         }	
-        var sizeWorry = this.segNoGene * this.twoToThe(this.gene[8]);
+        var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
         if(sizeWorry > WORRYMAX)
             this.gene[8] = this.gene[8] - 1;
         if(this.gene[8] < 1) {

@@ -58,6 +58,8 @@
             <fileset file="js/minimal/species_minimal.js" />
             </concat>
         <concat destfile="docs/js/colour_biomorph.js">
+            <fileset file="js/colour_biomorph/colour_biomorph_develop.js" />
+            <fileset file="js/colour_biomorph/colour_biomorph_colour.js" />
             <fileset file="js/colour_biomorph/colour_biomorph.js" />
             <fileset file="js/colour_biomorph/colour_pic.js" />
             </concat>

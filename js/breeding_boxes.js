@@ -152,7 +152,7 @@ $( function() {
                         console.log(this.options.biomorph);
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
-                        biomorph.doPerson('BasicTree')
+                        biomorph.doPerson()
                     }
                     $(canvas).data('genotype', biomorph)        
                     biomorph.develop()

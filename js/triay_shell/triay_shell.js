@@ -136,14 +136,7 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 5:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.handedness = -1
-            break;
-        case HorizPos.RightThird: 
-            shell.handedness = 1
-            break;
-        }
+        shell.handedness = -shell.handedness
         break;
     case 6:
         switch(leftRightPos) {

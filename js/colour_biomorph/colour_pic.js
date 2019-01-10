@@ -1,9 +1,3 @@
-
-
-
-
-
-
 /*
  * Lin = RECORD
  *     StartPt, EndPt: Point;
@@ -20,8 +14,8 @@ function ColourLin(x, y, xnew, ynew, col) {
     this.nextLin = null;    
 }
 
-ColourLin.prototype.linToString = function() {
-    return "ColourLin " + this.startPt.toString() + " -> " + this.endPt.toString() + " thickness " + this.thickness;
+ColourLin.prototype.toString = function() {
+    return "ColourLin " + this.startPt.toString() + " -> " + this.endPt.toString() + " color " + this.col;
 }
 
 
@@ -38,11 +32,12 @@ ColourLin.prototype.linToString = function() {
  * 
  */
 function ColourPic(biomorph) {
+    this.palette = biomorph.session.options.palette
     this.basePtr = null // The first ColourLin
     this.movePtr = null // The current ColourLin (used in walking the array)
     this.origin = new Point(0,0) // a Point
     this.picSize = 0 // Number of Lins
-    this.picPerson = null // the biomorph that this is a picture of.
+    this.picPerson = biomorph // the biomorph that this is a picture of.
     this.margin = new Rect() // bounding rectangle
 }
 
@@ -82,9 +77,6 @@ ColourPic.prototype.zeroPic = function (here) {
 }
 
 ColourPic.prototype.picLine = function(x, y, xnew, ynew, color) {
-//  // // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
-    if(thick > 8)
-        thick = 8;
     if(this.picSize >= PICSIZEMAX) {
         alert('Biomorph too Large. No recovery possible')
         return
@@ -131,7 +123,6 @@ ColourPic.prototype.actualLine = function(picStyle, orientation) {
     var movePtr = this.movePtr;
     var drawer = this.drawer;
 
-    drawer.penSize(movePtr.thickness);
     var x0;
     var x1;
     var y0;
@@ -149,30 +140,31 @@ ColourPic.prototype.actualLine = function(picStyle, orientation) {
         x0 = startPt.v;
         x1 = endPt.v;
     }
+    drawer.setColor(this.palette.colors[movePtr.col])
     switch(picStyle) {
     case PicStyleType.LF: 
-        drawer.drawLine(x0, y0, x1, y1);
+        this.limb(x0, y0, x1, y1);
         break;
     case PicStyleType.RF: 
-        drawer.drawLine(-x0, y0, -x1, y1);
+        this.limb(-x0, y0, -x1, y1);
         break;
     case PicStyleType.FF: 
-        drawer.drawLine(x0, y0, x1, y1);
-        drawer.drawLine(-x0, y0, -x1, y1);
+        this.limb(x0, y0, x1, y1);
+        this.limb(-x0, y0, -x1, y1);
         break;
     case PicStyleType.LUD: 
-        drawer.drawLine(x0, y0, x1, y1);
-        drawer.drawLine(-x0, -y0, -x1, -y1);
+        this.limb(x0, y0, x1, y1);
+        this.limb(-x0, -y0, -x1, -y1);
         break;
     case PicStyleType.RUD: 
-        drawer.drawLine(-x0, y0, -x1, y1);
-        drawer.drawLine(x0, -y0, x1, -y1);
+        this.limb(-x0, y0, -x1, y1);
+        this.limb(x0, -y0, x1, -y1);
         break;
     case PicStyleType.FUD: 
-        drawer.drawLine(x0, y0, x1, y1);
-        drawer.drawLine(-x0, y0, -x1, y1);
-        drawer.drawLine(x0, -y0, x1, -y1);
-        drawer.drawLine(-x0, -y0, -x1, -y1);
+        this.limb(x0, y0, x1, y1);
+        this.limb(-x0, y0, -x1, y1);
+        this.limb(x0, -y0, x1, -y1);
+        this.limb(-x0, -y0, -x1, -y1);
         break;
     } // {CASES}
 } // {ActualLine}
@@ -180,19 +172,71 @@ ColourPic.prototype.actualLine = function(picStyle, orientation) {
 //{ColourPic already contains its own origin, meaning the coordinates at which}
 //{ it was originally drawn. Now draw it at place}
 
-ColourPic.prototype.drawPic = function(place) {
-    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', this.biomorph.drawer);
+ColourPic.prototype.limb = function(x0, y0, x1, y1) {
 
-    // console.log('drawPic picSize ' + this.picSize)
-    // console.log(this)
+    var limbShapeGene = this.picPerson.limbShapeGene
+    var limbFillGene = this.picPerson.limbFillGene
+    var square = new Rect();
+    if(limbShapeGene == LimbType.Oval || limbShapeGene == LimbType.Rectangle) {
+        if(x0 < x1) {
+            if(y0 > y1) {
+                square.setRect(x0, y1, x1, y0)
+            } else {
+                square.setRect(x0, y0, x1, y1)
+            }
+        } else {
+            if(y0 > y1) {
+                square.setRect(x1, y1, x0, y0)
+            } else {
+                square.setRect(x1, y0, x0, y1)
+            }
+        }
+    }
     var drawer = this.drawer
-    var biomorph = this.biomorph
+    drawer.penSize(this.picPerson.thicknessGene)
+    if(limbShapeGene == LimbType.Oval) {
+        drawer.frameOval(square);
+        if(limbFillGene == LimbFillType.Filled) {
+            drawer.paintOval(square)
+        }
+    } else if(limbShapeGene == LimbType.Rectangle) {
+        drawer.frameRect(square);
+        if(limbFillGene == LimbType.Filled) {
+            drawer.paintRect(square)
+        }
+    }
+    drawer.moveTo(x0, y0);
+    drawer.lineTo(x1, y1);
+    // PenSize(MyPenSize, MyPenSize)
+}
+
+
+ColourPic.prototype.drawPic = function(place) {
+    var biomorph = this.picPerson
+    this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', biomorph.drawer);
+    var drawer = this.drawer
+    var bgcolor = this.palette.colors[biomorph.backColorGene]
+    if(bgcolor === undefined) {
+        alert('bgcolor is undefined')
+    }
+    
+
     drawer.save()
     drawer.translate(-place.h,-place.v);
+    drawer.setColor(bgcolor)
+    var halfWidth = drawer.drawingObject.width / 2
+    var halfHeight = drawer.drawingObject.height / 2
+    var margin = this.margin
+    drawer.paintRect(new Rect(
+            -halfWidth + margin.left, 
+            -halfHeight + margin.top, 
+            halfWidth + margin.right, 
+            halfHeight + margin.bottom))
     if(false) { // draw bounding rectangle for debugging centring
         drawer.setColor("red");
-        drawer.frameRect(this.margin);
+        drawer.frameRect(margin);
     }
+
     var picStyle = PicStyleType.FF; 
     switch(biomorph.completenessGene) {
     case CompletenessType.Single: 
@@ -222,10 +266,9 @@ ColourPic.prototype.drawPic = function(place) {
         }
         break;
     }
-    drawer.penSize(biomorph.session.myPenSize);
+    drawer.penSize(biomorph.session.options.myPenSize);
     // {reposition at base of grabbed space}
     this.movePtr = this.basePtr;
-    drawer.setColor("black");
 
     while(true) {
         this.actualLine(picStyle, Compass.NorthSouth); // {sometimes rangecheck error}
@@ -240,4 +283,6 @@ ColourPic.prototype.drawPic = function(place) {
         this.movePtr = this.movePtr.nextLin;
     }
     drawer.penSize(1);
+    // ForeColor(blackcolor)
+
 } // {DrawPic}

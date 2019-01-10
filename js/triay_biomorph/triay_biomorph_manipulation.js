@@ -88,7 +88,7 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
             // number gene value exceeded 4095.
             // This version does the test first, then increments gene 9 only
             // if it is safe to do so.
-            var sizeWorry = biomorph.segNoGene * this.twoToThe(biomorph.genes[8] + 1);
+            var sizeWorry = biomorph.segNoGene * Monochrome.twoToThe(biomorph.genes[8] + 1);
             if(sizeWorry <= WORRYMAX)
                 biomorph.genes[8]++;
             break;
@@ -115,7 +115,7 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         case HorizPos.MidThird: 
             break; //{No Action}
         case HorizPos.RightThird: 
-            var sizeWorry = (biomorph.segNoGene + 1) * this.twoToThe(biomorph.genes[8]);
+            var sizeWorry = (biomorph.segNoGene + 1) * Monochrome.twoToThe(biomorph.genes[8]);
             if(sizeWorry <= WORRYMAX) {
                 biomorph.segNoGene++
             }

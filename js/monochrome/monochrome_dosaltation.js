@@ -2,20 +2,20 @@ Monochrome.prototype.doSaltation = function() {
     // {bomb 5, range check failed, here after killing top Adam}
     var mut = this.session.options.mut
     if(mut[0]) {
-        this.segNoGene = this.randInt(6);
-        this.segDistGene = this.randInt(20);
+        this.segNoGene = Monochrome.randInt(6);
+        this.segDistGene = Monochrome.randInt(20);
     } else {
         this.segNoGene = 1;
         this.segDistGene = 1;
     }
-    var r = this.randInt(100);
+    var r = Monochrome.randInt(100);
     this.completenessGene = CompletenessType.Double;
     if(mut[2]) {
         if(r < 50) {
             this.completenessGene = CompletenessType.Single;
         } 
     }
-    r = this.randInt(100);
+    r = Monochrome.randInt(100);
     if(mut[3]) {
         if(r < 33) {
             this.spokesGene = SpokesType.Radial;
@@ -28,7 +28,7 @@ Monochrome.prototype.doSaltation = function() {
         this.spokesGene = SpokesType.NorthOnly;
     }
     if(mut[4]) {
-        this.trickleGene = this.randInt(10);
+        this.trickleGene = Monochrome.randInt(10);
         if(this.trickleGene > 1) {
             this.mutSizeGene = Math.trunc(this.trickleGene / 2);
         }
@@ -36,9 +36,9 @@ Monochrome.prototype.doSaltation = function() {
     for(let j = 0; j < 8; j++) {
         var maxGene;
         do {
-            this.gene[j] = Math.trunc(this.mutSizeGene * (this.randInt(19) - 10));
+            this.gene[j] = Math.trunc(this.mutSizeGene * (Monochrome.randInt(19) - 10));
             if(mut[1]) {
-                this.dGene[j] = this.randSwell(this.dGene[j]);
+                this.dGene[j] = Monochrome.randSwell(this.dGene[j]);
             } else {
                 this.dGene[j] = SwellType.Same;
             }
@@ -60,12 +60,12 @@ Monochrome.prototype.doSaltation = function() {
     do {
         // console.log("doSaltation2 trickleGene " + this.trickleGene);
         if(mut[7]) {
-            this.dGene[8] = this.randSwell(this.dGene[8]);
+            this.dGene[8] = Monochrome.randSwell(this.dGene[8]);
         } else {
             this.dGene[8] = SwellType.Same;
         }
         if(mut[1]) {
-            this.dGene[9] = this.randSwell(this.dGene[8])
+            this.dGene[9] = Monochrome.randSwell(this.dGene[8])
         } else {
             this.dGene[9] = Same;
         }
@@ -92,5 +92,5 @@ Monochrome.prototype.doSaltation = function() {
         maxgene = this.segDistGene * this.segNoGene * factor;
         // console.log("mut1 and 7 maxgene " + maxgene);
     } while (maxgene > 100 || maxgene < -100);
-    this.gene[8] = this.randInt(6);
+    this.gene[8] = Monochrome.randInt(6);
 }
