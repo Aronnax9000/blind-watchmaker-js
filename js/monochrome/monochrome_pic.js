@@ -93,8 +93,6 @@ Pic.prototype.zeroPic = function (here) {
     this.margin = new Rect()
     this.basePtr = null
     this.movePtr = null
-    // console.log('zeroPic') 
-    // console.log(this)
 }
 /*
  * Globals, line 28.
@@ -133,7 +131,6 @@ const PICSIZEMAX = 4095
 
  */
 Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
-//  // // console.log("picLine (" + x + "," + y + ")>(" + xnew + "," + ynew + ")" + " thickness " + thick);
     if(thick > 8)
         thick = 8;
     if(this.picSize >= PICSIZEMAX) {
@@ -143,8 +140,6 @@ Pic.prototype.picLine = function(x, y, xnew, ynew, thick) {
         return
     } else {
         newLin = new Lin(x, y, xnew, ynew, thick)
-//        newLin.id = this.picSize++
-//        // console.log('added line ' + newLin.id)
         if(this.basePtr == null) { // First Lin in the Pic.
             this.basePtr = newLin; // set the base pointer to the new Lin
         } else { // Pic already has at least one Lin.
@@ -185,11 +180,6 @@ Pic.prototype.actualLine = function(picStyle, orientation) {
     var origin = this.origin;
     var movePtr = this.movePtr;
     var drawer = this.drawer;
-//    
-//  // console.log("actualLine Style:" + PicStyleType.properties[picStyle].name 
-//          + " id " + movePtr.id 
-//          + " movePtr:" + movePtr.toString() 
-//          + " Origin:" + origin.toString())
 
     drawer.penSize(movePtr.thickness);
     var x0;
@@ -244,8 +234,6 @@ Pic.prototype.drawPic = function(place) {
     var biomorph = this.picPerson
     this.drawer = _drawerFactorySingleton.getDrawer('canvas2d', biomorph.drawer);
 
-    // console.log('drawPic picSize ' + this.picSize)
-    // console.log(this)
     var drawer = this.drawer
     drawer.save()
     drawer.translate(-place.h,-place.v)

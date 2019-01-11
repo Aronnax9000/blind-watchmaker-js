@@ -25,7 +25,6 @@ function doRepro(sourceCanvas, targetCanvas) {
 }
 
 function eraseCanvasNoCenter(canvas) {
-//    // console.log("eraseCanvasNoCenter");
     var drawingContext = canvas.getContext("2d");
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);

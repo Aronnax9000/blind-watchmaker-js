@@ -27,7 +27,6 @@ $( function() {
             var parentbreedingView = this.element.parents('.engineeringView').get(0);
             var geneboxes = $(parentbreedingView)
                 .find('.geneboxes').get(0);
-//            // console.log(geneboxes);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     this.options.canvas.get(0))
         },

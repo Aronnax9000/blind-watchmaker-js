@@ -10,12 +10,9 @@ $.widget('dawk.watchmakerView', {
       $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
   },
   viewGainedFocus: function(event) {
-      // console.log('View gained focus');
   },
   buildMenu: function(menuContents) {
-      // console.log('in view buildmenu')
-      var li
-      li = $('<li><div>Close View</div></li>')
+      let li = $('<li><div>Close View</div></li>')
       menuContents.append(li)
   },
 })

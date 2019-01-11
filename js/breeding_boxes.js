@@ -14,7 +14,6 @@ $( function() {
 
         sparkLine: function(destinationCanvas) {
             var canvas = $(this.element).parent().find('.overlayCanvas')[0];
-//            // console.log(canvas);
 
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
@@ -50,14 +49,11 @@ $( function() {
             }
             else  
                 alert("Genotype is null");
-//            return genotype;
         },
 
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
-                // console.log('produceKthOffspring ' + k)
-                // console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -65,7 +61,6 @@ $( function() {
                     var position = $(targetCanvas).parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-//                  // console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
@@ -84,7 +79,6 @@ $( function() {
                                 eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-//                                // console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -93,8 +87,6 @@ $( function() {
                         }, { queue: true, duration: 2000,
                             easing: 'easeOutExpo',
                             complete: function() {
-//                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                              // console.log('finished animate Offspring ' + targetCanvas.attr('id'));
                             }});
                     }
                 } else { // midbox
@@ -111,8 +103,6 @@ $( function() {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
             var explosiveBreeding = $(this.element).parents('.breedingView').find('.explosiveBreeding').get(0)
-//            console.log(explosiveBreeding);
-//                .find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {
                 this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
@@ -140,7 +130,6 @@ $( function() {
                     isMidBox: isMidBox, 
                     species: species,
                     breedingBoxes: this}).appendTo(boxes)
-                // console.log('adding canvas ' + j)
                 if(isMidBox) {
                     // Create a biomorph and render it on the middle canvas.
                     this.options.midCanvasDiv = canvasDiv
@@ -148,8 +137,6 @@ $( function() {
                     var biomorph = _speciesFactorySingleton.getSpecies(
                             species, session, canvas)
                     if(this.options.biomorph) {
-                        console.log('copyBiomorph')
-                        console.log(this.options.biomorph);
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
                         biomorph.doPerson()

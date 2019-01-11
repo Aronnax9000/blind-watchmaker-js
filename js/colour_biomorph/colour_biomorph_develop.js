@@ -47,5 +47,5 @@ ColourBiomorph.prototype.plugIn = function(gene, dx, dy) {
 }
 
 //called when it is time for the biomorph to draw itself. 
-ColourBiomorph.prototype.develop = Monochrome.prototype.develop
+ColourBiomorph.prototype.develop = Biomorphs.prototype.develop
 

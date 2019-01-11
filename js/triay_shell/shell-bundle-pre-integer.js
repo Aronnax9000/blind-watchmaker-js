@@ -662,7 +662,6 @@ Shell.randInt = function(lower, upper) {
 // we've added more parameters and a higher size mutation
 Shell.prototype.breed = function (element) {
     var child = this.getGenes()
-    console.log(child)
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
     }

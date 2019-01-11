@@ -13,14 +13,8 @@ Canvas2DDrawer.prototype.erase = function() {
     var height = this.getHeight();
     var halfWidth = width / 2;
     var halfHeight = height / 2;
-    // console.log('erase ' + width + 'x' + height);
 
     this.drawingContext.clearRect(0, 0, width, height);
-//    this.setColor('#FF0000');
-//    this.drawingContext.strokeStyle = 'red';
-//    this.penSize(4);
-//    this.moveTo(0,0);
-//    this.lineTo(200,200);
     
     this.drawingContext.translate(halfWidth + 0.5, halfHeight / 2 + 0.5);
 
@@ -30,17 +24,13 @@ Canvas2DDrawer.prototype.penSize = function(penSize) {
     if(penSize === undefined) {
         return this.drawingContext.lineWidth * 2;
     } else {
-//        // console.log("canvas2DDrawer.penSize = " + penSize);
         this.drawingContext.lineWidth = penSize / 2;
     }
 }
 
-Canvas2DDrawer.prototype.setColor = function(color, report) {
+Canvas2DDrawer.prototype.setColor = function(color) {
   this.drawingContext.strokeStyle = color;
   this.drawingContext.fillStyle = color;
-  if(report) {
-      console.log('setColor ' + color)
-  }
 }
 
 
@@ -88,19 +78,15 @@ Canvas2DDrawer.prototype.paintOval = function(rect) {
 }
 
 
-Canvas2DDrawer.prototype.paintRect = function(rect, report) {
+Canvas2DDrawer.prototype.paintRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.fillRect(rect.left, rect.top, width, height);
-    if(report) {
-        console.log('PaintRect ' + rect + ' fillStyle ' + this.drawingContext.strokeStyle)
-    }
 }
 Canvas2DDrawer.prototype.frameRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.strokeRect(rect.left, rect.top, width, height);
-    
 }
 
 Canvas2DDrawer.prototype.getHeight = function() {

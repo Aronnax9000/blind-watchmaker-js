@@ -9,13 +9,9 @@ $.widget('dawk.geneboxes', {
         $(this.element).addClass('geneboxes')
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-        console.log(this.options.biomorph)
         this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
-        console.log('geneboxes widget finished calling manipulation on geneboxIndex ' + geneboxIndex);
         var canvas = $(this.element).parent().find('canvas').get(0);
         this.updateFromCanvas(canvas);
-        console.log('geneboxes widget calling develop on ');
-        console.log(this.options.biomorph)
         this.options.biomorph.develop();
     },
 
@@ -30,13 +26,10 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
 
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-            // console.log('updateFromCanvas: no biomorph on canvas.')
-            // console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;
         geneboxes = $(this.element).find('.genebox');
-//      // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);

@@ -58,7 +58,6 @@ var LimbFillType = {
  * 
  */
 function ColourBiomorph(session, drawer) {
-//  console.log('new ColourBiomorph')
     this.session = session
     this.drawer = drawer
     this.gene = chromosome()
@@ -95,6 +94,10 @@ ColourBiomorph.initializeSession = function(session) {
     session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
     session.options.trickle = 10
     session.options.palette = new Palette()
+    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "New Random Start"]
+    session.options.defaultBasicType = ["New Random Start"]
+    session.options.hopefulMonsterBasicType = ["New Random Start"]
+    
     ColourBiomorph.initializeMut(session)
 }
 
@@ -153,7 +156,7 @@ ColourBiomorph.prototype.makeGenes = function(a, b, c, d, e, f, g, h, i) {
 
 ColourBiomorph.prototype.chess = function() {
     var trickle = this.session.options.trickle
-    this.makeGenes(genotype, -trickle, 3 * trickle, -3 * trickle, -3 * trickle, trickle, -2 * trickle, 6 * trickle, -5 * trickle, 7);
+    this.makeGenes(-trickle, 3 * trickle, -3 * trickle, -3 * trickle, trickle, -2 * trickle, 6 * trickle, -5 * trickle, 7)
     for(let j = 0; j < 8; j++) {
         this.colorGene[j] = Math.trunc(ColourBiomorph.Rainbow / 2);
     }
@@ -167,17 +170,17 @@ ColourBiomorph.prototype.basicTree = function() {
     var trickle = this.session.options.trickle
     this.makeGenes(-trickle, -trickle, -trickle, -trickle, -trickle, 0, trickle, trickle, 6);
     for(let j = 0; j < 8; j++) {
-        this.colorGene[j] = Math.trunc(ColourBiomorph.Rainbow / 2);
+        this.colorGene[j] = Math.trunc(ColourBiomorph.Rainbow / 2)
     }
-    this.backColorGene = Math.trunc(ColourBiomorph.Rainbow / 3);
-    this.limbShapeGene = LimbType.Stick;
-    this.limbFillGene = LimbFillType.Filled;
-    this.thicknessGene = 1;
+    this.backColorGene = Math.trunc(ColourBiomorph.Rainbow / 3)
+    this.limbShapeGene = LimbType.Stick
+    this.limbFillGene = LimbFillType.Filled
+    this.thicknessGene = 1
 }
 
 ColourBiomorph.prototype.insect = function() {
     var trickle = this.session.options.trickle
-    makeGenes(trickle, 
+    this.makeGenes(trickle, 
             trickle, 
             -4 * trickle, 
             trickle, 
@@ -185,13 +188,13 @@ ColourBiomorph.prototype.insect = function() {
             -2 * trickle, 
             8 * trickle, 
             -4 * trickle, 
-            6);
+            6)
     for(let j = 0; j < 8; j++)
-        this.colorGene[j] = Math.trunc(ColourBiomorph.Rainbow / 2);
-    this.backColorGene = Math.trunc(ColourBiomorph.Rainbow / 3);
+        this.colorGene[j] = Math.trunc(ColourBiomorph.Rainbow / 2)
+    this.backColorGene = Math.trunc(ColourBiomorph.Rainbow / 3)
     this.limbShapeGene = LimbType.Stick;
     this.limbFillGene = LimbFillType.Filled;
-    this.thicknessGene = 1;
+    this.thicknessGene = 1
 }
 
 
@@ -203,6 +206,7 @@ ColourBiomorph.prototype.doPerson = function(biomorphType) {
         case "Chess": this.chess(); break;
         case "BasicTree": this.basicTree(); break;
         case "Insect": this.insect(); break;
+        case "New Random Start":
         default: 
             this.basicTree()
             this.doSaltation()
@@ -359,9 +363,7 @@ ColourBiomorph.prototype.direction9 = function() {
 //initializes the biomorph's genotype to a random set) { values
 //causes the biomorph's genotype to undergo a random mutation
 ColourBiomorph.prototype.mutate = function() {
-    console.log('mutate')
     var mut = this.session.options.mut
-    console.log(mut)
     if(mut[6]) {
         if(Monochrome.randInt(100) < this.mutProbGene) {
             this.mutProbGene = this.mutProbGene + this.direction9();
@@ -513,7 +515,6 @@ ColourBiomorph.prototype.reproduce = function(element) {
 }
 
 ColourBiomorph.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-//  console.log('ColourBiomorph.manipulate')
 }
 
 //Register the Colour biomorph species with the SpeciesFactory.

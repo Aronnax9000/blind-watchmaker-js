@@ -10,42 +10,7 @@ function getBiomorphFromCanvas(canvas) {
 
 
 
-$( function() {
-    $.widget( "dawk.modeToolbar", {
-        options: {
-            species: null
-        },
-        _create: function() {
-            $(this.element).addClass('breedingControl');
-            var button 
-            $('<span>Clone in new window:</span>').appendTo(this.element)
-            
-            button = $('<button>Breed</button>')
-            this._on($(button), {'click': this.breedInNewWindow})
-            $(this.element).append(button)
 
-            button = $('<button>Engineer</button>')
-            this._on($(button), {'click': this.engineer})
-            $(this.element).append(button)
-        },
-        breedInNewWindow: function() {
-            console.log('breedInNewWindow')
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newBreedingView", biomorph)
-        },
-        engineer: function() {
-            console.log('engineer')
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newEngineeringView", biomorph)
-        }
-    });
-});
 $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
 
@@ -73,7 +38,6 @@ $( function() {
         },
         viewGainedFocus: function(event) {
             var watchmakerSessionTab = $(this).breedingView("option", "watchmakerSessionTab");
-            // console.log($(watchmakerSessionTab.element).watchmakerSessionTab('option', 'name'));
             var newMenu = $('<ul></ul>');
             var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
             newMenu.append(operation);
@@ -89,7 +53,9 @@ $( function() {
             var species = this.options.session.species
             $(this.element).addClass('breedingView')
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
-            $("<div></div>").modeToolbar({ 
+            $("<div></div>").modeToolbar({
+                parentView: this,
+                session: this.options.session,
                 species: this.options.session.species}
             ).appendTo(this.element)
             var geneboxes_options = {
@@ -101,6 +67,7 @@ $( function() {
             var container = $("<div></div>");
             container.addClass('container');
             var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+            this.options.boxes = boxes
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);

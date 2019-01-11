@@ -1,47 +1,20 @@
-//
-//function main() {
-//
-//    var canvas = document.getElementById("canvas")
-//    var wWidth = window.innerWidth
-//    var wHeight = window.innerHeight
-//
-//    canvas.width = wWidth
-//    canvas.height = wHeight
-//
-//    var ctx = canvas.getContext('2d')
-//
-//    var bio = new Shell(ctx, wWidth, wHeight, null)
-//
-//    bio.draw()
-//
-//    canvas.addEventListener('click', function () {
-//
-//        bio.randomize()
-//        bio.draw()
-//    })
-//
-//}
-
-// A shell is a set of genes which control roughly what Dawkins called
-// flare, spire and verm, as discussed in Climbing Mount Improbable. 
-// There are other genes which modify the behaviour of these.
-// It's modeled around the idea of a spiraling tube. The genes determine how the 
-// spiral unfolds, and at each stop, draws a given pattern (circle, or others).
-// The naming comes from the original code
-// - pattern: string which says what shape will be repeated and distorted
-// - opening: called "flare" in the book, determines the speed at which the tube's diameter expands
-// - displacement: called "verm" in the book, determines how close together the tube's whorls are
-// - translation: called "spire" in the book, determines how much the tube piles on itself (the height)
-// - coarsegraininess: how often is the pattern repeated along the spiral
-// - reach: how much the spiral coils
-// - handedness: wether the shells faces left or right
-// - shape: how much the shell pattern gets distorted
-// - translationGradient: modifies the translation's "easing"
-// Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
-// The genes are optional (you'll get a random shell). 
-
-
-
+//A shell is a set of genes which control roughly what Dawkins called
+//flare, spire and verm, as discussed in Climbing Mount Improbable. 
+//There are other genes which modify the behaviour of these.
+//It's modeled around the idea of a spiraling tube. The genes determine how the 
+//spiral unfolds, and at each stop, draws a given pattern (circle, or others).
+//The naming comes from the original code
+//- pattern: string which says what shape will be repeated and distorted
+//- opening: called "flare" in the book, determines the speed at which the tube's diameter expands
+//- displacement: called "verm" in the book, determines how close together the tube's whorls are
+//- translation: called "spire" in the book, determines how much the tube piles on itself (the height)
+//- coarsegraininess: how often is the pattern repeated along the spiral
+//- reach: how much the spiral coils
+//- handedness: wether the shells faces left or right
+//- shape: how much the shell pattern gets distorted
+//- translationGradient: modifies the translation's "easing"
+//Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
+//The genes are optional (you'll get a random shell). 
 
 function Shell (ctx, width, height, genes) {
     this.children = []
@@ -65,30 +38,32 @@ function Shell (ctx, width, height, genes) {
     this.nbSegments = 0
     this.ctx = ctx
 
-    this.type = 'shell'
+    this.type = 'shell';
 
-        if (genes) {
-            this.opening = genes.opening
-            this.displacement = genes.displacement
-            this.shape = genes.shape
-            this.translation = genes.translation
-            this.coarsegraininess = genes.coarsegraininess
-            this.reach = genes.reach
-            this.pattern = genes.pattern
-            this.handedness = genes.handedness
-            this.translationGradient = genes.translationGradient
+    if (genes) {
+        this.opening = genes.opening
+        this.displacement = genes.displacement
+        this.shape = genes.shape
+        this.translation = genes.translation
+        this.coarsegraininess = genes.coarsegraininess
+        this.reach = genes.reach
+        this.pattern = genes.pattern
+        this.handedness = genes.handedness
+        this.translationGradient = genes.translationGradient
+        if(genes.mutSize) {
             this.mutSize = {
-                    displacement: genes.mutSize.displacement,
-                    translation: genes.mutSize.translation,
-                    shape: genes.mutSize.shape,
-                    reach: genes.mutSize.reach
+                displacement: genes.mutSize.displacement,
+                translation: genes.mutSize.translation,
+                shape: genes.mutSize.shape,
+                reach: genes.mutSize.reach
             }
-            this.mutProbGene = genes.mutProbGene
-            this.generate()
         }
-        else {
-            this.randomize()
-        }
+        this.mutProbGene = genes.mutProbGene
+        this.generate()
+    }
+    else {
+        this.randomize()
+    }
 }
 
 Shell.prototype.randomize = function () {
@@ -124,12 +99,8 @@ Shell.randomSign = function() {
     else return 1;
 }
 
-// This produces a random set of genes which have visually
-// pleasing characteristics (most of the time)
-// Each shape has a different set of boundaries to make them look better
-Shell.randomGenes = function () {
-
-    var basicSnail = {
+Shell.hardcodedAnimals = {
+        BasicSnail: {
             opening: Shell.random(1.5, 6.50),
             displacement: Shell.random(0, 0.1),
             shape: Shell.random(0.8, 1.8),
@@ -139,9 +110,8 @@ Shell.randomGenes = function () {
             pattern: "circle",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var Babylon = {
+        },
+        Babylon: {
             opening: Shell.random(100, 1000),
             displacement: Shell.random(0, 0.25),
             shape: Shell.random(2, 5),
@@ -151,9 +121,8 @@ Shell.randomGenes = function () {
             pattern: "babylon",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 8),
-    }
-
-    var Angel = {
+        },
+        Angel: {
             opening: Shell.random(100, 1000),
             displacement: Shell.random(0, 0.25),
             shape: Shell.random(2, 5),
@@ -163,9 +132,8 @@ Shell.randomGenes = function () {
             pattern: "angel",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 8),
-    }
-
-    var Oyster = {
+        },
+        Oyster: {
             opening: Shell.random(100, 1000),
             displacement: Shell.random(0, 0.2),
             shape: Shell.random(2, 5),
@@ -175,10 +143,10 @@ Shell.randomGenes = function () {
             pattern: "oyster",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.5, 1.5),
-    }
+        },
 
-    // BIVALVE AND BRACHIOPOD Shell.random
-    var Bivalve = {
+        // BIVALVE AND BRACHIOPOD Shell.random
+        Bivalve: {
             opening: Shell.random(20, 1000),
             displacement: Shell.random(0, 0.25),
             shape: Shell.random(1.5, 4),
@@ -188,9 +156,8 @@ Shell.randomGenes = function () {
             pattern: "circle",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 5),
-    }
-
-    var Cone = {
+        },
+        Cone: {
             opening: Shell.random(1.3, 5),
             displacement: Shell.random(0, 0.5),
             shape: Shell.random(1, 5),
@@ -200,9 +167,8 @@ Shell.randomGenes = function () {
             pattern: "whelk",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var Scallop = {
+        },
+        Scallop: {
             opening: Shell.random(100, 1000),
             displacement: 0,
             shape: Shell.random(1, 6),
@@ -212,9 +178,8 @@ Shell.randomGenes = function () {
             pattern: "scallop",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0, 2),
-    }
-
-    var Eloise = {
+        },
+        Eloise: {
             opening: Shell.random(1.3, 2.5),
             displacement: Shell.random(0, 0.3),
             shape: Shell.random(1.5, 2),
@@ -224,9 +189,8 @@ Shell.randomGenes = function () {
             pattern: "eloise",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 2),
-    }
-
-    var Gallaghers = {
+        },
+        Gallaghers: {
             opening: Shell.random(1.4, 2),
             displacement: Shell.random(0, 0.1),
             shape: Shell.random(1.4, 2),
@@ -236,9 +200,8 @@ Shell.randomGenes = function () {
             pattern: "gallaghers",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.5, 1),
-    }
-
-    var Rapa = {
+        },
+        Rapa: {
             opening: Shell.random(1.4, 6),
             displacement: Shell.random(0, 0.12),
             shape: Shell.random(1.8, 2.7),
@@ -248,9 +211,8 @@ Shell.randomGenes = function () {
             pattern: "rapa",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.8, 1.5),
-    }
-
-    var Lightning = {
+        },
+        Lightning: {
             opening: Shell.random(1.4, 2.2),
             displacement: Shell.random(0, 0.3),
             shape: Shell.random(2.5, 5),
@@ -260,9 +222,8 @@ Shell.randomGenes = function () {
             pattern: "lightning",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.8, 1.2),
-    }
-
-    var Fig = {
+        },
+        Fig: {
             opening: Shell.random(1.5, 4),
             displacement: Shell.random(0, 0.1),
             shape: Shell.random(2, 4),
@@ -272,9 +233,8 @@ Shell.randomGenes = function () {
             pattern: "tun",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.9, 1.1),
-    }
-
-    var RazorShell = {
+        },
+        RazorShell: {
             opening: Shell.random(100, 1000),
             displacement: -0.15,
             shape: Shell.random(4, 6),
@@ -284,9 +244,8 @@ Shell.randomGenes = function () {
             pattern: "razor",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var JapaneseWonder = {
+        },
+        JapaneseWonder: {
             opening: Shell.random(1.4, 2),
             displacement: Shell.random(-0.2, 0.05),
             shape: Shell.random(1, 3),
@@ -296,15 +255,36 @@ Shell.randomGenes = function () {
             pattern: "wonder",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.9, 1.2),
-    }
-    var choices = [basicSnail, Oyster, Bivalve, Cone, Scallop, Eloise, Gallaghers, Rapa, Lightning, Fig, RazorShell, JapaneseWonder]
+        }
+
+}
+
+//This produces a random set of genes which have visually
+//pleasing characteristics (most of the time)
+//Each shape has a different set of boundaries to make them look better
+Shell.randomGenes = function () {
+    var choices = [
+        Shell.hardcodedAnimals['BasicSnail'], 
+        Shell.hardcodedAnimals['Babylon'],
+        Shell.hardcodedAnimals['Angel'],
+        Shell.hardcodedAnimals['Oyster'],
+        Shell.hardcodedAnimals['Bivalve'],
+        Shell.hardcodedAnimals['Cone'],
+        Shell.hardcodedAnimals['Scallop'],
+        Shell.hardcodedAnimals['Eloise'], 
+        Shell.hardcodedAnimals['Gallaghers'], 
+        Shell.hardcodedAnimals['Rapa'], 
+        Shell.hardcodedAnimals['Lightning'], 
+        Shell.hardcodedAnimals['Fig'], 
+        Shell.hardcodedAnimals['RazorShell'],
+        Shell.hardcodedAnimals['JapaneseWonder']]
     //Babylon and Angel aren't used because they're very similar to Bivalves
     return choices[Math.trunc(Math.random() * choices.length)]
 }
 
-// This is a hash of patterns. Each shape is a set of 2D coordinates relative to the first point.
-// There are also w and h which are the original height and width of the shape (to allow scaling)
-// These patterns can be used instead of circles to draw the shells.
+//This is a hash of patterns. Each shape is a set of 2D coordinates relative to the first point.
+//There are also w and h which are the original height and width of the shape (to allow scaling)
+//These patterns can be used instead of circles to draw the shells.
 Shell.patterns = {
         whelk: {points:[[0.22100000000000364,793.123],[79.92,-101.91],[103.64,-230.23],[61.47,-328.6],[91.36,-484.13],[132.64,-522.82],[132.64,-530.73],[169.55,-565.84],[175.71,-565.84],[264.44,-655.47],[361.13,-708.19],[415.59,-793.44],[492.93,-774.98],[499.94,-718.73],[558.82,-637.91],[624.73,-571.11],[637.91,-565.84],[673.02,-445.48],[649.29,-302.24],[594.84,-224.05],[552.66,-180.99],[545.65,-180.15],[504.31,-138.81],[235.44,3.53],[216.99,52.72],[181.88,-8.8],[97.53,-31.63]],w:673.02,h:846.16},
         wonder: {points:[[318.977,-0.3160000000000025],[-59.25,58.5],[-119.25,123.75],[-185.25,245.25],[-209.25,287.25],[-244.5,390],[-269.25,576],[-276,739.5],[-288,779.25],[-318.75,845.25],[-194.25,836.25],[-142.5,821.25],[-120.75,804],[-98.25,776.25],[-53.25,704.25],[15,615.75],[75,537.75],[135,440.25],[195.75,333.75],[249.75,243.75],[284.25,177],[307.5,144],[307.5,134.25],[294,121.5]],w:626.25,h:845.25},
@@ -320,9 +300,9 @@ Shell.patterns = {
         angel: {points:[[582.789,-0.09300000000001774],[-24.22,23.09],[-57.09,47.32],[-179.06,119.98],[-246.53,161.5],[-286.32,185.72],[-377.16,252.32],[-447.22,318.07],[-508.64,375.16],[-519.02,379.48],[-559.68,468.58],[-583.03,530.86],[-576.11,630.34],[-532.86,708.19],[-438.57,804.21],[-352.07,844.29],[-136.68,844.29],[-6.06,820.64],[84.77,765.29],[162.62,686.57],[229.23,610.44],[262.97,506.64],[262.97,400.24],[237.88,303.36],[184.25,207.34],[132.34,139.01],[101.21,104.4]],w:846,h:844.29},
 }
 
-// To draw the shell, we first have to generate all the bounding boxes along
-// the spiral. The pattern is then scaled to fit these boxes and drawn
-// Width and height are optional and useful if the canvas has changed size
+//To draw the shell, we first have to generate all the bounding boxes along
+//the spiral. The pattern is then scaled to fit these boxes and drawn
+//Width and height are optional and useful if the canvas has changed size
 Shell.prototype.generate = function (width, height) {
 
     if (width && height) {
@@ -404,8 +384,8 @@ Shell.prototype.generate = function (width, height) {
     this.scaleToBox(0.8) // Make sure the shell fits in the box
 }
 
-// Stretches a shape to make it fit in a rectangle of w x h
-// invert = -1 or 1 to invert the coordinates (handedness)
+//Stretches a shape to make it fit in a rectangle of w x h
+//invert = -1 or 1 to invert the coordinates (handedness)
 Shell.scaleToRect = function (shape, w, h, invert) {
 
     // Calculate ratios of sizeWeWant/sizeItWas
@@ -481,8 +461,8 @@ Shell.prototype.translate = function (offsetX, offsetY) {
     }
 }
 
-// Calculates the width/height and corner coordinates of the shell
-// Useful to place multiple shells on a single canvas
+//Calculates the width/height and corner coordinates of the shell
+//Useful to place multiple shells on a single canvas
 Shell.prototype.setBoundingBox = function () {
 
     var segment
@@ -532,8 +512,8 @@ Shell.prototype.setBoundingBox = function () {
     this.box = box
 }
 
-// For each box generated, this has to be called to draw the pattern
-// with the right dimensions
+//For each box generated, this has to be called to draw the pattern
+//with the right dimensions
 Shell.prototype.drawPattern = function (segment, index) {
 
     // Height and width for the box
@@ -612,8 +592,8 @@ Shell.prototype.draw = function (lofi) {
     this.ctx.stroke()
 }
 
-// Opening is a logarithmic value so it has its own
-// function to mutate it which converts it to meaningful values
+//Opening is a logarithmic value so it has its own
+//function to mutate it which converts it to meaningful values
 Shell.mutateOpening = function (opening) {
 
     var mutSize = 0.4
@@ -655,17 +635,16 @@ Shell.rand100 = function() {
 
 
 //Shell.randInt = function(lower, upper) {
-//    return Math.trunc(Math.random() * (upper - lower) + lower)
+//return Math.trunc(Math.random() * (upper - lower) + lower)
 //}
 
-// The breeding process is relatively straighforward compared to the rest
-// It looks at each gene and rolls a D100. If it's under the probability, then
-// the gene will mutate by a factor of the mutSize
-// The original program's mutations were pretty limited, so to accentuate them
-// we've added more parameters and a higher size mutation
+//The breeding process is relatively straighforward compared to the rest
+//It looks at each gene and rolls a D100. If it's under the probability, then
+//the gene will mutate by a factor of the mutSize
+//The original program's mutations were pretty limited, so to accentuate them
+//we've added more parameters and a higher size mutation
 Shell.prototype.breed = function (element) {
     var child = this.getGenes()
-    console.log(child)
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
     }
@@ -703,7 +682,7 @@ Shell.prototype.breed = function (element) {
         newShell = new Shell(element.getContext('2d'), element.width, element.height, child)
     else
         newShell = new Shell(this.ctx, this.canvasWidth, this.canvasHeight, child)
-        
+
     this.children.push(newShell)
 
     return this.children[this.children.length - 1]

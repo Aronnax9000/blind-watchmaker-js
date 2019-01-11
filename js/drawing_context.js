@@ -1,7 +1,5 @@
 function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
-    // console.log("Registered Drawer Type " + drawerType);
-
 }
 
 function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
@@ -10,10 +8,7 @@ function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
         drawer = this.properties[drawerFactoryType](drawingObject);
     } catch (err) {
         console.error("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
-        for(let propt in this.properties){
-            // console.log(propt + ': ' + this.properties[propt]);
-        }
-        // console.log("err: " + err);
+        console.error(err);
     }
     return drawer;
 }

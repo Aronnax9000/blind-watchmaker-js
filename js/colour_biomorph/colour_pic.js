@@ -72,8 +72,6 @@ ColourPic.prototype.zeroPic = function (here) {
     this.margin = new Rect()
     this.basePtr = null
     this.movePtr = null
-    // console.log('zeroPic') 
-    // console.log(this)
 }
 
 ColourPic.prototype.picLine = function(x, y, xnew, ynew, color) {

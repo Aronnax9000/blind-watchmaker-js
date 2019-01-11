@@ -45,7 +45,6 @@ TriayBiomorphs.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         str += ',' + rungProperties.name;
     }
     var biomorph = this.triay_biomorph
-    // console.log(str);
     switch(geneboxIndex) {
     case 1:
     case 2:

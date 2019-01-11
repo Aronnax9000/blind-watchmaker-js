@@ -17,23 +17,44 @@
  */
 
 function Shells(session, drawer) {
-    console.log('new Shells')
     this.session = session
     this.drawer = drawer
 }
 
 Shells.initializeSession = function(session) {
     session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
+    session.options.basicTypes = [
+        "Hopeful Monster",
+        "BasicSnail",
+        "Babylon",
+        "Angel",
+        "Oyster",
+        "Bivalve",
+        "Cone",
+        "Scallop",
+        "Eloise",
+        "Gallaghers",
+        "Rapa",
+        "Fig",
+        "RazorShell",
+        "JapaneseWonder"]
+
+    session.options.defaultBasicType = "Hopeful Monster"
+    session.options.hopefulMonsterBasicType = "Hopeful Monster"
+
 }
 
 //initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
-    console.log('Shells doPerson ' + morphType)
+    var genes = null
+    if(morphType) {
+        genes = Shell.hardcodedAnimals[morphType]
+    }
     var drawer = this.drawer
     this.shell = new Shell(drawer.getContext('2d'), 
             drawer.width,
             drawer.height,
-            null)
+            genes)
     // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
 //  this.shell.mutProbGene = 100
 
@@ -44,7 +65,6 @@ Shells.prototype.doSaltation = function() {
 //initializes the biomorph's genotype to a random set of values
 //causes the biomorph's genotype to undergo a random mutation
 Shells.prototype.mutate = function() {
-//    console.log('Shells.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 Shells.prototype.reproduce = function(element) {

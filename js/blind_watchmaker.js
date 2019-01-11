@@ -8,7 +8,6 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
         var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
-//        console.log(availableSpecies)
         availableSpecies.forEach(availableSpecie => {
             this.newWatchmakerSession(availableSpecie)
         })
@@ -21,10 +20,8 @@ $.widget('dawk.blindWatchmaker', {
         $(parents).blindWatchmaker('buildMenu');
     },
     raiseAlert: function() {
-     // console.log('Blindwatchmaker callback from view');   
     },
     newWatchmakerSession: function(species) {
-//        // console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
@@ -48,13 +45,11 @@ $.widget('dawk.blindWatchmaker', {
             'session': newWSession,
             'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-//        // console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
     },
     buildMenu: function() {
-//        // console.log('bw buildMenu');
         $(this.element).find('.watchmakerMenu').each(function() {this.remove();});
         var menu = $('<ul class="watchmakerMenu"></ul>');
         $(this.element).append(menu);
@@ -83,9 +78,7 @@ $.widget('dawk.blindWatchmaker', {
         }
 
         
-//        // console.log($(this.element).tabs("option", "active"));
         var activeIndex = $(this.element).tabs("option", "active");
-//        // console.log(activeIndex);
         var activeSession = $(this.element).find('.watchmakerSessionTab').get(activeIndex);
         var sessionName = $(activeSession).watchmakerSessionTab('option', 'name');
         var sessionLi = $("<li><div>" + sessionName + "</div></li>")
@@ -98,14 +91,10 @@ $.widget('dawk.blindWatchmaker', {
     },
     closeSession: function() {
         var selectedIndex = this.element.tabs('option', 'active');
-        // console.log('selectedIndex ' + selectedIndex);
         var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
         var ul = this.element.find('ul.watchmakerTabs').get(0);
-        // console.log(ul);
         var liToRemove = $(ul).find('li').get(selectedIndex);
         var divToRemove = $(this.element).find('div').get(selectedIndex);
-        // console.log(liToRemove);
-        // console.log(divToRemove);
         $(divToRemove).remove();
         $(liToRemove).remove();
         this.element.tabs("refresh");

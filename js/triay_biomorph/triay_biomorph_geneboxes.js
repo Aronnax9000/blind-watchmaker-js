@@ -1,7 +1,7 @@
-// Globals, lines 205-206
-// TYPE
-//        HorizPos = (LeftThird, MidThird, RightThird);
-//        VertPos = (TopRung, MidRung, BottomRung);
+//Globals, lines 205-206
+//TYPE
+//HorizPos = (LeftThird, MidThird, RightThird);
+//VertPos = (TopRung, MidRung, BottomRung);
 
 
 
@@ -20,7 +20,7 @@ $.widget("dawk.triay_biomorph_genebox", {
     },
     _create : function(options) {
         this._setOptions(options);
-        
+
         this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);
@@ -29,37 +29,37 @@ $.widget("dawk.triay_biomorph_genebox", {
         // HTML template for the manipulation areas of the genebox.
         var str =  '\
             <div class="geneboxInfo"> \
-                <img src="img/swellcircle.png" class="gradientGene gradientSame" /> \
-                <span class="geneValue"></span> \
+            <img src="img/swellcircle.png" class="gradientGene gradientSame" /> \
+            <span class="geneValue"></span> \
             </div>';
         var engineering = this.options.geneboxCollection.options.engineering;
         if(engineering) {
             str += '<div class="geneboxNavi">';
-                if(this.options.hasLeftRight) {
-                    str += '<div class="geneboxLeft"></div>';
-                }
-                str += '<div class="geneboxMid"> ';
-                if(this.options.hasGradient) {
-                    str += 
-                        '<div class="geneboxUp"></div> \
-                        <div class="geneboxEquals"></div> \
-                        <div class="geneboxDown"></div>';
-                }
-                else {
-                    str += '<div class="geneboxEquals"></div>';
-                }
-                str += '</div>';
-            
-                if(this.options.hasLeftRight) {
-                    str += '<div class="geneboxRight"></div>';
-                 }
+            if(this.options.hasLeftRight) {
+                str += '<div class="geneboxLeft"></div>';
+            }
+            str += '<div class="geneboxMid"> ';
+            if(this.options.hasGradient) {
+                str += 
+                    '<div class="geneboxUp"></div> \
+                    <div class="geneboxEquals"></div> \
+                    <div class="geneboxDown"></div>';
+            }
+            else {
+                str += '<div class="geneboxEquals"></div>';
+            }
+            str += '</div>';
+
+            if(this.options.hasLeftRight) {
+                str += '<div class="geneboxRight"></div>';
+            }
             str +='</div>';
         }
         this.element.append($.parseHTML(str));
         if(engineering) this._on( $(this.element).find('.geneboxLeft, .geneboxMid, .geneboxUp, .geneboxEquals, .geneboxDown, .geneboxRight'), {
             click: "_manipulate"
-          });
-        
+        });
+
         this.refresh();
     },
     _setOption : function(key, value) {
@@ -67,56 +67,48 @@ $.widget("dawk.triay_biomorph_genebox", {
     },
     _setOptions : function(options) {
         this._super(options);
-//        // console.log('genebox set options' + options);
         this.refresh();
     },
 
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {
-            // // console.log("Showsign " + this.options.showSign);
             str = "+s+" + String(str);
-            // // console.log(str);
         }
-        // // console.log(str);
         this.element.find('.geneValue').text(str);
-        
+
     },
-    
+
     refreshColor: function() {
         this.element.find('.geneValue').text(this.options.value);
         if(this.options.hasColor) {
             $(this.element).css('background-color', str);
         }
-        
+
     },
-    
+
     refreshGradient: function() {
         if(this.options.hasGradient) {
             var gradientImg = this.element.find('.gradientGene');
-    //        // // console.log("gradientValue " + this.options.gradientValue);
             switch (this.options.gradientValue) {
             case "Swell":
-    //            // // console.log('refresh finds Swell');
                 gradientImg.removeClass('gradientSame gradientShrink');
                 gradientImg.addClass('gradientSwell');
                 break;
             case "Shrink":
-    //            // // console.log('refresh finds Shrink');
                 gradientImg.removeClass('gradientSame gradientSwell');
                 gradientImg.addClass('gradientShrink');
                 break;
             case "Same":
-    //            // // console.log('refresh finds Same');
                 gradientImg.removeClass('gradientShrink gradientSwell');
                 gradientImg.addClass('gradientSame');
                 break;
             default:
-                // // console.log('Illegal gradientValue: '+ this.options.gradientValue);
+                console.error('Illegal gradientValue: '+ this.options.gradientValue + " genbox " + this.options.geneboxIndex);
             }
         }
     },
-    
+
     refresh : function() {
         this.refreshValue();
         this.refreshColor();
@@ -132,12 +124,9 @@ $.widget("dawk.triay_biomorph_genebox", {
         return value;
     },
     _manipulate: function(event) {
-//        HorizPos = (LeftThird, MidThird, RightThird);
-//        VertPos = (TopRung, MidRung, BottomRung);
         var target = $(event.target);
         var leftRightPos;
         var rung;
-        // // console.log(target.attr('class'));
         if(target.hasClass('geneboxLeft')) {
             leftRightPos = HorizPos.LeftThird;
         } else if(target.hasClass('geneboxRight')) {
@@ -145,7 +134,7 @@ $.widget("dawk.triay_biomorph_genebox", {
         } else if(target.hasClass('geneboxMid')) {
             leftRightPos = HorizPos.MidThird;
         }
-        
+
         if(target.hasClass('geneboxUp')) {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.TopRung;
@@ -156,16 +145,16 @@ $.widget("dawk.triay_biomorph_genebox", {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.BottomRung;
         }
-        
+
         this.options.geneboxCollection.manipulate(this.options.geneboxIndex, leftRightPos, rung)
         return false;
     }
-    
+
 });
 
 $.widget( "dawk.triay_biomorph_gene1to9box", $.dawk.triay_biomorph_genebox, {
     _init : function() {
-        
+
         this.options.hasLeftRight = true;
         this.options.hasMid = true;
         this.options.hasColor = false;
@@ -258,19 +247,16 @@ $.widget('dawk.triay_biomorph_geneboxes', {
     },
 
     updateFromCanvas: function(canvas) {
-        
+
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-            // console.log('updateFromCanvas: no biomorph on canvas.')
-            // console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;
-        
+
         biomorph = biomorph.triay_biomorph
-        
+
         geneboxes = $(this.element).find('.genebox');
-//        // console.log('update from canvas:  nGeneboxes ' + geneboxes.length + ' biomorph ' + biomorph);
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
@@ -300,14 +286,14 @@ $.widget('dawk.triay_biomorph_geneboxes', {
         genebox = geneboxes.eq(15);
         genebox.triay_biomorph_segNoGenebox("option", "value", biomorph.mutProbGene);
         genebox.triay_biomorph_segNoGenebox("refresh");
-        
+
     },
     _create : function(options) {
         this._super(options)
 
         this.element.addClass("monochromeGeneboxes");
         this.element.addClass("geneboxes");
-        
+
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
             if(i == 8) {
@@ -348,11 +334,10 @@ $.widget('dawk.triay_biomorph_geneboxes', {
         geneBox.triay_biomorph_segNoGenebox("option", "geneboxCollection", this);
         geneBox.triay_biomorph_segNoGenebox("option", "geneboxIndex", 16);
         this.element.append(geneBox);
-        
+
         this.refresh();
     },
     _setOption : function(key, value) {
-//        // // console.log('setOption ' + key + ": " + value);
         this._super(key, value);
     },
     _setOptions : function(options) {
@@ -362,14 +347,13 @@ $.widget('dawk.triay_biomorph_geneboxes', {
     refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
-//       // console.log('geneboxes widget calling manipulate on geneboxIndex ' + geneboxIndex);
         this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
-       var canvas = $(this.element).parent().find('canvas').get(0);
-       this.updateFromCanvas(canvas);
-       this.options.biomorph.develop();
+        var canvas = $(this.element).parent().find('canvas').get(0);
+        this.updateFromCanvas(canvas);
+        this.options.biomorph.develop();
     },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");
     }
-    
+
 });

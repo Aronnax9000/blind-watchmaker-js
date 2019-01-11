@@ -11,7 +11,6 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
     },
     _create : function(options) {
         this._super(options)
-        console.log('creating shell geneboxes')
         this._setOptions(options);
 
         this.element.addClass("shellGeneboxes");
@@ -105,11 +104,8 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
     },
 
     updateFromCanvas: function(canvas) {
-        console.log('shell update from canvas')
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
-             console.log('updateFromCanvas: no biomorph on canvas.')
-             console.log(canvas);
             return;
         }
         this.options.biomorph = biomorph;

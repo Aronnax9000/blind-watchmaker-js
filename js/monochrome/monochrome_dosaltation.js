@@ -58,7 +58,6 @@ Monochrome.prototype.doSaltation = function() {
         } while(maxgene > 9 * this.trickleGene || maxgene < -9 * this.trickleGene);
     }
     do {
-        // console.log("doSaltation2 trickleGene " + this.trickleGene);
         if(mut[7]) {
             this.dGene[8] = Monochrome.randSwell(this.dGene[8]);
         } else {
@@ -90,7 +89,6 @@ Monochrome.prototype.doSaltation = function() {
             break;
         }
         maxgene = this.segDistGene * this.segNoGene * factor;
-        // console.log("mut1 and 7 maxgene " + maxgene);
     } while (maxgene > 100 || maxgene < -100);
     this.gene[8] = Monochrome.randInt(6);
 }

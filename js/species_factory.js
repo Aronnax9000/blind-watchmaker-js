@@ -15,7 +15,7 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
     this.geneboxesCallbacks[speciesType] = geneboxesCallback
-    console.log("Registered Species Type " + speciesType)
+//    console.log("Registered Species Type " + speciesType)
 }
 
 SpeciesFactory.prototype.getRegisteredSpecies = function() {
@@ -35,13 +35,9 @@ SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canv
         console.error(drawer)
         console.error('geneboxes')
         console.error(geneboxes)
-        for(let propt in this.constructorFunctions) {
-            // console.log(propt + ': ' + this.constructorFunctions[propt])
-        }
 
     }
     if(species != null)
-        // console.log("Got species for " + speciesFactoryType);
         return species;
 }
 SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
@@ -55,7 +51,6 @@ SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, sessio
         console.error(err);
     }
     if(species != null)
-        // console.log("Got session initializer for " + speciesFactoryType);
         return species;
 }
 

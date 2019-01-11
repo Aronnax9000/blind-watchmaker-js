@@ -28,7 +28,8 @@
         	<fileset file="js/drawing_context_canvas2d.js" />
         	<fileset file="js/drawing_context_nop.js" />
         	<fileset file="js/drawing_context_svg.js" />
-            <fileset file="js/breeding_box.js" />
+            <fileset file="js/mode_toolbar.js" />
+        	<fileset file="js/breeding_box.js" />
             <fileset file="js/breeding_boxes.js" />
         	<fileset file="js/watchmaker_geom.js" />
             <fileset file="js/species_factory.js" />
@@ -41,7 +42,11 @@
         	<fileset file="js/engineering_window.js" />
             <fileset file="js/engineering_box.js" />
         </concat>
-        <concat destfile="docs/js/monochrome.js">
+        <concat destfile="docs/js/biomorphs.js">
+            <fileset file="js/biomorphs/biomorphs.js" />
+            </concat>
+    	<concat destfile="docs/js/monochrome.js">
+            <fileset file="js/monochrome/monochrome_doperson.js" />
             <fileset file="js/monochrome/monochrome_swelltype.js" />
             <fileset file="js/monochrome/monochrome_triangle.js" />
             <fileset file="js/monochrome/monochrome_manipulation.js" />
@@ -72,6 +77,7 @@
         <concat destfile="docs/js/triay_biomorph.js">
             <fileset file="js/triay_biomorph/triay_biomorph_geneboxes.js" />
             <fileset file="js/triay_biomorph/triay_biomorph.js" />
+            <fileset file="js/triay_biomorph/triay_biomorph_doperson.js" />
             <fileset file="js/triay_biomorph/triay_biomorph_manipulation.js" />
             <fileset file="js/triay_biomorph/biomorph-bundle.js" />
             </concat>

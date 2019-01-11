@@ -4,12 +4,12 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this._super("_create")
         $(this.element).addClass('engineeringView')
         var species = this.options.session.species
-        // console.log('EW species ' + species)
         var geneboxes_options = {
             engineering : true,
             species: species,
         }
         $("<div></div>").modeToolbar({ 
+            session: this.options.session,
             species: this.options.session.species}
         ).appendTo(this.element)
         

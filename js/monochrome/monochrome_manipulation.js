@@ -10,7 +10,6 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     if(rungProperties != null) {
         str += ',' + rungProperties.name;
     }
-    // console.log(str);
     switch(geneboxIndex) {
     case 1:
     case 2:

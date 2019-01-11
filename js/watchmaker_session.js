@@ -6,8 +6,6 @@ $.widget('dawk.watchmakerSessionTab', {
         blindWatchmaker: null
     },
     raiseAlert: function(newMenu) {
-        // console.log('raise alert in watchmaker session')
-        // console.log(newMenu);
         var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
     },
@@ -28,12 +26,10 @@ $.widget('dawk.watchmakerSessionTab', {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
 //      $(parents).watchmakerView('buildMenu');
-//      // console.log(ui.newPanel);
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
     },   
     _create: function () {
         var species = this.options.species
-        // console.log('new WatchmakerSession species ' + species);
         this.element.addClass('watchmakerSessionTab');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
@@ -76,7 +72,6 @@ $.widget('dawk.watchmakerSessionTab', {
                 });    
         this.element.tabs("refresh");
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
@@ -111,7 +106,6 @@ $.widget('dawk.watchmakerSessionTab', {
                 });    
 
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     }
