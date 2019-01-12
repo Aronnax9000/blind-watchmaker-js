@@ -1,6 +1,6 @@
 
 
-$.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
+$.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
     options : {
         numGeneBoxes : 16,
     },

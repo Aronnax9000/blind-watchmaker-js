@@ -23,7 +23,10 @@
 }
 
 .geneValue {
-    width: 100%; text-align:center;  display:table;
+    width: 100%; 
+    text-align:center;  
+    display:table;
+    font-size: 10pt;
 }
 
 .genebox {

@@ -69,16 +69,16 @@ $.widget("dawk.biomorph_genebox", {
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {
-            str = "+s+" + String(str);
+            str = "+" + String(str);
         }
         this.element.find('.geneValue').text(str);
         
     },
     
     refreshColor: function() {
-        this.element.find('.geneValue').text(this.options.value);
+        
         if(this.options.hasColor) {
-            $(this.element).css('background-color', str);
+            $(this.element).css('background-color', this.options.value);
         }
         
     },
