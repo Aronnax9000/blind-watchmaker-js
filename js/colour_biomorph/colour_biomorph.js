@@ -12,7 +12,7 @@
 //this.dGene: array[1..10]) { SwellType;
 //this.segNoGene: INTEGER;
 //this.segDistGene: INTEGER;
-//this.CompletenessGene: CompletenessType;
+//this.completenessGene: CompletenessType;
 //this.spokesGene: SpokesType;
 //tricklegene, mutsizegene, mutprobgene: INTEGER;
 //this.limbShapeGene: LimbType;
@@ -67,7 +67,7 @@ function ColourBiomorph(session, drawer) {
     }
     this.segNoGene = 0
     this.segDistGene = 0
-    this.completenessGene = CompletenessType.Sbingle
+    this.completenessGene = CompletenessType.Single
     this.spokesGene = SpokesType.NorthOnly
     this.trickleGene = session.options.trickle
     this.mutSizeGene = 0
@@ -112,20 +112,20 @@ $.widget('dawk.colourbiomorph_geneboxes', {
 
 ColourBiomorph.randLimbType = function() {
     switch(Monochrome.randInt(3)) {
-    case 0:
-        return LimbType.Stick
     case 1:
-        return LimbType.Oval
+        return LimbType.Stick
     case 2:
+        return LimbType.Oval
+    case 3:
         return LimbType.Rectangle
     }
 }
 
 ColourBiomorph.randLimbFill = function() {
     switch(Monochrome.randInt(2)) {
-    case 0:
-        return LimbFillType.Open
     case 1:
+        return LimbFillType.Open
+    case 2:
         return LimbFillType.Filled
     }
 }
@@ -262,7 +262,7 @@ ColourBiomorph.prototype.doSaltation = function() {
     if(mut[4]) {
         this.trickleGene = 1 + Math.trunc(Monochrome.randInt(100) / 10)
         if(this.trickleGene > 1)
-            this.mutSizeGene = this.trickleGene % 2
+            this.mutSizeGene = Math.trunc(this.trickleGene / 2)
     }
     if(mut[9]) {
         this.randomForeColour()
@@ -350,9 +350,9 @@ ColourBiomorph.prototype.doSaltation = function() {
 
 ColourBiomorph.prototype.direction = function() {
     if(Monochrome.randInt(2) == 2) { 
-        return this.mutSizegene
+        return this.mutSizeGene
     } else {
-        return -this.MutSizegene
+        return -this.mutSizeGene
     }
 }
 
@@ -360,132 +360,6 @@ ColourBiomorph.prototype.direction9 = function() {
     return Monochrome.randInt(2) == 2 ? 1 : -1
 }
 
-//initializes the biomorph's genotype to a random set) { values
-//causes the biomorph's genotype to undergo a random mutation
-ColourBiomorph.prototype.mutate = function() {
-    var mut = this.session.options.mut
-    if(mut[6]) {
-        if(Monochrome.randInt(100) < this.mutProbGene) {
-            this.mutProbGene = this.mutProbGene + this.direction9();
-            if(this.mutProbGene < 1) {
-                this.mutProbGene = 1
-            }
-            if(this.mutProbGene > 100) {
-                this.mutProbGene = 100
-            }
-        }
-    }
-    if(mut[12]) {
-        for(let j = 0; j < 8; j++) {
-            if(Monochrome.randInt(100) < this.mutProbGene)
-                this.gene[j] += this.direction();
-        }
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.gene[8] += this.direction9();
-        if(this.gene[8] < 1)
-            this.gene[8] = 1;
-        if(this.gene[8] > 8)
-            this.gene[8] = 8;
-    }
-    if(mut[9]) {
-        for(let j = 0; j < 8; j++)
-            if(Monochrome.randInt(100) < this.mutProbGene)
-            {
-                this.colorGene[j] = this.colorGene[j] + this.direction9();
-                if((this.colorGene[j] >= ColourBiomorph.Rainbow))
-                    this.colorGene[j] = ColourBiomorph.Rainbow - 1;
-                if((this.colorGene[j] < 0))
-                    this.colorGene[j] = 0;
-            }
-    }
-    if(mut[7]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.limbShapeGene = ColourBiomorph.randLimbType();
-
-    }
-    if(mut[8]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.limbFillGene = ColourBiomorph.randLimbFill();
-    }
-    if(mut[10]) {
-        if(Monochrome.randInt(100) < this.mutProbGene) {
-            this.backColorGene = this.backColorGene + this.direction9()
-            if(this.backColorGene >= ColourBiomorph.Rainbow) {
-                this.backColorGene = ColourBiomorph.Rainbow - 1
-            }
-            if(this.backColorGene < 0) {
-                this.backColorGene = 0
-            }
-        }
-    }
-    if(mut[11]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.thicknessGene += this.direction9();
-        if(this.thicknessGene < 1)
-            this.thicknessGene = 1;
-    }
-    if(mut[0]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.segNoGene = this.segNoGene + this.direction9();
-    }
-    if(this.segNoGene < 1) {
-        this.segNoGene = 1;
-    }
-    if(mut[1] && this.segNoGene > 1) {
-        for(let j = 0; j < 8; j++)
-            if(Monochrome.randInt(100) < this.mutProbGene / 2)
-                this.dGene[j] = Monochrome.randSwell(this.dGene[j]);
-        if(Monochrome.randInt(100) < this.mutProbGene / 2)
-            this.dGene[9] = Monochrome.randSwell(this.dGene[9]);
-    }
-    if(mut[0] && this.segNoGene > 1) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.segDistGene = this.segDistGene + this.direction9()
-    }
-    if(mut[2]) {
-        if(Monochrome.randInt(100) < this.mutProbGene / 2) {
-            if(this.CompletenessGene == CompletenessType.Single) {
-                this.CompletenessGene = CompletenessType.Double
-            } else {
-                this.CompletenessGene = CompletenessType.Single
-            }
-        }
-    }
-    if(mut[3]) {
-        if(Monochrome.randInt(100) < this.mutProbGene / 2)
-            switch(this.spokesGene) {
-            case SpokesType.NorthOnly: 
-                this.spokesGene = SpokesType.NSouth
-                break
-            case SpokesType.NSouth: 
-                if(this.direction9() == 1) {
-                    this.spokesGene = SpokesType.Radial
-                } else {
-                    this.spokesGene = SpokesType.NorthOnly
-                }
-                break
-            case SpokesType.Radial: 
-                this.spokesGene = SpokesType.NSouth
-                break
-            }
-    }
-    if(mut[4]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-        {
-            this.trickleGene = this.trickleGene + this.direction9();
-            if(this.trickleGene < 1)
-                this.trickleGene = 1
-        }
-    }
-    if(mut[5]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-        {
-            this.mutSizeGene = this.mutSizeGene + this.direction9()
-            if(this.mutSizeGene < 1)
-                this.mutSizeGene = 1
-        }
-    }
-}
 
 ColourBiomorph.prototype.copyBiomorph = function(child) {
     child.gene = this.gene.slice();
@@ -514,15 +388,13 @@ ColourBiomorph.prototype.reproduce = function(element) {
     
 }
 
-ColourBiomorph.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-}
 
 //Register the Colour biomorph species with the SpeciesFactory.
 _speciesFactorySingleton.registerSpeciesType("Colour", 
         (function(session, drawer) { return new ColourBiomorph(session, drawer)}),
         (function(session) { ColourBiomorph.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.colourbiomorph_geneboxes.call(geneboxes, geneboxes_options) }),
+            $.fn.colour_geneboxes.call(geneboxes, geneboxes_options) }),
             (function(geneboxes, canvas) { 
-                $(geneboxes).colourbiomorph_geneboxes('updateFromCanvas', canvas)}));
+                $(geneboxes).colour_geneboxes('updateFromCanvas', canvas)}));
 

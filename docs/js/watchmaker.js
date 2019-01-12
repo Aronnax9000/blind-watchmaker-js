@@ -204,8 +204,6 @@ jQuery.extend( jQuery.easing,
  *
  */function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
-    // console.log("Registered Drawer Type " + drawerType);
-
 }
 
 function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
@@ -214,10 +212,7 @@ function drawerFactory_getDrawer(drawerFactoryType, drawingObject) {
         drawer = this.properties[drawerFactoryType](drawingObject);
     } catch (err) {
         console.error("DrawerFactory can't find a registered drawer for type '" + drawerFactoryType + "'. Valid values are " + this.properties);
-        for(let propt in this.properties){
-            // console.log(propt + ': ' + this.properties[propt]);
-        }
-        // console.log("err: " + err);
+        console.error(err);
     }
     return drawer;
 }
@@ -270,14 +265,8 @@ Canvas2DDrawer.prototype.erase = function() {
     var height = this.getHeight();
     var halfWidth = width / 2;
     var halfHeight = height / 2;
-    // console.log('erase ' + width + 'x' + height);
 
     this.drawingContext.clearRect(0, 0, width, height);
-//    this.setColor('#FF0000');
-//    this.drawingContext.strokeStyle = 'red';
-//    this.penSize(4);
-//    this.moveTo(0,0);
-//    this.lineTo(200,200);
     
     this.drawingContext.translate(halfWidth + 0.5, halfHeight / 2 + 0.5);
 
@@ -287,17 +276,13 @@ Canvas2DDrawer.prototype.penSize = function(penSize) {
     if(penSize === undefined) {
         return this.drawingContext.lineWidth * 2;
     } else {
-//        // console.log("canvas2DDrawer.penSize = " + penSize);
         this.drawingContext.lineWidth = penSize / 2;
     }
 }
 
-Canvas2DDrawer.prototype.setColor = function(color, report) {
+Canvas2DDrawer.prototype.setColor = function(color) {
   this.drawingContext.strokeStyle = color;
   this.drawingContext.fillStyle = color;
-  if(report) {
-      console.log('setColor ' + color)
-  }
 }
 
 
@@ -345,19 +330,15 @@ Canvas2DDrawer.prototype.paintOval = function(rect) {
 }
 
 
-Canvas2DDrawer.prototype.paintRect = function(rect, report) {
+Canvas2DDrawer.prototype.paintRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.fillRect(rect.left, rect.top, width, height);
-    if(report) {
-        console.log('PaintRect ' + rect + ' fillStyle ' + this.drawingContext.strokeStyle)
-    }
 }
 Canvas2DDrawer.prototype.frameRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.strokeRect(rect.left, rect.top, width, height);
-    
 }
 
 Canvas2DDrawer.prototype.getHeight = function() {
@@ -625,7 +606,85 @@ function SVGDrawer(drawingObject) {
 _drawerFactorySingleton.registerDrawerType("svg", (
         function(drawingObject) { 
             return new SVGDrawer(drawingObject);}));
-var stillBreeding = false;
+$( function() {
+    $.widget( "dawk.modeToolbar", {
+        options: {
+            parentView: null,
+            session: null,
+            species: null
+        },
+        _create: function() {
+            $(this.element).addClass('breedingControl');
+            var button 
+            $('<span>Clone in new window:</span>').appendTo(this.element)
+            
+            button = $('<button>Breed</button>')
+            this._on($(button), {'click': this.breedInNewWindow})
+            $(this.element).append(button)
+
+            button = $('<button>Engineer</button>')
+            this._on($(button), {'click': this.engineer})
+            $(this.element).append(button)
+            
+            button = $('<button></button>')
+            $(button).text(this.options.session.options.hopefulMonsterBasicType)
+            this._on($(button), {'click': this.hopefulMonster})
+            $(this.element).append(button)
+            
+            var str = '<span><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">\
+<input type="hidden" name="cmd" value="_s-xclick" />\
+<input type="hidden" name="hosted_button_id" value="DMY3SE245BZRQ" />\
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />\
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />\
+</form><span>';
+//            button = $(str)
+//            $(this.element).append(button)
+                
+
+            
+            let basicTypes = this.options.session.options.basicTypes
+            var basicTypeSelect = $("<select></select>");
+            $(this.element).append(basicTypeSelect)
+            this._on(basicTypeSelect, {change: 'doPerson'})
+            let option = $("<option>Animal</option>")
+            $(basicTypeSelect).append(option)
+            for(basicType in basicTypes) {
+                option = $("<option>" + basicTypes[basicType] + "</option>")
+                option.attr("value", basicTypes[basicType])
+                $(basicTypeSelect).append(option)
+            }
+        },
+        doPerson: function(event) {
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var basicTypeSelect = event.target
+            var selectedValue = basicTypeSelect.options[basicTypeSelect.selectedIndex].value
+            basicTypeSelect.selectedIndex = 0
+            var biomorph = $(midCanvas).data('genotype')
+            biomorph.doPerson(selectedValue)
+            biomorph.develop()
+        },
+        hopefulMonster: function(event) {
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            biomorph.doPerson($(event.target).text())
+            biomorph.develop()
+        },
+        breedInNewWindow: function() {
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph)
+        },
+        engineer: function() {
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph)
+        }
+    });
+});var stillBreeding = false;
 
 $( function() {
     $.widget('dawk.breedingBox', {
@@ -684,7 +743,6 @@ $( function() {
                 var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
                 $(breedingViewCanvases).each(function(index) {
                     if(index != clickedBoxIndex) {
-                        // console.log('erase ' + index)
                         eraseCanvas(this);
                         $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
                     }
@@ -697,17 +755,12 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
-//                            // console.log('midCanvas');
-//                            // console.log(midCanvas);
                             // Hand the biomorph off to the new canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
-                            // console.log('animateToCenter complete')
-                            
-                            // console.log(genotype.drawer)
                             $(midCanvas).css({left:0,top:0})
                             var midCanvasPos = $(midCanvas).position()
                             genotype.develop()
@@ -717,7 +770,7 @@ $( function() {
                     breedingBoxes.produceLitter(numBoxes, midBox);
                 }
             } else {
-                // console.log("Genotype was null");
+                // Genotype was null
             } 
             // Update the geneboxes with the genes of the new parent.
             $(midCanvasDiv).trigger("mouseover");
@@ -740,7 +793,6 @@ $( function() {
 
         sparkLine: function(destinationCanvas) {
             var canvas = $(this.element).parent().find('.overlayCanvas')[0];
-//            // console.log(canvas);
 
             var context = canvas.getContext('2d');
             var midBox = Math.trunc(this.options.numBoxes / 2);
@@ -776,14 +828,11 @@ $( function() {
             }
             else  
                 alert("Genotype is null");
-//            return genotype;
         },
 
 
         produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
             if(k < numBoxes) {
-                // console.log('produceKthOffspring ' + k)
-                // console.log($(this.element))
                 var sourceCanvas = $(this.element).find('.midBox').get(0);
                 var targetCanvas = $(this.element).find('canvas').get(k);
                 $(targetCanvas).css({ left: "0px", top: "0px" });
@@ -791,7 +840,6 @@ $( function() {
                     var position = $(targetCanvas).parent().position();
                     var deltaX = midCanvasDivPosition.left - position.left;
                     var deltaY = midCanvasDivPosition.top - position.top;
-//                  // console.log('offspring ' + targetId + ' offSet ' + deltaX + ',' + deltaY);
                     // Move the target canvas to the centre
                     $(targetCanvas).css({ left: deltaX, top: deltaY});
                     // Grow the offspring on the target canvas
@@ -810,7 +858,6 @@ $( function() {
                                 eraseCanvasNoCenter(overlayCanvas);
                                 var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                                 breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
-//                                // console.log('finished recursive animate Offspring ' + k);
                             }});
                     } else { // Explosive breeding
                         $( targetCanvas ).animate({
@@ -819,8 +866,6 @@ $( function() {
                         }, { queue: true, duration: 2000,
                             easing: 'easeOutExpo',
                             complete: function() {
-//                              eraseCanvasNoCenter(document.getElementById('overlayCanvas'));
-//                              // console.log('finished animate Offspring ' + targetCanvas.attr('id'));
                             }});
                     }
                 } else { // midbox
@@ -837,8 +882,6 @@ $( function() {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
             var explosiveBreeding = $(this.element).parents('.breedingView').find('.explosiveBreeding').get(0)
-//            console.log(explosiveBreeding);
-//                .find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {
                 this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
@@ -866,7 +909,6 @@ $( function() {
                     isMidBox: isMidBox, 
                     species: species,
                     breedingBoxes: this}).appendTo(boxes)
-                // console.log('adding canvas ' + j)
                 if(isMidBox) {
                     // Create a biomorph and render it on the middle canvas.
                     this.options.midCanvasDiv = canvasDiv
@@ -874,8 +916,6 @@ $( function() {
                     var biomorph = _speciesFactorySingleton.getSpecies(
                             species, session, canvas)
                     if(this.options.biomorph) {
-                        console.log('copyBiomorph')
-                        console.log(this.options.biomorph);
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
                         biomorph.doPerson()
@@ -987,7 +1027,7 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
     this.geneboxesCallbacks[speciesType] = geneboxesCallback
-    console.log("Registered Species Type " + speciesType)
+//    console.log("Registered Species Type " + speciesType)
 }
 
 SpeciesFactory.prototype.getRegisteredSpecies = function() {
@@ -1007,13 +1047,9 @@ SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canv
         console.error(drawer)
         console.error('geneboxes')
         console.error(geneboxes)
-        for(let propt in this.constructorFunctions) {
-            // console.log(propt + ': ' + this.constructorFunctions[propt])
-        }
 
     }
     if(species != null)
-        // console.log("Got species for " + speciesFactoryType);
         return species;
 }
 SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
@@ -1027,7 +1063,6 @@ SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, sessio
         console.error(err);
     }
     if(species != null)
-        // console.log("Got session initializer for " + speciesFactoryType);
         return species;
 }
 
@@ -1088,7 +1123,6 @@ function doRepro(sourceCanvas, targetCanvas) {
 }
 
 function eraseCanvasNoCenter(canvas) {
-//    // console.log("eraseCanvasNoCenter");
     var drawingContext = canvas.getContext("2d");
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -1129,7 +1163,6 @@ $.widget('dawk.blindWatchmaker', {
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
         var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
-//        console.log(availableSpecies)
         availableSpecies.forEach(availableSpecie => {
             this.newWatchmakerSession(availableSpecie)
         })
@@ -1142,10 +1175,8 @@ $.widget('dawk.blindWatchmaker', {
         $(parents).blindWatchmaker('buildMenu');
     },
     raiseAlert: function() {
-     // console.log('Blindwatchmaker callback from view');   
     },
     newWatchmakerSession: function(species) {
-//        // console.log('new Watchmaker session ' + species);
         var index = this.options.sessionCount;
         this.options.sessionCount++;
         var uuid = uuidv4();
@@ -1169,13 +1200,11 @@ $.widget('dawk.blindWatchmaker', {
             'session': newWSession,
             'name': sessionName, 'blindWatchmaker': this, species: species});
         var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-//        // console.log('watchmaker session tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
     },
     buildMenu: function() {
-//        // console.log('bw buildMenu');
         $(this.element).find('.watchmakerMenu').each(function() {this.remove();});
         var menu = $('<ul class="watchmakerMenu"></ul>');
         $(this.element).append(menu);
@@ -1204,9 +1233,7 @@ $.widget('dawk.blindWatchmaker', {
         }
 
         
-//        // console.log($(this.element).tabs("option", "active"));
         var activeIndex = $(this.element).tabs("option", "active");
-//        // console.log(activeIndex);
         var activeSession = $(this.element).find('.watchmakerSessionTab').get(activeIndex);
         var sessionName = $(activeSession).watchmakerSessionTab('option', 'name');
         var sessionLi = $("<li><div>" + sessionName + "</div></li>")
@@ -1219,14 +1246,10 @@ $.widget('dawk.blindWatchmaker', {
     },
     closeSession: function() {
         var selectedIndex = this.element.tabs('option', 'active');
-        // console.log('selectedIndex ' + selectedIndex);
         var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
         var ul = this.element.find('ul.watchmakerTabs').get(0);
-        // console.log(ul);
         var liToRemove = $(ul).find('li').get(selectedIndex);
         var divToRemove = $(this.element).find('div').get(selectedIndex);
-        // console.log(liToRemove);
-        // console.log(divToRemove);
         $(divToRemove).remove();
         $(liToRemove).remove();
         this.element.tabs("refresh");
@@ -1239,8 +1262,6 @@ $.widget('dawk.blindWatchmaker', {
         blindWatchmaker: null
     },
     raiseAlert: function(newMenu) {
-        // console.log('raise alert in watchmaker session')
-        // console.log(newMenu);
         var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
     },
@@ -1261,12 +1282,10 @@ $.widget('dawk.blindWatchmaker', {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
 //      $(parents).watchmakerView('buildMenu');
-//      // console.log(ui.newPanel);
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
     },   
     _create: function () {
         var species = this.options.species
-        // console.log('new WatchmakerSession species ' + species);
         this.element.addClass('watchmakerSessionTab');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
         this.element.append(ul);
@@ -1309,7 +1328,6 @@ $.widget('dawk.blindWatchmaker', {
                 });    
         this.element.tabs("refresh");
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
@@ -1344,7 +1362,6 @@ $.widget('dawk.blindWatchmaker', {
                 });    
 
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        // console.log('watchmaker view tabcount '+ tabcount);
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     }
@@ -1463,12 +1480,9 @@ $.widget('dawk.watchmakerView', {
       $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
   },
   viewGainedFocus: function(event) {
-      // console.log('View gained focus');
   },
   buildMenu: function(menuContents) {
-      // console.log('in view buildmenu')
-      var li
-      li = $('<li><div>Close View</div></li>')
+      let li = $('<li><div>Close View</div></li>')
       menuContents.append(li)
   },
 })
@@ -1483,42 +1497,7 @@ function getBiomorphFromCanvas(canvas) {
 
 
 
-$( function() {
-    $.widget( "dawk.modeToolbar", {
-        options: {
-            species: null
-        },
-        _create: function() {
-            $(this.element).addClass('breedingControl');
-            var button 
-            $('<span>Clone in new window:</span>').appendTo(this.element)
-            
-            button = $('<button>Breed</button>')
-            this._on($(button), {'click': this.breedInNewWindow})
-            $(this.element).append(button)
 
-            button = $('<button>Engineer</button>')
-            this._on($(button), {'click': this.engineer})
-            $(this.element).append(button)
-        },
-        breedInNewWindow: function() {
-            console.log('breedInNewWindow')
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newBreedingView", biomorph)
-        },
-        engineer: function() {
-            console.log('engineer')
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newEngineeringView", biomorph)
-        }
-    });
-});
 $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
 
@@ -1546,7 +1525,6 @@ $( function() {
         },
         viewGainedFocus: function(event) {
             var watchmakerSessionTab = $(this).breedingView("option", "watchmakerSessionTab");
-            // console.log($(watchmakerSessionTab.element).watchmakerSessionTab('option', 'name'));
             var newMenu = $('<ul></ul>');
             var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
             newMenu.append(operation);
@@ -1562,7 +1540,9 @@ $( function() {
             var species = this.options.session.species
             $(this.element).addClass('breedingView')
             $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
-            $("<div></div>").modeToolbar({ 
+            $("<div></div>").modeToolbar({
+                parentView: this,
+                session: this.options.session,
                 species: this.options.session.species}
             ).appendTo(this.element)
             var geneboxes_options = {
@@ -1574,6 +1554,7 @@ $( function() {
             var container = $("<div></div>");
             container.addClass('container');
             var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+            this.options.boxes = boxes
             var overlay = $("<div></div>");
             overlay.addClass("overlay");
             container.append(overlay);
@@ -1599,12 +1580,12 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this._super("_create")
         $(this.element).addClass('engineeringView')
         var species = this.options.session.species
-        // console.log('EW species ' + species)
         var geneboxes_options = {
             engineering : true,
             species: species,
         }
         $("<div></div>").modeToolbar({ 
+            session: this.options.session,
             species: this.options.session.species}
         ).appendTo(this.element)
         
@@ -1678,7 +1659,6 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             var parentbreedingView = this.element.parents('.engineeringView').get(0);
             var geneboxes = $(parentbreedingView)
                 .find('.geneboxes').get(0);
-//            // console.log(geneboxes);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     this.options.canvas.get(0))
         },

@@ -1,5 +1,5 @@
 // Number.parseFloat(x).toFixed(2);
-$.widget( "dawk.floatGenebox", $.dawk.monochrome_genebox, {
+$.widget( "dawk.floatGenebox", $.dawk.biomorph_genebox, {
     _create: function(options) {
         this._super(options)
     },
@@ -19,7 +19,7 @@ $.widget( "dawk.floatGenebox", $.dawk.monochrome_genebox, {
 
 } );
 
-$.widget( "dawk.handednessGenebox", $.dawk.monochrome_genebox, {
+$.widget( "dawk.handednessGenebox", $.dawk.biomorph_genebox, {
     _create: function(options) {
         this._super(options)
     },

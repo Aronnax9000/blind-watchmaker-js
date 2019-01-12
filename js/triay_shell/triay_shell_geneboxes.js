@@ -58,13 +58,13 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
             title: 'Translation Mutation Size'});
         this.element.append(genebox);
 
-        genebox = $("<div></div>").monochrome_genebox({
+        genebox = $("<div></div>").biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 8,
             title: 'Coarsegraininess'});
         this.element.append(genebox);
 
-        genebox = $("<div></div>").monochrome_genebox({
+        genebox = $("<div></div>").biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 9,
             title: 'Reach'});
@@ -88,13 +88,13 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
             title: 'Reach mutation size'});
         this.element.append(genebox);
 
-        genebox = $("<div></div>").monochrome_genebox({
+        genebox = $("<div></div>").biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 13,
             title: 'Mutation Probability'});
         this.element.append(genebox);
 
-        genebox = $("<div></div>").monochrome_genebox({
+        genebox = $("<div></div>").biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 14,
             title: 'Pattern'});
@@ -142,12 +142,12 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         genebox.floatGenebox("refresh");
         // Coarsegraniness
         genebox = geneboxes.eq(7); 
-        genebox.monochrome_genebox("option", "value", shell.coarsegraininess);
-        genebox.monochrome_genebox("refresh");
+        genebox.biomorph_genebox("option", "value", shell.coarsegraininess);
+        genebox.biomorph_genebox("refresh");
         // Reach
         genebox = geneboxes.eq(8); 
-        genebox.monochrome_genebox("option", "value", shell.reach);
-        genebox.monochrome_genebox("refresh");
+        genebox.biomorph_genebox("option", "value", shell.reach);
+        genebox.biomorph_genebox("refresh");
         // Translation gradient
         genebox = geneboxes.eq(9); 
         genebox.floatGenebox("option", "value", shell.translationGradient);
@@ -162,12 +162,12 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         genebox.floatGenebox("refresh");
         // Mutation probability
         genebox = geneboxes.eq(12); 
-        genebox.monochrome_genebox("option", "value", shell.mutProbGene);
-        genebox.monochrome_genebox("refresh");
+        genebox.biomorph_genebox("option", "value", shell.mutProbGene);
+        genebox.biomorph_genebox("refresh");
         // Pattern
         genebox = geneboxes.eq(13); 
-        genebox.monochrome_genebox("option", "value", shell.pattern);
-        genebox.monochrome_genebox("refresh");
+        genebox.biomorph_genebox("option", "value", shell.pattern);
+        genebox.biomorph_genebox("refresh");
 
     },
 });

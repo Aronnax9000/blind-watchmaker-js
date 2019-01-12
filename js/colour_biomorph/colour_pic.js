@@ -199,7 +199,7 @@ ColourPic.prototype.limb = function(x0, y0, x1, y1) {
         }
     } else if(limbShapeGene == LimbType.Rectangle) {
         drawer.frameRect(square);
-        if(limbFillGene == LimbType.Filled) {
+        if(limbFillGene == LimbFillType.Filled) {
             drawer.paintRect(square)
         }
     }

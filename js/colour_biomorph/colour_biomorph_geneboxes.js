@@ -1,8 +1,45 @@
 
+$.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
+    _init : function() {
+        this.element.attr('title', 'Limb Shape');
+        this.options.showSign = true;
+        this.options.hasLeftRight = true;
+        this.options.hasMid = true;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    refresh: function() {
+        var str = this.options.value;
+        var properties = LimbType.properties[str];
+        if(properties != null) {
+            this.element.find('.geneValue').text(properties.name);
+        }
+    },
+} );
+$.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
+    _init : function() {
+        this.element.attr('title', 'Limb Fill');
+        this.options.showSign = true;
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    refresh: function() {
+        var str = this.options.value;
+        console.log("LimbFillType " + str)
+        var properties = LimbFillType.properties[str];
+        if(properties != null) {
+            this.element.find('.geneValue').text(properties.name);
+        }
+    },
+} );
 
-$.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
+$.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
     options : {
-        numGeneBoxes : 16,
+        numGeneBoxes : 19,
     },
 
     updateFromCanvas: function(canvas) {
@@ -42,11 +79,21 @@ $.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
         genebox = geneboxes.eq(15);
         genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
         genebox.segNoGenebox("refresh");
-
+        genebox = geneboxes.eq(16);
+        genebox.segNoGenebox("option", "value", biomorph.thicknessGene);
+        genebox.segNoGenebox("refresh");
+        genebox = geneboxes.eq(17);
+        genebox.limbShapeGenebox("option", "value", biomorph.limbShapeGene);
+        genebox.limbShapeGenebox("refresh");
+        genebox = geneboxes.eq(18);
+        console.log('Update LimbFillGene ' + biomorph.limbFillGene)
+        console.log(biomorph)
+        genebox.limbFillGenebox("option", "value", biomorph.limbFillGene);
+        genebox.limbFillGenebox("refresh");
     },
     _create : function(options) {
         this._super(options)
-        this.element.addClass("monochromeGeneboxes");
+        this.element.addClass("colourGeneboxes");
 
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
@@ -88,6 +135,20 @@ $.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
         geneBox.segNoGenebox("option", "geneboxCollection", this);
         geneBox.segNoGenebox("option", "geneboxIndex", 16);
         this.element.append(geneBox);
+        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Thickness'});
+        geneBox.segNoGenebox("option", "geneboxCollection", this);
+        geneBox.segNoGenebox("option", "geneboxIndex", 17);
+        this.element.append(geneBox);
+
+        geneBox = $("<div></div>").limbShapeGenebox({geneboxCollection: this});
+        geneBox.limbShapeGenebox("option", "geneboxCollection", this);
+        geneBox.limbShapeGenebox("option", "geneboxIndex", 18);
+        this.element.append(geneBox);
+
+        geneBox = $("<div></div>").limbFillGenebox({geneboxCollection: this});
+        geneBox.limbFillGenebox("option", "geneboxCollection", this);
+        geneBox.limbFillGenebox("option", "geneboxIndex", 19);
+        this.element.append(geneBox);
 
         this.refresh();
     },
@@ -102,7 +163,7 @@ $.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
     },
 
     _destroy : function() {
-        this.element.removeClass("monochromeGeneboxes").text("");
+        this.element.removeClass("colourGeneboxes").text("");
     }
 
 });

@@ -16,13 +16,11 @@
  * 
  */
 function MinimalSpecies(session, drawer) {
-    console.log('new MinimalSpecies')
     this.session = session
     this.drawer = drawer
 }
 
 MinimalSpecies.initializeSession = function(session) {
-    console.log('MinimalSpecies.initializeSession')
 }
 
 $.widget('dawk.minimalspecies_geneboxes', {
@@ -36,15 +34,12 @@ $.widget('dawk.minimalspecies_geneboxes', {
 
 // initializes the biomorph's genotype as one of a named set of types.
 MinimalSpecies.prototype.doPerson = function(morphType) {
-    console.log('MinimalSpecies doPerson ' + morphType)
 } 
 MinimalSpecies.prototype.doSaltation = function() {
-    console.log('MinimalSpecies.doSaltation')
 }
 // initializes the biomorph's genotype to a random set of values
 // causes the biomorph's genotype to undergo a random mutation
 MinimalSpecies.prototype.mutate = function() {
-    console.log('MinimalSpecies.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 MinimalSpecies.prototype.reproduce = function(element) {
@@ -52,10 +47,8 @@ MinimalSpecies.prototype.reproduce = function(element) {
 }
 // called when it is time for the biomorph to draw itself. 
 MinimalSpecies.prototype.develop = function() {
-    console.log('MinimalSpecies.develop')
 }
 MinimalSpecies.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('MinimalSpecies.manipulate')
 }
 
 //Register the Monochrome biomorph species with the SpeciesFactory.

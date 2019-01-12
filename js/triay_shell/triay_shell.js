@@ -48,7 +48,7 @@ Shells.initializeSession = function(session) {
 Shells.prototype.doPerson = function(morphType) {
     var genes = null
     if(morphType) {
-        genes = Shell.hardcodedAnimals[morphType]
+        genes = (new ShellHardcodedAnimals())[morphType]
     }
     var drawer = this.drawer
     this.shell = new Shell(drawer.getContext('2d'), 

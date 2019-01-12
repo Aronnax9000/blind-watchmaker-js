@@ -52,10 +52,10 @@ function Shell (ctx, width, height, genes) {
         this.translationGradient = genes.translationGradient
         if(genes.mutSize) {
             this.mutSize = {
-                displacement: genes.mutSize.displacement,
-                translation: genes.mutSize.translation,
-                shape: genes.mutSize.shape,
-                reach: genes.mutSize.reach
+                    displacement: genes.mutSize.displacement,
+                    translation: genes.mutSize.translation,
+                    shape: genes.mutSize.shape,
+                    reach: genes.mutSize.reach
             }
         }
         this.mutProbGene = genes.mutProbGene
@@ -99,7 +99,9 @@ Shell.randomSign = function() {
     else return 1;
 }
 
-Shell.hardcodedAnimals = {
+function ShellHardcodedAnimals() {
+
+    return {
         BasicSnail: {
             opening: Shell.random(1.5, 6.50),
             displacement: Shell.random(0, 0.1),
@@ -256,28 +258,29 @@ Shell.hardcodedAnimals = {
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(0.9, 1.2),
         }
-
+    }
 }
 
 //This produces a random set of genes which have visually
 //pleasing characteristics (most of the time)
 //Each shape has a different set of boundaries to make them look better
 Shell.randomGenes = function () {
+    var hardcodedAnimals = new ShellHardcodedAnimals()
     var choices = [
-        Shell.hardcodedAnimals['BasicSnail'], 
-        Shell.hardcodedAnimals['Babylon'],
-        Shell.hardcodedAnimals['Angel'],
-        Shell.hardcodedAnimals['Oyster'],
-        Shell.hardcodedAnimals['Bivalve'],
-        Shell.hardcodedAnimals['Cone'],
-        Shell.hardcodedAnimals['Scallop'],
-        Shell.hardcodedAnimals['Eloise'], 
-        Shell.hardcodedAnimals['Gallaghers'], 
-        Shell.hardcodedAnimals['Rapa'], 
-        Shell.hardcodedAnimals['Lightning'], 
-        Shell.hardcodedAnimals['Fig'], 
-        Shell.hardcodedAnimals['RazorShell'],
-        Shell.hardcodedAnimals['JapaneseWonder']]
+        hardcodedAnimals['BasicSnail'], 
+        hardcodedAnimals['Babylon'],
+        hardcodedAnimals['Angel'],
+        hardcodedAnimals['Oyster'],
+        hardcodedAnimals['Bivalve'],
+        hardcodedAnimals['Cone'],
+        hardcodedAnimals['Scallop'],
+        hardcodedAnimals['Eloise'], 
+        hardcodedAnimals['Gallaghers'], 
+        hardcodedAnimals['Rapa'], 
+        hardcodedAnimals['Lightning'], 
+        hardcodedAnimals['Fig'], 
+        hardcodedAnimals['RazorShell'],
+        hardcodedAnimals['JapaneseWonder']]
     //Babylon and Angel aren't used because they're very similar to Bivalves
     return choices[Math.trunc(Math.random() * choices.length)]
 }
