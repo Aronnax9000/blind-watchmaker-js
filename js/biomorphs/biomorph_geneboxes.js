@@ -1,6 +1,3 @@
-
-
-
 $.widget("dawk.biomorph_genebox", {
     options : {
         geneboxCollection: null,
@@ -16,7 +13,6 @@ $.widget("dawk.biomorph_genebox", {
     },
     _create : function(options) {
         this._setOptions(options);
-        
         this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);

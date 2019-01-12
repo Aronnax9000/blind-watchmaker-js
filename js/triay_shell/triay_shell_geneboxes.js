@@ -1,9 +1,6 @@
-
-// Classic Snailmaker displayed only these:
-// Opening
-// Displacement
-// Shape
-// Translation
+/*
+ * Geneboxes for Matthieu Triay's implementation of Blind Watchmaker Shells.
+ */
 $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
     options : {
         engineering: true,
@@ -14,93 +11,77 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         this._setOptions(options);
 
         this.element.addClass("shellGeneboxes");
-        
-        var genebox
-        genebox = $("<div></div>").floatGenebox({
+        let template = '<div></div>';
+
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 1,
-            title: 'Opening'});
-        this.element.append(genebox);
+            title: 'Opening'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 2,
-            title: 'Displacement'});
-        this.element.append(genebox);
+            title: 'Displacement'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 3,
-            title: 'Shape'});
-        this.element.append(genebox);
+            title: 'Shape'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 4,
-            title: 'Translation'});
-        this.element.append(genebox);
+            title: 'Translation'}).appendTo(this.element);
 
-        genebox = $("<div></div>").handednessGenebox({
+        $(template).handednessGenebox({
             geneboxCollection: this,
             geneboxIndex: 5,
-            title: 'Handedness'});
-        this.element.append(genebox);
+            title: 'Handedness'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 6,
-            title: 'Displacement Mutation Size'});
-        this.element.append(genebox);
+            title: 'Displacement Mutation Size'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 7,
-            title: 'Translation Mutation Size'});
-        this.element.append(genebox);
+            title: 'Translation Mutation Size'}).appendTo(this.element);
 
-        genebox = $("<div></div>").biomorph_genebox({
+        $(template).biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 8,
-            title: 'Coarsegraininess'});
-        this.element.append(genebox);
+            title: 'Coarsegraininess'}).appendTo(this.element);
 
-        genebox = $("<div></div>").biomorph_genebox({
+        $(template).biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 9,
-            title: 'Reach'});
-        this.element.append(genebox);
-        
-        genebox = $("<div></div>").floatGenebox({
+            title: 'Reach'}).appendTo(this.element);
+
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 10,
-            title: 'Translation gradient'});
-        this.element.append(genebox);
+            title: 'Translation gradient'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 11,
-            title: 'Shape mutation size'});
-        this.element.append(genebox);
+            title: 'Shape mutation size'}).appendTo(this.element);
 
-        genebox = $("<div></div>").floatGenebox({
+        $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 12,
-            title: 'Reach mutation size'});
-        this.element.append(genebox);
+            title: 'Reach mutation size'}).appendTo(this.element);
 
-        genebox = $("<div></div>").biomorph_genebox({
+        $(template).biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 13,
-            title: 'Mutation Probability'});
-        this.element.append(genebox);
+            title: 'Mutation Probability'}).appendTo(this.element);
 
-        genebox = $("<div></div>").biomorph_genebox({
+        $(template).biomorph_genebox({
             geneboxCollection: this,
             geneboxIndex: 14,
-            title: 'Pattern'});
-        this.element.append(genebox);
-
-        
+            title: 'Pattern'}).appendTo(this.element);
     },
 
     updateFromCanvas: function(canvas) {

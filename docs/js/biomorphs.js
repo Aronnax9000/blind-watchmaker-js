@@ -59,9 +59,6 @@ var VertPos = {
             3: {name: "BottomRung"}
         }
 };
-
-
-
 $.widget("dawk.biomorph_genebox", {
     options : {
         geneboxCollection: null,
@@ -77,7 +74,6 @@ $.widget("dawk.biomorph_genebox", {
     },
     _create : function(options) {
         this._setOptions(options);
-        
         this.element.addClass("genebox");
         $(this.element).tooltip();
         this.element.attr('title', this.options.title);
@@ -130,16 +126,16 @@ $.widget("dawk.biomorph_genebox", {
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {
-            str = "+s+" + String(str);
+            str = "+" + String(str);
         }
         this.element.find('.geneValue').text(str);
         
     },
     
     refreshColor: function() {
-        this.element.find('.geneValue').text(this.options.value);
+        
         if(this.options.hasColor) {
-            $(this.element).css('background-color', str);
+            $(this.element).css('background-color', this.options.value);
         }
         
     },

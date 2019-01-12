@@ -1179,13 +1179,12 @@ $.widget( "dawk.completenessGenebox", $.dawk.biomorph_genebox, {
 
 
 
-$.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
+$.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
     options : {
         numGeneBoxes : 16,
     },
 
     updateFromCanvas: function(canvas) {
-
         var biomorph = $(canvas).data('genotype');
         if(biomorph === undefined) {
             return;
@@ -1226,47 +1225,53 @@ $.widget('dawk.biomorph_geneboxes', $.dawk.geneboxes, {
     _create : function(options) {
         this._super(options)
         this.element.addClass("monochromeGeneboxes");
-
+        let template = '<div></div>'
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
             if(i == 8) {
                 geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
             }
-            var geneBox = $("<div></div>").gene1to9box({
+            $(template).gene1to9box({
                 geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
+                geneboxIndex: i + 1,
+                title: geneBoxTitle}).appendTo(this.element)
         }
-        var geneBox;
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 10);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segDistGenebox({geneboxCollection: this, title: 'Segment Distance and Gradient Gene 10'});
-        geneBox.segDistGenebox("option", "geneboxCollection", this);
-        geneBox.segDistGenebox("option", "geneboxIndex", 11);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").completenessGenebox({geneboxCollection: this});
-        geneBox.completenessGenebox("option", "geneboxCollection", this);
-        geneBox.completenessGenebox("option", "geneboxIndex", 12);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").spokesGenebox({geneboxCollection: this});
-        geneBox.spokesGenebox("option", "geneboxCollection", this);
-        geneBox.spokesGenebox("option", "geneboxIndex", 13);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Trickle'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 14);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Size'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 15);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Probability'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 16);
-        this.element.append(geneBox);
+        
+        $(template).segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 10,
+            title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096',
+            }).appendTo(this.element);
+        
+        $(template).segDistGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 11,
+            title: 'Segment Distance and Gradient Gene 10'}).appendTo(this.element);
+
+        $(template).completenessGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 12,
+        }).appendTo(this.element);
+        
+        $(template).spokesGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 13,
+            }).appendTo(this.element);
+        
+        $(template).segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 14,
+            title: 'Trickle'}).appendTo(this.element);
+
+        $(template).segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 15,
+            title: 'Mutation Size'}).appendTo(this.element);
+
+        $(template).segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 16,
+            title: 'Mutation Probability'}).appendTo(this.element);
 
         this.refresh();
     },
@@ -1328,8 +1333,8 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
         (function(session, drawer) { return new Monochrome(session, drawer);}),
         (function(session) { Monochrome.initializeSession(session);}),
         (function(geneboxes, geneboxes_options) { 
-            $.fn.biomorph_geneboxes.call(geneboxes, geneboxes_options) }),
+            $.fn.monochrome_geneboxes.call(geneboxes, geneboxes_options) }),
         (function(geneboxes, canvas) { 
-            $(geneboxes).biomorph_geneboxes('updateFromCanvas', canvas)})
+            $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)})
 
 );

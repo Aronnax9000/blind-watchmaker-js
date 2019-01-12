@@ -174,6 +174,7 @@ ColourBiomorph.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         case HorizPos.MidThird: 
             break; // {No action}
         }
+        break
     case 17:
         switch(leftRightPos) {
         case HorizPos.LeftThird:
@@ -188,6 +189,7 @@ ColourBiomorph.prototype.manipulation = function(geneboxIndex, leftRightPos, run
         case HorizPos.MidThird: 
             break; // {No action}
         }
+        break
     case 18:
         switch(leftRightPos) {
         case HorizPos.LeftThird:
@@ -200,7 +202,8 @@ ColourBiomorph.prototype.manipulation = function(geneboxIndex, leftRightPos, run
             this.limbShapeGene = LimbType.Oval;
             break; // {No action}
         }
-    case 19:
+        break
+    case 19: // limbFillGene
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.limbFillGene = LimbFillType.Open
@@ -209,6 +212,34 @@ ColourBiomorph.prototype.manipulation = function(geneboxIndex, leftRightPos, run
             this.limbFillGene = LimbFillType.Filled
             break;
         }
+        break;
+    case 20: // backColorGene
+        this.backColorGene = leftRightPos
+        break;
+    case 21: 
+        this.colorGene[0] = leftRightPos
+        break;
+    case 22: 
+        this.colorGene[1] = leftRightPos
+        break;
+    case 23: 
+        this.colorGene[2] = leftRightPos
+        break;
+    case 24: 
+        this.colorGene[3] = leftRightPos
+        break;
+    case 25: 
+        this.colorGene[4] = leftRightPos
+        break;
+    case 26: 
+        this.colorGene[5] = leftRightPos
+        break;
+    case 27: 
+        this.colorGene[6] = leftRightPos
+        break;
+    case 28: 
+        this.colorGene[7] = leftRightPos
+        break;
     }
         
     

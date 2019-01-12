@@ -99,9 +99,9 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         genebox = geneboxes.eq(18);
         genebox.limbFillGenebox("option", "value", biomorph.limbFillGene);
         genebox.limbFillGenebox("refresh");
-        
+
         let colors = biomorph.session.options.palette.colors
-        
+
         genebox = geneboxes.eq(19);
         genebox.colourGenebox("option", "value", colors[biomorph.backColorGene]);
         genebox.colourGenebox("refresh");
@@ -132,6 +132,7 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
     },
     _create : function(options) {
         this._super(options)
+
         this.element.addClass("colourGeneboxes");
 
         for(let i = 0; i < 9; i++) {
@@ -139,102 +140,113 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
             if(i == 8) {
                 geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
             }
-            var geneBox = $("<div></div>").gene1to9box({
+            $("<div></div>").gene1to9box({
                 geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
+                geneboxIndex: i + 1,
+                title: geneBoxTitle}).appendTo(this.element)
         }
-        var geneBox;
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 10);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segDistGenebox({geneboxCollection: this, title: 'Segment Distance and Gradient Gene 10'});
-        geneBox.segDistGenebox("option", "geneboxCollection", this);
-        geneBox.segDistGenebox("option", "geneboxIndex", 11);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").completenessGenebox({geneboxCollection: this});
-        geneBox.completenessGenebox("option", "geneboxCollection", this);
-        geneBox.completenessGenebox("option", "geneboxIndex", 12);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").spokesGenebox({geneboxCollection: this});
-        geneBox.spokesGenebox("option", "geneboxCollection", this);
-        geneBox.spokesGenebox("option", "geneboxIndex", 13);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Trickle'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 14);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Size'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 15);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Mutation Probability'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 16);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").segNoGenebox({geneboxCollection: this, title: 'Thickness'});
-        geneBox.segNoGenebox("option", "geneboxCollection", this);
-        geneBox.segNoGenebox("option", "geneboxIndex", 17);
-        this.element.append(geneBox);
 
-        geneBox = $("<div></div>").limbShapeGenebox({geneboxCollection: this});
-        geneBox.limbShapeGenebox("option", "geneboxCollection", this);
-        geneBox.limbShapeGenebox("option", "geneboxIndex", 18);
-        this.element.append(geneBox);
+        $("<div></div>").segNoGenebox({
+            geneboxCollection: this, 
+            title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096',
+            geneBoxIndex: 10
+        }).appendTo(this.element)
 
-        geneBox = $("<div></div>").limbFillGenebox({geneboxCollection: this});
-        geneBox.limbFillGenebox("option", "geneboxCollection", this);
-        geneBox.limbFillGenebox("option", "geneboxIndex", 19);
-        this.element.append(geneBox);
+        $("<div></div>").segDistGenebox({
+            geneboxCollection: this, 
+            title: 'Segment Distance and Gradient Gene 10',
+            geneBoxIndex: 11
+        }).appendTo(this.element)
 
-        geneBox = $("<div></div>").colourGenebox({
+        $("<div></div>").completenessGenebox({
+            geneboxCollection: this,
+            geneBoxIndex: 12
+        }).appendTo(this.element)
+
+        $("<div></div>").spokesGenebox({
+            geneboxCollection: this,
+            geneBoxIndex: 13
+        }).appendTo(this.element)
+
+        $("<div></div>").segNoGenebox({
+            geneboxCollection: this, 
+            geneBoxIndex: 14,
+            title: 'Trickle',
+        }).appendTo(this.element)
+
+        $("<div></div>").segNoGenebox({
+            geneboxCollection: this, 
+            geneBoxIndex: 15,
+            title: 'Mutation Size',
+        }).appendTo(this.element)
+
+        $("<div></div>").segNoGenebox({
+            geneboxCollection: this, 
+            geneBoxIndex: 16,
+            title: 'Mutation Probability',
+        }).appendTo(this.element)
+
+        $("<div></div>").segNoGenebox({
+            geneboxCollection: this, 
+            geneBoxIndex: 17,
+            title: 'Thickness',
+        }).appendTo(this.element)
+
+        $("<div></div>").limbShapeGenebox({
+            geneboxCollection: this,
+            geneBoxIndex: 18,
+        }).appendTo(this.element)
+
+        $("<div></div>").limbFillGenebox({
+            geneboxCollection: this,
+            geneBoxIndex: 19,
+        }).appendTo(this.element)
+
+        $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
-            title: 'Background Colour'});
-        this.element.append(geneBox);
+            title: 'Background Colour'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 21,
-            title: 'Colour Gene 1'}).appendTo(this.element)
+            title: 'Colour Gene 1'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 22,
-            title: 'Colour Gene 2'}).appendTo(this.element)
+            title: 'Colour Gene 2'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 23,
-            title: 'Colour Gene 3'}).appendTo(this.element)
+            title: 'Colour Gene 3'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 24,
-            title: 'Colour Gene 4'}).appendTo(this.element)
+            title: 'Colour Gene 4'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 25,
-            title: 'Colour Gene 5'}).appendTo(this.element)
+            title: 'Colour Gene 5'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 26,
-            title: 'Colour Gene 6'}).appendTo(this.element)
+            title: 'Colour Gene 6'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 27,
-            title: 'Colour Gene 7'}).appendTo(this.element)
+            title: 'Colour Gene 7'}).appendTo(this.element);
 
         $("<div></div>").colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 28,
-            title: 'Colour Gene 8'}).appendTo(this.element)
-        
+            title: 'Colour Gene 8'}).appendTo(this.element);
+
         this.refresh();
     },
     _setOption : function(key, value) {
