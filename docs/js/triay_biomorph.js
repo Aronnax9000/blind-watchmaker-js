@@ -293,47 +293,54 @@ $.widget('dawk.triay_biomorph_geneboxes', {
 
         this.element.addClass("monochromeGeneboxes");
         this.element.addClass("geneboxes");
+        let template = '<div></div>'
 
-        for(let i = 0; i < 9; i++) {
-            var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
-            if(i == 8) {
-                geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
+            for(let i = 0; i < 9; i++) {
+                var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
+                if(i == 8) {
+                    geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
+                }
+                $(template).triay_biomorph_gene1to9box({
+                    geneboxCollection: this, 
+                    geneboxIndex: i + 1,
+                    title: geneBoxTitle}).appendTo(this.element);
             }
-            var geneBox = $("<div></div>").triay_biomorph_gene1to9box({
-                geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.triay_biomorph_gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
-        }
-        var geneBox;
-        geneBox = $("<div></div>").triay_biomorph_segNoGenebox({geneboxCollection: this, title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096'});
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxIndex", 10);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_segDistGenebox({geneboxCollection: this, title: 'Segment Distance and Gradient Gene 10'});
-        geneBox.triay_biomorph_segDistGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_segDistGenebox("option", "geneboxIndex", 11);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_completenessGenebox({geneboxCollection: this});
-        geneBox.triay_biomorph_completenessGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_completenessGenebox("option", "geneboxIndex", 12);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_spokesGenebox({geneboxCollection: this});
-        geneBox.triay_biomorph_spokesGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_spokesGenebox("option", "geneboxIndex", 13);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_segNoGenebox({geneboxCollection: this, title: 'Trickle'});
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxIndex", 14);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_segNoGenebox({geneboxCollection: this, title: 'Mutation Size'});
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxIndex", 15);
-        this.element.append(geneBox);
-        geneBox = $("<div></div>").triay_biomorph_segNoGenebox({geneboxCollection: this, title: 'Mutation Probability'});
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxCollection", this);
-        geneBox.triay_biomorph_segNoGenebox("option", "geneboxIndex", 16);
-        this.element.append(geneBox);
+
+        $(template).triay_biomorph_segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 10,
+            title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096'
+        }).appendTo(this.element);
+
+        $(template).triay_biomorph_segDistGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 11,
+            title: 'Segment Distance and Gradient Gene 10'}).appendTo(this.element);
+
+        $(template).triay_biomorph_completenessGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 12,
+        }).appendTo(this.element);
+
+        $(template).triay_biomorph_spokesGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 13,
+        }).appendTo(this.element);
+
+        $(template).triay_biomorph_segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 14,
+            title: 'Trickle'}).appendTo(this.element);
+
+        $(template).triay_biomorph_segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 15,
+            title: 'Mutation Size'}).appendTo(this.element);
+
+        $(template).triay_biomorph_segNoGenebox({
+            geneboxCollection: this, 
+            geneboxIndex: 16,
+            title: 'Mutation Probability'}).appendTo(this.element);
 
         this.refresh();
     },

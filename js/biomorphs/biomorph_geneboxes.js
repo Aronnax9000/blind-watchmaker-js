@@ -61,7 +61,10 @@ $.widget("dawk.biomorph_genebox", {
         this._super(options);
         this.refresh();
     },
-
+    updateValue: function(newValue) {
+      this.options.value = newValue
+      this.refresh();
+    },
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {

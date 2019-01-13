@@ -9,7 +9,6 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
     _create : function(options) {
         this._super(options)
         this._setOptions(options);
-
         this.element.addClass("shellGeneboxes");
         let template = '<div></div>';
 
@@ -31,7 +30,7 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         $(template).floatGenebox({
             geneboxCollection: this,
             geneboxIndex: 4,
-            title: 'Translation'}).appendTo(this.element);
+            title: 'Translation (per outline, in the direction orthogonal to that of the parent spirtal)'}).appendTo(this.element);
 
         $(template).handednessGenebox({
             geneboxCollection: this,
