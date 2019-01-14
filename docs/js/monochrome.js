@@ -1272,19 +1272,13 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
             geneboxCollection: this, 
             geneboxIndex: 16,
             title: 'Mutation Probability'}).appendTo(this.element);
-
-        this.refresh();
     },
     _setOption : function(key, value) {
         this._super(key, value);
     },
     _setOptions : function(options) {
         this._super(options);
-        this.refresh();
     },
-    refresh : function() {
-    },
-
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");
     }

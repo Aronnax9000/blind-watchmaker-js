@@ -341,17 +341,12 @@ $.widget('dawk.triay_biomorph_geneboxes', {
             geneboxCollection: this, 
             geneboxIndex: 16,
             title: 'Mutation Probability'}).appendTo(this.element);
-
-        this.refresh();
     },
     _setOption : function(key, value) {
         this._super(key, value);
     },
     _setOptions : function(options) {
         this._super(options);
-        this.refresh();
-    },
-    refresh : function() {
     },
     manipulate: function(geneboxIndex, leftRightPos, rung) {
         this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);

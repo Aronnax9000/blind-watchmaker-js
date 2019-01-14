@@ -1,3 +1,14 @@
+$.widget('dawk.colourPicker', {
+    _create: function() {
+        $(this.element).addClass('colourPicker')
+        let template = '<div>colourpicker</div>'
+            
+        $(template).appendTo(this.element) 
+        $(this.element).dialog()
+        
+    } 
+});
+
 
 $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
@@ -39,11 +50,16 @@ $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
         this.options.showSign = false;
         this.options.hasLeftRight = false;
-        this.options.hasMid = true;
+        this.options.hasMid = false;
         this.options.hasGradient = false;
         this.options.hasColor = true;
+
         this._super();
     },
+    _launchPicker: function() {
+        $('<div></div>').colourPicker()
+    },
+
 } );
 
 $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
@@ -133,16 +149,16 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
 
         this.element.addClass("colourGeneboxes");
         let template = '<div></div>'
-        for(let i = 0; i < 9; i++) {
-            var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
-            if(i == 8) {
-                geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
+            for(let i = 0; i < 9; i++) {
+                var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
+                if(i == 8) {
+                    geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
+                }
+                $(template).gene1to9box({
+                    geneboxCollection: this, 
+                    geneboxIndex: i + 1,
+                    title: geneBoxTitle}).appendTo(this.element)
             }
-            $(template).gene1to9box({
-                geneboxCollection: this, 
-                geneboxIndex: i + 1,
-                title: geneBoxTitle}).appendTo(this.element)
-        }
 
         $(template).segNoGenebox({
             geneboxCollection: this, 
@@ -244,12 +260,10 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
             geneboxCollection: this,
             geneboxIndex: 28,
             title: 'Colour Gene 8'}).appendTo(this.element);
-
-        this.refresh();
     },
-     _destroy : function() {
+    _destroy : function() {
         this.element.removeClass("colourGeneboxes").text("");
-    }
+    },
 
 });
 //initializes the biomorph's genotype to a random set) { values
