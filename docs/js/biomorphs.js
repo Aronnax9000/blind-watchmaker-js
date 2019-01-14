@@ -91,18 +91,19 @@ $.widget("dawk.biomorph_genebox", {
                 if(this.options.hasLeftRight) {
                     str += '<div class="geneboxLeft"></div>';
                 }
-                str += '<div class="geneboxMid"> ';
-                if(this.options.hasGradient) {
-                    str += 
-                        '<div class="geneboxUp"></div> \
-                        <div class="geneboxEquals"></div> \
-                        <div class="geneboxDown"></div>';
+                if(this.options.hasMid) {
+                    str += '<div class="geneboxMid"> ';
+                    if(this.options.hasGradient) {
+                        str += 
+                            '<div class="geneboxUp"></div> \
+                            <div class="geneboxEquals"></div> \
+                            <div class="geneboxDown"></div>';
+                    }
+                    else {
+                        str += '<div class="geneboxEquals"></div>';
+                    }
+                    str += '</div>';
                 }
-                else {
-                    str += '<div class="geneboxEquals"></div>';
-                }
-                str += '</div>';
-            
                 if(this.options.hasLeftRight) {
                     str += '<div class="geneboxRight"></div>';
                  }
@@ -111,7 +112,7 @@ $.widget("dawk.biomorph_genebox", {
         this.element.append($.parseHTML(str));
         if(engineering) this._on( $(this.element).find('.geneboxLeft, .geneboxMid, .geneboxUp, .geneboxEquals, .geneboxDown, .geneboxRight'), {
             click: "_manipulate"
-          });
+        });
         
         this.refresh();
     },
@@ -122,7 +123,10 @@ $.widget("dawk.biomorph_genebox", {
         this._super(options);
         this.refresh();
     },
-
+    updateValue: function(newValue) {
+      this.options.value = newValue
+      this.refresh();
+    },
     refreshValue: function() {
         var str = this.options.value;
         if(this.options.showSign) {

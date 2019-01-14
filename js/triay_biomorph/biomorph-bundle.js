@@ -1,25 +1,3 @@
-//function main() {
-//
-//    var canvas = document.getElementById("canvas")
-//    var wWidth = window.innerWidth
-//    var wHeight = window.innerHeight
-//
-//    canvas.width = wWidth
-//    canvas.height = wHeight
-//
-//    var ctx = canvas.getContext('2d')
-//
-//    var bio = new Biomorph(ctx, wWidth, wHeight, null)
-//
-//    bio.drawWithImages()
-//
-//    canvas.addEventListener('click', function () {
-//        bio.randomize()
-//        bio.drawWithImages()
-//    })
-//
-//}
-
 //A biomorph is a set of genes, represented as numbers, strings and booleans
 // The genes lead to the generation of segments using a recursive tree building
 // algorithm, which can then be drawn on a canvas

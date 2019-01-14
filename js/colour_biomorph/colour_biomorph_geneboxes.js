@@ -247,17 +247,7 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
 
         this.refresh();
     },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    _setOptions : function(options) {
-        this._super(options);
-        this.refresh();
-    },
-    refresh : function() {
-    },
-
-    _destroy : function() {
+     _destroy : function() {
         this.element.removeClass("colourGeneboxes").text("");
     }
 

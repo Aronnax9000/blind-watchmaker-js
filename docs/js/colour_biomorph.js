@@ -12,9 +12,8 @@ $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
     refresh: function() {
         var str = this.options.value;
         var properties = LimbType.properties[str];
-        if(properties != null) {
+        if(properties != null) 
             this.element.find('.geneValue').text(properties.name);
-        }
     },
 } );
 $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
@@ -29,7 +28,6 @@ $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
     },
     refresh: function() {
         var str = this.options.value;
-        console.log("LimbFillType " + str)
         var properties = LimbFillType.properties[str];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.name);
@@ -134,132 +132,122 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         this._super(options)
 
         this.element.addClass("colourGeneboxes");
-
+        let template = '<div></div>'
         for(let i = 0; i < 9; i++) {
             var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
             if(i == 8) {
                 geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
             }
-            $("<div></div>").gene1to9box({
+            $(template).gene1to9box({
                 geneboxCollection: this, 
                 geneboxIndex: i + 1,
                 title: geneBoxTitle}).appendTo(this.element)
         }
 
-        $("<div></div>").segNoGenebox({
+        $(template).segNoGenebox({
             geneboxCollection: this, 
             title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096',
-            geneBoxIndex: 10
+            geneboxIndex: 10
         }).appendTo(this.element)
 
-        $("<div></div>").segDistGenebox({
+        $(template).segDistGenebox({
             geneboxCollection: this, 
             title: 'Segment Distance and Gradient Gene 10',
-            geneBoxIndex: 11
+            geneboxIndex: 11
         }).appendTo(this.element)
 
-        $("<div></div>").completenessGenebox({
+        $(template).completenessGenebox({
             geneboxCollection: this,
-            geneBoxIndex: 12
+            geneboxIndex: 12
         }).appendTo(this.element)
 
-        $("<div></div>").spokesGenebox({
+        $(template).spokesGenebox({
             geneboxCollection: this,
-            geneBoxIndex: 13
+            geneboxIndex: 13
         }).appendTo(this.element)
 
-        $("<div></div>").segNoGenebox({
+        $(template).segNoGenebox({
             geneboxCollection: this, 
-            geneBoxIndex: 14,
+            geneboxIndex: 14,
             title: 'Trickle',
         }).appendTo(this.element)
 
-        $("<div></div>").segNoGenebox({
+        $(template).segNoGenebox({
             geneboxCollection: this, 
-            geneBoxIndex: 15,
+            geneboxIndex: 15,
             title: 'Mutation Size',
         }).appendTo(this.element)
 
-        $("<div></div>").segNoGenebox({
+        $(template).segNoGenebox({
             geneboxCollection: this, 
-            geneBoxIndex: 16,
+            geneboxIndex: 16,
             title: 'Mutation Probability',
         }).appendTo(this.element)
 
-        $("<div></div>").segNoGenebox({
+        $(template).segNoGenebox({
             geneboxCollection: this, 
-            geneBoxIndex: 17,
+            geneboxIndex: 17,
             title: 'Thickness',
         }).appendTo(this.element)
 
-        $("<div></div>").limbShapeGenebox({
+        $(template).limbShapeGenebox({
             geneboxCollection: this,
-            geneBoxIndex: 18,
+            geneboxIndex: 18,
         }).appendTo(this.element)
 
-        $("<div></div>").limbFillGenebox({
+        $(template).limbFillGenebox({
             geneboxCollection: this,
-            geneBoxIndex: 19,
+            geneboxIndex: 19,
         }).appendTo(this.element)
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
             title: 'Background Colour'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 21,
             title: 'Colour Gene 1'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 22,
             title: 'Colour Gene 2'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 23,
             title: 'Colour Gene 3'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 24,
             title: 'Colour Gene 4'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 25,
             title: 'Colour Gene 5'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 26,
             title: 'Colour Gene 6'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 27,
             title: 'Colour Gene 7'}).appendTo(this.element);
 
-        $("<div></div>").colourGenebox({
+        $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 28,
             title: 'Colour Gene 8'}).appendTo(this.element);
 
         this.refresh();
     },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    _setOptions : function(options) {
-        this._super(options);
-        this.refresh();
-    },
-    refresh : function() {
-    },
-
-    _destroy : function() {
+     _destroy : function() {
         this.element.removeClass("colourGeneboxes").text("");
     }
 
@@ -267,75 +255,70 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
 //initializes the biomorph's genotype to a random set) { values
 //causes the biomorph's genotype to undergo a random mutation
 ColourBiomorph.prototype.mutate = function() {
+
     var mut = this.session.options.mut
-    if(mut[6]) {
-        if(Monochrome.randInt(100) < this.mutProbGene) {
-            this.mutProbGene = this.mutProbGene + this.direction9();
-            if(this.mutProbGene < 1) {
-                this.mutProbGene = 1
-            }
-            if(this.mutProbGene > 100) {
-                this.mutProbGene = 100
-            }
+
+    if(mut[6] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.mutProbGene += this.direction9();
+        if(this.mutProbGene < 1) {
+            this.mutProbGene = 1
+        } else if(this.mutProbGene > 100) {
+            this.mutProbGene = 100
         }
     }
+
     if(mut[12]) {
-        for(let j = 0; j < 8; j++) {
-            if(Monochrome.randInt(100) < this.mutProbGene) {
+        for(let j = 0; j < 8; j++) 
+            if(Monochrome.randInt(100) < this.mutProbGene) 
                 this.gene[j] += this.direction();
-            }
-        }
+
         if(Monochrome.randInt(100) < this.mutProbGene)
             this.gene[8] += this.direction9();
+
         if(this.gene[8] < 1)
             this.gene[8] = 1;
-        if(this.gene[8] > 8)
+        else if(this.gene[8] > 8)
             this.gene[8] = 8;
     }
-    if(mut[9]) {
+    if(mut[9]) 
         for(let j = 0; j < 8; j++)
-            if(Monochrome.randInt(100) < this.mutProbGene)
-            {
+            if(Monochrome.randInt(100) < this.mutProbGene) {
                 this.colorGene[j] = this.colorGene[j] + this.direction9();
                 if((this.colorGene[j] >= ColourBiomorph.Rainbow))
                     this.colorGene[j] = ColourBiomorph.Rainbow - 1;
                 if((this.colorGene[j] < 0))
                     this.colorGene[j] = 0;
             }
-    }
-    if(mut[7]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.limbShapeGene = ColourBiomorph.randLimbType();
 
+    if(mut[7] && Monochrome.randInt(100) < this.mutProbGene)
+        this.limbShapeGene = ColourBiomorph.randLimbType();
+
+    if(mut[8] && Monochrome.randInt(100) < this.mutProbGene)
+        this.limbFillGene = ColourBiomorph.randLimbFill();
+
+    if(mut[10] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.backColorGene = this.backColorGene + this.direction9()
+
+        if(this.backColorGene >= ColourBiomorph.Rainbow) 
+            this.backColorGene = ColourBiomorph.Rainbow - 1
+        
+        if(this.backColorGene < 0) 
+            this.backColorGene = 0
     }
-    if(mut[8]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.limbFillGene = ColourBiomorph.randLimbFill();
-    }
-    if(mut[10]) {
-        if(Monochrome.randInt(100) < this.mutProbGene) {
-            this.backColorGene = this.backColorGene + this.direction9()
-            if(this.backColorGene >= ColourBiomorph.Rainbow) {
-                this.backColorGene = ColourBiomorph.Rainbow - 1
-            }
-            if(this.backColorGene < 0) {
-                this.backColorGene = 0
-            }
-        }
-    }
-    if(mut[11]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.thicknessGene += this.direction9();
+
+    if(mut[11] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.thicknessGene += this.direction9();
         if(this.thicknessGene < 1)
             this.thicknessGene = 1;
     }
-    if(mut[0]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.segNoGene = this.segNoGene + this.direction9();
+
+    if(mut[0] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.segNoGene = this.segNoGene + this.direction9();
+        if(this.segNoGene < 1) {
+            this.segNoGene = 1;
+        }
     }
-    if(this.segNoGene < 1) {
-        this.segNoGene = 1;
-    }
+
     if(mut[1] && this.segNoGene > 1) {
         for(let j = 0; j < 8; j++)
             if(Monochrome.randInt(100) < this.mutProbGene / 2)
@@ -343,54 +326,47 @@ ColourBiomorph.prototype.mutate = function() {
         if(Monochrome.randInt(100) < this.mutProbGene / 2)
             this.dGene[9] = Monochrome.randSwell(this.dGene[9]);
     }
-    if(mut[0] && this.segNoGene > 1) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-            this.segDistGene = this.segDistGene + this.direction9()
+
+    if(mut[0] && this.segNoGene > 1 && Monochrome.randInt(100) < this.mutProbGene) {
+        this.segDistGene = this.segDistGene + this.direction9()
     }
-    if(mut[2]) {
-        if(Monochrome.randInt(100) < this.mutProbGene / 2) {
-            if(this.completenessGene == CompletenessType.Single) {
-                this.completenessGene = CompletenessType.Double
+
+
+    if(mut[2] && Monochrome.randInt(100) < this.mutProbGene / 2) {
+        if(this.completenessGene == CompletenessType.Single) {
+            this.completenessGene = CompletenessType.Double
+        } else {
+            this.completenessGene = CompletenessType.Single
+        }
+    }
+
+    if(mut[3] && Monochrome.randInt(100) < this.mutProbGene / 2) 
+        switch(this.spokesGene) {
+        case SpokesType.NorthOnly: 
+            this.spokesGene = SpokesType.NSouth
+            break
+        case SpokesType.NSouth: 
+            if(this.direction9() == 1) {
+                this.spokesGene = SpokesType.Radial
             } else {
-                this.completenessGene = CompletenessType.Single
+                this.spokesGene = SpokesType.NorthOnly
             }
+            break
+        case SpokesType.Radial: 
+            this.spokesGene = SpokesType.NSouth
+            break
         }
+
+    if(mut[4] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.trickleGene = this.trickleGene + this.direction9();
+        if(this.trickleGene < 1)
+            this.trickleGene = 1
     }
-    if(mut[3]) {
-        if(Monochrome.randInt(100) < this.mutProbGene / 2)
-            switch(this.spokesGene) {
-            case SpokesType.NorthOnly: 
-                this.spokesGene = SpokesType.NSouth
-                break
-            case SpokesType.NSouth: 
-                if(this.direction9() == 1) {
-                    this.spokesGene = SpokesType.Radial
-                } else {
-                    this.spokesGene = SpokesType.NorthOnly
-                }
-                break
-            case SpokesType.Radial: 
-                this.spokesGene = SpokesType.NSouth
-                break
-            }
+    if(mut[5] && Monochrome.randInt(100) < this.mutProbGene) {
+        this.mutSizeGene = this.mutSizeGene + this.direction9()
+        if(this.mutSizeGene < 1)
+            this.mutSizeGene = 1
     }
-    if(mut[4]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-        {
-            this.trickleGene = this.trickleGene + this.direction9();
-            if(this.trickleGene < 1)
-                this.trickleGene = 1
-        }
-    }
-    if(mut[5]) {
-        if(Monochrome.randInt(100) < this.mutProbGene)
-        {
-            this.mutSizeGene = this.mutSizeGene + this.direction9()
-            if(this.mutSizeGene < 1)
-                this.mutSizeGene = 1
-        }
-    }
-    console.log(this)
 }
 function Palette(name, colors) {
     if(name) {
