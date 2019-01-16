@@ -98,8 +98,8 @@ $.widget('dawk.colourPicker', {
 
         console.log(this.options.title)
         $(this.element).dialog({
-            width: 400,
-            height: 400,
+            width: 220,
+            height: 230,
             title: this.options.title,
             draggable: true,
             modal: true,
