@@ -158,6 +158,7 @@ $.widget("dawk.biomorph_genebox", {
 $.widget('dawk.geneboxes', {
     options : {
         engineering: true,
+        session: null,
         numGeneBoxes : 16,
         biomorph: null,
     },    

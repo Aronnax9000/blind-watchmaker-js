@@ -1,14 +1,116 @@
+ColourBiomorph.initializeMut = function(session) {
+    var mut = []
+    for(let i = 0; i < 13; i++) {
+        mut.push(true)
+    }
+    session.options.mut = mut
+}
+
+
+ColourBiomorph.initializeSession = function(session) {
+    session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
+    session.options.trickle = 10
+    session.options.palette = new Palette()
+    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "New Random Start"]
+    session.options.defaultBasicType = ["New Random Start"]
+    session.options.hopefulMonsterBasicType = ["New Random Start"]
+    
+    ColourBiomorph.initializeMut(session)
+}
+$.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
+    _init : function() {
+        this.options.showSign = false;
+        this.options.hasLeftRight = false;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = true;
+        this._super();
+    },
+    _launchPicker: function() {
+        $('<div class="colourGenebox"></div>').colourPicker({
+            colourGenebox: this.element,
+            colors: this.options.colors,
+            title: this.options.title,
+            value: this.options.value,
+            appendTo: this.element
+            })
+    },
+    manipulate: function(event) {
+        let value = $(event.target).data("value")
+        $(this.element).parents('.colourGeneboxes').eq(0).colour_geneboxes(
+                "manipulate",
+                this.options.geneboxIndex, 
+                value, 0)
+        return false;
+        
+    },    
+} );
+
 $.widget('dawk.colourPicker', {
+    options: {
+        colourGenebox: null,
+        value: '',
+        title: 'Untitled Colour Picker',
+        colors: []
+    },
     _create: function() {
         $(this.element).addClass('colourPicker')
-        let template = '<div>colourpicker</div>'
-            
-        $(template).appendTo(this.element) 
-        $(this.element).dialog()
+        this.element.attr('title', this.options.title)
         
-    } 
-});
+        let colors = this.options.colors
+        let value = this.options.value
+        
+        let colourSwatchTemplate = '<div class="colourPickerCubeSwatch"></div>'; 
 
+        let counterFloor = 0
+
+        let cubeDiv = $('<div class="colourPickerCubeDiv"></div>').appendTo(this.element)
+        for(let cubeRow = 0; cubeRow < 6; cubeRow++) {
+            let templateSlice = $('<div class="colourPickerCubeDivSlice"></div>').appendTo(cubeDiv)
+            for(let i = counterFloor; i < counterFloor + 36; i++) {
+                let colorswatch = $(colourSwatchTemplate)
+                $(templateSlice).append(colorswatch)
+                let color = colors[i]
+                $(colorswatch).css('background-color', color)
+                $(colorswatch).data('value', i)
+                this._on(colorswatch, {click: "_colorSwatchClicked"})
+                if(color == value) {
+                    $(colorswatch).addClass('selected')
+                }
+            }
+            counterFloor += 36
+        }
+        
+        colourSwatchTemplate = '<div class="colourPickerRampSwatch"></div>'; 
+        template = $('<div class="colourPickerRampDiv"></div>').appendTo(this.element)
+        for(let i = 216; i < 256; i++) {
+            let colorswatch = $(colourSwatchTemplate)
+            $(template).append(colorswatch)
+            let color = colors[i]
+            $(colorswatch).css('background-color', color)
+            $(colorswatch).data('value', i)
+            this._on(colorswatch, {click: "_colorSwatchClicked"})
+            if(color == value) {
+                $(colorswatch).addClass('colourPickerSelected')
+            }
+        }
+        $(this.element).append(template)
+
+        console.log(this.options.title)
+        $(this.element).dialog({
+            width: 400,
+            height: 400,
+            title: this.options.title,
+            draggable: true,
+            modal: true,
+            appendTo: this.options.appendTo
+        })
+
+    },
+    _colorSwatchClicked: function(event) {
+        $(this.options.colourGenebox).colourGenebox("manipulate", event)
+    }
+});
 
 $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
@@ -27,6 +129,7 @@ $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
             this.element.find('.geneValue').text(properties.name);
     },
 } );
+
 $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
         this.element.attr('title', 'Limb Fill');
@@ -44,22 +147,6 @@ $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
             this.element.find('.geneValue').text(properties.name);
         }
     },
-} );
-
-$.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.options.showSign = false;
-        this.options.hasLeftRight = false;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = true;
-
-        this._super();
-    },
-    _launchPicker: function() {
-        $('<div></div>').colourPicker()
-    },
-
 } );
 
 $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
@@ -216,49 +303,60 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
             geneboxIndex: 19,
         }).appendTo(this.element)
 
+        let colors = this.options.session.options.palette.colors
+        
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
+            colors: colors,
             title: 'Background Colour'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 21,
+            colors: colors,
             title: 'Colour Gene 1'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 22,
+            colors: colors,
             title: 'Colour Gene 2'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 23,
+            colors: colors,
             title: 'Colour Gene 3'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 24,
+            colors: colors,
             title: 'Colour Gene 4'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 25,
+            colors: colors,
             title: 'Colour Gene 5'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 26,
+            colors: colors,
             title: 'Colour Gene 6'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 27,
+            colors: colors,
             title: 'Colour Gene 7'}).appendTo(this.element);
 
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 28,
+            colors: colors,
             title: 'Colour Gene 8'}).appendTo(this.element);
     },
     _destroy : function() {
@@ -837,25 +935,6 @@ function ColourBiomorph(session, drawer) {
 
 }
 
-ColourBiomorph.initializeMut = function(session) {
-    var mut = []
-    for(let i = 0; i < 13; i++) {
-        mut.push(true)
-    }
-    session.options.mut = mut
-}
-
-
-ColourBiomorph.initializeSession = function(session) {
-    session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
-    session.options.trickle = 10
-    session.options.palette = new Palette()
-    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "New Random Start"]
-    session.options.defaultBasicType = ["New Random Start"]
-    session.options.hopefulMonsterBasicType = ["New Random Start"]
-    
-    ColourBiomorph.initializeMut(session)
-}
 
 $.widget('dawk.colourbiomorph_geneboxes', {
     options : {

@@ -1,15 +1,7 @@
-
-
-
-
-
 function getBiomorphFromCanvas(canvas) {
     var biomorph = jQuery.data(canvas, 'genotype');
     return biomorph;
 }
-
-
-
 
 $( function() {
     $.widget( "dawk.breedingOffspringCounter", {
@@ -59,7 +51,8 @@ $( function() {
                 species: this.options.session.species}
             ).appendTo(this.element)
             var geneboxes_options = {
-                engineering : false
+                engineering: false,
+                session: this.options.session
             }
             var geneboxes = $("<div></div>");
             _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)

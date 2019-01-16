@@ -3,7 +3,6 @@ $( function() {
         options: {
             parentView: null,
             session: null,
-            species: null
         },
         _create: function() {
             $(this.element).addClass('breedingControl');

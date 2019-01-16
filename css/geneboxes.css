@@ -18,6 +18,44 @@
 	height: 40px;
 }
 
+.colourPickerCubeDiv {
+    width: 360px;
+    height: 240px;
+	grid-gap: 0px;
+    display: grid;
+    grid-template-columns: 33.33% 33.33% 33.33% ;
+}
+
+.colourPickerCubeDivSlice {
+    width: 120px;
+    height: 120px;
+	grid-gap: 0px;
+	display: grid;
+    grid-template-columns: 20px 20px 20px 20px 20px 20px;
+}
+
+.colourPickerRampDiv {
+    width: 360px;
+    height: 80px;
+	grid-gap: 0px;
+	display: grid;
+	grid-template-columns: 36px 36px 36px 36px 36px 36px 36px 36px 36px 36px ;
+}
+
+.colourPickerCubeSwatch {
+    height: 20px;
+    width: 20px;
+}
+
+.colourPickerRampSwatch {
+    height: 20px;
+    width: 36px;
+}
+
+.colourPickerSelected {
+	border: solid 1px white;	
+}
+
 .shellGeneboxes {
     grid-template-columns: 6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5%  6.5% 15.5%;
 }
