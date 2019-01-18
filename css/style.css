@@ -13,6 +13,9 @@ body {font-family: sans-serif}
 .wrapper div {
     display: table-cell;
 }
+
+.dialogNoTitle .ui-dialog-titlebar {display:none}
+
 .headerwrapper {
     display: table;
     table-layout: fixed;

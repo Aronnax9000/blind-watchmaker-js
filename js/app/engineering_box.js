@@ -35,12 +35,11 @@ $( function() {
             var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
             		<span style='float:none; display: inline' >\
                     The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
-                    		<br>to get a usable cursor. If in doubt pull down<br>'Help with current operation'</span></div>")
+                    		<br>to get a usable cursor. If in doubt hover<br>over a gene for instructions.</span></div>")
             $(hypo).dialog({
-                dialogClass: "no-close",
+                dialogClass: "dialogNoTitle",
                 resizeable: false,
                 modal: true,
-                
                 position: { my: "left top", at: "left+312 top+104", of: this.element },
                 width: 450,
                 buttons: [
