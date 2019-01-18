@@ -61,16 +61,11 @@ var VertPos = {
 };
 $.widget("dawk.biomorph_genebox", {
     options : {
-        geneboxCollection: null,
-        geneboxIndex : 0,
-        value : 0,
-        gradientValue : SwellType.Same,
-        hasMid: true,
-        hasGradient: true,
+        hasMid: false,
+        hasGradient: false,
         hasLeftRight: true,
         hasColor: false,
         showSign: false,
-        title: ''
     },
     _create : function(options) {
         this._setOptions(options);
@@ -79,32 +74,42 @@ $.widget("dawk.biomorph_genebox", {
         this.element.attr('title', this.options.title);
     },
     _init: function() {
+        let options = this.options;
         // HTML template for the manipulation areas of the genebox.
         var str =  '\
             <div class="geneboxInfo"> \
             <img src="img/swellcircle.png" class="gradientGene gradientSame" /> \
             <span class="geneValue"></span> \
             </div>';
-        var engineering = this.options.geneboxCollection.options.engineering;
+        var engineering = options.geneboxCollection.options.engineering;
         if(engineering) {
-            str += '<div class="geneboxNavi">';
-            if(this.options.hasLeftRight) {
+            if(options.hasLeftRight && (options.hasMid || options.hasGradient)) {
+                str += '<div class="geneboxNaviThirds">'
+            } else if(options.hasLeftRight){
+                str += '<div class="geneboxNaviHalves">'
+            } else {
+                str += '<div class="geneboxNaviWhole">'
+            } 
+
+            if(options.hasLeftRight) {
                 str += '<div class="geneboxLeft"></div>';
             }
-            if(this.options.hasMid) {
-                str += '<div class="geneboxMid"> ';
-                if(this.options.hasGradient) {
-                    str += 
-                        '<div class="geneboxUp"></div> \
-                        <div class="geneboxEquals"></div> \
-                        <div class="geneboxDown"></div>';
-                }
-                else {
-                    str += '<div class="geneboxEquals"></div>';
-                }
+
+
+            if(options.hasGradient) {
+                str += '<div class="geneboxMidThirds">';
+                str += 
+                    '<div class="geneboxUp"></div> \
+                    <div class="geneboxEquals"></div> \
+                    <div class="geneboxDown"></div>';
                 str += '</div>';
+            } else if(options.hasMid) {
+                str += '<div class="geneboxMidWhole">\
+                    <div class="geneboxEquals"></div>\
+                    </div>';
             }
-            if(this.options.hasLeftRight) {
+
+            if(options.hasLeftRight) {
                 str += '<div class="geneboxRight"></div>';
             }
             str +='</div>';
@@ -114,7 +119,7 @@ $.widget("dawk.biomorph_genebox", {
             this._on( $(this.element).find('.geneboxLeft, .geneboxMid, .geneboxUp, .geneboxEquals, .geneboxDown, .geneboxRight'), {
                 click: "_manipulate"
             });
-            this._on( $(this.element).find('.geneboxNavi'), {
+            this._on( $(this.element).find('.geneboxNaviWhole'), {
                 click: "_launchPicker"
             });
         }
@@ -130,8 +135,12 @@ $.widget("dawk.biomorph_genebox", {
         this._super(options);
         this.refresh();
     },
-    updateValue: function(newValue) {
-        this.options.value = newValue
+    updateValue: function(newValue, newGradientValue) {
+        let options = this.options
+        options.value = newValue
+        if(options.hasGradient) {
+            options.gradientValue = newGradientValue
+        }
         this.refresh();
     },
     refreshValue: function() {
@@ -168,24 +177,20 @@ $.widget("dawk.biomorph_genebox", {
                 gradientImg.addClass('gradientSame');
                 break;
             default:
-                console.error('Illegal gradientValue: '+ this.options.gradientValue);
             }
         }
     },
 
     refresh : function() {
         this.refreshValue();
-        this.refreshColor();
-        this.refreshGradient();
-    },
-    _constrain : function(value) {
-        if (value > 100) {
-            value = 100;
+        let options = this.options
+        if(options.hasColor) {
+            this.refreshColor()
         }
-        if (value < 0) {
-            value = 0;
+
+        if(options.hasGradient) {  
+            this.refreshGradient()
         }
-        return value;
     },
     _manipulate: function(event) {
         var target = $(event.target);
@@ -206,15 +211,16 @@ $.widget("dawk.biomorph_genebox", {
         } else if(target.hasClass('geneboxDown')) {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.BottomRung;
-        } else if(target.hasClass('geneboxNavi')) {
-            alert('geneboxNavi')
+        } else if(target.hasClass('geneboxNaviWhole')) {
+            console.log('geneboxNaviWhole in rung calculation. Picker related? Probably not a problem.')
         }
-
-        this.options.geneboxCollection.manipulate(this.options.geneboxIndex, leftRightPos, rung)
+        let options = this.options
+        options.geneboxCollection.manipulate(options.geneboxIndex, leftRightPos, rung)
         return false;
     }
 
 });
+
 
 $.widget('dawk.geneboxes', {
     options : {
@@ -227,22 +233,24 @@ $.widget('dawk.geneboxes', {
         this._setOptions(options);
         $(this.element).addClass('geneboxes')
     },
-    manipulate: function(geneboxIndex, leftRightPos, rung) {
-        this.options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
+    manipulate: function(geneboxIndex, leftRightPos, rung) { 
+        let options = this.options
+        options.biomorph.manipulation(geneboxIndex, leftRightPos, rung);
         var canvas = $(this.element).parent().find('canvas').get(0);
         this.updateFromCanvas(canvas);
-        this.options.biomorph.develop();
+        options.biomorph.develop();
     },
 })
 
+
+/**
+ * Spokes genebox
+ */
+
 $.widget( "dawk.spokesGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.element.attr('title', 'Spokes');
-        this.options.hasLeftRight = true;
-        this.options.hasMid = true;
-        this.options.hasGradient = false;
-        this.options.hasColor = false;
-        this._super();
+    options: {
+        hasMid: true,
+        title: 'Spokes'
     },
     refresh: function() {
         this.refreshGradient();
@@ -252,8 +260,7 @@ $.widget( "dawk.spokesGenebox", $.dawk.biomorph_genebox, {
             this.element.find('.geneValue').text(properties.geneboxName);
         }
     },
-} );
-
+});
 
 function Biomorphs() {
     

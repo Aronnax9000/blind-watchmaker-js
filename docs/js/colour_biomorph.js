@@ -18,13 +18,9 @@ ColourBiomorph.initializeSession = function(session) {
     ColourBiomorph.initializeMut(session)
 }
 $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.options.showSign = false;
-        this.options.hasLeftRight = false;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = true;
-        this._super();
+    options: {
+        hasLeftRight: false,
+        hasColor: true
     },
     _launchPicker: function() {
         $('<div class="colourGenebox"></div>').colourPicker({
@@ -113,14 +109,8 @@ $.widget('dawk.colourPicker', {
 });
 
 $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.element.attr('title', 'Limb Shape');
-        this.options.showSign = true;
-        this.options.hasLeftRight = true;
-        this.options.hasMid = true;
-        this.options.hasGradient = false;
-        this.options.hasColor = true;
-        this._super();
+    options: {
+        hasMid: true
     },
     refresh: function() {
         var str = this.options.value;
@@ -131,14 +121,9 @@ $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
 } );
 
 $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.element.attr('title', 'Limb Fill');
-        this.options.showSign = true;
-        this.options.hasLeftRight = true;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = false;
-        this._super();
+    options: {
+        title: 'Limb Fill'
+        
     },
     refresh: function() {
         var str = this.options.value;
@@ -165,71 +150,49 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
-            genebox.gene1to9box("option", "value", biomorph.gene[i]);
-            genebox.gene1to9box("option", "gradientValue", biomorph.dGene[i]);
-            genebox.gene1to9box("refresh");
+            genebox.gene1to9box("updateValue", biomorph.gene[i], biomorph.dGene[i]);
         }
         genebox = geneboxes.eq(9);
-        genebox.segNoGenebox("option", "value", biomorph.segNoGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.segNoGene);
         genebox = geneboxes.eq(10);
-        genebox.segDistGenebox("option", "value", biomorph.segDistGene);
-        genebox.segDistGenebox("option", "gradientValue", biomorph.dGene[9]);
-        genebox.segDistGenebox("refresh");
+        genebox.segDistGenebox("updateValue", biomorph.segDistGene, biomorph.dGene[9]);
         genebox = geneboxes.eq(11);
-        genebox.completenessGenebox("option", "value", biomorph.completenessGene);
-        genebox.completenessGenebox("refresh");
+        genebox.completenessGenebox("updateValue", biomorph.completenessGene);
         genebox = geneboxes.eq(12);
-        genebox.spokesGenebox("option", "value", biomorph.spokesGene);
-        genebox.spokesGenebox("refresh");
+        genebox.spokesGenebox("updateValue", biomorph.spokesGene);
         genebox = geneboxes.eq(13);
-        genebox.segNoGenebox("option", "value", biomorph.trickleGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.trickleGene);
         genebox = geneboxes.eq(14);
-        genebox.segNoGenebox("option", "value", biomorph.mutSizeGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutSizeGene);
         genebox = geneboxes.eq(15);
-        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutProbGene);
         genebox = geneboxes.eq(16);
-        genebox.segNoGenebox("option", "value", biomorph.thicknessGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.thicknessGene);
         genebox = geneboxes.eq(17);
-        genebox.limbShapeGenebox("option", "value", biomorph.limbShapeGene);
-        genebox.limbShapeGenebox("refresh");
+        genebox.limbShapeGenebox("updateValue", biomorph.limbShapeGene);
         genebox = geneboxes.eq(18);
-        genebox.limbFillGenebox("option", "value", biomorph.limbFillGene);
-        genebox.limbFillGenebox("refresh");
+        genebox.limbFillGenebox("updateValue", biomorph.limbFillGene);
 
         let colors = biomorph.session.options.palette.colors
 
         genebox = geneboxes.eq(19);
-        genebox.colourGenebox("option", "value", colors[biomorph.backColorGene]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.backColorGene]);
         genebox = geneboxes.eq(20);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[0]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[0]]);
         genebox = geneboxes.eq(21);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[1]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[1]]);
         genebox = geneboxes.eq(22);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[2]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[2]]);
         genebox = geneboxes.eq(23);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[3]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[3]]);
         genebox = geneboxes.eq(24);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[4]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[4]]);
         genebox = geneboxes.eq(25);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[5]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[5]]);
         genebox = geneboxes.eq(26);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[6]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[6]]);
         genebox = geneboxes.eq(27);
-        genebox.colourGenebox("option", "value", colors[biomorph.colorGene[7]]);
-        genebox.colourGenebox("refresh");
+        genebox.colourGenebox("updateValue", colors[biomorph.colorGene[7]]);
     },
     _create : function(options) {
         this._super(options)
@@ -1506,7 +1469,7 @@ ColourPic.prototype.drawPic = function(place) {
     while(true) {
         this.actualLine(picStyle, Compass.NorthSouth); // {sometimes rangecheck error}
         if(biomorph.spokesGene == SpokesType.Radial) 
-            if(biomorph.completenessGene = CompletenessType.Single) 
+            if(biomorph.completenessGene == CompletenessType.Single) 
                 this.actualLine(PicStyleType.RUD, Compass.EastWest);
             else
                 this.actualLine(picStyle, Compass.EastWest);

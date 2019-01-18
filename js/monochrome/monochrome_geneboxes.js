@@ -1,4 +1,6 @@
-
+/*
+ * Monochrome geneboxes
+ */
 
 $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
     options : {
@@ -15,32 +17,22 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
-            genebox.gene1to9box("option", "value", biomorph.gene[i]);
-            genebox.gene1to9box("option", "gradientValue", biomorph.dGene[i]);
-            genebox.gene1to9box("refresh");
+            genebox.gene1to9box("updateValue", biomorph.gene[i], biomorph.dGene[i]);
         }
         genebox = geneboxes.eq(9);
-        genebox.segNoGenebox("option", "value", biomorph.segNoGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.segNoGene);
         genebox = geneboxes.eq(10);
-        genebox.segDistGenebox("option", "value", biomorph.segDistGene);
-        genebox.segDistGenebox("option", "gradientValue", biomorph.dGene[9]);
-        genebox.segDistGenebox("refresh");
+        genebox.segDistGenebox("updateValue", biomorph.segDistGene, biomorph.dGene[9]);
         genebox = geneboxes.eq(11);
-        genebox.completenessGenebox("option", "value", biomorph.completenessGene);
-        genebox.completenessGenebox("refresh");
+        genebox.completenessGenebox("updateValue", biomorph.completenessGene);
         genebox = geneboxes.eq(12);
-        genebox.spokesGenebox("option", "value", biomorph.spokesGene);
-        genebox.spokesGenebox("refresh");
+        genebox.spokesGenebox("updateValue", biomorph.spokesGene);
         genebox = geneboxes.eq(13);
-        genebox.segNoGenebox("option", "value", biomorph.trickleGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.trickleGene);
         genebox = geneboxes.eq(14);
-        genebox.segNoGenebox("option", "value", biomorph.mutSizeGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutSizeGene);
         genebox = geneboxes.eq(15);
-        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutProbGene);
 
     },
     _create : function(options) {
@@ -93,12 +85,6 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
             geneboxCollection: this, 
             geneboxIndex: 16,
             title: 'Mutation Probability'}).appendTo(this.element);
-    },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    _setOptions : function(options) {
-        this._super(options);
     },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");

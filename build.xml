@@ -46,6 +46,7 @@
             <fileset file="js/biomorphs/biomorph_swelltype.js" />
             <fileset file="js/biomorphs/biomorph_types.js" />
             <fileset file="js/biomorphs/biomorph_geneboxes.js" />
+            <fileset file="js/biomorphs/biomorph_spokesgene_genebox.js" />
             <fileset file="js/biomorphs/biomorphs.js" />
             </concat>
     	<concat destfile="docs/js/monochrome.js">

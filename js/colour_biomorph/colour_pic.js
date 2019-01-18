@@ -271,7 +271,7 @@ ColourPic.prototype.drawPic = function(place) {
     while(true) {
         this.actualLine(picStyle, Compass.NorthSouth); // {sometimes rangecheck error}
         if(biomorph.spokesGene == SpokesType.Radial) 
-            if(biomorph.completenessGene = CompletenessType.Single) 
+            if(biomorph.completenessGene == CompletenessType.Single) 
                 this.actualLine(PicStyleType.RUD, Compass.EastWest);
             else
                 this.actualLine(picStyle, Compass.EastWest);

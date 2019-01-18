@@ -284,6 +284,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 12: 
+        console.log('Completeness manipulation')
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.completenessGene = CompletenessType.Single;
@@ -296,6 +297,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 13: 
+        console.log('Spokes manipulation')
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.spokesGene = SpokesType.NorthOnly;
@@ -357,7 +359,6 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     if(this.segNoGene < 1) {
         this.segNoGene = 1;
     }
-//  Alert subscribers that the genome has changed here.
 }
 
 const TRICKLE = 10;
@@ -1001,7 +1002,7 @@ Pic.prototype.drawPic = function(place) {
     while(true) {
         this.actualLine(picStyle, Compass.NorthSouth); // {sometimes rangecheck error}
         if(biomorph.spokesGene == SpokesType.Radial) 
-            if(biomorph.completenessGene = CompletenessType.Single) 
+            if(biomorph.completenessGene == CompletenessType.Single) 
                 this.actualLine(PicStyleType.RUD, Compass.EastWest);
             else
                 this.actualLine(picStyle, Compass.EastWest);
@@ -1101,26 +1102,14 @@ Monochrome.prototype.develop = Biomorphs.prototype.develop;
 
 
 $.widget( "dawk.gene1to9box", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.options.hasLeftRight = true;
-        this.options.hasMid = true;
-        this.options.hasColor = false;
-        this._super();
-    },
-    _setOption : function(key, value) {
-        this._super(key, value);
+    options: {
+        hasGradient: true
     }
-
-} );
+});
 
 $.widget( "dawk.segNoGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.options.showSign = true;
-        this.options.hasLeftRight = true;
-        this.options.hasMid = false;
-        this.options.hasColor = false;
-        this.options.hasGradient = false;
-        this._super();
+    options: {
+        showSign: true
     },
     refresh: function() {
         var str = this.options.value;
@@ -1131,16 +1120,12 @@ $.widget( "dawk.segNoGenebox", $.dawk.biomorph_genebox, {
             this.element.find('.geneValue').text(str);
         }
     },
-} );
+});
 
 $.widget( "dawk.segDistGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.options.showSign = true;
-        this.options.hasLeftRight = true;
-        this.options.hasMid = true;
-        this.options.hasGradient = true;
-        this.options.hasColor = false;
-        this._super();
+    options: {
+        hasGradient: true,
+        showSign: true
     },
     refresh: function() {
         this.refreshGradient();
@@ -1156,20 +1141,11 @@ $.widget( "dawk.segDistGenebox", $.dawk.biomorph_genebox, {
 
 
 $.widget( "dawk.completenessGenebox", $.dawk.biomorph_genebox, {
-    _init : function() {
-        this.element.attr('title', 'Completeness');
-
-        this.options.showSign = true;
-        this.options.hasLeftRight = true;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = false;
-        this._super();
+    options: {
+        showSign: true
     },
     refresh: function() {
-        this.refreshGradient();
-        var str = this.options.value;
-        var properties = CompletenessType.properties[str];
+        var properties = CompletenessType.properties[this.options.value];
         if(properties != null) {
             this.element.find('.geneValue').text(properties.geneboxName);
         }
@@ -1177,7 +1153,9 @@ $.widget( "dawk.completenessGenebox", $.dawk.biomorph_genebox, {
 } );
 
 
-
+/*
+ * Monochrome geneboxes
+ */
 
 $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
     options : {
@@ -1194,32 +1172,22 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
         var genebox;
         for(let i = 0; i < 9; i++) {
             genebox = geneboxes.eq(i);
-            genebox.gene1to9box("option", "value", biomorph.gene[i]);
-            genebox.gene1to9box("option", "gradientValue", biomorph.dGene[i]);
-            genebox.gene1to9box("refresh");
+            genebox.gene1to9box("updateValue", biomorph.gene[i], biomorph.dGene[i]);
         }
         genebox = geneboxes.eq(9);
-        genebox.segNoGenebox("option", "value", biomorph.segNoGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.segNoGene);
         genebox = geneboxes.eq(10);
-        genebox.segDistGenebox("option", "value", biomorph.segDistGene);
-        genebox.segDistGenebox("option", "gradientValue", biomorph.dGene[9]);
-        genebox.segDistGenebox("refresh");
+        genebox.segDistGenebox("updateValue", biomorph.segDistGene, biomorph.dGene[9]);
         genebox = geneboxes.eq(11);
-        genebox.completenessGenebox("option", "value", biomorph.completenessGene);
-        genebox.completenessGenebox("refresh");
+        genebox.completenessGenebox("updateValue", biomorph.completenessGene);
         genebox = geneboxes.eq(12);
-        genebox.spokesGenebox("option", "value", biomorph.spokesGene);
-        genebox.spokesGenebox("refresh");
+        genebox.spokesGenebox("updateValue", biomorph.spokesGene);
         genebox = geneboxes.eq(13);
-        genebox.segNoGenebox("option", "value", biomorph.trickleGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.trickleGene);
         genebox = geneboxes.eq(14);
-        genebox.segNoGenebox("option", "value", biomorph.mutSizeGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutSizeGene);
         genebox = geneboxes.eq(15);
-        genebox.segNoGenebox("option", "value", biomorph.mutProbGene);
-        genebox.segNoGenebox("refresh");
+        genebox.segNoGenebox("updateValue", biomorph.mutProbGene);
 
     },
     _create : function(options) {
@@ -1272,12 +1240,6 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
             geneboxCollection: this, 
             geneboxIndex: 16,
             title: 'Mutation Probability'}).appendTo(this.element);
-    },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    _setOptions : function(options) {
-        this._super(options);
     },
     _destroy : function() {
         this.element.removeClass("monochromeGeneboxes").text("");

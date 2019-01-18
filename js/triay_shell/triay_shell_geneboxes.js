@@ -94,60 +94,45 @@ $.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
         var genebox 
         // Opening
         genebox = geneboxes.eq(0); 
-        genebox.floatGenebox("option", "value", shell.opening);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.opening);
         // Displacement
         genebox = geneboxes.eq(1); 
-        genebox.floatGenebox("option", "value", shell.displacement);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.displacement);
         // Shape
         genebox = geneboxes.eq(2); 
-        genebox.floatGenebox("option", "value", shell.shape);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.shape);
         // Translation
         genebox = geneboxes.eq(3); 
-        genebox.floatGenebox("option", "value", shell.translation);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.translation);
         // Handedness
         genebox = geneboxes.eq(4); 
-        genebox.handednessGenebox("option", "value", shell.handedness);
-        genebox.handednessGenebox("refresh");
+        genebox.handednessGenebox("updateValue", shell.handedness);
         // Displacement mutation size
         genebox = geneboxes.eq(5); 
-        genebox.floatGenebox("option", "value", shell.mutSize.displacement);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.mutSize.displacement);
         // Translation mutation size
         genebox = geneboxes.eq(6); 
-        genebox.floatGenebox("option", "value", shell.mutSize.translation);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.mutSize.translation);
         // Coarsegraniness
         genebox = geneboxes.eq(7); 
-        genebox.biomorph_genebox("option", "value", shell.coarsegraininess);
-        genebox.biomorph_genebox("refresh");
+        genebox.biomorph_genebox("updateValue", shell.coarsegraininess);
         // Reach
         genebox = geneboxes.eq(8); 
-        genebox.biomorph_genebox("option", "value", shell.reach);
-        genebox.biomorph_genebox("refresh");
+        genebox.biomorph_genebox("updateValue", shell.reach);
         // Translation gradient
         genebox = geneboxes.eq(9); 
-        genebox.floatGenebox("option", "value", shell.translationGradient);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.translationGradient);
         // Shape mutation size
         genebox = geneboxes.eq(10); 
-        genebox.floatGenebox("option", "value", shell.mutSize.shape);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.mutSize.shape);
         // Reach mutation size
         genebox = geneboxes.eq(11); 
-        genebox.floatGenebox("option", "value", shell.mutSize.reach);
-        genebox.floatGenebox("refresh");
+        genebox.floatGenebox("updateValue", shell.mutSize.reach);
         // Mutation probability
         genebox = geneboxes.eq(12); 
-        genebox.biomorph_genebox("option", "value", shell.mutProbGene);
-        genebox.biomorph_genebox("refresh");
+        genebox.biomorph_genebox("updateValue", shell.mutProbGene);
         // Pattern
         genebox = geneboxes.eq(13); 
-        genebox.biomorph_genebox("option", "value", shell.pattern);
-        genebox.biomorph_genebox("refresh");
-
+        genebox.biomorph_genebox("updateValue", shell.pattern);
     },
 });

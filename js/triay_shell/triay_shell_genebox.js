@@ -6,6 +6,7 @@ $.widget( "dawk.floatGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
         this.options.hasLeftRight = true;
         this.options.hasMid = false;
+        this.options.hasGradient = false;
         this.options.hasColor = false;
         this._super();
     },
@@ -26,6 +27,7 @@ $.widget( "dawk.handednessGenebox", $.dawk.biomorph_genebox, {
     _init : function() {
         this.options.hasLeftRight = true;
         this.options.hasMid = false;
+        this.options.hasGradient = false;
         this.options.hasColor = false;
         this._super();
     },
