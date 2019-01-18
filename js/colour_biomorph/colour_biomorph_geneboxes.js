@@ -5,12 +5,14 @@ $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
     },
     _launchPicker: function() {
         $('<div class="colourGenebox"></div>').colourPicker({
+            
             colourGenebox: this.element,
             colors: this.options.colors,
             title: this.options.title,
             value: this.options.value,
             appendTo: this.element
-            })
+        })
+
     },
     manipulate: function(event) {
         let value = $(event.target).data("value")
@@ -18,8 +20,8 @@ $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
                 "manipulate",
                 this.options.geneboxIndex, 
                 value, 0)
-        return false;
-        
+                return false;
+
     },    
 } );
 
@@ -33,10 +35,10 @@ $.widget('dawk.colourPicker', {
     _create: function() {
         $(this.element).addClass('colourPicker')
         this.element.attr('title', this.options.title)
-        
+
         let colors = this.options.colors
         let value = this.options.value
-        
+
         let colourSwatchTemplate = '<div class="colourPickerCubeSwatch"></div>'; 
 
         let counterFloor = 0
@@ -57,7 +59,7 @@ $.widget('dawk.colourPicker', {
             }
             counterFloor += 36
         }
-        
+
         colourSwatchTemplate = '<div class="colourPickerRampSwatch"></div>'; 
         template = $('<div class="colourPickerRampDiv"></div>').appendTo(this.element)
         for(let i = 216; i < 256; i++) {
@@ -74,15 +76,24 @@ $.widget('dawk.colourPicker', {
         $(this.element).append(template)
 
         console.log(this.options.title)
+        let engineeringBox = $(this.options.appendTo).parents('.engineeringView').find('.engineeringBox').eq(0)
         $(this.element).dialog({
             width: 220,
             height: 230,
             title: this.options.title,
             draggable: true,
             modal: true,
-            appendTo: this.options.appendTo
+            appendTo: this.options.appendTo,
+            position: {
+                my: 'left top',
+                at: 'left+20px top+20px',
+                of: engineeringBox
+            },
+            offset: {
+                left:20,
+                right:20
+            }
         })
-
     },
     _colorSwatchClicked: function(event) {
         $(this.options.colourGenebox).colourGenebox("manipulate", event)
@@ -104,7 +115,7 @@ $.widget( "dawk.limbShapeGenebox", $.dawk.biomorph_genebox, {
 $.widget( "dawk.limbFillGenebox", $.dawk.biomorph_genebox, {
     options: {
         title: 'Limb Fill'
-        
+
     },
     refresh: function() {
         var str = this.options.value;
@@ -179,17 +190,17 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         this._super(options)
 
         this.element.addClass("colourGeneboxes");
-        let template = '<div></div>'
-            for(let i = 0; i < 9; i++) {
-                var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
-                if(i == 8) {
-                    geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
-                }
-                $(template).gene1to9box({
-                    geneboxCollection: this, 
-                    geneboxIndex: i + 1,
-                    title: geneBoxTitle}).appendTo(this.element)
+        let template = '<div></div>';
+        for(let i = 0; i < 9; i++) {
+            var geneBoxTitle = 'Gene and Gradient Gene '+(i+1);
+            if(i == 8) {
+                geneBoxTitle += '. Limited to values such that 2^Gene9 * Segment Number < 4096';
             }
+            $(template).gene1to9box({
+                geneboxCollection: this, 
+                geneboxIndex: i + 1,
+                title: geneBoxTitle}).appendTo(this.element)
+        }
 
         $(template).segNoGenebox({
             geneboxCollection: this, 
@@ -248,7 +259,7 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         }).appendTo(this.element)
 
         let colors = this.options.session.options.palette.colors
-        
+
         $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
