@@ -65,6 +65,11 @@
         <concat destfile="docs/js/minimal.js">
             <fileset file="js/minimal/species_minimal.js" />
             </concat>
+        <concat destfile="docs/js/arthromorph.js">
+            <fileset file="js/arthromorph/arthromorph_atomkind.js" />
+            <fileset file="js/arthromorph/arthromorph.js" />
+            <fileset file="js/arthromorph/arthromorph_develop.js" />
+            </concat>
         <concat destfile="docs/js/colour_biomorph.js">
             <fileset file="js/colour_biomorph/colour_biomorph_session.js" />
             <fileset file="js/colour_biomorph/colour_biomorph_geneboxes.js" />
