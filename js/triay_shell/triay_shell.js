@@ -38,7 +38,7 @@ Shells.initializeSession = function(session) {
         "Fig",
         "RazorShell",
         "JapaneseWonder"]
-
+    session.options.defaultView = 'Engineering'
     session.options.defaultBasicType = "Hopeful Monster"
     session.options.hopefulMonsterBasicType = "Hopeful Monster"
 

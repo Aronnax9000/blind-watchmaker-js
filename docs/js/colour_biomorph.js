@@ -23,8 +23,8 @@ $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
         hasColor: true
     },
     _launchPicker: function() {
+        $(this.element).tooltip('disable')
         $('<div class="colourGenebox"></div>').colourPicker({
-            
             colourGenebox: this.element,
             colors: this.options.colors,
             title: this.options.title,
@@ -103,6 +103,10 @@ $.widget('dawk.colourPicker', {
             draggable: true,
             modal: true,
             appendTo: this.options.appendTo,
+            close: function(event, ui) {
+                let colourGenebox = $(event.target).dialog("option", "appendTo")
+                $(colourGenebox).tooltip('enable')    
+            },
             position: {
                 my: 'left top',
                 at: 'left+20px top+20px',

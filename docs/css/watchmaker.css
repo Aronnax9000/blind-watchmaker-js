@@ -94,6 +94,10 @@ body {font-family: sans-serif}
     display: table-cell;
 }
 
+.ui-dialog-title {
+    font-size: 12px
+}
+
 input[type=checkbox]
 {
   /* Double-sized Checkboxes */

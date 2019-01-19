@@ -29,13 +29,20 @@ $.widget('dawk.watchmakerSessionTab', {
         $(ui.newPanel).trigger('dawk:viewGainedFocus');
     },   
     _create: function () {
-        var species = this.options.species
+        let options = this.options
+        var species = options.species
         this.element.addClass('watchmakerSessionTab');
         var ul = $('<ul class="watchmakerViewTabs"></ul>');
-        this.element.append(ul);
+        this.element.append(ul); 
         this.element.tabs({activate: this.on_activate});
-        this.newBreedingView();
-        this.newEngineeringView();
+        switch(options.session.options.defaultView) {
+        case 'Engineering':
+            this.newEngineeringView();
+            break
+        case 'Breeding':
+        default:
+            this.newBreedingView();
+        }
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
