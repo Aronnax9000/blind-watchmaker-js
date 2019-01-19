@@ -626,6 +626,8 @@ Monochrome.prototype.mutate = function() {
             if(this.mutSizeGene < 1) 
                 this.mutSizeGene = 1;
         }
+    // Really only supposed to return true if mutation happened
+    return true
     
 }
 Monochrome.prototype.doSaltation = function() {

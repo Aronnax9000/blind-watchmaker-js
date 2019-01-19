@@ -72,6 +72,7 @@ $( function() {
                             // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
+                            console.log('handoff complete')
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas

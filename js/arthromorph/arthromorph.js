@@ -75,6 +75,8 @@ Arthromorph.initializeSession = function(session) {
     session.options.focusOfAttention = Concentration.AnySegment;
     session.options.sideways = false;
     session.options.wantColor = true
+    session.options.sessionIcon = 'img/arthromorphs32x32.png'
+
 }
 
 Arthromorph.prototype.doSaltation = function() {
@@ -242,7 +244,7 @@ Arthromorph.prototype.minimalAnimal = function() {
 //creates and returns a new, mutated copy) { the biomorph.
 Arthromorph.prototype.reproduce = function(element) {
     let child = new Arthromorph(this.session, element);
-
+    
     //{Reproduce copies an animal and calls Mutate}
     //{Please kill the old animal before calling this.  We may need to use his atoms.}
     let counter = 0;
