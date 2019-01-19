@@ -69,14 +69,13 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
-                            // Hand the biomorph off to the new canvas
+                            // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
                             $(midCanvas).css({left:0,top:0})
-                            var midCanvasPos = $(midCanvas).position()
                             genotype.develop()
                             breedingBoxes.produceLitter(numBoxes, midBox)
                         } });

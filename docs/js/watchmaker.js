@@ -253,6 +253,7 @@ var _drawerFactorySingleton = new DrawerFactory();
 function Canvas2DDrawer(drawingObject) {
     this.drawingObject = drawingObject;
     this.drawingContext = drawingObject.getContext('2d');
+    this.bgcolor = 'White' 
 }
 
 
@@ -311,6 +312,31 @@ Canvas2DDrawer.prototype.frameOval = function(rect) {
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.stroke();
 }
+
+Canvas2DDrawer.prototype.fillOval = function(rect, style) {
+    let fillStyle = this.drawingContext.fillStyle
+    this.drawingContext.fillStyle = style;
+    this.paintOval(rect)
+    this.drawingContext.fillStyle = fillStyle
+}
+Canvas2DDrawer.prototype.eraseOval = function(rect) {
+    let fillStyle = this.drawingContext.fillStyle
+    this.drawingContext.fillStyle = this.bgcolor
+    this.paintOval(rect)
+    this.drawingContext.fillStyle = fillStyle
+    
+}
+
+Canvas2DDrawer.prototype.foreColor = function(color) {
+    this.drawingContext.fillStyle = color;
+    this.drawingContext.strokeStyle = color;
+}
+
+Canvas2DDrawer.prototype.backColor = function(color) {
+    this.bgcolor = color;
+}
+
+
 
 Canvas2DDrawer.prototype.paintOval = function(rect) {
     var cx = (rect.left + rect.right) / 2;
@@ -754,14 +780,13 @@ $( function() {
                     }, { duration: 1000,                               
                         easing: 'easeOutExpo',
                         complete: function() {
-                            // Hand the biomorph off to the new canvas
+                            // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
                             $(midCanvas).css({left:0,top:0})
-                            var midCanvasPos = $(midCanvas).position()
                             genotype.develop()
                             breedingBoxes.produceLitter(numBoxes, midBox)
                         } });

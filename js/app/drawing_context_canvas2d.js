@@ -1,6 +1,7 @@
 function Canvas2DDrawer(drawingObject) {
     this.drawingObject = drawingObject;
     this.drawingContext = drawingObject.getContext('2d');
+    this.bgcolor = 'White' 
 }
 
 
@@ -59,6 +60,31 @@ Canvas2DDrawer.prototype.frameOval = function(rect) {
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.stroke();
 }
+
+Canvas2DDrawer.prototype.fillOval = function(rect, style) {
+    let fillStyle = this.drawingContext.fillStyle
+    this.drawingContext.fillStyle = style;
+    this.paintOval(rect)
+    this.drawingContext.fillStyle = fillStyle
+}
+Canvas2DDrawer.prototype.eraseOval = function(rect) {
+    let fillStyle = this.drawingContext.fillStyle
+    this.drawingContext.fillStyle = this.bgcolor
+    this.paintOval(rect)
+    this.drawingContext.fillStyle = fillStyle
+    
+}
+
+Canvas2DDrawer.prototype.foreColor = function(color) {
+    this.drawingContext.fillStyle = color;
+    this.drawingContext.strokeStyle = color;
+}
+
+Canvas2DDrawer.prototype.backColor = function(color) {
+    this.bgcolor = color;
+}
+
+
 
 Canvas2DDrawer.prototype.paintOval = function(rect) {
     var cx = (rect.left + rect.right) / 2;
