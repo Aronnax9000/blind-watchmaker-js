@@ -120,8 +120,8 @@ Atom.copy = function(which) {
 Atom.copyExceptNext = function(which) {
     let newPlace = new Atom(which.kind) // {Grab a new atom}
     newPlace.height = which.height
-    newplace.width = which.width
-    newplace.angle = which.angle
+    newPlace.width = which.width
+    newPlace.angle = which.angle
     if(which.firstBelowMe) {
         // {Normal copy from here on}
         newPlace.firstBelowMe = Atom.copy(which.firstBelowMe); 
@@ -132,11 +132,11 @@ Atom.copyExceptNext = function(which) {
 Atom.countAtoms = function(which) {
     // {travel over the Animal, counting Atoms}
     let count = 1 // {count me}
-    if(which.firstBelowMe) {
+    if(which.firstBelowMe != null) {
         count += Atom.countAtoms(which.firstBelowMe)
     }
 
-    if (which.nextLikeMe && which.kind != AtomKind.AnimalTrunk) {
+    if (which.nextLikeMe  != null && which.kind != AtomKind.AnimalTrunk) {
         count += Atom.countAtoms(which.nextLikeMe)
     }
     return count

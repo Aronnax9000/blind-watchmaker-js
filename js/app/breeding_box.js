@@ -39,7 +39,6 @@ $( function() {
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
-            
             var position = this.element.position();
             var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
@@ -72,6 +71,7 @@ $( function() {
                             // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
+                            eraseCanvas(this)
                             console.log('handoff complete')
                             // Inform the genotype that it now draws on a different
                             // canvas

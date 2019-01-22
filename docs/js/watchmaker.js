@@ -632,6 +632,9 @@ function SVGDrawer(drawingObject) {
 _drawerFactorySingleton.registerDrawerType("svg", (
         function(drawingObject) { 
             return new SVGDrawer(drawingObject);}));
+
+
+
 $( function() {
     $.widget( "dawk.modeToolbar", {
         options: {
@@ -680,7 +683,9 @@ $( function() {
             }
         },
         doPerson: function(event) {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').first()
+//            console.log(midCanvas[0])
+            eraseCanvas(midCanvas[0])
             var basicTypeSelect = event.target
             var selectedValue = basicTypeSelect.options[basicTypeSelect.selectedIndex].value
             basicTypeSelect.selectedIndex = 0
@@ -750,7 +755,6 @@ $( function() {
         },
         _doCanvasClicked: function(event) {
             var canvas = this.options.canvas;
-            
             var position = this.element.position();
             var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
@@ -783,6 +787,8 @@ $( function() {
                             // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
+                            eraseCanvas(this)
+                            console.log('handoff complete')
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
@@ -942,7 +948,7 @@ $( function() {
                     if(this.options.biomorph) {
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
-                        biomorph.doPerson()
+                        biomorph.doPerson(session.options.defaultBasicType)
                     }
                     $(canvas).data('genotype', biomorph)        
                     biomorph.develop()

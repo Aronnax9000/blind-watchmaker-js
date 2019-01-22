@@ -120,8 +120,8 @@ Atom.copy = function(which) {
 Atom.copyExceptNext = function(which) {
     let newPlace = new Atom(which.kind) // {Grab a new atom}
     newPlace.height = which.height
-    newplace.width = which.width
-    newplace.angle = which.angle
+    newPlace.width = which.width
+    newPlace.angle = which.angle
     if(which.firstBelowMe) {
         // {Normal copy from here on}
         newPlace.firstBelowMe = Atom.copy(which.firstBelowMe); 
@@ -132,11 +132,11 @@ Atom.copyExceptNext = function(which) {
 Atom.countAtoms = function(which) {
     // {travel over the Animal, counting Atoms}
     let count = 1 // {count me}
-    if(which.firstBelowMe) {
+    if(which.firstBelowMe != null) {
         count += Atom.countAtoms(which.firstBelowMe)
     }
 
-    if (which.nextLikeMe && which.kind != AtomKind.AnimalTrunk) {
+    if (which.nextLikeMe  != null && which.kind != AtomKind.AnimalTrunk) {
         count += Atom.countAtoms(which.nextLikeMe)
     }
     return count
@@ -346,9 +346,17 @@ Arthromorph.initializeSession = function(session) {
     session.options.focusOfAttention = Concentration.AnySegment;
     session.options.sideways = false;
     session.options.wantColor = true
+    session.options.sessionIcon = 'img/arthromorphs32x32.png';
+    session.options.basicTypes = ["Minimal", "Complex"]
+    session.options.defaultBasicType = "Minimal"
+
+
 }
 
 Arthromorph.prototype.doSaltation = function() {
+}
+
+Arthromorph.prototype.copyBiomorph = function() {
 }
 
 //{travel over the Animal, counting Atoms and return the Nth}
@@ -430,35 +438,52 @@ Arthromorph.prototype.getFactor = function() {
     }
 }
 
+//creates and returns a new, mutated copy) { the biomorph.
+Arthromorph.prototype.reproduce = function(element) {
+    
 
-Arthromorph.prototype.tandem = function(targetAtom) {
-    //{If Dup and target is second or third part of an Animal, Section, or Segment,}
-    //{Then jump down to the next part of the animal}
-    let kind = targetAtom.kind
-    if(kind == AtomKind.AnimalJoint 
-            || kind == AtomKind.SectionJoint 
-            || kind == AtomKind.SegmentJoint) {
-        targetAtom = targetAtom.nextLikeMe; //{AnimalClaw}
-        kind = targetAtom.kind
-    }
-    if(kind == AtomKind.AnimalClaw || kind == AtomKind.SectionClaw || kind == AtomKind.SegmentClaw) {
-        //{SectionTrunk .. where we want to be }
-        targetAtom = targetAtom.firstBelowMe;
-    }
-//  {Insert copy of me after me}
-//  {CopyExceptNext makes sure NextLikeMe of copy now points to old NextLikeMe of target}
-//  {So brothers are kept, and new subtree is inserted}
-    targetAtom.nextLikeMe = Atom.copyExceptNext(targetAtom); 
+    let child = new Arthromorph(this.session, element);
 
-    if(targetAtom.kind == AtomKind.Joint && targetAtom.firstBelowMe) {
-        //{last joint has claw.  When duplicate, get rid of extra claw}
-        let extraClaw = targetAtom.firstBelowMe;
-        targetAtom.firstBelowMe = null;
-        extraClaw.kill();
+    //{Reproduce copies an animal and calls Mutate}
+    //{Please kill the old animal before calling this.  We may need to use his atoms.}
+    let counter = 0;
+    child.trunk = Atom.copy(this.trunk);
+    let limit = 1000 // 1000
+    do {
+        counter++
+        done = child.mutate() // {If it fails, just try again until we succeed at changing something}
+    } while(counter < limit && ! done);
+//    console.log('Child')
+//    child.trunk.printMiddle()
+    if(counter > limit) {
+        console.error('Timed out, perhaps attempting impossible duplication or deletion');
+        return null
+    } else {
+//      console.log(child.trunk)
+        return child
     }
-    //{A little wasteful to count entire animal again}
-    this.trunk.angle = Atom.countAtoms(this.trunk); 
 }
+
+
+Arthromorph.prototype.develop = function() {
+    this.drawInBox()
+}
+
+
+$.widget('dawk.arthromorph_geneboxes', $.dawk.geneboxes, {
+    updateFromCanvas: function() {
+
+    }
+})
+
+//Register the Colour biomorph species with the SpeciesFactory.
+_speciesFactorySingleton.registerSpeciesType("Arthromorph", 
+        (function(session, drawer) { return new Arthromorph(session, drawer)}),
+        (function(session) { Arthromorph.initializeSession(session)}),
+        (function(geneboxes, geneboxes_options) { 
+            $.fn.arthromorph_geneboxes.call(geneboxes, geneboxes_options) }),
+            (function(geneboxes, canvas) { 
+                $(geneboxes).arthromorph_geneboxes('updateFromCanvas', canvas)}));
 
 //{I still vote for AnimalJoint . Width = 20 and AnimalJoint . angle = 0.25 
 //in the default animal .}
@@ -502,41 +527,124 @@ Arthromorph.prototype.minimalAnimal = function() {
     aa = new Atom(AtomKind.AnimalTrunk)
     aa.firstBelowMe = bb;
     aa.nextLikeMe = -2; // {Gradient, by convention}
-    aa.angle = Atom.countAtoms(aa);
     aa.height = 20;
     aa.width = 20;
-
+    aa.angle = Atom.countAtoms(aa);
     this.trunk = aa
 }
 
+Arthromorph.prototype.complexAnimal = function() {
+//  Height Width Angle
+//  01.00 01.00 01.00                       Claw         
+    let aa = new Atom(AtomKind.Claw);
+//  01.00 05.00 -2.00                       Joint
+    let bb = new Atom(AtomKind.Joint);
+    bb.width = 5
+    bb.angle = -2
+    bb.firstBelowMe = aa
+//  01.00 05.00 02.00                       Joint
+    aa = new Atom(AtomKind.Joint);
+    aa.width = 5
+    aa.angle = 2
+    aa.nextLikeMe = bb
+//  01.00 01.00 01.00                     SegmentClaw
+    bb = new Atom(AtomKind.SegmentClaw)
+    bb.firstBelowMe = aa
+    //  01.00 01.00 02.00                     SegmentJoint
+    aa = new Atom(AtomKind.SegmentJoint)
+    aa.angle = 2
+    aa.firstBelowMe = bb
+    //  01.00 01.00 03.00                 SegmentTrunk 3
+    let st3 = new Atom(AtomKind.SegmentTrunk)
+    st3.angle = 3
+    st3.firstBelowMe = aa
+//  01.00 01.00 01.00                       Claw
+    aa = new Atom(AtomKind.Claw);
+//  01.00 05.00 -2.00                       Joint
+    bb = new Atom(AtomKind.Joint);
+    bb.width = 5
+    bb.angle = -2
+    bb.firstBelowMe = aa
+//  01.00 05.00 02.00                       Joint
+    aa = new Atom(AtomKind.Joint);
+    aa.width = 5
+    aa.angle = 2
+    aa.nextLikeMe = bb
+//  01.00 01.00 01.00                     SegmentClaw
+    bb = new Atom(AtomKind.SegmentClaw)
+    bb.firstBelowMe = aa
+//  01.00 01.00 02.00                     SegmentJoint
+    aa = new Atom(AtomKind.SegmentJoint)
+    aa.angle = 2
+    aa.firstBelowMe = bb
+//  01.00 01.00 02.00                 SegmentTrunk 2
+    let st2 = new Atom(AtomKind.SegmentTrunk)
+    st2.angle = 2
+    st2.firstBelowMe = aa
+    st2.nextLikeMe = st3
+//  01.00 01.00 01.00                       Claw
+    aa = new Atom(AtomKind.Claw);
+//  01.00 05.00 -2.00                       Joint
+    bb = new Atom(AtomKind.Joint);
+    bb.width = 5
+    bb.angle = -2
+    bb.firstBelowMe = aa
+//  01.00 05.00 02.00                       Joint
+    aa = new Atom(AtomKind.Joint);
+    aa.width = 5
+    aa.angle = 2
+    aa.nextLikeMe = bb
+//  01.00 01.00 01.00                     SegmentClaw
+    bb = new Atom(AtomKind.SegmentClaw)
+    bb.firstBelowMe = aa
+//  01.00 01.00 01.79                     SegmentJoint
+    aa = new Atom(AtomKind.SegmentJoint)
+    aa.angle = 1.79
+    aa.firstBelowMe = bb
+//  01.00 01.00 01.00                 SegmentTrunk 1
+    let st1 = new Atom(AtomKind.SegmentTrunk)
+    st1.firstBelowMe = aa
+    st1.nextLikeMe = st2
 
-//creates and returns a new, mutated copy) { the biomorph.
-Arthromorph.prototype.reproduce = function(element) {
-    let child = new Arthromorph(this.session, element);
+//  01.00 01.00 01.00             SectionClaw
+    aa = new Atom(AtomKind.SectionClaw)
+    aa.firstBelowMe = st1
 
-    //{Reproduce copies an animal and calls Mutate}
-    //{Please kill the old animal before calling this.  We may need to use his atoms.}
-    let counter = 0;
-    child.trunk = Atom.copy(this.trunk);
-    let limit = 1000 // 1000
-    do {
-        counter++
-        done = child.mutate() // {If it fails, just try again until we succeed at changing something}
-    } while(counter < limit && ! done);
-    if(counter > limit) {
-        console.error('Timed out, perhaps attempting impossible duplication or deletion');
-        return null
-    } else {
-//        console.log(child.trunk)
-        return child
-    }
+    //  01.00 01.00 01.00             SectionJoint
+    bb = new Atom(AtomKind.SectionJoint)
+    bb.firstBelowMe = st1
+//  01.00 01.00 00.50         SectionTrunk
+    aa = new Atom(AtomKind.SectionTrunk)
+    aa.angle = 0.5
+    aa.firstBelowMe = bb
+//  01.00 01.00 01.00     AnimalClaw
+    bb = new Atom(AtomKind.AnimalClaw)
+    bb.firstBelowMe = aa
+    //  01.00 05.00 05.00     AnimalJoint
+    aa = new Atom(AtomKind.AnimalJoint)
+    aa.width = 5
+    aa.angle = 5
+    aa.firstBelowMe = bb
+    //  20.00 20.00 24.00 AnimalTrunk
+    bb = new Atom(AtomKind.AnimalTrunk)
+    bb.height = 20
+    bb.width = 20
+    bb.firstBelowMe = aa
+    bb.angle = Atom.countAtoms(bb);
+    this.trunk = bb
 }
 
 Arthromorph.prototype.doPerson = function(type) {
-    this.minimalAnimal()
-}
-Arthromorph.prototype.develop = function() {
-    this.drawInBox()
+    switch(type) {
+    case "Complex":
+        this.complexAnimal()
+        break
+    case "Minimal":
+    default:     
+        this.minimalAnimal()
+    }
+    this.trunk.printMiddle()
+
 }
 
 //{Mutate first picks an atom randomly from the Animal.}
@@ -552,13 +660,19 @@ Arthromorph.prototype.mutate = function() {
         console.error('Not an animal');
     }
     this.secondSegmentAtomNo = 0;
-    let  atomNumber = Atom.countAtoms(this.trunk);
+    let atomNumber = Atom.countAtoms(this.trunk);
     let lastSegment = this.segmentCounter;
     let size = Math.trunc(this.trunk.angle); //{As a convention, we keep the number of Atoms in this animal in AnimalTrunk's Angle field}
+    
     let pick = Arthromorph.randInt(size); //{a number from 1 to size.  Index of the atom we will modify}
+    
     this.count = 0;
+
     
     let targetAtom = this.findNth(this.trunk, pick); // {find the Nth atom}
+    if(targetAtom ==  null) console.log('null pick ' + pick + ' of ' + this.trunk.angle + ' size ' + size)
+    var kind = targetAtom.kind
+//    console.log('Picked ' + AtomKind.properties[kind].name)
     if(targetAtom == null) {
         //{Aren't pick atoms in this Animal}
         console.error('Atom count is wrong.  Fatal.  Quitting');
@@ -568,7 +682,6 @@ Arthromorph.prototype.mutate = function() {
     let change = Arthromorph.randInt(7); //          {seven basic operations}
 //  { 1 twiddle Height, 2 twiddle Width, 3 twiddle Angle, 4 Duplicate entire subtree, 5 Delete subtree}
 //  { 6 reverse an angle , 7 reverse sign of Gradient}
-    let kind = targetAtom.kind
     if(change == 7 && targetAtom.kind == AtomKind.AnimalTrunk) {
         targetAtom.nextLikeMe *= -1;
     }
@@ -576,8 +689,15 @@ Arthromorph.prototype.mutate = function() {
         //  {If Dup and target is second or third part of an Animal, Section, or Segment,}
         //  {Then jump down to the next part of the animal}
         if(kind == AtomKind.AnimalJoint || kind == AtomKind.SectionJoint || kind == AtomKind.SegmentJoint) {
+            if(targetAtom.nextLikeMe == null) {
+                console.log('mutation expected targetAtom to have a nextLikeMe, and it does not.')
+                targetAtom.printMiddle()
+                
+            }
             targetAtom = targetAtom.nextLikeMe; // {AnimalClaw}
+            
             kind = targetAtom.kind
+
         }
         if(kind == AtomKind.AnimalClaw || kind == AtomKind.SectionClaw || kind == AtomKind.SegmentClaw) {
             targetAtom = targetAtom.firstBelowMe;
@@ -669,32 +789,55 @@ Arthromorph.prototype.mutate = function() {
         //{No need for action.  mutOK retains its present value}
     }
 
+    // For debugging, make duplications happen more than twice as often as other mutations
+//    if(Math.random() < 0.5 )
+//        change == 4
+    
     let ok = false;
-    if(mutOK) {
+    if(mutOK) { // && kind == AtomKind.Joint
+            
         ok = true;
-        if(change == 4 || change == 5 && kind == AtomKind.Claw) {
+        if((change == 4 || change == 5) 
+                && kind == AtomKind.Claw) {
             ok = false; //{Forbid delete or dup of claw}
         }
-        if(change == 3 || change == 6 && kind == AtomKind.AnimalTrunk || kind == AtomKind.SegmentTrunk) {
-            ok = false; //{These atoms have no Angle part. SectionTrunk does, because 'angle' is overlap, by convention}
+        if((change == 3 || change == 6) 
+                && (kind == AtomKind.AnimalTrunk || kind == AtomKind.SegmentTrunk)) {
+            //{These atoms have no Angle part. SectionTrunk does, because 'angle' 
+            // is overlap, by convention}
+            ok = false; 
         }  
+        
         if(ok) {
             if(change == 4) {
                 if(options.duplicationMut) {
+                    console.log('duplicationMut')
+//                    targetAtom.printMiddle()
+                    
+                    // There is only one AnimalTrunk per animal,
+                    // so it doesn't need to use nextLikeMe to hold a reference
+                    // to its next sibling. In AnimalTrunk, nextLikeMe is
+                    // used to hold gradient factor, instead of to refer to another Atom.
+                    //{ Special case, means GradientFactor}
                     if(kind == AtomKind.AnimalTrunk) {
-                        targetAtom.nextLikeMe++
-                    } else { //{Special case, means GradientFactor}
-                        targetAtom.nextLikeMe = Atom.copyExceptNext(target); // {Insert copy of me after me}
+                        targetAtom.nextLikeMe++ // Increment gradient factor, see above
+                    } else { 
+                        targetAtom.nextLikeMe = Atom.copyExceptNext(targetAtom); // {Insert copy of me after me}
 //                      {CopyExceptNext makes sure NextLikeMe of copy now points to old NextLikeMe of target}
 //                      {So brothers are kept, and new subtree is inserted}
+//                        console.log('copy except next returned: ')
+//                        targetAtom.nextLikeMe.printMiddle()
                     }
                     if(kind == AtomKind.Joint && targetAtom.firstBelowMe) { //{last joint has claw.  When duplicate, get rid of extra claw}
+//                        alert('duplicating joint')
+//                        console.log('duplicated joint deleting claw')
                         extraClaw = targetAtom.firstBelowMe;
                         targetAtom.firstBelowMe = null;
                         extraClaw.kill();
                     }
                     //{A little wasteful to count entire animal again}
-                    this.trunk.angle = Atom.countAtoms(this.trunk);           
+                    this.trunk.angle = Atom.countAtoms(this.trunk);  
+//                    this.trunk.printMiddle()
                 } else {
                     ok = false;
                 }
@@ -756,22 +899,6 @@ Arthromorph.prototype.mutate = function() {
     }
     return ok && mutOK;
 }
-
-$.widget('dawk.arthromorph_geneboxes', $.dawk.geneboxes, {
-    updateFromCanvas: function() {
-
-    }
-})
-
-//Register the Colour biomorph species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("Arthromorph", 
-        (function(session, drawer) { return new Arthromorph(session, drawer)}),
-        (function(session) { Arthromorph.initializeSession(session)}),
-        (function(geneboxes, geneboxes_options) { 
-            $.fn.arthromorph_geneboxes.call(geneboxes, geneboxes_options) }),
-            (function(geneboxes, canvas) { 
-                $(geneboxes).arthromorph_geneboxes('updateFromCanvas', canvas)}));
-
 function Poles() {
     this.northPole = 0
     this.southPole = 0
@@ -865,18 +992,18 @@ Arthromorph.prototype.drawClaw = function(drawingContext, params, x, y, xCenter,
     }
     let oldX = x;
     let oldY = y;
-    let ang = params[9] / 2.0;
+    let ang = params[8] / 2.0;
 //  {half claw opening, in radians}
-    x = Math.round(x + params[8] * Math.sin(ang)); //{line end point   width*sine(angle)}
-    y = Math.round(y + params[8] * Math.cos(ang)); //{line end point}
-    thick = 1 + Math.trunc(params[7]); //{1 is minimum thickness}
+    x = Math.round(x + params[7] * Math.sin(ang)); //{line end point   width*sine(angle)}
+    y = Math.round(y + params[7] * Math.cos(ang)); //{line end point}
+    thick = 1 + Math.trunc(params[6]); //{1 is minimum thickness}
     this.drawLine(drawingContext, oldX, oldY, x, y, thick, poles); //{right side, top of claw}
 
     let leftX = xCenter - (x - xCenter); //{do the left side, top of claw}
     let leftOldX = xCenter - (oldX - xCenter);
     this.drawLine(drawingContext, leftOldX, oldY, leftX, y, thick, poles);
 //  {Bottom of the claw}
-    y = Math.round(y - 2.0 * params[8] * Math.cos(ang));
+    y = Math.round(y - 2.0 * params[7] * Math.cos(ang));
     this.drawLine(drawingContext, oldX, oldY, x, y, thick, poles); //{right side}
     this.drawLine(drawingContext, leftOldX, oldY, leftX, y, thick, poles); //{left side}
     if(drawingContext) {

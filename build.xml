@@ -48,7 +48,7 @@
             <fileset file="js/biomorphs/biomorph_geneboxes.js" />
             <fileset file="js/biomorphs/biomorph_spokesgene_genebox.js" />
             <fileset file="js/biomorphs/biomorphs.js" />
-            </concat>
+        </concat>
     	<concat destfile="docs/js/monochrome.js">
             <fileset file="js/monochrome/monochrome_doperson.js" />
             <fileset file="js/monochrome/monochrome_triangle.js" />
@@ -56,20 +56,22 @@
             <fileset file="js/monochrome/monochrome_genotype.js" />
             <fileset file="js/monochrome/monochrome_mutate.js" />
             <fileset file="js/monochrome/monochrome_dosaltation.js" />
-        <fileset file="js/monochrome/monochrome_pic.js" />
-        <fileset file="js/monochrome/monochrome_develop.js" />
-        <fileset file="js/monochrome/monochrome_genebox.js" />
-        <fileset file="js/monochrome/monochrome_geneboxes.js" />
-        <fileset file="js/monochrome/monochrome.js" />
-            </concat>
+            <fileset file="js/monochrome/monochrome_pic.js" />
+            <fileset file="js/monochrome/monochrome_develop.js" />
+            <fileset file="js/monochrome/monochrome_genebox.js" />
+            <fileset file="js/monochrome/monochrome_geneboxes.js" />
+            <fileset file="js/monochrome/monochrome.js" />
+        </concat>
         <concat destfile="docs/js/minimal.js">
             <fileset file="js/minimal/species_minimal.js" />
-            </concat>
+        </concat>
         <concat destfile="docs/js/arthromorph.js">
             <fileset file="js/arthromorph/arthromorph_atomkind.js" />
             <fileset file="js/arthromorph/arthromorph.js" />
+            <fileset file="js/arthromorph/arthromorph_doperson.js" />
+            <fileset file="js/arthromorph/arthromorph_mutate.js" />
             <fileset file="js/arthromorph/arthromorph_develop.js" />
-            </concat>
+        </concat>
         <concat destfile="docs/js/colour_biomorph.js">
             <fileset file="js/colour_biomorph/colour_biomorph_session.js" />
             <fileset file="js/colour_biomorph/colour_biomorph_geneboxes.js" />
@@ -79,21 +81,20 @@
             <fileset file="js/colour_biomorph/colour_biomorph_manipulation.js" />
             <fileset file="js/colour_biomorph/colour_biomorph.js" />
             <fileset file="js/colour_biomorph/colour_pic.js" />
-            </concat>
+        </concat>
         <concat destfile="docs/js/triay_shell.js">
             <fileset file="js/triay_shell/triay_shell_genebox.js" />
             <fileset file="js/triay_shell/triay_shell_geneboxes.js" />
             <fileset file="js/triay_shell/triay_shell.js" />
             <fileset file="js/triay_shell/shell-bundle.js" />
-            </concat>
+        </concat>
         <concat destfile="docs/js/triay_biomorph.js">
             <fileset file="js/triay_biomorph/triay_biomorph_geneboxes.js" />
             <fileset file="js/triay_biomorph/triay_biomorph.js" />
             <fileset file="js/triay_biomorph/triay_biomorph_doperson.js" />
             <fileset file="js/triay_biomorph/triay_biomorph_manipulation.js" />
             <fileset file="js/triay_biomorph/biomorph-bundle.js" />
-            </concat>
-
+        </concat>
         <concat destfile="docs/css/watchmaker.css">
             <fileset file="css/watchmaker_boxes.css" />
             <fileset file="css/style.css" />

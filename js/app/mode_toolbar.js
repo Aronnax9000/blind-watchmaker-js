@@ -1,3 +1,6 @@
+
+
+
 $( function() {
     $.widget( "dawk.modeToolbar", {
         options: {
@@ -46,7 +49,9 @@ $( function() {
             }
         },
         doPerson: function(event) {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
+            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').first()
+//            console.log(midCanvas[0])
+            eraseCanvas(midCanvas[0])
             var basicTypeSelect = event.target
             var selectedValue = basicTypeSelect.options[basicTypeSelect.selectedIndex].value
             basicTypeSelect.selectedIndex = 0

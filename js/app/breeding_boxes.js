@@ -139,7 +139,7 @@ $( function() {
                     if(this.options.biomorph) {
                         this.options.biomorph.copyBiomorph(biomorph)
                     } else {
-                        biomorph.doPerson()
+                        biomorph.doPerson(session.options.defaultBasicType)
                     }
                     $(canvas).data('genotype', biomorph)        
                     biomorph.develop()

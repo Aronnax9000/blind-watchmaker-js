@@ -91,18 +91,18 @@ Arthromorph.prototype.drawClaw = function(drawingContext, params, x, y, xCenter,
     }
     let oldX = x;
     let oldY = y;
-    let ang = params[9] / 2.0;
+    let ang = params[8] / 2.0;
 //  {half claw opening, in radians}
-    x = Math.round(x + params[8] * Math.sin(ang)); //{line end point   width*sine(angle)}
-    y = Math.round(y + params[8] * Math.cos(ang)); //{line end point}
-    thick = 1 + Math.trunc(params[7]); //{1 is minimum thickness}
+    x = Math.round(x + params[7] * Math.sin(ang)); //{line end point   width*sine(angle)}
+    y = Math.round(y + params[7] * Math.cos(ang)); //{line end point}
+    thick = 1 + Math.trunc(params[6]); //{1 is minimum thickness}
     this.drawLine(drawingContext, oldX, oldY, x, y, thick, poles); //{right side, top of claw}
 
     let leftX = xCenter - (x - xCenter); //{do the left side, top of claw}
     let leftOldX = xCenter - (oldX - xCenter);
     this.drawLine(drawingContext, leftOldX, oldY, leftX, y, thick, poles);
 //  {Bottom of the claw}
-    y = Math.round(y - 2.0 * params[8] * Math.cos(ang));
+    y = Math.round(y - 2.0 * params[7] * Math.cos(ang));
     this.drawLine(drawingContext, oldX, oldY, x, y, thick, poles); //{right side}
     this.drawLine(drawingContext, leftOldX, oldY, leftX, y, thick, poles); //{left side}
     if(drawingContext) {
