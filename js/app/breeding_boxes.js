@@ -37,8 +37,8 @@ $( function() {
         },
 
         doReproduce: function (sourceCanvas, targetCanvas) {
-            var breedingView = $(sourceCanvas).parents('.breedingView').get(0);
-            var generations = $(breedingView).find('.generations').get(0);
+            var breedingView = $(sourceCanvas).closest('.breedingView')
+            var generations = $(breedingView).find('.generations').get(0)
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
@@ -102,7 +102,9 @@ $( function() {
         produceLitter: function(numBoxes, midBox) {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
-            var explosiveBreeding = $(this.element).parents('.breedingView').find('.explosiveBreeding').get(0)
+            var breedingView = $(this.element).closest('.breedingView')
+            console.log(breedingView)
+            var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {
                 this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);

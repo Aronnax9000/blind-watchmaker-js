@@ -764,8 +764,8 @@ $( function() {
         },
 
         doReproduce: function (sourceCanvas, targetCanvas) {
-            var breedingView = $(sourceCanvas).parents('.breedingView').get(0);
-            var generations = $(breedingView).find('.generations').get(0);
+            var breedingView = $(sourceCanvas).closest('.breedingView')
+            var generations = $(breedingView).find('.generations').get(0)
             generations.value = Number(generations.value) + 1;
             
             var genotype = jQuery.data(sourceCanvas, "genotype");
@@ -829,7 +829,9 @@ $( function() {
         produceLitter: function(numBoxes, midBox) {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
-            var explosiveBreeding = $(this.element).parents('.breedingView').find('.explosiveBreeding').get(0)
+            var breedingView = $(this.element).closest('.breedingView')
+            console.log(breedingView)
+            var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {
                 this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
@@ -1332,101 +1334,57 @@ WatchmakerSession.prototype.buildMenus = function(menu) {
 WatchmakerSession.prototype.viewGainedFocus = function(view) {
 
 }
-$( function() { 
-    $.widget( "dawk.breedingAutoReproduceControl", {
-        options: {
-            startButton: null,
-            generationsPreviousSecond: 0,
-        },
-        _create: function() {
-            $(this.element).addClass('autoReproduceControl');
-            var div = $('<span></span>');
-            this.element.append(div);
-            var button = $('<button class="startAutoReproduce">Start</button>');
-            this.options.startButton = button;
-            div.append(button);
-            this._on(button, {'click': this.startAutoBreeding});
-            var string = '<span> autobreeding every <input type="text"\
-                class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
-                ms.</span>'
-                
-            $(string).appendTo(div)
-            var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
-            $(useFitness).tooltip();
-            $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
-            $(useFitness).appendTo(div)
-            var explosiveBreeding = $('<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
-                Breeding</span>')
+function Breeding() {}
 
-            this.element.append(explosiveBreeding);
-            $(explosiveBreeding).tooltip();
-            $(explosiveBreeding).attr('title', 'Whether breeding happens all-at-once or one-at-a time. Uncheck for classic Blind Watchmaker breeding animation');
+Breeding.createTimingDialog = function(appendTo, positionOf)  {
+    var div = $('<div>');
+    var button = $('<button class="startAutoReproduce">Start</button>');
+    div.append(button);
 
-            
-            
-        },
-        startAutoBreeding: function(event) {
-            var startButton = $(this.element).find('.startAutoReproduce').get(0);
-            var text = $(startButton).text()
-            if(text == 'Stop') {
-                this.options.autoRunning = false;
-                $(startButton).text('Start');
-            } else {
-                $(startButton).text('Stop');
-                this.options.autoRunning = true;
-                this.autoBreed();
-                var generations = $(this.element).parents('.breedingView').find('.generations').get(0);
-                this.measureGenerationRate(Number(generations.value));
-            }
-        },
-        autoBreed: function() {
-            var breedingView = $(this.element).parent();
-            var breedingBoxes = $(this.element).parent().find('.boxes').get(0);
-            if (this.options.autoRunning) {
-                var useFitnessCheckbox = $(breedingView).find('.useFitness').get(0)
-                var useFitness = false
-                if(useFitnessCheckbox) {
-                    useFitness = useFitnessCheckbox.checked;
-                }
-                var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
-                if (useFitness) {
-                    var canvas = $(breedingBoxes).find('.box').get(0);
-                    var biomorph = getBiomorphFromCanvas(canvas);
-                    var bestSoFar = canvas;
-                    
-                    var errorToBeat = biomorph.fitness(canvas);
-                    $(breedingBoxes).find('.box').each( function(index) {
-                        canvas = this;
-                        var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
-                        if (currentError < errorToBeat) {
-                            bestSoFar = canvas;
-                            errorToBeat = currentError;
-                        }
-                    });
-                    $(bestSoFar).trigger('click');
-                } else {
-                    var luckyParent = Math.trunc(Math.random() * numBoxes);
-                    var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
-                    $(luckyCanvas).trigger('click');
-                }
-                var interval = Number($(this.element).parents('.breedingView')
-                        .find('.autoReproduceInterval').get(0).value);
-                this._delay(this.autoBreed, interval);
-                
-            }            
-        },
-        measureGenerationRate: function() {
-            var generationCounter = $(this.element).parent().find('.generations').get(0);
-            var newGenerationValue = Number(generationCounter.value) + 1;
-            generationCounter.value = newGenerationValue;
-            var generationRate = $(this.element).parent().find('.generationRate').get(0);
-            generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
-            this.options.generationsPreviousSecond = newGenerationValue;
-            if(this.options.autoRunning)
-                this._delay(this.measureGenerationRate, 1000);
-        }
+    $(button).click(function(event) {
+        $(event.target).closest('.breedingView').breedingView('startAutoBreeding')
     });
-});
+    var string = '<span> autobreeding every <input type="text"\
+        class="autoReproduceInterval" size="5" maxlength="10" value="5000" />\
+        ms.</span>';
+
+    $(string).appendTo(div)
+    $("<br>").appendTo(div)
+    
+    var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
+    $(useFitness).tooltip();
+    $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
+    $(useFitness).appendTo(div)
+    $("<br>").appendTo(div)
+    var explosiveBreeding = $('<span><input type="checkbox" checked class="explosiveBreeding" /> Explosive\
+    Breeding</span>')
+
+    div.append(explosiveBreeding);
+    $(explosiveBreeding).tooltip();
+    $(explosiveBreeding).attr('title', 'Whether breeding happens all-at-once or one-at-a time. Uncheck for classic Blind Watchmaker breeding animation');
+    $(div).dialog({
+        width: 400,
+        position: {
+            my: 'left top',
+            at: 'left+20px top+20px',
+            of: positionOf
+        },
+        appendTo: appendTo,
+        autoOpen: false,
+        modal: false,
+        classes: {"ui-dialog": "breedingTiming"},
+        title: 'Timing',            
+        offset: {
+            left:20,
+            right:20
+        },
+        startButton: null,
+        generationsPreviousSecond: 0});
+    console.log(div)
+
+    return div
+}
+
 $.widget('dawk.sub_menu', {
     options: {
         title: ''
@@ -1439,6 +1397,12 @@ $.widget('dawk.sub_menu', {
                 $('<ul>').addClass('sub_menu')
         )
     },
+    appendcheckboxmenuitem: function(title, menuid) {
+        let a = this.appendmenuitem(title, menuid).children('a').get(0)
+        
+        $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>").prependTo(a)
+        
+    },
     appendmenuitem: function(title, menuid) {
         let li = $('<li>')
         li.addClass('menuitem' + menuid)
@@ -1447,7 +1411,8 @@ $.widget('dawk.sub_menu', {
         $(a).data('menuid', menuid)
         this._on(a, {'click': function (event){
             this.menuclick(event)}})
-            $(this.element).find('> ul').append(li)
+            $(this.element).find('> ul').append(li);
+        return li
     },
     menuclick: function(event) {
         $(this.element).closest('.watchmakerMenuBar').dropdownmenu('menuclick', event)
@@ -1510,7 +1475,6 @@ $.widget('dawk.operationmenu', $.dawk.sub_menu, {
         if(this.options.session.arrayable) {
             this.appendmenuitem('Array', 'Array')
         }
-        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
     }
 })
 
@@ -1555,6 +1519,7 @@ $.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
     },
     _create: function() {
         this._super();
+        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
         this.appendmenuitem('----')
         this.appendmenuitem('Draw Out Offspring (2)','DrawOutOffspring')
         this.appendmenuitem('No Mirrors (3)','NoMirrors')
@@ -1584,15 +1549,17 @@ $.widget('dawk.dropdownmenu', {
         session: null
     },
     _create: function() {
-        let menu = $('<ul>').addClass('dropdown')
+        let menu = $('<ul>').addClass('sm sm-watchmaker')
         menu.appendTo(this.element)
         $("<li>").filemenu({session: this.options.session}).appendTo(menu)
         $("<li>").editmenu({session: this.options.session}).appendTo(menu)
         $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
         $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
         $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").pedigreemenu({session: this.options.session}).appendTo(menu)
         $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
         this.options.session.buildMenus(menu)
+        menu.smartmenus()
     },
     appendsubmenu: function(title) {
         let sub_menu = $('<li>').sub_menu({title: title})
@@ -1749,19 +1716,18 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this._super("_create")
         var species = this.options.session.species
         $(this.element).addClass('breedingView')
-        $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
         var geneboxes_options = {
             engineering: false,
             session: this.options.session
         }
-        var geneboxes = $("<div></div>");
+        var geneboxes = $("<div>");
         _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
         this.element.append(geneboxes);
-        var container = $("<div></div>");
+        var container = $("<div>");
         container.addClass('container');
-        var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+        var boxes = $("<div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
         this.options.boxes = boxes
-        var overlay = $("<div></div>");
+        var overlay = $("<div>");
         overlay.addClass("overlay");
         container.append(overlay);
         container.append(boxes);
@@ -1773,22 +1739,91 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         overlay.append(overlayCanvas);
         this.element.append(container);
 
-        $("<div></div>").breedingOffspringCounter().appendTo(this.element)
+        $("<div>").breedingOffspringCounter().appendTo(this.element)
 
-        this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler()
+        this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
         
         var midCanvas = $(this.element).find('.midBox').get(0);
+        this.options.timingDialog = Breeding.createTimingDialog(this.element, boxes.element)
         $(midCanvas).trigger('mouseover');
         $(midCanvas).trigger('click');
+    },
+    startAutoBreeding: function(event) {
+        var startButton = $(this.options.timingDialog).find('.startAutoReproduce').get(0);
+        var text = $(startButton).text()
+        if(text == 'Stop') {
+            this.options.autoRunning = false;
+            $(startButton).text('Start');
+        } else {
+            $(startButton).text('Stop');
+            this.options.autoRunning = true;
+            this.autoBreed();
+            var generations = $(this.element).find('.generations').get(0);
+            this.measureGenerationRate(Number(generations.value));
+        }
+    },
+    autoBreed: function() {
+        var breedingBoxes = $(this.element).closest('.breedingView').find('.boxes').get(0);
+        if (this.options.autoRunning) {
+            var useFitnessCheckbox = $(this.element).find('.useFitness').get(0)
+            var useFitness = false
+            if(useFitnessCheckbox) {
+                useFitness = useFitnessCheckbox.checked;
+            }
+            var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
+            if (useFitness) {
+                var canvas = $(breedingBoxes).find('.box').get(0);
+                var biomorph = getBiomorphFromCanvas(canvas);
+                var bestSoFar = canvas;
+
+                var errorToBeat = biomorph.fitness(canvas);
+                $(breedingBoxes).find('.box').each( function(index) {
+                    canvas = this;
+                    var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
+                    if (currentError < errorToBeat) {
+                        bestSoFar = canvas;
+                        errorToBeat = currentError;
+                    }
+                });
+                $(bestSoFar).trigger('click');
+            } else {
+                var luckyParent = Math.trunc(Math.random() * numBoxes);
+                var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
+                $(luckyCanvas).trigger('click');
+            }
+            console.log($(this.element).find('.autoReproduceInterval').get(0))
+            let autoReproduceIntervalStr = $(this.element).find('.autoReproduceInterval').get(0).value 
+            var interval = Number(autoReproduceIntervalStr);
+            this._delay(this.autoBreed, interval);
+
+        }            
+    },
+    measureGenerationRate: function() {
+        var generationCounter = $(this.element).find('.generations').get(0);
+        var newGenerationValue = Number(generationCounter.value) + 1;
+        generationCounter.value = newGenerationValue;
+        var generationRate = $(this.element).find('.generationRate').get(0);
+        generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
+        this.options.generationsPreviousSecond = newGenerationValue;
+        if(this.options.autoRunning)
+            this._delay(this.measureGenerationRate, 1000);
     }
 })
 
-function BreedingMenuHandler() {
-    
+function BreedingMenuHandler(breedingView) {
+    this.breedingView = breedingView
 }
 
 BreedingMenuHandler.prototype.menuclick = function(event) {
-    console.log('BreedingMenuHandler'  + $(event.target).data('menuid'))
+    let target = event.target
+    let menuid = $(target).data('menuid')
+    console.log('BreedingMenuHandler '  + menuid)
+    switch(menuid) {
+    case 'Timing':
+        this.breedingView.options.timingDialog.dialog('open') 
+        return false    
+    }
+    return true
 }
 
 $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
@@ -1931,11 +1966,9 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     buildMenus: function(menu) {
         this._super('buildMenus')
-        let theMenu = $(this.element).find('.dropdown')
-        $("<li>").pedigreemenu({session: this.options.session})
-            .insertBefore($(theMenu).find('.menuHelp')[0])
+//        let theMenu = $(this.element).find('.dropdown')
 
-        console.log('Pedigree Buildmenus')
+//        console.log('Pedigree Buildmenus')
     }
 
 })
@@ -1951,12 +1984,15 @@ $.widget('dawk.about', {
     options: {
         slides: ['img/AboutBlindWatchmaker_PICT_26817_463x287.png',
             'img/AboutColourWatchmaker_PICT_00257_486x352.png',
-            'img/AboutArthromorphs.png']
+            'img/AboutArthromorphs.png',
+            'img/AboutWatchmakerJS2.png'
+        ]
     },
     _create: function() {
         let slides = this.options.slides
         for(let i = 0; i < slides.length; i++) {
             let div = $("<div>").appendTo(this.element)
+            // this is your chance to conditionally add a widget instead of an img.
             let img = $("<img>").appendTo(div)
             $(img).attr('src', slides[i])
             if(i == 0) {
@@ -1964,8 +2000,10 @@ $.widget('dawk.about', {
             }
         }
         $(this.element).dialog({
-            width: 600,
-//          position: { my: "left top", at: "left+312 top+104", of: this.options.appendTo },
+//            open: function (event, ui) {
+//                $(this.element).css('overflow', 'hidden'); //this line does the actual hiding
+//              },
+            width: '1240px',
             classes: 
             {
                 "ui-dialog": "about",

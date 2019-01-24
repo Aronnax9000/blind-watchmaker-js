@@ -27,11 +27,9 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     buildMenus: function(menu) {
         this._super('buildMenus')
-        let theMenu = $(this.element).find('.dropdown')
-        $("<li>").pedigreemenu({session: this.options.session})
-            .insertBefore($(theMenu).find('.menuHelp')[0])
+//        let theMenu = $(this.element).find('.dropdown')
 
-        console.log('Pedigree Buildmenus')
+//        console.log('Pedigree Buildmenus')
     }
 
 })

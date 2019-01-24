@@ -31,7 +31,7 @@ Monochrome.initializeSession = function(session) {
 
 Monochrome.buildMenus = function(menu) {
     console.log('monochrome mutations menu')
-    $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuHelp')[0])
+    $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuPedigree')[0])
 
 }
 
@@ -40,10 +40,11 @@ Monochrome.toggleMut = function(mut, index, target) {
     let li = $(target).closest('li')
     if(mut[index]) {
         $(li).addClass('checked')
+        $(li).find('img').css('display', 'inline-block')
     } else {
         $(li).removeClass('checked')
+        $(li).find('img').css('display', 'none')
     }
-
 }
 
 Monochrome.menuclick = function(event) {
@@ -89,8 +90,13 @@ Monochrome.menuclick = function(event) {
 
 Monochrome.updateMutCheckbox = function(mut, view, index, name) {
     let menuitem = $(view).find('.menuitem' + name)[0]
-    if(mut[index]) $(menuitem).addClass('checked')
-    else $(menuitem).removeClass('checked')
+    if(mut[index]) {
+        $(menuitem).addClass('checked')
+        $(menuitem).find('img').css('display', 'inline-block')
+    } else {
+        $(menuitem).removeClass('checked')
+        $(menuitem).find('img').css('display', 'none')
+    }
 }
 
 Monochrome.viewGainedFocus = function(session, view) {

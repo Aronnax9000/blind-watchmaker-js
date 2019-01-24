@@ -10,6 +10,12 @@ $.widget('dawk.sub_menu', {
                 $('<ul>').addClass('sub_menu')
         )
     },
+    appendcheckboxmenuitem: function(title, menuid) {
+        let a = this.appendmenuitem(title, menuid).children('a').get(0)
+        
+        $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>").prependTo(a)
+        
+    },
     appendmenuitem: function(title, menuid) {
         let li = $('<li>')
         li.addClass('menuitem' + menuid)
@@ -18,7 +24,8 @@ $.widget('dawk.sub_menu', {
         $(a).data('menuid', menuid)
         this._on(a, {'click': function (event){
             this.menuclick(event)}})
-            $(this.element).find('> ul').append(li)
+            $(this.element).find('> ul').append(li);
+        return li
     },
     menuclick: function(event) {
         $(this.element).closest('.watchmakerMenuBar').dropdownmenu('menuclick', event)
@@ -81,7 +88,6 @@ $.widget('dawk.operationmenu', $.dawk.sub_menu, {
         if(this.options.session.arrayable) {
             this.appendmenuitem('Array', 'Array')
         }
-        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
     }
 })
 
@@ -126,6 +132,7 @@ $.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
     },
     _create: function() {
         this._super();
+        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
         this.appendmenuitem('----')
         this.appendmenuitem('Draw Out Offspring (2)','DrawOutOffspring')
         this.appendmenuitem('No Mirrors (3)','NoMirrors')
@@ -155,15 +162,17 @@ $.widget('dawk.dropdownmenu', {
         session: null
     },
     _create: function() {
-        let menu = $('<ul>').addClass('dropdown')
+        let menu = $('<ul>').addClass('sm sm-watchmaker')
         menu.appendTo(this.element)
         $("<li>").filemenu({session: this.options.session}).appendTo(menu)
         $("<li>").editmenu({session: this.options.session}).appendTo(menu)
         $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
         $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
         $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").pedigreemenu({session: this.options.session}).appendTo(menu)
         $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
         this.options.session.buildMenus(menu)
+        menu.smartmenus()
     },
     appendsubmenu: function(title) {
         let sub_menu = $('<li>').sub_menu({title: title})

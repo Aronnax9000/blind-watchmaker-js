@@ -35,10 +35,10 @@
             <fileset file="js/app/app.js" />
             <fileset file="js/app/blind_watchmaker.js" />
             <fileset file="js/app/watchmaker_session.js" />
-            <fileset file="js/app/breeding_autoreproducecontrol.js" />
+            <fileset file="js/app/breeding_timing.js" />
         	<fileset file="js/app/watchmaker_view.js" />
         	<fileset file="js/app/breeding.js" />
-        	<fileset file="js/app/engineering_window.js" />
+        	<fileset file="js/app/engineering_view.js" />
             <fileset file="js/app/engineering_box.js" />
             <fileset file="js/app/pedigree.js" />
             <fileset file="js/app/about.js" />
