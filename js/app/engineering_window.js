@@ -4,9 +4,6 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this._super("_create")
         $(this.element).addClass('engineeringView')
         var species = this.options.session.species
-        $("<div></div>").modeToolbar({ 
-            session: this.options.session
-        }).appendTo(this.element)
         
         var geneboxes_options = {
             engineering : true,
@@ -33,7 +30,10 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         $(canvas).trigger('mouseover')
         
     },
-
+    viewGainedFocus: function(event) {
+        let session = $(this).engineeringView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
     // Called when created, and later when changing options
     _refresh: function() {
     },

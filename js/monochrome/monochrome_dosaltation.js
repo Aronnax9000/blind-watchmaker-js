@@ -66,7 +66,7 @@ Monochrome.prototype.doSaltation = function() {
         if(mut[1]) {
             this.dGene[9] = Monochrome.randSwell(this.dGene[8])
         } else {
-            this.dGene[9] = Same;
+            this.dGene[9] = SwellType.Same;
         }
         var factor;
         // In the Pascal, the index of the previous for loop, j, is used.

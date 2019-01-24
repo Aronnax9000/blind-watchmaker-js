@@ -632,89 +632,7 @@ function SVGDrawer(drawingObject) {
 _drawerFactorySingleton.registerDrawerType("svg", (
         function(drawingObject) { 
             return new SVGDrawer(drawingObject);}));
-
-
-
-$( function() {
-    $.widget( "dawk.modeToolbar", {
-        options: {
-            parentView: null,
-            session: null,
-        },
-        _create: function() {
-            $(this.element).addClass('breedingControl');
-            var button 
-            $('<span>Clone in new window:</span>').appendTo(this.element)
-            
-            button = $('<button>Breed</button>')
-            this._on($(button), {'click': this.breedInNewWindow})
-            $(this.element).append(button)
-
-            button = $('<button>Engineer</button>')
-            this._on($(button), {'click': this.engineer})
-            $(this.element).append(button)
-            
-            button = $('<button></button>')
-            $(button).text(this.options.session.options.hopefulMonsterBasicType)
-            this._on($(button), {'click': this.hopefulMonster})
-            $(this.element).append(button)
-            
-            var str = '<span><form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">\
-<input type="hidden" name="cmd" value="_s-xclick" />\
-<input type="hidden" name="hosted_button_id" value="DMY3SE245BZRQ" />\
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />\
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />\
-</form><span>';
-//            button = $(str)
-//            $(this.element).append(button)
-                
-
-            
-            let basicTypes = this.options.session.options.basicTypes
-            var basicTypeSelect = $("<select></select>");
-            $(this.element).append(basicTypeSelect)
-            this._on(basicTypeSelect, {change: 'doPerson'})
-            let option = $("<option>Animal</option>")
-            $(basicTypeSelect).append(option)
-            for(basicType in basicTypes) {
-                option = $("<option>" + basicTypes[basicType] + "</option>")
-                option.attr("value", basicTypes[basicType])
-                $(basicTypeSelect).append(option)
-            }
-        },
-        doPerson: function(event) {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').first()
-//            console.log(midCanvas[0])
-            eraseCanvas(midCanvas[0])
-            var basicTypeSelect = event.target
-            var selectedValue = basicTypeSelect.options[basicTypeSelect.selectedIndex].value
-            basicTypeSelect.selectedIndex = 0
-            var biomorph = $(midCanvas).data('genotype')
-            biomorph.doPerson(selectedValue)
-            biomorph.develop()
-        },
-        hopefulMonster: function(event) {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            biomorph.doPerson($(event.target).text())
-            biomorph.develop()
-        },
-        breedInNewWindow: function() {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newBreedingView", biomorph)
-        },
-        engineer: function() {
-            var midCanvas = $(this.element).parents('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(this.element).parents('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newEngineeringView", biomorph)
-        }
-    });
-});var stillBreeding = false;
+var stillBreeding = false;
 
 $( function() {
     $.widget('dawk.breedingBox', {
@@ -1185,7 +1103,6 @@ function eraseCanvas(canvas) {
 
 $.widget('dawk.blindWatchmaker', {
     options: {
-        menu: null,
         sessionCount: 0,
     } ,
     _create: function () {
@@ -1198,11 +1115,8 @@ $.widget('dawk.blindWatchmaker', {
         })
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
-        this.buildMenu();
     },
     on_activate: function (event, ui) {
-        var parents = $(ui.newTab).parents('.blindWatchmaker').get(0);
-        $(parents).blindWatchmaker('buildMenu');
     },
     raiseAlert: function() {
     },
@@ -1233,46 +1147,6 @@ $.widget('dawk.blindWatchmaker', {
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
 
-    },
-    buildMenu: function() {
-        $(this.element).find('.watchmakerMenu').each(function() {this.remove();});
-        var menu = $('<ul class="watchmakerMenu"></ul>');
-        $(this.element).append(menu);
-        var liTop = $('<li><div>Menu</div></li>');
-        menu.append(liTop);
-        var menuContents = $("<ul></ul>");
-        liTop.append(menuContents);
-        var newSessionMenu;
-        newSessionMenu = $("<li><div>New Monochrome session</div></li>");
-        menuContents.append(newSessionMenu);
-        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Monochrome");}});
-        newSessionMenu = $("<li><div>New Colour session</div></li>");
-        menuContents.append(newSessionMenu);
-        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Colour");}});
-        newSessionMenu = $("<li><div>New Snails session</div></li>");
-        menuContents.append(newSessionMenu);
-        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Snails");}});
-        newSessionMenu = $("<li><div>New Arthromorphs session</div></li>");
-        menuContents.append(newSessionMenu);
-        this._on(newSessionMenu, {click: function(event) { this.newWatchmakerSession("Arthromorphs");}});
-        
-        if($(this.element).find('.watchmakerSessionTab').length != 0) {
-            var liCloseSession = $('<li><div>Close session</div></li>');
-            this._on(liCloseSession, {click: 'closeSession'});
-            menuContents.append(liCloseSession);
-        }
-
-        
-        var activeIndex = $(this.element).tabs("option", "active");
-        var activeSession = $(this.element).find('.watchmakerSessionTab').get(activeIndex);
-        var sessionName = $(activeSession).watchmakerSessionTab('option', 'name');
-        var sessionLi = $("<li><div>" + sessionName + "</div></li>")
-        menuContents.append(sessionLi);
-        var sessionMenu = $('<ul></ul>');
-        sessionLi.append(sessionMenu);
-        $(activeSession).watchmakerSessionTab('buildMenu', sessionMenu);
-
-        menu.menu().show();
     },
     closeSession: function() {
         var selectedIndex = this.element.tabs('option', 'active');
@@ -1349,7 +1223,7 @@ $.widget('dawk.blindWatchmaker', {
             watchmakerSessionTab: this, 
             species: species,
             biomorph: biomorph});
-        $('.ui-closable-tab').click(
+        $(newTabLi).find('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
                     .attr("id");
@@ -1401,16 +1275,64 @@ $.widget('dawk.blindWatchmaker', {
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-    }
+    },
+    newPedigreeView: function(biomorph) {
+        var uuid = uuidv4();
+        var viewIcon = 'img/Pedigree_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.pedigreeView({session: this.options.session, 
+            biomorph: biomorph,
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    }    
 });
 
 function WatchmakerSession(species) {
     this.options = []
     this.myPenSize = 1;
-
+    this.trianglable = false
+    this.arrayable = false
     this.species = species
     _speciesFactorySingleton.initializeSession(species, this)
-}$( function() { 
+}
+
+WatchmakerSession.prototype.menuclick = function(event) {
+    console.log('WatchmakerSession menuclick')
+    return true
+}
+
+WatchmakerSession.prototype.buildMenus = function(menu) {
+    
+}
+
+WatchmakerSession.prototype.viewGainedFocus = function(view) {
+
+}
+$( function() { 
     $.widget( "dawk.breedingAutoReproduceControl", {
         options: {
             startButton: null,
@@ -1505,24 +1427,290 @@ function WatchmakerSession(species) {
         }
     });
 });
-$.widget('dawk.watchmakerView', {
-  options: {
-      session: null
-  },
-  _create: function() {
-      this._super("_create")
-      $(this.element).addClass('watchmakerView')
-  },
-  _init: function() {
-      $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
-  },
-  viewGainedFocus: function(event) {
-  },
-  buildMenu: function(menuContents) {
-      let li = $('<li><div>Close View</div></li>')
-      menuContents.append(li)
-  },
+$.widget('dawk.sub_menu', {
+    options: {
+        title: ''
+    },
+    _create: function() {
+        let title = this.options.title
+        $(this.element).addClass('menu' + title)
+        $(this.element).append(
+                $('<a>').text(title),
+                $('<ul>').addClass('sub_menu')
+        )
+    },
+    appendmenuitem: function(title, menuid) {
+        let li = $('<li>')
+        li.addClass('menuitem' + menuid)
+        let a = $('<a>' + title + '</a>')
+        li.append(a)
+        $(a).data('menuid', menuid)
+        this._on(a, {'click': function (event){
+            this.menuclick(event)}})
+            $(this.element).find('> ul').append(li)
+    },
+    menuclick: function(event) {
+        $(this.element).closest('.watchmakerMenuBar').dropdownmenu('menuclick', event)
+    }
+
 })
+
+$.widget('dawk.filemenu', $.dawk.sub_menu, {
+    options: {
+        title: 'File'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Load to Album... (L)', 'LoadToAlbum')
+        this.appendmenuitem('Load as Fossils... (O)', 'LoadAsFossils')
+        this.appendmenuitem('Save Biomorph...', 'SaveBiomorph')
+        this.appendmenuitem('Save Fossils... (F)', 'SaveFossils')
+        this.appendmenuitem('Save Album... (S)', 'SaveAlbum')
+        this.appendmenuitem('Close Album (W)', 'CloseAlbum')
+        this.appendmenuitem('Timing', 'Timing')
+        this.appendmenuitem('Quit (Q)', 'Quit')
+    }
+})
+
+$.widget('dawk.editmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Edit'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Undo (Z)', 'Undo')
+        this.appendmenuitem('----')
+        this.appendmenuitem('Cut (X)', 'Cut')
+        this.appendmenuitem('Copy (C)', 'Copy')
+        this.appendmenuitem('Paste (V)', 'Paste')
+        this.appendmenuitem('Clear', 'Clear')
+        this.appendmenuitem('----')
+        this.appendmenuitem('Highlight Biomorph', 'HighlightBiomorph')
+        this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
+        this.appendmenuitem('Show Album', 'ShowAlbum')
+    }
+})
+
+$.widget('dawk.operationmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Operation'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Breed (B)', 'Breed')
+        this.appendmenuitem('Drift (D)', 'Drift')
+        this.appendmenuitem('Engineering (E)', 'Engineering')
+        this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
+        this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
+        this.appendmenuitem('Play Back Fossils', 'PlayBackFossils')
+        this.appendmenuitem('Recording Fossils (R)', 'RecordingFossils')
+        if(this.options.session.trianglable) {
+            this.appendmenuitem('Triangle (T)', 'Triangle')
+        }
+        if(this.options.session.arrayable) {
+            this.appendmenuitem('Array', 'Array')
+        }
+        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
+    }
+})
+
+$.widget('dawk.animalmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Animal'
+    },
+    _create: function() {
+        this._super();
+        let basicTypes = this.options.session.options.basicTypes
+        for(let i = 0; i < basicTypes.length; i++) {
+            this.appendmenuitem(basicTypes[i], 'Animal' + basicTypes[i])
+        }
+    }
+})
+
+$.widget('dawk.viewmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'View'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('More Rows', 'MoreRows')
+        this.appendmenuitem('Fewer Rows', 'FewerRows')
+        this.appendmenuitem('More Columns','MoreColumns')
+        this.appendmenuitem('Fewer Columns','FewerColumns')
+        this.appendmenuitem('Thicker Pen','ThickerPen')
+        this.appendmenuitem('Thinner Pen','ThinnerPen')
+        this.appendmenuitem('Drift Sweep','DriftSweep')
+        if(this.options.session.trianglable) {
+            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
+            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTtriangle')
+        }
+    }
+})
+
+
+$.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Pedigree'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('----')
+        this.appendmenuitem('Draw Out Offspring (2)','DrawOutOffspring')
+        this.appendmenuitem('No Mirrors (3)','NoMirrors')
+        this.appendmenuitem('Single Mirror (4)','SingleMirror')
+        this.appendmenuitem('Double Mirror (5)','DoubleMirror')
+        this.appendmenuitem('----')
+        this.appendmenuitem('Move (6)','Move')
+        this.appendmenuitem('Detach (7)','Detach')
+        this.appendmenuitem('Kill (8)','Kill')
+    }
+})
+
+$.widget('dawk.helpmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Help'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Help with current operation', 'HelpWithCurrentOperation')
+        this.appendmenuitem('Miscellaneous Help', 'MiscellaneousHelp')
+        this.appendmenuitem('About Blind Watchmaker', 'AboutBlindWatchmaker')
+    }
+})
+
+$.widget('dawk.dropdownmenu', {
+    options: {
+        session: null
+    },
+    _create: function() {
+        let menu = $('<ul>').addClass('dropdown')
+        menu.appendTo(this.element)
+        $("<li>").filemenu({session: this.options.session}).appendTo(menu)
+        $("<li>").editmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
+        this.options.session.buildMenus(menu)
+    },
+    appendsubmenu: function(title) {
+        let sub_menu = $('<li>').sub_menu({title: title})
+        $(this.element).find('> ul').append(sub_menu)
+        return sub_menu
+    },
+    menuclick: function(event) {
+        this.options.menuHandler.menuclick(event)
+    }
+})
+
+$.widget('dawk.watchmakerView', {
+    options: {
+        session: null,
+    },
+    _create: function() {
+        $(this.element).addClass('watchmakerView')
+        this.buildMenus()
+
+    },
+    buildMenus: function() {
+        let menubar = $('<div class="watchmakerMenuBar"></div>')
+        $(menubar).appendTo(this.element)
+        let menuHandler = new MenuHandler(this.options.session)
+        this.options.menuHandler = menuHandler
+
+        $(menubar).dropdownmenu({menuHandler: menuHandler,
+            session: this.options.session});
+
+        $(menubar).find("ul.dropdown li").hover(function(){
+
+            $(this).addClass("hover");
+            $('ul:first',this).css('visibility', 'visible');
+
+        }, function(){
+
+            $(this).removeClass("hover");
+            $('ul:first',this).css('visibility', 'hidden');
+
+        });
+
+        $(menubar).find("ul.dropdown li ul li:has(ul)").find("a:first").append(" &raquo; ");
+
+    },
+    _init: function() {
+        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
+    },
+    viewGainedFocus: function(event) {
+    },
+
+})
+
+function MenuHandler(session) {
+    this.session = session
+    this.nextMenuHandler = null
+}
+
+MenuHandler.prototype.menuclick = function(event) {
+    console.log('Menuhandler menuclick')
+    let result = this.session.menuclick(event)
+    console.log(result)
+    if(result) {
+        let menuid = $(event.target).data('menuid')
+        let target = event.target
+        console.log('WatchmakerView menu ' + menuid)
+        if(menuid.startsWith('Animal')) {
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
+            console.log(midCanvas)
+            eraseCanvas(midCanvas)
+            var biomorph = $(midCanvas).data('genotype')
+            biomorph.doPerson(menuid.substring(6))
+            biomorph.develop()
+            return false
+        }
+        switch(menuid) {
+        case 'Breed': 
+            console.log('Breeding')
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph);
+            return false
+        case 'Engineering':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph);
+            return false
+        case 'DisplayPedigree':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newPedigreeView", biomorph);
+            return false
+        case 'HopefulMonster':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            console.log(this.session.options.hopefulMonsterBasicType)
+            biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
+            biomorph.develop()
+            return false
+        case 'AboutBlindWatchmaker':
+            $("<div>").about({appendTo: this.element,
+                })
+            return false
+        }
+        // Do generic stuff here
+        // Then call view-specific handler
+        if(this.nextMenuHandler) {
+            this.nextMenuHandler.menuclick(event)
+        }
+        return true;
+    }
+}
+
 function getBiomorphFromCanvas(canvas) {
     var biomorph = jQuery.data(canvas, 'genotype');
     return biomorph;
@@ -1544,76 +1732,70 @@ $( function() {
 });
 
 
-$( function() {
-    // the widget definition, where "custom" is the namespace,
-    // "colorize" the widget name
-    $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
-        options: { 
-            species: null,
-            watchmakerSessionTab: null,
-            biomorph: null
-        },
-        viewGainedFocus: function(event) {
-            var watchmakerSessionTab = $(this).breedingView("option", "watchmakerSessionTab");
-            var newMenu = $('<ul></ul>');
-            var operation = $('<li><div><a href="#">Operation</a></div><ul></ul></li>');
-            newMenu.append(operation);
-            var li = $('<li><div><a href="#">Breed in new</a></div></li>');
-            newMenu.append(li);
-            var li = $('<li><div><a href="#">Engineer in new</a></div></li>');
-            newMenu.append(li);
-            $(watchmakerSessionTab.element).watchmakerSessionTab('raiseAlert', newMenu);
-        },
+//the widget definition, where "custom" is the namespace,
+//"colorize" the widget name
+$.widget( "dawk.breedingView", $.dawk.watchmakerView, {
+    options: { 
+        species: null,
+        watchmakerSessionTab: null,
+        biomorph: null
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).breedingView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
 
-        _create: function (options) {
-            this._super("_create")
-            var species = this.options.session.species
-            $(this.element).addClass('breedingView')
-            $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
-            $("<div></div>").modeToolbar({
-                parentView: this,
-                session: this.options.session,
-                species: this.options.session.species}
-            ).appendTo(this.element)
-            var geneboxes_options = {
-                engineering: false,
-                session: this.options.session
-            }
-            var geneboxes = $("<div></div>");
-            _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
-            this.element.append(geneboxes);
-            var container = $("<div></div>");
-            container.addClass('container');
-            var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
-            this.options.boxes = boxes
-            var overlay = $("<div></div>");
-            overlay.addClass("overlay");
-            container.append(overlay);
-            container.append(boxes);
+    _create: function (options) {
+        this._super("_create")
+        var species = this.options.session.species
+        $(this.element).addClass('breedingView')
+        $("<div></div>").breedingAutoReproduceControl().appendTo(this.element)
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div></div>");
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes);
+        var container = $("<div></div>");
+        container.addClass('container');
+        var boxes = $("<div></div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+        this.options.boxes = boxes
+        var overlay = $("<div></div>");
+        overlay.addClass("overlay");
+        container.append(overlay);
+        container.append(boxes);
 
-            var overlayCanvas = $('<canvas></canvas>');
-            overlayCanvas.attr('width', 1000);
-            overlayCanvas.attr('height', 600);
-            overlayCanvas.addClass('overlayCanvas');
-            overlay.append(overlayCanvas);
-            this.element.append(container);
+        var overlayCanvas = $('<canvas></canvas>');
+        overlayCanvas.attr('width', 1000);
+        overlayCanvas.attr('height', 600);
+        overlayCanvas.addClass('overlayCanvas');
+        overlay.append(overlayCanvas);
+        this.element.append(container);
 
-            $("<div></div>").breedingOffspringCounter().appendTo(this.element)
+        $("<div></div>").breedingOffspringCounter().appendTo(this.element)
 
-            var midCanvas = $(this.element).find('.midBox').get(0);
-            $(midCanvas).trigger('mouseover');
-            $(midCanvas).trigger('click');
-        }})});
+        this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler()
+        
+        var midCanvas = $(this.element).find('.midBox').get(0);
+        $(midCanvas).trigger('mouseover');
+        $(midCanvas).trigger('click');
+    }
+})
 
+function BreedingMenuHandler() {
+    
+}
+
+BreedingMenuHandler.prototype.menuclick = function(event) {
+    console.log('BreedingMenuHandler'  + $(event.target).data('menuid'))
+}
 
 $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create")
         $(this.element).addClass('engineeringView')
         var species = this.options.session.species
-        $("<div></div>").modeToolbar({ 
-            session: this.options.session
-        }).appendTo(this.element)
         
         var geneboxes_options = {
             engineering : true,
@@ -1640,7 +1822,10 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         $(canvas).trigger('mouseover')
         
     },
-
+    viewGainedFocus: function(event) {
+        let session = $(this).engineeringView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
     // Called when created, and later when changing options
     _refresh: function() {
     },
@@ -1717,4 +1902,82 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             return false;
         },
     });
-});
+});//the widget definition, where "custom" is the namespace,
+//"colorize" the widget name
+$.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
+    options: { 
+        species: null,
+        biomorph: null
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).pedigreeView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
+    _create: function (options) {
+        this._super()
+        
+        this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
+        $(this.element).addClass('pedigreeView')
+        let biomorph = this.options.biomorph 
+        console.log(this.element.height())
+        let pedigreeDiv = $('<div>').appendTo(this.element)
+        let canvas = $("<canvas class='midBox'>").attr('height', Math.trunc(this.element.height()))
+            .attr('width', Math.trunc(this.element.width())).appendTo(pedigreeDiv);
+        console.log(canvas[0])
+        biomorph.drawer = canvas[0]
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+            
+    },
+    buildMenus: function(menu) {
+        this._super('buildMenus')
+        let theMenu = $(this.element).find('.dropdown')
+        $("<li>").pedigreemenu({session: this.options.session})
+            .insertBefore($(theMenu).find('.menuHelp')[0])
+
+        console.log('Pedigree Buildmenus')
+    }
+
+})
+
+function PedigreeMenuHandler() {
+    
+}
+
+PedigreeMenuHandler.prototype.menuclick = function(event) {
+    console.log('PedigreeMenuHandler'  + $(event.target).data('menuid'))
+}
+$.widget('dawk.about', {
+    options: {
+        slides: ['img/AboutBlindWatchmaker_PICT_26817_463x287.png',
+            'img/AboutColourWatchmaker_PICT_00257_486x352.png',
+            'img/AboutArthromorphs.png']
+    },
+    _create: function() {
+        let slides = this.options.slides
+        for(let i = 0; i < slides.length; i++) {
+            let div = $("<div>").appendTo(this.element)
+            let img = $("<img>").appendTo(div)
+            $(img).attr('src', slides[i])
+            if(i == 0) {
+                $(img).addClass('active')
+            }
+        }
+        $(this.element).dialog({
+            width: 600,
+//          position: { my: "left top", at: "left+312 top+104", of: this.options.appendTo },
+            classes: 
+            {
+                "ui-dialog": "about",
+                "ui-dialog-titlebar": "dialogNoTitle",
+            }
+        ,
+        modal: true
+        })
+        $(this.element).slick({
+            slidesToShow: 1,
+            autoplay: true,
+            autoplaySpeed: 5000,
+        });
+    }
+})

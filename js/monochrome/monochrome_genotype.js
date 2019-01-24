@@ -15,29 +15,6 @@ Monochrome.prototype.fitness = function(environment) {
     return averageError;
 }
 
-Monochrome.initializeMut = function(session) {
-    var mut = []
-    
-    mut.push(true)  // Segmentation // {** changed 1.1 **}
-    mut.push(true)  // Gradient {** changed 1.1 **}
-    mut.push(true)  // Asymmetry {** changed 1.1 **}
-    mut.push(true)  // Radial Sym {** changed 1.1 **}
-    mut.push(true)  // Scaling Factor {** changed 1.1 **}
-    mut.push(false) // Mutation Size
-    mut.push(false) // Mutation Rate
-    mut.push(true)  // Tapering Twigs
-    mut.push(true)
-    session.options.mut = mut
-}
-
-// Really belongs on the session
-Monochrome.initializeSession = function(session) {
-    Monochrome.initializeMut(session)
-    session.options.sessionIcon = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png'
-    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "Hopeful Monster"]
-    session.options.defaultBasicType = "BasicTree"
-    session.options.hopefulMonsterBasicType = ["Hopeful Monster"]
-}
 
 
 function chromosome() {

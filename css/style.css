@@ -16,6 +16,8 @@ body {font-family: sans-serif}
 
 .dialogNoTitle .ui-dialog-titlebar {display:none}
 
+.dialogNoTitle {display: none;}
+
 .headerwrapper {
     display: table;
     table-layout: fixed;
@@ -49,13 +51,7 @@ div {
 	font-size: 14pt;
 }
 
-.ui-menu {
-    width: 200px;
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    z-index: 1;
-}
+
 
 .ui-icon-circle-close {
     cursor: pointer;
@@ -83,3 +79,17 @@ div {
 
 .ui-dialog { border: 1px solid black;} 
 /* .ui-dialog-titlebar {  display: none; } */
+
+.watchmakerMenu {
+	height: 32px; /* Classic Mac menu bar height */
+}
+
+.pedigreeView {
+	height: 100%;
+	width: 100%;
+}
+
+.about {
+	padding: 0px;
+	margin: 0px;
+}

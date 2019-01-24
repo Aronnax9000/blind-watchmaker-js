@@ -63,7 +63,7 @@ $.widget('dawk.watchmakerSessionTab', {
             watchmakerSessionTab: this, 
             species: species,
             biomorph: biomorph});
-        $('.ui-closable-tab').click(
+        $(newTabLi).find('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
                     .attr("id");
@@ -115,13 +115,60 @@ $.widget('dawk.watchmakerSessionTab', {
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-    }
+    },
+    newPedigreeView: function(biomorph) {
+        var uuid = uuidv4();
+        var viewIcon = 'img/Pedigree_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.pedigreeView({session: this.options.session, 
+            biomorph: biomorph,
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    }    
 });
 
 function WatchmakerSession(species) {
     this.options = []
     this.myPenSize = 1;
-
+    this.trianglable = false
+    this.arrayable = false
     this.species = species
     _speciesFactorySingleton.initializeSession(species, this)
+}
+
+WatchmakerSession.prototype.menuclick = function(event) {
+    console.log('WatchmakerSession menuclick')
+    return true
+}
+
+WatchmakerSession.prototype.buildMenus = function(menu) {
+    
+}
+
+WatchmakerSession.prototype.viewGainedFocus = function(view) {
+
 }
