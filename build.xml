@@ -64,7 +64,8 @@
             <fileset file="js/monochrome/monochrome_genebox.js" />
             <fileset file="js/monochrome/monochrome_geneboxes.js" />
             <fileset file="js/monochrome/monochrome.js" />
-        </concat>
+            <fileset file="js/monochrome/monochrome_boundingbox.js" />
+    	</concat>
         <concat destfile="docs/js/minimal.js">
             <fileset file="js/minimal/species_minimal.js" />
         </concat>
@@ -97,6 +98,7 @@
             <fileset file="js/triay_biomorph/triay_biomorph_doperson.js" />
             <fileset file="js/triay_biomorph/triay_biomorph_manipulation.js" />
             <fileset file="js/triay_biomorph/biomorph-bundle.js" />
+            <fileset file="js/triay_biomorph/triay_boundingbox.js" />
         </concat>
         <concat destfile="docs/css/watchmaker.css">
             <fileset file="css/watchmaker_boxes.css" />

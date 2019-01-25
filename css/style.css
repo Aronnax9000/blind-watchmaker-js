@@ -81,13 +81,9 @@ div {
 /* .ui-dialog-titlebar {  display: none; } */
 
 .watchmakerMenu {
-	height: 32px; /* Classic Mac menu bar height */
+/*	height: 32px; */ /* Classic Mac menu bar height */
 }
 
-.pedigreeView {
-	height: 100%;
-	width: 100%;
-}
 
 .about {
 	padding: 0px;

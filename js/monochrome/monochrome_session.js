@@ -91,10 +91,8 @@ Monochrome.menuclick = function(event) {
 Monochrome.updateMutCheckbox = function(mut, view, index, name) {
     let menuitem = $(view).find('.menuitem' + name)[0]
     if(mut[index]) {
-        $(menuitem).addClass('checked')
         $(menuitem).find('img').css('display', 'inline-block')
     } else {
-        $(menuitem).removeClass('checked')
         $(menuitem).find('img').css('display', 'none')
     }
 }

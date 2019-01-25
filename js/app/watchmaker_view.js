@@ -10,15 +10,20 @@ $.widget('dawk.sub_menu', {
                 $('<ul>').addClass('sub_menu')
         )
     },
-    appendcheckboxmenuitem: function(title, menuid) {
-        let a = this.appendmenuitem(title, menuid).children('a').get(0)
-        
-        $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>").prependTo(a)
-        
+    appendcheckboxmenuitem: function(title, menuid, hidden) {
+        let a = this.appendmenuitem(title, menuid, hidden).children('a').get(0)
+
+        let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
+
+        checkbox.prependTo(a)
+
     },
-    appendmenuitem: function(title, menuid) {
+    appendmenuitem: function(title, menuid, hidden) {
         let li = $('<li>')
         li.addClass('menuitem' + menuid)
+        if(hidden) {
+            $(li).css('display','none')
+        }
         let a = $('<a>' + title + '</a>')
         li.append(a)
         $(a).data('menuid', menuid)
@@ -132,16 +137,17 @@ $.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
     },
     _create: function() {
         this._super();
+        $(this).addClass('pedigreeMenu')
         this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
-        this.appendmenuitem('----')
-        this.appendmenuitem('Draw Out Offspring (2)','DrawOutOffspring')
-        this.appendmenuitem('No Mirrors (3)','NoMirrors')
-        this.appendmenuitem('Single Mirror (4)','SingleMirror')
-        this.appendmenuitem('Double Mirror (5)','DoubleMirror')
-        this.appendmenuitem('----')
-        this.appendmenuitem('Move (6)','Move')
-        this.appendmenuitem('Detach (7)','Detach')
-        this.appendmenuitem('Kill (8)','Kill')
+        this.appendmenuitem('----', 'PedigreeSep', true)
+        this.appendcheckboxmenuitem('Draw Out Offspring (2)','DrawOutOffspring', true)
+        this.appendcheckboxmenuitem('No Mirrors (3)','NoMirrors', true)
+        this.appendcheckboxmenuitem('Single Mirror (4)','SingleMirror', true)
+        this.appendcheckboxmenuitem('Double Mirror (5)','DoubleMirror', true)
+        this.appendmenuitem('----', 'PedigreeSep', true)
+        this.appendcheckboxmenuitem('Move (6)','Move', true)
+        this.appendcheckboxmenuitem('Detach (7)','Detach', true)
+        this.appendcheckboxmenuitem('Kill (8)','Kill', true)
     }
 })
 
@@ -279,7 +285,7 @@ MenuHandler.prototype.menuclick = function(event) {
             return false
         case 'AboutBlindWatchmaker':
             $("<div>").about({appendTo: this.element,
-                })
+            })
             return false
         }
         // Do generic stuff here

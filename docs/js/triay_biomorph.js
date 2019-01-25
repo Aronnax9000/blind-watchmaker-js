@@ -205,6 +205,41 @@ TriayBiomorphs.initializeSession = function(session) {
             session.options.hopefulMonsterBasicType = 'Hopeful Monster'
 }
 
+/*
+ * Triay monochrome biomorph bounding box calculations.
+ * Triay monochrome biomorphs store this as a Rect-like
+ * structure in the this.biomorph.box property
+ */
+
+TriayBiomorphs.prototype.dummydraw = function() {
+    var tempDrawer = this.drawer
+    this.drawer = Document.createElement('canvas')
+    this.develop()
+    this.drawer = tempDrawer
+}
+
+TriayBiomorphs.prototype.getWidth = function() {
+    if(this.biomorph.box == null) {
+        dummydraw()
+    }
+    let margin = this.biomorph.box
+    return margin.right - margin.left
+}
+TriayBiomorphs.prototype.getHeight = function() {
+    if(this.biomorph.box == null) {
+        dummydraw()
+    }
+    let margin = this.biomorph.box
+    return margin.bottom - margin.top
+}
+TriayBiomorphs.prototype.getRect = function() {
+    if(this.biomorph.box == null) {
+        dummydraw()
+    }
+    let margin = this.biomorph.box
+    return new Rect(0,0, margin.right - margin.left,
+            margin.bottom - margin.top)
+}
 
 
 TriayBiomorphs.prototype.doSaltation = function() {
