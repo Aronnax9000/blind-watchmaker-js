@@ -12,11 +12,8 @@ $.widget('dawk.sub_menu', {
     },
     appendcheckboxmenuitem: function(title, menuid, hidden) {
         let a = this.appendmenuitem(title, menuid, hidden).children('a').get(0)
-
         let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
-
         checkbox.prependTo(a)
-
     },
     appendmenuitem: function(title, menuid, hidden) {
         let li = $('<li>')

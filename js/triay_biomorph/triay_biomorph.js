@@ -1,6 +1,7 @@
 function TriayBiomorphs(session, drawer) {
     this.session = session
     this.drawer = drawer
+//    this.full = null
 }
 
 TriayBiomorphs.prototype.copyBiomorph = function(child) {
@@ -33,24 +34,24 @@ TriayBiomorphs.prototype.dummydraw = function() {
 }
 
 TriayBiomorphs.prototype.getWidth = function() {
-    if(this.biomorph.box == null) {
+    if(this.triay_biomorph.box == null) {
         dummydraw()
     }
-    let margin = this.biomorph.box
+    let margin = this.triay_biomorph.box
     return margin.right - margin.left
 }
 TriayBiomorphs.prototype.getHeight = function() {
-    if(this.biomorph.box == null) {
+    if(this.triay_biomorph.box == null) {
         dummydraw()
     }
-    let margin = this.biomorph.box
+    let margin = this.triay_biomorph.box
     return margin.bottom - margin.top
 }
 TriayBiomorphs.prototype.getRect = function() {
-    if(this.biomorph.box == null) {
+    if(this.triay_biomorph.box == null) {
         dummydraw()
     }
-    let margin = this.biomorph.box
+    let margin = this.triay_biomorph.box
     return new Rect(0,0, margin.right - margin.left,
             margin.bottom - margin.top)
 }

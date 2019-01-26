@@ -1,25 +1,26 @@
 //A biomorph is a set of genes, represented as numbers, strings and booleans
-// The genes lead to the generation of segments using a recursive tree building
-// algorithm, which can then be drawn on a canvas
-// The naming was largely taken from the original code. They include:
-// - genes: an array of 9 numbers, which control the general growth of the biomorph
-// - dGenes: an array of 10 strings, which represent modifiers to the expression of the genes
-// - segNoGene: the number of segments
-// - segDistGene: the distance between segments
-// - symmetrical: whether the biomorph is vertically symmetrical
-// - spokesGene: string representing if the biomorph has a body in 1, 2 or 4 parts
-// - trickleGene: curbs how big the biomorphs get (scale-ish)
-// - mutSizeGene: Indicates how much a gene changes when it mutates
-// - mutProbGene: The probability of mutation for a gene
-// Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
-// The genes are optional (you'll get a random biomorph). The biomorph is then generated 
-// (effectively, all the segments to be draw are worked out ahead of drawing)
+//The genes lead to the generation of segments using a recursive tree building
+//algorithm, which can then be drawn on a canvas
+//The naming was largely taken from the original code. They include:
+//- genes: an array of 9 numbers, which control the general growth of the biomorph
+//- dGenes: an array of 10 strings, which represent modifiers to the expression of the genes
+//- segNoGene: the number of segments
+//- segDistGene: the distance between segments
+//- symmetrical: whether the biomorph is vertically symmetrical
+//- spokesGene: string representing if the biomorph has a body in 1, 2 or 4 parts
+//- trickleGene: curbs how big the biomorphs get (scale-ish)
+//- mutSizeGene: Indicates how much a gene changes when it mutates
+//- mutProbGene: The probability of mutation for a gene
+//Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
+//The genes are optional (you'll get a random biomorph). The biomorph is then generated 
+//(effectively, all the segments to be draw are worked out ahead of drawing)
 
 function Biomorph (ctx, width, height, genes) {
-
+    this.box = null
     this.canvasWidth = width
     this.canvasHeight = height
 
+    this.doScale = false;
     // The centre is being changed by the algorithm so we keep a working version here
     // as well as copy for generated centre (which can change depending on scale/translate of the coordinates)
     // and finally an origin, a pristine copy of the centre coordinates
@@ -34,23 +35,23 @@ function Biomorph (ctx, width, height, genes) {
 
     this.children = []
 
-    this.type = 'biomorph'
+    this.type = 'biomorph';
 
-        if (genes) {
-            this.genes = genes.genes.slice()
-            this.dGenes = genes.dGenes.slice()
-            this.segNoGene = genes.segNoGene
-            this.segDistGene = genes.segDistGene
-            this.symmetrical = genes.symmetrical
-            this.spokesGene = genes.spokesGene
-            this.trickleGene = genes.trickleGene
-            this.mutSizeGene = genes.mutSizeGene
-            this.mutProbGene = genes.mutProbGene
-//            this.generate()
-        }
-        else {
-            this.randomize()
-        }
+    if (genes) {
+        this.genes = genes.genes.slice()
+        this.dGenes = genes.dGenes.slice()
+        this.segNoGene = genes.segNoGene
+        this.segDistGene = genes.segDistGene
+        this.symmetrical = genes.symmetrical
+        this.spokesGene = genes.spokesGene
+        this.trickleGene = genes.trickleGene
+        this.mutSizeGene = genes.mutSizeGene
+        this.mutProbGene = genes.mutProbGene
+//      this.generate()
+    }
+    else {
+        this.randomize()
+    }
 }
 
 Biomorph.swellTypes = ["Swell", "Same", "Shrink"]
@@ -68,7 +69,7 @@ Biomorph.prototype.randomize = function () {
     this.trickleGene = randomGenes.trickleGene
     this.mutSizeGene = randomGenes.mutSizeGene
     this.mutProbGene = randomGenes.mutProbGene
-//    this.generate()
+//  this.generate()
 }
 
 Biomorph.prototype.resetCentre = function () {
@@ -91,8 +92,8 @@ Biomorph.randSpokes = function() {
 
 
 
-// Gives a random set of genes to form a "hopeful monster"
-// The values are set to produce something varied but still visually pleasing
+//Gives a random set of genes to form a "hopeful monster"
+//The values are set to produce something varied but still visually pleasing
 Biomorph.randomGenes = function () {
 
     return {
@@ -108,8 +109,8 @@ Biomorph.randomGenes = function () {
     }
 }
 
-// Some mutations can be turned off or on depending on 
-// what you're trying to achieve
+//Some mutations can be turned off or on depending on 
+//what you're trying to achieve
 Biomorph.mutations = {
         segmentation: true,
         gradient: true,
@@ -123,13 +124,13 @@ Biomorph.mutations = {
 }
 
 
-// Width and height are optional and useful if the canvas has changed size
-// since it was passed to the biomorph.
-// This method generates all the segment for the current set of genes
-// If the genes change, this needs to be called again
-// You'll notice that spokesGene and the symmetrical flags aren't used here
-// They come into play when drawing. Effectively, this generates the first part
-// of the biomorph and it'll be duplicated and twisted to match these genes on drawing.
+//Width and height are optional and useful if the canvas has changed size
+//since it was passed to the biomorph.
+//This method generates all the segment for the current set of genes
+//If the genes change, this needs to be called again
+//You'll notice that spokesGene and the symmetrical flags aren't used here
+//They come into play when drawing. Effectively, this generates the first part
+//of the biomorph and it'll be duplicated and twisted to match these genes on drawing.
 Biomorph.prototype.generate = function (width, height) {
 
     if (width && height) {
@@ -208,10 +209,12 @@ Biomorph.prototype.generate = function (width, height) {
 
     this.translate(0, this.verticalOffset()) // recentre biomorph
 
-    this.scaleToBox(0.8) // make sure the biomorph fits inside the canvas
+    if(this.doScale) {
+        this.scaleToBox(0.8) // make sure the biomorph fits inside the canvas
+    }
 }
 
-// This is a recursive function which does most of the construction work
+//This is a recursive function which does most of the construction work
 Biomorph.prototype.buildTree = function (odd, x, y, depth, direction) {
 
     // We want to make sure we loop around that array
@@ -263,8 +266,8 @@ Biomorph.prototype.buildTree = function (odd, x, y, depth, direction) {
     } 
 }
 
-// This method provides a value based on a direction using the current genes
-// How these values are mapped comes from the original algorithm
+//This method provides a value based on a direction using the current genes
+//How these values are mapped comes from the original algorithm
 Biomorph.prototype.dx = function (direction) {
 
     switch (direction) {
@@ -293,8 +296,8 @@ Biomorph.prototype.dx = function (direction) {
     }
 }
 
-// This method provides a value based on a direction using the current genes
-// How these values are mapped comes from the original algorithm
+//This method provides a value based on a direction using the current genes
+//How these values are mapped comes from the original algorithm
 Biomorph.prototype.dy = function (direction) {
 
     switch (direction) {
@@ -319,15 +322,15 @@ Biomorph.prototype.dy = function (direction) {
     }
 }
 
-// For positioning and general manipulation it's good to know how big
-// things are and where they are. Particularly because we want the biomorph to be
-// centered horizontally and vertically. By nature biomorphs can be uneven and would be
-// drawn too high or too low. This allows us to calculate the offset and apply
-// the proper transformation to always draw in the center of the canvas
+//For positioning and general manipulation it's good to know how big
+//things are and where they are. Particularly because we want the biomorph to be
+//centered horizontally and vertically. By nature biomorphs can be uneven and would be
+//drawn too high or too low. This allows us to calculate the offset and apply
+//the proper transformation to always draw in the center of the canvas
 Biomorph.prototype.setBoundingBox = function () {
 
     var segment
-    var box = {
+    let box = {
             left: Math.min(this.segments[0].startX, this.segments[0].endX),
             top: Math.min(this.segments[0].startY, this.segments[0].endY),
             right: Math.max(this.segments[0].startX, this.segments[0].endX),
@@ -430,9 +433,9 @@ Biomorph.prototype.scaleToBox = function (ratio) {
     }
 }
 
-// Not ideal, in theory it would be better to keep scale as an attribute
-// and compute that on draw. Since performance can be tricky when drawing
-// lots of them, pre-calculation is helpful
+//Not ideal, in theory it would be better to keep scale as an attribute
+//and compute that on draw. Since performance can be tricky when drawing
+//lots of them, pre-calculation is helpful
 Biomorph.prototype.scale = function (scale) {
 
     this.generatedCentre.x = Math.round(this.generatedCentre.x * scale)
@@ -450,8 +453,8 @@ Biomorph.prototype.scale = function (scale) {
     }
 }
 
-// Same as scale. Would be better as an attribute and compute on draw
-// Done for performance & clarity reasons
+//Same as scale. Would be better as an attribute and compute on draw
+//Done for performance & clarity reasons
 Biomorph.prototype.translate = function (offsetX, offsetY) {
 
     var segment
@@ -469,11 +472,11 @@ Biomorph.prototype.translate = function (offsetX, offsetY) {
     }
 }
 
-// Biomorphs can have upwards of 300 segments, which when duplicated a number
-// of times for symmetry and spokes can amount to thousands.
-// This technique, particularly when dealing with biomorphs with different
-// stroke size, seems to yield the best results.
-// It's also a lot more understandable than the original approach
+//Biomorphs can have upwards of 300 segments, which when duplicated a number
+//of times for symmetry and spokes can amount to thousands.
+//This technique, particularly when dealing with biomorphs with different
+//stroke size, seems to yield the best results.
+//It's also a lot more understandable than the original approach
 Biomorph.prototype.drawWithImages = function () {
 
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
@@ -531,93 +534,93 @@ Biomorph.prototype.drawWithImages = function () {
     }
 }
 
-// This method is closer to the original algorithm in terms of code
-// It works out, at draw time, which segments to draw based on the symmetrical
-// and spokes gene. This method can be a lot faster on biomorph with
-// strokeWidth set to 1. Effectively this does the manipulations of drawWithImages 
-// but for each segment, in coordinate space
-// The lofi flag draws every other line which
-// can help make the shape clearer if it's scaled down for instance.
-// TODO: investigate speed/memory tradeoff by pre-computing the lines
+//This method is closer to the original algorithm in terms of code
+//It works out, at draw time, which segments to draw based on the symmetrical
+//and spokes gene. This method can be a lot faster on biomorph with
+//strokeWidth set to 1. Effectively this does the manipulations of drawWithImages 
+//but for each segment, in coordinate space
+//The lofi flag draws every other line which
+//can help make the shape clearer if it's scaled down for instance.
+//TODO: investigate speed/memory tradeoff by pre-computing the lines
 Biomorph.prototype.drawWithLines = function (lofi) {
 
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
 
     var segment
-    var step = lofi && this.symmetrical && this.nbSegments > 30 ? 2 : 1
+    var step = lofi && this.symmetrical && this.nbSegments > 30 ? 2 : 1;
 
-            var mid2 = this.generatedCentre.x * 2
-            var belly2 = this.generatedCentre.y * 2
-            var diffX = this.generatedCentre.y - this.generatedCentre.x
-            var diffY = this.generatedCentre.x - this.generatedCentre.y
-            var currentWidth = this.segments[0].size
+    var mid2 = this.generatedCentre.x * 2
+    var belly2 = this.generatedCentre.y * 2
+    var diffX = this.generatedCentre.y - this.generatedCentre.x
+    var diffY = this.generatedCentre.x - this.generatedCentre.y
+    var currentWidth = this.segments[0].size
 
-            var startX
-            var startY
-            var endX
-            var endY
+    var startX
+    var startY
+    var endX
+    var endY
 
-            // Starts a new path
-            this.ctx.beginPath()
+    // Starts a new path
+    this.ctx.beginPath()
+    this.ctx.lineWidth = currentWidth
+
+    for (var i = 0; i < this.nbSegments; i = i+step) {
+        segment = this.segments[i]
+
+        // Minimises the changes in the context
+        // Ideally, the segments could even be sorted by size (TODO)
+        if (segment.size !== currentWidth) {
+            this.ctx.stroke()
+            currentWidth = segment.size
             this.ctx.lineWidth = currentWidth
+        }
 
-            for (var i = 0; i < this.nbSegments; i = i+step) {
-                segment = this.segments[i]
+        this.ctx.moveTo(segment.startX, segment.startY)
+        this.ctx.lineTo(segment.endX, segment.endY)
 
-                // Minimises the changes in the context
-                // Ideally, the segments could even be sorted by size (TODO)
-                if (segment.size !== currentWidth) {
-                    this.ctx.stroke()
-                    currentWidth = segment.size
-                    this.ctx.lineWidth = currentWidth
-                }
+        // Flip the x coordinate to draw the symmetrical version
+        if (this.symmetrical) {
+            this.ctx.moveTo(mid2 - segment.startX, segment.startY)
+            this.ctx.lineTo(mid2 - segment.endX, segment.endY)
+        }
 
-                this.ctx.moveTo(segment.startX, segment.startY)
-                this.ctx.lineTo(segment.endX, segment.endY)
+        if (this.spokesGene === "Double" || this.spokesGene === "Radial") {
 
-                // Flip the x coordinate to draw the symmetrical version
+            // The horizontal symmetry
+            this.ctx.moveTo(mid2 - segment.startX, belly2 - segment.startY)
+            this.ctx.lineTo(mid2 - segment.endX, belly2 - segment.endY)
+
+            // and the symmetrical counterpart
+            if (this.symmetrical) {
+                this.ctx.moveTo(segment.startX, belly2 - segment.startY)
+                this.ctx.lineTo(segment.endX, belly2 - segment.endY)
+            }
+
+            if (this.spokesGene === "Radial") {
+
+                // We're switching the coordinate system to draw the same segment rotated by 90deg
+                startX = segment.startY - diffX
+                startY = segment.startX - diffY
+                endX = segment.endY - diffX
+                endY = segment.endX - diffY
+
+                this.ctx.moveTo(mid2 - startX, startY)
+                this.ctx.lineTo(mid2 - endX, endY)
+
+                this.ctx.moveTo(startX, belly2 - startY)
+                this.ctx.lineTo(endX, belly2 - endY)
+
+                // Let's not forget the symmetrical counterpart...
                 if (this.symmetrical) {
-                    this.ctx.moveTo(mid2 - segment.startX, segment.startY)
-                    this.ctx.lineTo(mid2 - segment.endX, segment.endY)
-                }
+                    this.ctx.moveTo(mid2 - startX, belly2 - startY)
+                    this.ctx.lineTo(mid2 - endX, belly2 - endY)
 
-                if (this.spokesGene === "Double" || this.spokesGene === "Radial") {
-
-                    // The horizontal symmetry
-                    this.ctx.moveTo(mid2 - segment.startX, belly2 - segment.startY)
-                    this.ctx.lineTo(mid2 - segment.endX, belly2 - segment.endY)
-
-                    // and the symmetrical counterpart
-                    if (this.symmetrical) {
-                        this.ctx.moveTo(segment.startX, belly2 - segment.startY)
-                        this.ctx.lineTo(segment.endX, belly2 - segment.endY)
-                    }
-
-                    if (this.spokesGene === "Radial") {
-
-                        // We're switching the coordinate system to draw the same segment rotated by 90deg
-                        startX = segment.startY - diffX
-                        startY = segment.startX - diffY
-                        endX = segment.endY - diffX
-                        endY = segment.endX - diffY
-
-                        this.ctx.moveTo(mid2 - startX, startY)
-                        this.ctx.lineTo(mid2 - endX, endY)
-
-                        this.ctx.moveTo(startX, belly2 - startY)
-                        this.ctx.lineTo(endX, belly2 - endY)
-
-                        // Let's not forget the symmetrical counterpart...
-                        if (this.symmetrical) {
-                            this.ctx.moveTo(mid2 - startX, belly2 - startY)
-                            this.ctx.lineTo(mid2 - endX, belly2 - endY)
-
-                            this.ctx.moveTo(startX, startY)
-                            this.ctx.lineTo(endX, endY)
-                        }
-                    }
+                    this.ctx.moveTo(startX, startY)
+                    this.ctx.lineTo(endX, endY)
                 }
             }
+        }
+    }
 
     this.ctx.stroke()
 }
@@ -659,9 +662,9 @@ Biomorph.randInt = function() {
 }
 
 
-// The breeding process is relatively straighforward compared to the rest
-// It looks at each gene and rolls a D100. If it's under the probability, then
-// the gene will mutate by a factor of the mutSize
+//The breeding process is relatively straighforward compared to the rest
+//It looks at each gene and rolls a D100. If it's under the probability, then
+//the gene will mutate by a factor of the mutSize
 Biomorph.prototype.breed = function (element) {
 
     // A child starts with a copy of the genes of its parent
@@ -767,7 +770,7 @@ Biomorph.prototype.breed = function (element) {
     else
         newBiomorph = new Biomorph(this.ctx, this.canvasWidth, this.canvasHeight, child)
 
-    
+
     // Attach the child using the same parameters as his parent but with new genes
     this.children.push(newBiomorph)
 

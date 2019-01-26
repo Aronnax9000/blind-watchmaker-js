@@ -14,9 +14,9 @@
 }
 
 .engineeringView, .engineering, .watchmakerView {
-	border: 1px black solid
-    width: 1000px;
-    height: 600px;
+	border: 1px black solid;
+    width: 100%;
+    height: 100%;
     display: grid;
     grid-template-columns: 100%;
     grid-gap: 0px;
@@ -31,16 +31,65 @@
 .pedigreeDiv {
   width: 1000px;
   height: 600px;
-  position: relative;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
   cursor: url(cursor/pedigree_cursor.png), auto;
 }
 
+.pedigreeBox {
+	z-index: 1
+    padding: 0px;
+    position: relative;
+    border: 1px solid black
+}
+.pedigreeFamilialLineCanvas {
+  width: 1000px;
+  height: 600px;
+	position: absolute;
+    left: 0;
+    top: 0;
+	z-index: -10;
+}
+.pedigreeDrawOutLineDiv {
+  width: 1000px;
+  height: 600px;
+	position: absolute;
+    left: 0;
+    top: 0;
+	z-index: -10;
+}
+.pedigreeDrawOutMousingDiv {
+  width: 1000px;
+  height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+    z-index: 2147483647;
+}
+
+.pointerEventsNone {
+    pointer-events: none;
+	
+}
+
 .boxes, .overlay {
-  width: 100%;
-  height: 100%;
+  width: 1000px;
+  height: 600px;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.overlay {
+	pointer-events: none;
+	z-index: 100;
+}
+
+.underlay {
+    z-index: -1;
+	
 }
 #infoi {
   z-index: 10;
@@ -69,10 +118,5 @@
 	border-width: 2px;
 }
 
-.pedigreeBox {
-    padding: 0px;
-	position: relative;
-	border: 1px solid black
-}
 
 
