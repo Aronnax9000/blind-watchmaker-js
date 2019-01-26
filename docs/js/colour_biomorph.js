@@ -1428,7 +1428,7 @@ ColourPic.prototype.drawPic = function(place) {
     var drawer = this.drawer
     var bgcolor = this.palette.colors[biomorph.backColorGene]
     if(bgcolor === undefined) {
-        alert('bgcolor is undefined')
+        console.error('bgcolor is undefined for backcolorgene ' + biomorph.backColorGene)
     }
     
 
@@ -1509,3 +1509,4 @@ ColourBiomorph.prototype.dummydraw = Biomorphs.prototype.dummydraw
 ColourBiomorph.prototype.getWidth = Biomorphs.prototype.getWidth
 ColourBiomorph.prototype.getHeight = Biomorphs.prototype.getHeight
 ColourBiomorph.prototype.getRect = Biomorphs.prototype.getRect
+

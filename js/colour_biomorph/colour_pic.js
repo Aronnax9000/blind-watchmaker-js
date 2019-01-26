@@ -215,7 +215,7 @@ ColourPic.prototype.drawPic = function(place) {
     var drawer = this.drawer
     var bgcolor = this.palette.colors[biomorph.backColorGene]
     if(bgcolor === undefined) {
-        alert('bgcolor is undefined')
+        console.error('bgcolor is undefined for backcolorgene ' + biomorph.backColorGene)
     }
     
 

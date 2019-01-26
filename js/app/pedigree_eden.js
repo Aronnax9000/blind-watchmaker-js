@@ -17,21 +17,21 @@
 //snapBounds: Rect;
 //}
 function Full(genome) {
-    this.genome == genome
-    this.surround == new Rect()
-    this.origin == new Point()
-    this.centre == new Point()
-    this.parent == null
-    this.firstBorn == null
-    this.lastBorn == null
-    this.eldersib == null
-    this.youngersib == null
-    this.prec == null
-    this.next == null
-    this.damaged == false
-    this.snapHandle == null
-    this.snapBytes == null
-    this.snapBounds == new Rect()
+    this.genome = genome
+    this.surround = genome.getRect()
+    this.origin = new Point()
+    this.centre = new Point()
+    this.parent = null
+    this.firstBorn = null
+    this.lastBorn = null
+    this.eldersib = null
+    this.youngersib = null
+    this.prec = null
+    this.next = null
+    this.damaged = false
+    this.snapHandle = null
+    this.snapBytes = null
+    this.snapBounds = new Rect()
 }
 
 //GodPtr == ^God;
@@ -783,7 +783,7 @@ Pedigree.prototype.followMouse = function(thisFull) {
 //via created() and returned.
 Pedigree.prototype.spawnOne = function(thisFull, here, current) {
 
-    SetCursor(Curslist[WatchCursor]);
+//    SetCursor(Curslist[WatchCursor]);
     current = new Full();
     document.createElement('canvas')
     current.genome = thisFull.genome.reproduce();

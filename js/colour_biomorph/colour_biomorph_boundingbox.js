@@ -10,3 +10,4 @@ ColourBiomorph.prototype.dummydraw = Biomorphs.prototype.dummydraw
 ColourBiomorph.prototype.getWidth = Biomorphs.prototype.getWidth
 ColourBiomorph.prototype.getHeight = Biomorphs.prototype.getHeight
 ColourBiomorph.prototype.getRect = Biomorphs.prototype.getRect
+

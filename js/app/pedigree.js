@@ -21,7 +21,10 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         species: null,
         biomorph: null,
         rootGod: null,
-        phyloging: null
+        phyloging: null,
+        specialFull: null,
+        theGod: null,
+        godCounter: 0
     },
     viewGainedFocus: function(event) {
         let session = $(this).pedigreeView("option", "session")
@@ -31,7 +34,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this._super()
         
         $(this.element).addClass('pedigreeView')
-
+        
         this.options.rootGod = new God()
         this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
         let container = $("<div class='container'>")
@@ -40,39 +43,23 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         div.appendTo(container)
         let familialLineCanvas = $("<canvas width='1000' height='600'>")
         familialLineCanvas.appendTo(div)
-        
+        this.options.familialLineCanvas = familialLineCanvas[0]
         div = $("<div class='pedigreeDrawOutLineDiv'>")
         
         div.appendTo(container)
         let canvas = $("<canvas class='drawOutCanvas' width='1000' height='600'>")
         this.options.drawOutCanvas = canvas[0]
         canvas.appendTo(div)
-//        let ctx = canvas[0].getContext('2d')
-//        ctx.clearRect(0,0,canvas.width, canvas.height)
-//        ctx.strokeStyle = "Black"
-//        ctx.lineWidth = 3
-//        ctx.moveTo(0,0)
-//        ctx.lineTo(100,100)
-//        ctx.stroke()
-//                
-        let biomorph = this.options.biomorph 
-        biomorph.full = new Full(biomorph)
-
+        
         let pedigreeDiv = $('<div class="pedigreeDiv">')
         pedigreeDiv.addClass('boxes')
         pedigreeDiv.appendTo(container)
         this._on(pedigreeDiv, {
-            mousedown: function(event) { this.drawoutmousedown(event) },
             mouseup: function(event) { this.drawoutmouseup(event) },
             mousemove: function(event) { this.drawoutmousemove(event) },
-            mousedrag: function(event) { this.drawoutmousedrag(event) },
         })
         
-        let screenRect = pedigreeDiv[0].getBoundingClientRect()
-        let x = Math.trunc(screenRect.width / 2);
-        let y = Math.trunc(screenRect.height / 2);
-        console.log(this.options.biomorph)
-        this.addone(this.options.biomorph, new Point(x, y))
+        this.phylognew(this.options.biomorph)
 
     },
     buildMenus: function(menu) {
@@ -95,14 +82,44 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
         $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
     },
-    addone: function(biomorph, point) {
-        console.log(biomorph)
-        let biomorphWidth = biomorph.getWidth();
-        let biomorphHeight = biomorph.getHeight();
-        console.log('biomorph ' + biomorphWidth + 'x' + biomorphHeight)
+    markIf: function(thisFull) {
+        $(this.element).find('canvas').removeClass('midBox')
+        $(thisFull.genome.drawer).addClass('midBox')
+    },
+    phylognew: function(biomorph) {
+        let options = this.options
+        let tempGod = new God()
+        tempGod.nextGod = null;
+        this.findLastGod();
+        let theGod = options.theGod
+        tempGod.previousGod = theGod;
+        theGod.nextGod = tempGod;
+        theGod = tempGod;
+        theGod.adam = new Full(biomorph);
+        biomorph.full = theGod.adam
+        theGod.adam.surround = biomorph.getRect();
+        Triangle.atLeast(theGod.adam.surround);
+        if(this.options.specialFull != null) {
+            this.options.specialFull.prec = theGod.adam
+        }                                                                                        
+        theGod.adam.next = this.options.specialFull;
+        this.options.specialFull = theGod.adam;
+        this.options.specialFull.prec = null;
+        
+        let screenRect = $(this.element).find('.pedigreeDiv')[0].getBoundingClientRect()
+        let x = Math.trunc(screenRect.width / 2);
+        let y = Math.trunc(screenRect.height / 2);
+
+        this.addone(theGod.adam, new Point(x,y))
+    },
+    
+    addone: function(full, point) {
+        let biomorph = full.genome
+        let surround = full.surround
+        let biomorphWidth = surround.right - surround.left
+        let biomorphHeight = surround.bottom - surround.top
         let left = point.h - biomorphWidth / 2
         let top = point.v - biomorphHeight / 2;
-        console.log(left + ',' + top)
         let canvas = $("<canvas class='pedigreeMorphCanvas'>")
         canvas.attr('height', Math.trunc(biomorphHeight))
         canvas.attr('width', Math.trunc(biomorphWidth))
@@ -110,7 +127,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         canvas.css('top', top)
         canvas.addClass('pedigreeBox midBox')
         $(this.element).find('.pedigreeDiv').append(canvas)
-        console.log(canvas[0])
         biomorph.drawer = canvas[0]
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
@@ -118,18 +134,41 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             mousedown: function(event) { this.morphmousedown(event) },
             mouseup: function(event) { this.morphmouseup(event) },
             mousemove: function(event) { this.morphmousemove(event) },
-            mousedrag: function(event) { this.morphmousedrag(event) },
         })
+        console.log('God')
+        console.log(this.options.rootGod)
+        this.allLines(this.options.rootGod)
+    },
+    spawnone: function(thisFull, here) {
+        let biomorph = thisFull.genome
         
-    },
-    spawnone: function(point) {
-        console.log('spawnone at ' + point.h + ',' + point.v)
-        let biomorph = $(this.options.phyloging).data('genotype')
         let spawn = biomorph.reproduce(null)
-        biomorph.full = new Full(biomorph)
-        this.addone(spawn, point)
+        let current = new Full(spawn)
+        spawn.full = current
+        current.origin = here    
+        current.surround = current.genome.getRect();
+        Triangle.atLeast(current.surround);
+
+        current.parent = thisFull;
+        current.elderSib = thisFull.lastBorn;
+        if(current.elderSib != null) {
+            current.elderSib.youngerSib = current;
+        }
+        current.lastBorn = null;
+        current.youngerSib = null;
+        if(thisFull.lastBorn == null) {
+            thisFull.firstBorn = current;
+        }
+        thisFull.lastBorn = current;
+        current.next = this.options.specialFull;  //{puts currentfull at head of list}
+        this.options.specialFull.prec = current;  //{Updates seniority pointer of previous head}
+//        oldSpecialFull = specialFull; // value never used
+        this.options.specialFull = current; // {Gives new head its proper title}
+        this.options.specialFull.prec = null; // {Probably unnecessary but good form}
+        this.addone(current, here)
+        this.markIf(current);
     },
-    spawnmany: function(point) {
+    spawnmany: function(thisFull, point) {
         let target = this.options.phyloging
         let offset = $(target).offset()
         let pedigreeOffset = $(target).parent().offset()
@@ -137,10 +176,9 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let y = offset.top - pedigreeOffset.top + target.height / 2;
         let radients = this.getradiants(new Point(x,y), point, this.options.rays)
         for(i = 0; i < this.options.rays; i++) {
-            this.spawnone(radients[i])
+            this.spawnone(thisFull, radients[i])
         }
         this.options.phyloging = null
-  
     },
     getradiants: function(from, goal, spokes) {
         dx = goal.h - from.h;
@@ -148,8 +186,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         var here = []
         here.push(new Point(from.h + dx, from.v + dy))
         here.push(new Point(from.h - dx, from.v - dy))
-        here.push(new Point(from.h - dx, from.v + dy))
-        here.push(new Point(from.h + dx, from.v - dy))
+        here.push(new Point(from.h - dy, from.v + dx))
+        here.push(new Point(from.h + dy, from.v - dx))
         return here
     },
     radiate: function(from, goal, spokes, ctx) {
@@ -180,40 +218,132 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ctx.closePath()
     },
+    connect: function(nucleusFull, orbitFull) {
+        if((nucleusFull != null) && (orbitFull != null)) {
+            console.log('connect')
+            let ctx = this.options.familialLineCanvas.getContext('2d')
+            ctx.strokeStyle = 'Black';
+            ctx.lineWidth = 1;
+            ctx.beginPath()
+            ctx.moveTo(nucleusFull.centre.h, nucleusFull.centre.v);
+            this.options.thereAreLines = true;
+            ctx.lineTo(orbitFull.centre.h, orbitFull.centre.v);
+            ctx.stroke()
+            ctx.closePath()
+        }
+    },
+    findLastGod: function() { //{Delivers last God in theGod}
+        let thisGod = this.options.rootGod
+        this.options.godCounter = 1;
+        if(thisGod.nextGod == null) {
+            this.options.theGod = thisGod
+        } else {
+            tryGod(thisGod)
+        } 
+    },
+    
+//  {Isolates ThisFull from all except its descendants, leaving rest of}
+//  {pedigree hierarchical linked list tidied up and pointing elsewhere.}
+//  {Does not touch linear Specialfull linked list, since this reflects}
+//  {spatial relations on screen, and nonrelatives can cover each other}
+    detach: function(thisFull) {
+        if(thisFull.parent != null) {
+            this.connect(thisFull, thisFull.parent);
+            if(thisFull.parent.lastBorn == thisFull) {
+                thisFull.parent.lastBorn = thisFull.elderSib;
+            }
+            if(thisFull.parent.firstBorn == thisFull) {
+                thisFull.parent.firstBorn = thisFull.youngerSib;
+            }
+        }// {of whitening line connecting with thisFull's parent}
+        if(thisFull.youngerSib != null) {
+            thisFull.youngerSib.elderSib = thisFull.elderSib;
+        }
+        if(thisFull.elderSib != null) {
+            thisFull.elderSib.youngerSib = thisFull.youngerSib;
+        }
+        thisFull.elderSib = null;
+        thisFull.youngerSib = null;
+        thisFull.parent = null;
+        tempGod = new God()
+        tempGod.nextGod = null;
+        this.findLastGod()
+        tempGod.previousGod = this.options.theGod;
+        tempGod.adam = thisFull;
+        theGod.nextGod = tempGod;
+        theGod = tempGod;
+        this.markIf(thisFull); //make midBox
+    },
+    redrawLines: function(thisFull) {
+        
+        if(thisFull != null) {
+            let ctx = this.options.familialLineCanvas.getContext('2d')
+            ctx.strokeStyle = 'Black';
+            ctx.lineWidth = 1;
+            ctx.beginPath()
+
+            if(thisFull.parent != null) {
+                ctx.moveTo(thisFull.centre.h, thisFull.centre.v);
+                ctx.lineTo(thisFull.parent.centre.h, thisFull.parent.centre.v);
+                ctx.stroke()
+                ctx.closePath()
+            }
+            if(thisFull.lastBorn != null) {
+//                this.redrawAll(thisFull.lastBorn);
+            }
+        } 
+    },
+    allLines: function(theGod) {
+        if(theGod != null) {
+            if(theGod.adam != null) {
+                this.redrawLines(theGod.adam);
+            }
+            if(theGod.nextGod != null) {
+                this.allLines(theGod.nextGod)
+            }
+        }
+    },
+
+    childLine: function(thisFull, child) {
+        this.connect(thisFull, child);
+        if(child.youngerSib != null) {
+            this.childLine(thisFull, child.youngerSib);
+        } 
+    },
+
+    localLines: function(thisFull) {
+        if(thisFull.parent != null) {
+            this.connect(thisFull, thisFull.parent);
+        }
+        if(thisFull.firstBorn != null) {
+            this.childLine(thisFull, thisFull.firstBorn)
+        } 
+    },
     kill: function(target) {
         $(target).remove()
     },
     morphmousedown: function(event) {
-        console.log('Morph mouse down Mode ' + Mode.properties[this.options.theMode].name)
-
+        // Move the selected morph to the front
+        $(this.element).find('.pedigreeDiv').append(event.target)
         switch(this.options.theMode) {
         case Mode.Phyloging:
-            event.stopPropagation()
             let target = event.target
             // Bring it to the front
             $(this.element).find('.pedigreeDiv').append(target)
             // User pressed on a morph. Record it as a potential parent.
             this.options.phyloging = target
-            console.log('phyloging with target')
             break
         case Mode.Moving:
-            $(this.element).find('.pedigreeDiv').append(event.target)
-            event.stopPropagation()
             break
         case Mode.Detaching:
-            $(this.element).find('.pedigreeDiv').append(event.target)
-            event.stopPropagation()
             break
         case Mode.Killing:
-            $(this.element).find('.pedigreeDiv').append(event.target)
             this.kill(event.target)
-            event.stopPropagation()
             break
         }
     },
     morphmousemove: function(event) {
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
+        if(this.options.theMode == Mode.Phyloging) {
             event.stopPropagation()
             if(this.options.phyloging != null) {
                 let target = event.target
@@ -223,49 +353,24 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 let y = offset.top - pedigreeOffset.top;
                 this.dragoutline(x, y)
             }
-            break
-        case Mode.Moving:
-            event.stopPropagation()
-            break
-        case Mode.Detaching:
-            event.stopPropagation()
-            break
-        case Mode.Killing:
-            event.stopPropagation()
-            break
-        }
-    },
-    morphmousedrag: function(event) {
-        let target = event.target
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
         }
     },
     morphmouseup: function(event) {
         let target = event.target
-        console.log('Morph mouse up Mode ' + Mode.properties[this.options.theMode].name)
         switch(this.options.theMode) {
         case Mode.Phyloging:
             event.stopPropagation()
             if(event.target != this.options.phyloging) {
-                console.log('Spawn on top of another morph')
                 this.cleardragoutline()
                 let target = event.target
                 let offset = $(target).offset()
                 let pedigreeOffset = $(target).parent().offset()
                 let x = offset.left - pedigreeOffset.left;
                 let y = offset.top - pedigreeOffset.top;
-                this.spawnmany(new Point(x, y))
+                thisFull = $(target).data('genotype').full
+                this.spawnmany(thisFull, new Point(x, y))
             } else {
                 // Let go inside original morph. Don't reproduce
-                console.log('Let go inside original morph. Dont reproduce')
                 this.options.phyloging = null
             }
 
@@ -278,48 +383,19 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             break
         }
     },
-    drawoutmousedown: function(event) {
-        console.log('drawoutmousedown')
-        let target = event.target
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
-        }
-    },
     
     drawoutmouseup: function(event) {
-        console.log(Mode)
-        console.log('drawoutmouseup ' + Mode.properties[this.options.theMode].name)
         let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
             this.cleardragoutline()
             if(this.options.phyloging != null) {
-                console.log('draw out dropped')
                 let offset = $(event.target).offset()
                 let x = event.pageX - offset.left;
                 let y = event.pageY - offset.top;
-                this.spawnmany(new Point(x, y))
+                thisFull = $(this.options.phyloging).data('genotype').full
+                this.spawnmany(thisFull, new Point(x, y))
             }            
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
-        }
-    },
-    drawoutmousedrag: function(event) {
-        console.log('drawoutmousedrag')
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
             break
         case Mode.Moving:
             break
@@ -428,7 +504,6 @@ function PedigreeMenuHandler() {
 PedigreeMenuHandler.prototype.menuclick = function(event) {
     let target = event.target
     let menuid = $(target).data('menuid')
-    console.log('PedigreeMenuHandler'  + menuid)
     switch(menuid) {
     case 'DrawOutOffspring':
     case 'Move':

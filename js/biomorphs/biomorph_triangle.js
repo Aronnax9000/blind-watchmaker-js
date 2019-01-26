@@ -5,12 +5,12 @@ Triangle.divisibleByEight = function(n) {
     return n % 8 == 0
 }
 
-Triangle.atLeast(outRect) {
+Triangle.atLeast = function(outRect) {
     outRect.insetRect(-3, -3);
-    while(! divisibleByEight(left)) {
+    while(! Triangle.divisibleByEight(outRect.left)) {
         outRect.left--
     }
-    while(! divisibleByEight(right)) {
+    while(! Triangle.divisibleByEight(outRect.right)) {
         outRect.right++
     }
 }

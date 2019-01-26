@@ -269,33 +269,50 @@ $.widget( "dawk.spokesGenebox", $.dawk.biomorph_genebox, {
 
 Biomorphs.prototype.dummydraw = function() {
     var tempDrawer = this.drawer
-    this.drawer = Document.createElement('canvas')
+    this.drawer = document.createElement('canvas')
     this.develop()
     this.drawer = tempDrawer
 }
 
 Biomorphs.prototype.getWidth = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return margin.right - margin.left
 }
 Biomorphs.prototype.getHeight = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return margin.bottom - margin.top
 }
 Biomorphs.prototype.getRect = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return new Rect(0,0, margin.right - margin.left,
             margin.bottom - margin.top)
 }
+function Triangle() {}
+
+
+Triangle.divisibleByEight = function(n) {
+    return n % 8 == 0
+}
+
+Triangle.atLeast = function(outRect) {
+    outRect.insetRect(-3, -3);
+    while(! Triangle.divisibleByEight(outRect.left)) {
+        outRect.left--
+    }
+    while(! Triangle.divisibleByEight(outRect.right)) {
+        outRect.right++
+    }
+}
+
 function Biomorphs() {
     
 }
