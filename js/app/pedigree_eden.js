@@ -871,7 +871,7 @@ Pedigree.prototype.Radiate = function(from, goal, spokes, here) {
     here[2].v = from.v + dx;
     here[3].h = from.h + dy;
     here[3].v = from.v - dx;
-    for(let i = 0; i < spokes; i++ - 1) {
+    for(let j = 0; j < spokes; i++) {
         this.moveTo(from.h, from.v);
         this.lineTo(here[j].h, here[j].v)
     }
@@ -955,7 +955,8 @@ Pedigree.prototype.drawOutFrom  = function(thisFull) {
 } // {DrawOutFrom}
 
 Pedigree.prototype.PhylogNew  = function(biomorph) {
-//  EraseRect(pRect);
+    // Erase the Pedigree breeding area
+    // EraseRect(pRect);
     tempGod = new God()
     tempGod.nextGod = null;
     this.findLastGod;

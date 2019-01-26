@@ -123,4 +123,12 @@ Rect.prototype.equalRect = function(otherRect) {
         this.top == otherRect.top &&
         this.bottom == otherRect.bottom)
 }
+Rect.prototype.isDegenerate = function() {
+    return (this.left == 0 &&
+        this.right == 0 &&
+        this.top == 0 &&
+        this.bottom == 0 || 
+        this.left >= this.right ||
+        this.top >= this.bottom)
+}
 

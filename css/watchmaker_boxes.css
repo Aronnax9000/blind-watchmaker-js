@@ -1,85 +1,87 @@
-
 .boxes {
 	position: relative;
 	width: 1000px;
 	height: 600px;
-    grid-template-columns: 20% 20% 20% 20% 20% ;
+	grid-template-columns: 20% 20% 20% 20% 20%;
 	display: grid;
 	grid-gap: 0px;
 	color: #000;
 }
 
 .engineeringBox {
-    cursor: url(cursor/hypodermic.png), auto;
+	cursor: url(cursor/hypodermic.png), auto;
 }
 
 .engineeringView, .engineering, .watchmakerView {
 	border: 1px black solid;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-gap: 0px;
-    color: #000;
-}
-.container {
-  width: 1000px;
-  height: 600px;
-  position: relative;
-  cursor: url(cursor/breed.png), auto;
-}
-.pedigreeDiv {
-  width: 1000px;
-  height: 600px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  cursor: url(cursor/pedigree_cursor.png), auto;
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 100%;
+	grid-gap: 0px;
+	color: #000;
 }
 
-.pedigreeBox {
-	z-index: 1
-    padding: 0px;
-    position: relative;
-    border: 1px solid black
+.container {
+	width: 1000px;
+	height: 600px;
+	position: relative;
+	cursor: url(cursor/breed.png), auto;
 }
-.pedigreeFamilialLineCanvas {
-  width: 1000px;
-  height: 600px;
-	position: absolute;
-    left: 0;
-    top: 0;
-	z-index: -10;
-}
-.pedigreeDrawOutLineDiv {
-  width: 1000px;
-  height: 600px;
-	position: absolute;
-    left: 0;
-    top: 0;
-	z-index: -10;
-}
-.pedigreeDrawOutMousingDiv {
-  width: 1000px;
-  height: 600px;
+
+.pedigreeDiv {
+	width: 1000px;
+	height: 600px;
 	position: absolute;
 	left: 0;
 	top: 0;
-    z-index: 2147483647;
+	z-index: 1;
+	cursor: url(cursor/pedigree_cursor.png), auto;
+}
+
+.pedigreeBox {
+	z-index: 1 padding: 0px;
+	position: relative;
+	border: 1px solid black
+}
+
+.pedigreeFamilialLineCanvas {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: -10;
+}
+
+.pedigreeDrawOutLineDiv {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 0;
+}
+
+.pedigreeDrawOutMousingDiv {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 2147483647;
 }
 
 .pointerEventsNone {
-    pointer-events: none;
-	
+	pointer-events: none;
 }
 
 .boxes, .overlay {
-  width: 1000px;
-  height: 600px;
-  position: absolute;
-  top: 0;
-  left: 0;
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 .overlay {
@@ -88,28 +90,27 @@
 }
 
 .underlay {
-    z-index: -1;
-	
+	z-index: -1;
 }
+
 #infoi {
-  z-index: 10;
+	z-index: 10;
 }
 
 .boxDiv {
 	height: 100%;
 	width: 100%;
-    position: relative;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    color: #000;
-	
+	position: relative;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	color: #000;
 }
 
 .box {
-    position: relative;
-    left: 0px;
-    top: 0px;
+	position: relative;
+	left: 0px;
+	top: 0px;
 	padding: 0px;
 	font-size: 150%;
 }
@@ -117,6 +118,3 @@
 .midBox {
 	border-width: 2px;
 }
-
-
-

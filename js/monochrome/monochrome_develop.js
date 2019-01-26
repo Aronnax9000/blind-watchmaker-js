@@ -63,22 +63,6 @@ Monochrome.prototype.plugIn = function(gene, dx, dy) {
 var clipBoarding = false;
 
 
-var Mode = {
-        Preliminary:1, 
-        Breeding:2, 
-        Albuming:3, 
-        Phyloging:4, 
-        Killing:5, 
-        Moving:6, 
-        Detaching:7, 
-        Randoming:8, 
-        Engineering:9, 
-        Drifting:10, 
-        Highlighting:11, 
-        PlayingBack:12, 
-        Triangling:13, 
-        Sweeping:14
-};
 
 var theMode = Mode.Breeding;
 Monochrome.prototype.develop = Biomorphs.prototype.develop;

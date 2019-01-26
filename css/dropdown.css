@@ -1,5 +1,9 @@
 
-.watchmakerMenuBar {height: 46px;}
+.watchmakerMenuBar {
+	height: 46px;
+	position: relative;
+	z-index: 2; /* Prevents overlay of popups */
+}
 
 .checked {
 }

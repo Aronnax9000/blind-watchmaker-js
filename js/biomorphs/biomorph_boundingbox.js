@@ -6,28 +6,28 @@
 
 Biomorphs.prototype.dummydraw = function() {
     var tempDrawer = this.drawer
-    this.drawer = Document.createElement('canvas')
+    this.drawer = document.createElement('canvas')
     this.develop()
     this.drawer = tempDrawer
 }
 
 Biomorphs.prototype.getWidth = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return margin.right - margin.left
 }
 Biomorphs.prototype.getHeight = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return margin.bottom - margin.top
 }
 Biomorphs.prototype.getRect = function() {
-    if(this.pic.margin == null) {
-        dummydraw()
+    if(this.pic.margin == null || this.pic.margin.isDegenerate()) {
+        this.dummydraw()
     }
     let margin = this.pic.margin
     return new Rect(0,0, margin.right - margin.left,

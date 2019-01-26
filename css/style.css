@@ -84,7 +84,17 @@ div {
 /*	height: 46px; */ /* Classic Mac menu bar height */
 }
 
+.pedigreeMorphCanvas {
+	position: absolute;
+	background-color: White;
+}
 
+.drawOutCanvas {
+    border: 1px solid black;
+    z-index: 1;
+    padding: 0px;
+    position: relative;
+}
 .about {
 	padding: 0px;
 	margin: 0px;

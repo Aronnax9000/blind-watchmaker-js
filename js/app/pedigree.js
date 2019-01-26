@@ -9,39 +9,6 @@ var Mirrors = {
         },
 }
 
-var Mode = {
-        // Values not the same as Classic Blind Watchmaker
-        Preliminary: 1, 
-        Breeding: 2, 
-        Albuming: 3, 
-        Phyloging: 4, 
-        Killing: 5, 
-        Moving: 6, 
-        Detaching: 7, 
-        Randoming: 8, 
-        Engineering: 9, 
-        Drifting: 10, 
-        Highlighting: 11, 
-        PlayingBack: 12, 
-        Triangling: 13, 
-        Sweeping: 14,
-        properties: {
-            1: {name: "Preliminary"},
-            2: {name: "Breeding"},
-            3: {name: "Albuming"},
-            4: {name: "Phyloging"},
-            5: {name: "Killing"},
-            6: {name: "Moving"},
-            7: {name: "Detaching"},
-            8: {name: "Randoming"},
-            9: {name: "Engineering"},
-            10: {name: "Drifting"},
-            11: {name: "Highlighting"},
-            12: {name: "PlayingBack"},
-            13: {name: "Triangling"},
-            14: {name: "Sweeping"},
-        },
-}
 
 
 
@@ -54,6 +21,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         species: null,
         biomorph: null,
         rootGod: null,
+        phyloging: null
     },
     viewGainedFocus: function(event) {
         let session = $(this).pedigreeView("option", "session")
@@ -61,77 +29,50 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     _create: function (options) {
         this._super()
-
+        
         $(this.element).addClass('pedigreeView')
 
+        this.options.rootGod = new God()
         this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
         let container = $("<div class='container'>")
         container.appendTo(this.element)
         let div = $("<div class='pedigreeFamilialLineCanvas'>")
-        //div.appendTo(container)
+        div.appendTo(container)
         let familialLineCanvas = $("<canvas width='1000' height='600'>")
-        //familialLineCanvas.appendTo(div)
+        familialLineCanvas.appendTo(div)
         
         div = $("<div class='pedigreeDrawOutLineDiv'>")
+        
         div.appendTo(container)
-        let drawOutCanvas = $("<canvas class='drawOutCanvas' width='1000' height='600'>")
-        drawOutCanvas.appendTo(div)
-        div = $("<div class='pedigreeDrawOutMousingDiv pointerEventsNone'>")
-        div.appendTo(container)
-        this._on(div, {
+        let canvas = $("<canvas class='drawOutCanvas' width='1000' height='600'>")
+        this.options.drawOutCanvas = canvas[0]
+        canvas.appendTo(div)
+//        let ctx = canvas[0].getContext('2d')
+//        ctx.clearRect(0,0,canvas.width, canvas.height)
+//        ctx.strokeStyle = "Black"
+//        ctx.lineWidth = 3
+//        ctx.moveTo(0,0)
+//        ctx.lineTo(100,100)
+//        ctx.stroke()
+//                
+        let biomorph = this.options.biomorph 
+        biomorph.full = new Full(biomorph)
+
+        let pedigreeDiv = $('<div class="pedigreeDiv">')
+        pedigreeDiv.addClass('boxes')
+        pedigreeDiv.appendTo(container)
+        this._on(pedigreeDiv, {
             mousedown: function(event) { this.drawoutmousedown(event) },
             mouseup: function(event) { this.drawoutmouseup(event) },
             mousemove: function(event) { this.drawoutmousemove(event) },
             mousedrag: function(event) { this.drawoutmousedrag(event) },
         })
         
-
-        
-        
-        let biomorph = this.options.biomorph 
-        biomorph.full = new Full(biomorph)
-        let biomorphWidth = biomorph.getWidth();
-        let biomorphHeight = biomorph.getHeight();
-        console.log('biomorph ' + biomorphWidth + 'x' + biomorphHeight)
-
-        let pedigreeDiv = $('<div class="pedigreeDiv">')
-        pedigreeDiv.addClass('boxes')
-        pedigreeDiv.appendTo(container)
-        
         let screenRect = pedigreeDiv[0].getBoundingClientRect()
-        let screenWidth = screenRect.width;
-        let screenHeight = screenRect.height;
-        console.log('screen ' + screenWidth + 'x' + screenHeight)
-        let left = screenWidth / 2 - biomorphWidth / 2
-        let top = screenHeight / 2 - biomorphHeight / 2;
-        console.log(left + ',' + top)
-
-        
-        
-        let canvas = $("<canvas style='position: absolute'>")
-        canvas.attr('height', Math.trunc(biomorphHeight))
-        canvas.attr('width', Math.trunc(biomorphWidth))
-        canvas.css('left', left)
-        canvas.css('top', top)
-        canvas.addClass('pedigreeBox midBox')
-        canvas.appendTo(pedigreeDiv)
-        console.log(canvas[0])
-        biomorph.drawer = canvas[0]
-        $(canvas).data('genotype', biomorph)
-        biomorph.develop()
-        this._on(canvas, {
-            mousedown: function(event) { this.morphmousedown(event) },
-            mouseup: function(event) { this.morphmouseup(event) },
-            mousemove: function(event) { this.morphmousemove(event) },
-            mousedrag: function(event) { this.morphmousedrag(event) },
-        })
-        
-
-        let ctx = drawOutCanvas[0].getContext('2d')
-        ctx.strokeStyle = '#000000'
-        ctx.moveTo(left, top)
-        ctx.lineTo(0,0)
-        ctx.stroke()
+        let x = Math.trunc(screenRect.width / 2);
+        let y = Math.trunc(screenRect.height / 2);
+        console.log(this.options.biomorph)
+        this.addone(this.options.biomorph, new Point(x, y))
 
     },
     buildMenus: function(menu) {
@@ -154,42 +95,147 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
         $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
     },
+    addone: function(biomorph, point) {
+        console.log(biomorph)
+        let biomorphWidth = biomorph.getWidth();
+        let biomorphHeight = biomorph.getHeight();
+        console.log('biomorph ' + biomorphWidth + 'x' + biomorphHeight)
+        let left = point.h - biomorphWidth / 2
+        let top = point.v - biomorphHeight / 2;
+        console.log(left + ',' + top)
+        let canvas = $("<canvas class='pedigreeMorphCanvas'>")
+        canvas.attr('height', Math.trunc(biomorphHeight))
+        canvas.attr('width', Math.trunc(biomorphWidth))
+        canvas.css('left', left)
+        canvas.css('top', top)
+        canvas.addClass('pedigreeBox midBox')
+        $(this.element).find('.pedigreeDiv').append(canvas)
+        console.log(canvas[0])
+        biomorph.drawer = canvas[0]
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        this._on(canvas, {
+            mousedown: function(event) { this.morphmousedown(event) },
+            mouseup: function(event) { this.morphmouseup(event) },
+            mousemove: function(event) { this.morphmousemove(event) },
+            mousedrag: function(event) { this.morphmousedrag(event) },
+        })
+        
+    },
+    spawnone: function(point) {
+        console.log('spawnone at ' + point.h + ',' + point.v)
+        let biomorph = $(this.options.phyloging).data('genotype')
+        let spawn = biomorph.reproduce(null)
+        biomorph.full = new Full(biomorph)
+        this.addone(spawn, point)
+    },
+    spawnmany: function(point) {
+        let target = this.options.phyloging
+        let offset = $(target).offset()
+        let pedigreeOffset = $(target).parent().offset()
+        let x = offset.left - pedigreeOffset.left + target.width / 2;
+        let y = offset.top - pedigreeOffset.top + target.height / 2;
+        let radients = this.getradiants(new Point(x,y), point, this.options.rays)
+        for(i = 0; i < this.options.rays; i++) {
+            this.spawnone(radients[i])
+        }
+        this.options.phyloging = null
+  
+    },
+    getradiants: function(from, goal, spokes) {
+        dx = goal.h - from.h;
+        dy = goal.v - from.v;
+        var here = []
+        here.push(new Point(from.h + dx, from.v + dy))
+        here.push(new Point(from.h - dx, from.v - dy))
+        here.push(new Point(from.h - dx, from.v + dy))
+        here.push(new Point(from.h + dx, from.v - dy))
+        return here
+    },
+    radiate: function(from, goal, spokes, ctx) {
+        let here = this.getradiants(from, goal, spokes)
+        for(let j = 0; j < spokes; j++) {
+            ctx.moveTo(from.h, from.v);
+            ctx.lineTo(here[j].h, here[j].v)
+        }
+    }, 
+    dragoutline: function(x,y) {
+        let canvas = this.options.drawOutCanvas
+        let parent = this.options.phyloging
+        let parentX = Number($(parent).css('left').replace('px', '')) + parent.width / 2
+        let parentY = Number($(parent).css('top').replace('px', '')) + parent.height / 2
+        let ctx = canvas.getContext('2d')
+        ctx.beginPath()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.strokeStyle = "Black"
+        ctx.lineWidth = 1
+        this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
+        ctx.closePath()
+        ctx.stroke()
+    },
+    cleardragoutline: function() {
+        let canvas = this.options.drawOutCanvas
+        let ctx = canvas.getContext('2d')
+        ctx.beginPath()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.closePath()
+    },
+    kill: function(target) {
+        $(target).remove()
+    },
     morphmousedown: function(event) {
-        console.log('morphmousedown')
+        console.log('Morph mouse down Mode ' + Mode.properties[this.options.theMode].name)
 
-        let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
+            event.stopPropagation()
+            let target = event.target
+            // Bring it to the front
+            $(this.element).find('.pedigreeDiv').append(target)
+            // User pressed on a morph. Record it as a potential parent.
             this.options.phyloging = target
-            $(target).closest('.container').find('.pedigreeDrawOutMousingDiv').removeClass('pointerEventsNone')
             console.log('phyloging with target')
             break
         case Mode.Moving:
+            $(this.element).find('.pedigreeDiv').append(event.target)
+            event.stopPropagation()
             break
         case Mode.Detaching:
+            $(this.element).find('.pedigreeDiv').append(event.target)
+            event.stopPropagation()
             break
         case Mode.Killing:
+            $(this.element).find('.pedigreeDiv').append(event.target)
+            this.kill(event.target)
+            event.stopPropagation()
             break
         }
     },
     morphmousemove: function(event) {
-        console.log('morphmousemove')
-
-        let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
+            event.stopPropagation()
+            if(this.options.phyloging != null) {
+                let target = event.target
+                let offset = $(target).offset()
+                let pedigreeOffset = $(target).parent().offset()
+                let x = offset.left - pedigreeOffset.left;
+                let y = offset.top - pedigreeOffset.top;
+                this.dragoutline(x, y)
+            }
             break
         case Mode.Moving:
+            event.stopPropagation()
             break
         case Mode.Detaching:
+            event.stopPropagation()
             break
         case Mode.Killing:
+            event.stopPropagation()
             break
         }
     },
     morphmousedrag: function(event) {
-        console.log('morphmousedrag')
-
         let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
@@ -203,14 +249,25 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         }
     },
     morphmouseup: function(event) {
-        console.log('morphmouseup')
-
         let target = event.target
+        console.log('Morph mouse up Mode ' + Mode.properties[this.options.theMode].name)
         switch(this.options.theMode) {
         case Mode.Phyloging:
-            // Let go inside morph. Don't reproduce
-            this.options.phyloging = null
-            $(target).closest('.container').find('.pedigreeDrawOutMousingDiv').addClass('pointerEventsNone')
+            event.stopPropagation()
+            if(event.target != this.options.phyloging) {
+                console.log('Spawn on top of another morph')
+                this.cleardragoutline()
+                let target = event.target
+                let offset = $(target).offset()
+                let pedigreeOffset = $(target).parent().offset()
+                let x = offset.left - pedigreeOffset.left;
+                let y = offset.top - pedigreeOffset.top;
+                this.spawnmany(new Point(x, y))
+            } else {
+                // Let go inside original morph. Don't reproduce
+                console.log('Let go inside original morph. Dont reproduce')
+                this.options.phyloging = null
+            }
 
             break
         case Mode.Moving:
@@ -235,15 +292,21 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             break
         }
     },
+    
     drawoutmouseup: function(event) {
-        console.log('drawoutmouseup')
+        console.log(Mode)
+        console.log('drawoutmouseup ' + Mode.properties[this.options.theMode].name)
         let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
+            this.cleardragoutline()
             if(this.options.phyloging != null) {
-                console.log('offspring time!')
-            }
-            $(target).addClass('pointerEventsNone')
+                console.log('draw out dropped')
+                let offset = $(event.target).offset()
+                let x = event.pageX - offset.left;
+                let y = event.pageY - offset.top;
+                this.spawnmany(new Point(x, y))
+            }            
             break
         case Mode.Moving:
             break
@@ -255,7 +318,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     drawoutmousedrag: function(event) {
         console.log('drawoutmousedrag')
-        let target = event.target
         switch(this.options.theMode) {
         case Mode.Phyloging:
             break
@@ -268,12 +330,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         }
     },
     drawoutmousemove: function(event) {
-        console.log('drawoutmousedrag')
-        let target = event.target
+        
         switch(this.options.theMode) {
         case Mode.Phyloging:
             if(this.options.phyloging != null) {
-                console.log('draw out lines time!')
+                let offset = $(event.target).offset()
+                let x = event.pageX - offset.left;
+                let y = event.pageY - offset.top;
+                this.dragoutline(x, y)
             }
             break
         case Mode.Moving:
@@ -291,15 +355,17 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let kill = $(this.element).find('.menuitemKill img')
         switch(name) {
         case 'DrawOutOffspring':
-            this.theMode = Mode.Phyloging
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Phyloging
             drawOutOffspring.css('display', 'inline-block')
             move.css('display', 'none')
             detach.css('display', 'none')
             kill.css('display', 'none')
-            $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             break
         case 'Move':
-            this.theMode = Mode.Moving
+            this.options.theMode = Mode.Moving
             drawOutOffspring.css('display', 'none')
             move.css('display', 'inline-block')
             detach.css('display', 'none')
@@ -307,20 +373,24 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             $(this.element).find('.pedigreeDiv canvas').draggable()
             break
         case 'Detach':
-            this.theMode = Mode.Detaching
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Detaching
             drawOutOffspring.css('display', 'none')
             move.css('display', 'none')
             detach.css('display', 'inline-block')
             kill.css('display', 'none')
-            $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             break
         case 'Kill':
-            this.theMode = Mode.Killing
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Killing
             drawOutOffspring.css('display', 'none')
             move.css('display', 'none')
             detach.css('display', 'none')
             kill.css('display', 'inline-block')
-            $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             break
         }
     },
