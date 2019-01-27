@@ -51,7 +51,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this.options.drawOutCanvas = canvas[0]
         canvas.appendTo(div)
         
-        let pedigreeDiv = $('<div class="pedigreeDiv">')
+        let pedigreeDiv = $('<div class="pedigreeDiv pedigreeDrawOutOffspring">')
         pedigreeDiv.addClass('boxes')
         pedigreeDiv.appendTo(container)
         this._on(pedigreeDiv, {
@@ -429,12 +429,16 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let move = $(this.element).find('.menuitemMove img')
         let detach = $(this.element).find('.menuitemDetach img')
         let kill = $(this.element).find('.menuitemKill img')
+        let pedigreeDiv = $(this.element).find('.pedigreeDiv')
         switch(name) {
         case 'DrawOutOffspring':
             if(this.options.theMode == Mode.Moving) {
                 $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             }
             this.options.theMode = Mode.Phyloging
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeDetach pedigreeMove')
+            $(pedigreeDiv).addClass('pedigreeDrawOutOffspring')
+            
             drawOutOffspring.css('display', 'inline-block')
             move.css('display', 'none')
             detach.css('display', 'none')
@@ -442,6 +446,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             break
         case 'Move':
             this.options.theMode = Mode.Moving
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeDetach pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeMove')
             drawOutOffspring.css('display', 'none')
             move.css('display', 'inline-block')
             detach.css('display', 'none')
@@ -453,6 +459,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             }
             this.options.theMode = Mode.Detaching
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeMove pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeDetach')
             drawOutOffspring.css('display', 'none')
             move.css('display', 'none')
             detach.css('display', 'inline-block')
@@ -463,6 +471,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
             }
             this.options.theMode = Mode.Killing
+            $(pedigreeDiv).removeClass('pedigreeDetach pedigreeMove pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeKill')
             drawOutOffspring.css('display', 'none')
             move.css('display', 'none')
             detach.css('display', 'none')

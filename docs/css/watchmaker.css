@@ -36,7 +36,20 @@
 	left: 0;
 	top: 0;
 	z-index: 1;
-	cursor: url(cursor/pedigree_cursor.png), auto;
+}
+
+.pedigreeMove {
+    cursor: url(cursor/pointyHand.png), auto;
+}
+
+.pedigreeDrawOutOffspring {
+    cursor: url(cursor/pedigree_cursor.png), auto;
+}
+.pedigreeDetach {
+    cursor: url(cursor/scissors.png), auto;
+}
+.pedigreeKill {
+    cursor: url(cursor/gun.png), auto;
 }
 
 .pedigreeBox {
