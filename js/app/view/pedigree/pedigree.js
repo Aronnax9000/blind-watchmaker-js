@@ -9,9 +9,6 @@ var Mirrors = {
         },
 }
 
-
-
-
 //the widget definition, where "custom" is the namespace,
 //"colorize" the widget name
 $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
@@ -83,8 +80,11 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
     },
     markIf: function(thisFull) {
+        // Remove midBox class from every canvas
         $(this.element).find('canvas').removeClass('midBox')
+        // Mark this one as special
         $(thisFull.genome.drawer).addClass('midBox')
+        $(this.element).find('.pedigreeDiv').append(thisFull.genome.drawer)
     },
     phylognew: function(biomorph) {
         let options = this.options
@@ -324,12 +324,13 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     morphmousedown: function(event) {
         // Move the selected morph to the front
-        $(this.element).find('.pedigreeDiv').append(event.target)
+        this.markIf($(event.target).data('genotype').full)
+//        $(this.element).find('.pedigreeDiv').append(event.target)
         switch(this.options.theMode) {
         case Mode.Phyloging:
             let target = event.target
             // Bring it to the front
-            $(this.element).find('.pedigreeDiv').append(target)
+//            $(this.element).find('.pedigreeDiv').append(target)
             // User pressed on a morph. Record it as a potential parent.
             this.options.phyloging = target
             break
@@ -351,7 +352,12 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 let pedigreeOffset = $(target).parent().offset()
                 let x = offset.left - pedigreeOffset.left;
                 let y = offset.top - pedigreeOffset.top;
-                this.dragoutline(x, y)
+                
+                let inneroffset = $(event.target).offset()
+                let innerx = event.pageX - offset.left;
+                let innery = event.pageY - offset.top;
+                console.log('inner ' + innerx + ',' + innery)
+                this.dragoutline(x + innerx, y + innery)
             }
         }
     },
@@ -367,8 +373,13 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 let pedigreeOffset = $(target).parent().offset()
                 let x = offset.left - pedigreeOffset.left;
                 let y = offset.top - pedigreeOffset.top;
+                let inneroffset = $(event.target).offset()
+                let innerx = event.pageX - offset.left;
+                let innery = event.pageY - offset.top;
+                console.log('inner ' + innerx + ',' + innery)
+
                 thisFull = $(target).data('genotype').full
-                this.spawnmany(thisFull, new Point(x, y))
+                this.spawnmany(thisFull, new Point(x + innerx, y + innery))
             } else {
                 // Let go inside original morph. Don't reproduce
                 this.options.phyloging = null
@@ -452,7 +463,12 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             move.css('display', 'inline-block')
             detach.css('display', 'none')
             kill.css('display', 'none')
-            $(this.element).find('.pedigreeDiv canvas').draggable()
+            let canvases = $(this.element).find('.pedigreeDiv canvas')
+            canvases.draggable()
+//            this._on(canvases, {
+//            dragstart: function(event) { this.markIf($(event.target).data('genotype').full) },
+//        })
+
             break
         case 'Detach':
             if(this.options.theMode == Mode.Moving) {
