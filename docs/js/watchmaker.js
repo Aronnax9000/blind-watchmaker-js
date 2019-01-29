@@ -202,7 +202,497 @@ jQuery.extend( jQuery.easing,
  *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
- */function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
+ */
+
+var drawCrossHairs = false;
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+
+function startAutoReproduce(canvasId, targetCanvasId) {
+    autoRunning = true;
+    doRepro(canvasId, targetCanvasId);
+    measureGenerationRate(Number(document.getElementById('generations').value));
+}
+
+function doRepro(sourceCanvas, targetCanvas) {
+    doReproduce(sourceCanvas, targetCanvas);
+    if(autoRunning)
+        setTimeout(function() { 
+            doRepro(sourceCanvas, targetCanvas)}, 
+                Number(document.getElementById("autoReproduceInterval").value));
+}
+
+function eraseCanvasNoCenter(canvas) {
+    var drawingContext = canvas.getContext("2d");
+    // Use the identity matrix while clearing the canvas
+    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    
+    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function eraseCanvas(canvas) {
+    // Store the current transformation matrix
+    //drawingContext.save();
+    var drawingContext = canvas.getContext("2d");
+    // Use the identity matrix while clearing the canvas
+    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
+//    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
+
+    if(drawCrossHairs) {
+        drawingContext.beginPath();
+        // Draw crosshairs
+        drawingContext.moveTo(-100, 0);
+        drawingContext.lineTo(100,0);
+        drawingContext.moveTo(0, -100);
+        drawingContext.lineTo(0,100);
+        drawingContext.closePath;
+        drawingContext.lineWidth = 0.5;
+        drawingContext.strokeStyle = "red";
+        drawingContext.stroke();
+    }
+}
+
+var Mode = {
+        // Values not the same as Classic Blind Watchmaker
+        Preliminary: 1, 
+        Breeding: 2, 
+        Albuming: 3, 
+        Phyloging: 4, 
+        Killing: 5, 
+        Moving: 6, 
+        Detaching: 7, 
+        Randoming: 8, 
+        Engineering: 9, 
+        Drifting: 10, 
+        Highlighting: 11, 
+        PlayingBack: 12, 
+        Triangling: 13, 
+        Sweeping: 14,
+        properties: {
+            1: {name: "Preliminary"},
+            2: {name: "Breeding"},
+            3: {name: "Albuming"},
+            4: {name: "Phyloging"},
+            5: {name: "Killing"},
+            6: {name: "Moving"},
+            7: {name: "Detaching"},
+            8: {name: "Randoming"},
+            9: {name: "Engineering"},
+            10: {name: "Drifting"},
+            11: {name: "Highlighting"},
+            12: {name: "PlayingBack"},
+            13: {name: "Triangling"},
+            14: {name: "Sweeping"},
+        },
+}
+
+
+$.widget('dawk.blindWatchmaker', {
+    options: {
+        sessionCount: 0,
+    } ,
+    _create: function () {
+        var ul = $('<ul class="watchmakerTabs"></ul>');
+        this.element.append(ul);
+        this.element.tabs({activate: this.on_activate});
+        var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
+        availableSpecies.forEach(availableSpecie => {
+            this.newWatchmakerSession(availableSpecie)
+        })
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+    },
+    on_activate: function (event, ui) {
+    },
+    raiseAlert: function() {
+    },
+    newWatchmakerSession: function(species) {
+        var index = this.options.sessionCount;
+        this.options.sessionCount++;
+        var uuid = uuidv4();
+        var sessionName = species //+ ' ' + index;
+        var newWSession = new WatchmakerSession(species)
+
+        var string = '<li>'
+        string += '<a href="#' + uuid + '">' 
+        
+        var sessionIcon = newWSession.options.sessionIcon
+        if(sessionIcon)
+            string += '<img src="' + newWSession.options.sessionIcon + '">'
+        string += sessionName + '</a>'
+//        string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.watchmakerSessionTab({
+            'session': newWSession,
+            'name': sessionName, 'blindWatchmaker': this, species: species});
+        var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+
+    },
+    closeSession: function() {
+        var selectedIndex = this.element.tabs('option', 'active');
+        var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
+        var ul = this.element.find('ul.watchmakerTabs').get(0);
+        var liToRemove = $(ul).find('li').get(selectedIndex);
+        var divToRemove = $(this.element).find('div').get(selectedIndex);
+        $(divToRemove).remove();
+        $(liToRemove).remove();
+        this.element.tabs("refresh");
+    }
+});$.widget('dawk.watchmakerSessionTab', {
+    options: {
+        species: null,
+        session: null,
+        name: 'Default Session',
+        blindWatchmaker: null
+    },
+    raiseAlert: function(newMenu) {
+        var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
+        $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
+    },
+    buildMenu: function(menuContents) {
+        var li;
+        li = $('<li><div>New Breeding</div></li>');
+        menuContents.append(li);
+        this._on(li, {click: 'newbreedingView'});
+
+        li = $('<li><div>New Engineering</div></li>');
+        menuContents.append(li);
+        this._on(li, {click: 'newengineeringView'});
+        var activeIndex = $(this.element).tabs("option", "active");
+        var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
+
+    },
+    on_activate: function (event, ui) {
+        // One of the session's views, like Breeding, has just become active.
+        var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
+//      $(parents).watchmakerView('buildMenu');
+        $(ui.newPanel).trigger('dawk:viewGainedFocus');
+    },   
+    _create: function () {
+        let options = this.options
+        var species = options.species
+        this.element.addClass('watchmakerSessionTab');
+        var ul = $('<ul class="watchmakerViewTabs"></ul>');
+        this.element.append(ul); 
+        this.element.tabs({activate: this.on_activate});
+        switch(options.session.options.defaultView) {
+        case 'Engineering':
+            this.newEngineeringView();
+            break
+        case 'Breeding':
+        default:
+            this.newBreedingView();
+        }
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+    },
+    newBreedingView: function(biomorph) {
+        var species = this.options.species
+        var uuid = uuidv4();
+        var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.breedingView({
+            session: this.options.session, 
+            watchmakerSessionTab: this, 
+            species: species,
+            biomorph: biomorph});
+        $(newTabLi).find('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+        this.element.tabs("refresh");
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+
+    },
+    newEngineeringView: function(biomorph) {
+        var uuid = uuidv4();
+        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.engineeringView({session: this.options.session, 
+            biomorph: biomorph,
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    },
+    newPedigreeView: function(biomorph) {
+        var uuid = uuidv4();
+        var viewIcon = 'img/Pedigree_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.pedigreeView({session: this.options.session, 
+            biomorph: biomorph,
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    }    
+});
+
+function WatchmakerSession(species) {
+    this.options = []
+    this.myPenSize = 1;
+    this.trianglable = false
+    this.arrayable = false
+    this.species = species
+    _speciesFactorySingleton.initializeSession(species, this)
+}
+
+WatchmakerSession.prototype.menuclick = function(event) {
+    console.log('WatchmakerSession menuclick')
+    return true
+}
+
+WatchmakerSession.prototype.buildMenus = function(menu) {
+    
+}
+
+WatchmakerSession.prototype.viewGainedFocus = function(view) {
+
+}
+$.widget('dawk.about', {
+    options: {
+        slides: [
+            ['About Blind Watchmaker', 'img/AboutBlindWatchmaker_PICT_26817_459x287.png', 459, 287],
+            ['About Colour Watchmaker', 'img/AboutColourWatchmaker_PICT_00257_486x352.png', 486, 352],
+            ['About Arthromorphs', 'img/AboutArthromorphs284x136.png', 284, 136],
+            ['About Blind Watchmaker Suite', 'img/AboutWatchmakerJS468x352.png', 468, 352]
+            
+        ],
+        index: 0,
+    },
+    _create: function() {
+        let slides = this.options.slides
+        let index = this.options.index
+        let img = $('<img>')
+        $(img).attr('src', slides[index][1])
+        let dialogdiv = $('<div>')
+        $(dialogdiv).addClass('aboutnomarginymcboatface')
+        $(dialogdiv).attr('title', slides[index][0])
+        $(dialogdiv).append(img)
+        $(dialogdiv).dialog({
+            width: slides[index][2] + 38, 
+            height: slides[index][3] + 52,
+            classes: 
+            {
+                "ui-dialog": "about",
+            },
+            modal: true,
+            appendTo: this.options.appendTo
+        })
+    }
+})/* 
+ * QuickDraw style point, with h (horizontal) and v (vertical) 
+ */
+function Point(x,y) {
+    this.h = x;
+    this.v = y;
+}
+
+Point.prototype.toString = function() {
+    return "(" + this.h + "," + this.v + ")";
+}
+
+Point.prototype.copy = function() {
+    var child = new Point(this.h, this.v);
+    return child;
+}
+
+function Rect() {
+    this.left = 0
+    this.right = 0
+    this.top = 0
+    this.bottom = 0
+}
+
+/*
+ * QuickDraw style Rect, with left, right, top and bottom
+ */
+function Rect(left, top, right, bottom) {
+    
+    if(left) {
+        this.left = left;
+    } else {
+        this.left = 0;
+    }
+    if(right) {
+        this.right = right;
+    } else {
+        this.right = 0;
+    }
+    if(top) {
+        this.top = top;
+    } else {
+        this.top = 0;
+    }
+    if(bottom) {
+        this.bottom = bottom;
+    } else {
+        this.bottom = 0;
+    }
+}
+
+
+
+Rect.prototype.toString = function() {
+    return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
+}
+
+Rect.prototype.setRect = function(left, top, right, bottom) {
+    this.left = left;
+    this.right = right;
+    this.top = top;
+    this.bottom = bottom;
+}
+
+Rect.prototype.ptInRect = function(pt) {
+    return (pt.h >= this.left 
+            && pt.h <= this.right 
+            && pt.v >= this.top
+            && pt.v <= this.bottom)
+}
+
+//FUNCTION SectRect (srcl,src2: Rect; VAR dstRect: Rect) : BOOLEAN;
+//SectRect calculates the rectangle that's the intersection of the two given rectangles, and returns
+//TRUE if they indeed intersect or FALSE if they don't. Rectangles that "touch" at a line or a point
+//are not considered intersecting, because their intersection rectangle (actually, in this case, an
+//intersection line or point) doesn't enclose any bits in the bit image.
+//If the rectangles don't intersect, the destination rectangle is set to (0,0)(0,0). SectRect works
+//correctly even if one of the source rectangles is also the destination
+Rect.prototype.sectRect = function(otherRect, destRect) {
+    let x5 = max(this.left, otherRect.left);
+    let y5 = max(this.top, otherRect.top);
+    let x6 = min(this.right, otherRect.right);
+    let y6 = min(this.bottom, otherRect.bottom);
+    if(x5 >= x6 || y5 >= y6) {
+        destRect.left = 0
+        destRect.top = 0
+        destRect.right = 0
+        destRect.bottom = 0
+        return false
+    } else {
+        destRect.left = x5
+        destRect.top = y5
+        destRect.right = x6
+        destRect.bottom = y6
+        return true
+    }
+}
+
+//PROCEDURE InsetRect (VAR r: Rect; dh,dv: INTEGER);
+//InsetRect shrinks or expands the given rectangle. The left and right sides are moved in by the
+//amount specified by dh; the top and bottom are moved toward the center by the amount specified
+//by dv. If dh or dv is negative, the appropriate pair of sides is moved outward instead of inward.
+//The effect is to alter the size by 2*dh horizontally and 2*dv vertically, with the rectangle
+//remaining centered in the same place on the coordinate plane.
+//If the resulting width or height becomes less than 1, the rectangle is set to the empty rectangle
+//(0,0)(0,0). 
+Rect.prototype.insetRect = function(dh, dv) {
+    this.left += dh
+    this.right -= dh
+    this.top += dv
+    this.bottom -= dv
+    if(this.left >= this.right || this.top >= this.bottom) {
+        this.left = 0
+        this.top = 0
+        this.right = 0
+        this.bottom = 0
+    }
+}
+
+Rect.prototype.equalRect = function(otherRect) {
+    return (this.left == otherRect.left &&
+        this.right == otherRect.right &&
+        this.top == otherRect.top &&
+        this.bottom == otherRect.bottom)
+}
+Rect.prototype.isDegenerate = function() {
+    return (this.left == 0 &&
+        this.right == 0 &&
+        this.top == 0 &&
+        this.bottom == 0 || 
+        this.left >= this.right ||
+        this.top >= this.bottom)
+}
+
+
+
+function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
 }
 
@@ -632,6 +1122,317 @@ function SVGDrawer(drawingObject) {
 _drawerFactorySingleton.registerDrawerType("svg", (
         function(drawingObject) { 
             return new SVGDrawer(drawingObject);}));
+$.widget('dawk.sub_menu', {
+    options: {
+        title: ''
+    },
+    _create: function() {
+        let title = this.options.title
+        $(this.element).addClass('menu' + title)
+        $(this.element).append(
+                $('<a>').text(title),
+                $('<ul>').addClass('sub_menu')
+        )
+    },
+    appendcheckboxmenuitem: function(title, menuid, hidden) {
+        let a = this.appendmenuitem(title, menuid, hidden).children('a').get(0)
+        let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
+        checkbox.prependTo(a)
+    },
+    appendmenuitem: function(title, menuid, hidden) {
+        let li = $('<li>')
+        li.addClass('menuitem' + menuid)
+        if(hidden) {
+            $(li).css('display','none')
+        }
+        let a = $('<a>' + title + '</a>')
+        li.append(a)
+        $(a).data('menuid', menuid)
+        this._on(a, {'click': function (event){
+            this.menuclick(event)}})
+            $(this.element).find('> ul').append(li);
+        return li
+    },
+    menuclick: function(event) {
+        $(this.element).closest('.watchmakerMenuBar').dropdownmenu('menuclick', event)
+    }
+
+})
+
+$.widget('dawk.filemenu', $.dawk.sub_menu, {
+    options: {
+        title: 'File'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Load to Album... (L)', 'LoadToAlbum')
+        this.appendmenuitem('Load as Fossils... (O)', 'LoadAsFossils')
+        this.appendmenuitem('Save Biomorph...', 'SaveBiomorph')
+        this.appendmenuitem('Save Fossils... (F)', 'SaveFossils')
+        this.appendmenuitem('Save Album... (S)', 'SaveAlbum')
+        this.appendmenuitem('Close Album (W)', 'CloseAlbum')
+        this.appendmenuitem('Timing', 'Timing')
+        this.appendmenuitem('Quit (Q)', 'Quit')
+    }
+})
+
+$.widget('dawk.editmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Edit'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Undo (Z)', 'Undo')
+        this.appendmenuitem('----')
+        this.appendmenuitem('Cut (X)', 'Cut')
+        this.appendmenuitem('Copy (C)', 'Copy')
+        this.appendmenuitem('Paste (V)', 'Paste')
+        this.appendmenuitem('Clear', 'Clear')
+        this.appendmenuitem('----')
+        this.appendmenuitem('Highlight Biomorph', 'HighlightBiomorph')
+        this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
+        this.appendmenuitem('Show Album', 'ShowAlbum')
+    }
+})
+
+$.widget('dawk.operationmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Operation'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Breed (B)', 'Breed')
+        this.appendmenuitem('Drift (D)', 'Drift')
+        this.appendmenuitem('Engineering (E)', 'Engineering')
+        this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
+        this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
+        this.appendmenuitem('Play Back Fossils', 'PlayBackFossils')
+        this.appendmenuitem('Recording Fossils (R)', 'RecordingFossils')
+        if(this.options.session.trianglable) {
+            this.appendmenuitem('Triangle (T)', 'Triangle')
+        }
+        if(this.options.session.arrayable) {
+            this.appendmenuitem('Array', 'Array')
+        }
+    }
+})
+
+$.widget('dawk.animalmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Animal'
+    },
+    _create: function() {
+        this._super();
+        let basicTypes = this.options.session.options.basicTypes
+        for(let i = 0; i < basicTypes.length; i++) {
+            this.appendmenuitem(basicTypes[i], 'Animal' + basicTypes[i])
+        }
+    }
+})
+
+$.widget('dawk.viewmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'View'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('More Rows', 'MoreRows')
+        this.appendmenuitem('Fewer Rows', 'FewerRows')
+        this.appendmenuitem('More Columns','MoreColumns')
+        this.appendmenuitem('Fewer Columns','FewerColumns')
+        this.appendmenuitem('Thicker Pen','ThickerPen')
+        this.appendmenuitem('Thinner Pen','ThinnerPen')
+        this.appendmenuitem('Drift Sweep','DriftSweep')
+        if(this.options.session.trianglable) {
+            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
+            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTtriangle')
+        }
+    }
+})
+
+
+$.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Pedigree'
+    },
+    _create: function() {
+        this._super();
+        $(this).addClass('pedigreeMenu')
+        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
+        this.appendmenuitem('----', 'PedigreeSep', true)
+        this.appendcheckboxmenuitem('Draw Out Offspring (2)','DrawOutOffspring', true)
+        this.appendcheckboxmenuitem('No Mirrors (3)','NoMirrors', true)
+        this.appendcheckboxmenuitem('Single Mirror (4)','SingleMirror', true)
+        this.appendcheckboxmenuitem('Double Mirror (5)','DoubleMirror', true)
+        this.appendmenuitem('----', 'PedigreeSep', true)
+        this.appendcheckboxmenuitem('Move (6)','Move', true)
+        this.appendcheckboxmenuitem('Detach (7)','Detach', true)
+        this.appendcheckboxmenuitem('Kill (8)','Kill', true)
+    }
+})
+
+$.widget('dawk.helpmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Help'
+    },
+    _create: function() {
+        this._super();
+        this.appendmenuitem('Help with current operation', 'HelpWithCurrentOperation')
+        this.appendmenuitem('Miscellaneous Help', 'MiscellaneousHelp')
+        this.appendmenuitem('About Classic Blind Watchmaker', 'AboutClassicBlindWatchmaker')
+        this.appendmenuitem('About Classic Exhibition Colour', 'AboutClassicExhibitionColour')
+        this.appendmenuitem('About Classic Arthomorphs', 'AboutClassicArthromorphs')
+        this.appendmenuitem('About WatchmakerJS', 'AboutWatchmakerJS')
+        this.appendmenuitem('Donate', 'Donate')
+    }
+})
+
+$.widget('dawk.dropdownmenu', {
+    options: {
+        session: null
+    },
+    _create: function() {
+        let menu = $('<ul>').addClass('sm sm-watchmaker')
+        menu.appendTo(this.element)
+        $("<li>").filemenu({session: this.options.session}).appendTo(menu)
+        $("<li>").editmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").pedigreemenu({session: this.options.session}).appendTo(menu)
+        $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
+        this.options.session.buildMenus(menu)
+        menu.smartmenus()
+    },
+    appendsubmenu: function(title) {
+        let sub_menu = $('<li>').sub_menu({title: title})
+        $(this.element).find('> ul').append(sub_menu)
+        return sub_menu
+    },
+    menuclick: function(event) {
+        this.options.menuHandler.menuclick(event)
+    }
+})
+
+$.widget('dawk.watchmakerView', {
+    options: {
+        session: null,
+    },
+    _create: function() {
+        $(this.element).addClass('watchmakerView')
+        this.buildMenus()
+
+    },
+    buildMenus: function() {
+        let menubar = $('<div class="watchmakerMenuBar"></div>')
+        $(menubar).appendTo(this.element)
+        let menuHandler = new MenuHandler(this.options.session)
+        this.options.menuHandler = menuHandler
+
+        $(menubar).dropdownmenu({menuHandler: menuHandler,
+            session: this.options.session});
+
+        $(menubar).find("ul.dropdown li").hover(function(){
+
+            $(this).addClass("hover");
+            $('ul:first',this).css('visibility', 'visible');
+
+        }, function(){
+
+            $(this).removeClass("hover");
+            $('ul:first',this).css('visibility', 'hidden');
+
+        });
+
+        $(menubar).find("ul.dropdown li ul li:has(ul)").find("a:first").append(" &raquo; ");
+
+    },
+    _init: function() {
+        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
+    },
+    viewGainedFocus: function(event) {
+    },
+
+})
+
+function MenuHandler(session) {
+    this.session = session
+    this.nextMenuHandler = null
+}
+
+MenuHandler.prototype.menuclick = function(event) {
+    console.log('Menuhandler menuclick')
+    let result = this.session.menuclick(event)
+    console.log(result)
+    if(result) {
+        let menuid = $(event.target).data('menuid')
+        let target = event.target
+        console.log('WatchmakerView menu ' + menuid)
+        if(menuid.startsWith('Animal')) {
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
+            console.log(midCanvas)
+            eraseCanvas(midCanvas)
+            var biomorph = $(midCanvas).data('genotype')
+            biomorph.doPerson(menuid.substring(6))
+            biomorph.develop()
+            return false
+        }
+        switch(menuid) {
+        case 'Breed': 
+            console.log('Breeding')
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph);
+            return false
+        case 'Engineering':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph);
+            return false
+        case 'DisplayPedigree':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newPedigreeView", biomorph);
+            return false
+        case 'HopefulMonster':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            console.log(this.session.options.hopefulMonsterBasicType)
+            biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
+            biomorph.develop()
+            return false
+        case 'AboutClassicBlindWatchmaker':
+            $("<div>").about({index:0, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicExhibitionColour':
+            $("<div>").about({index:1, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicArthromorphs':
+            $("<div>").about({index:2, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutWatchmakerJS':
+            $("<div>").about({index:3, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'Donate':
+            document.location = 'https://alancanon.net/donate' 
+            return false
+        }
+        // Do generic stuff here
+        // Then call view-specific handler
+        if(this.nextMenuHandler) {
+            this.nextMenuHandler.menuclick(event)
+        }
+        return true;
+    }
+}
+
 var stillBreeding = false;
 
 $( function() {
@@ -904,551 +1705,6 @@ $( function() {
         }
     });
 } );
-/* 
- * QuickDraw style point, with h (horizontal) and v (vertical) 
- */
-function Point(x,y) {
-    this.h = x;
-    this.v = y;
-}
-
-Point.prototype.toString = function() {
-    return "(" + this.h + "," + this.v + ")";
-}
-
-Point.prototype.copy = function() {
-    var child = new Point(this.h, this.v);
-    return child;
-}
-
-function Rect() {
-    this.left = 0
-    this.right = 0
-    this.top = 0
-    this.bottom = 0
-}
-
-/*
- * QuickDraw style Rect, with left, right, top and bottom
- */
-function Rect(left, top, right, bottom) {
-    
-    if(left) {
-        this.left = left;
-    } else {
-        this.left = 0;
-    }
-    if(right) {
-        this.right = right;
-    } else {
-        this.right = 0;
-    }
-    if(top) {
-        this.top = top;
-    } else {
-        this.top = 0;
-    }
-    if(bottom) {
-        this.bottom = bottom;
-    } else {
-        this.bottom = 0;
-    }
-}
-
-
-
-Rect.prototype.toString = function() {
-    return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
-}
-
-Rect.prototype.setRect = function(left, top, right, bottom) {
-    this.left = left;
-    this.right = right;
-    this.top = top;
-    this.bottom = bottom;
-}
-
-Rect.prototype.ptInRect = function(pt) {
-    return (pt.h >= this.left 
-            && pt.h <= this.right 
-            && pt.v >= this.top
-            && pt.v <= this.bottom)
-}
-
-//FUNCTION SectRect (srcl,src2: Rect; VAR dstRect: Rect) : BOOLEAN;
-//SectRect calculates the rectangle that's the intersection of the two given rectangles, and returns
-//TRUE if they indeed intersect or FALSE if they don't. Rectangles that "touch" at a line or a point
-//are not considered intersecting, because their intersection rectangle (actually, in this case, an
-//intersection line or point) doesn't enclose any bits in the bit image.
-//If the rectangles don't intersect, the destination rectangle is set to (0,0)(0,0). SectRect works
-//correctly even if one of the source rectangles is also the destination
-Rect.prototype.sectRect = function(otherRect, destRect) {
-    let x5 = max(this.left, otherRect.left);
-    let y5 = max(this.top, otherRect.top);
-    let x6 = min(this.right, otherRect.right);
-    let y6 = min(this.bottom, otherRect.bottom);
-    if(x5 >= x6 || y5 >= y6) {
-        destRect.left = 0
-        destRect.top = 0
-        destRect.right = 0
-        destRect.bottom = 0
-        return false
-    } else {
-        destRect.left = x5
-        destRect.top = y5
-        destRect.right = x6
-        destRect.bottom = y6
-        return true
-    }
-}
-
-//PROCEDURE InsetRect (VAR r: Rect; dh,dv: INTEGER);
-//InsetRect shrinks or expands the given rectangle. The left and right sides are moved in by the
-//amount specified by dh; the top and bottom are moved toward the center by the amount specified
-//by dv. If dh or dv is negative, the appropriate pair of sides is moved outward instead of inward.
-//The effect is to alter the size by 2*dh horizontally and 2*dv vertically, with the rectangle
-//remaining centered in the same place on the coordinate plane.
-//If the resulting width or height becomes less than 1, the rectangle is set to the empty rectangle
-//(0,0)(0,0). 
-Rect.prototype.insetRect = function(dh, dv) {
-    this.left += dh
-    this.right -= dh
-    this.top += dv
-    this.bottom -= dv
-    if(this.left >= this.right || this.top >= this.bottom) {
-        this.left = 0
-        this.top = 0
-        this.right = 0
-        this.bottom = 0
-    }
-}
-
-Rect.prototype.equalRect = function(otherRect) {
-    return (this.left == otherRect.left &&
-        this.right == otherRect.right &&
-        this.top == otherRect.top &&
-        this.bottom == otherRect.bottom)
-}
-Rect.prototype.isDegenerate = function() {
-    return (this.left == 0 &&
-        this.right == 0 &&
-        this.top == 0 &&
-        this.bottom == 0 || 
-        this.left >= this.right ||
-        this.top >= this.bottom)
-}
-
-
-
-function SpeciesFactory() {
-    this.constructorFunctions = {}
-    this.sessionInitializers = {}
-    this.geneboxesWidgets = {}
-    this.geneboxesCallbacks = {}
-    this.concoctors = {}
-}
-
-SpeciesFactory.prototype.registerSpeciesType = function(speciesType, 
-        constructorFunction, 
-        sessionInitializer,
-        geneboxesWidget,
-        geneboxesCallback) {
-    this.constructorFunctions[speciesType] = constructorFunction
-    this.sessionInitializers[speciesType] = sessionInitializer
-    this.geneboxesWidgets[speciesType] = geneboxesWidget
-    this.geneboxesCallbacks[speciesType] = geneboxesCallback
-//    console.log("Registered Species Type " + speciesType)
-}
-
-SpeciesFactory.prototype.getRegisteredSpecies = function() {
-    return Object.keys(this.constructorFunctions)
-}
-
-SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canvas) {
-    var species = null;
-    try {
-        species = this.constructorFunctions[speciesFactoryType](session, canvas)
-    } catch (err) {
-        console.error(err)
-        console.error("SpeciesFactory can't find a registered species for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
-        console.error('session')
-        console.error(session)
-        console.error('drawer')
-        console.error(drawer)
-        console.error('geneboxes')
-        console.error(geneboxes)
-
-    }
-    if(species != null)
-        return species;
-}
-SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
-    var species = null;
-    try {
-        species = this.sessionInitializers[speciesFactoryType](session);
-    } catch (err) {
-        console.error("SpeciesFactory can't find a registered session initializer for type '" 
-                + speciesFactoryType + "'. Valid values are " + 
-                Object.keys(this.sessionInitializers));
-        console.error(err);
-    }
-    if(species != null)
-        return species;
-}
-
-SpeciesFactory.prototype.geneboxes = function(speciesFactoryType, 
-        geneboxes, geneboxes_options) {
-    var species = null;
-    try {
-        species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
-    } catch (err) {
-        console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType 
-                + "'. Valid values are " + Object.keys(this.geneboxesWidgets))
-        console.error(err);
-    }
-    if(species != null) {
-        return species;
-    }
-}
-
-SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType, 
-        geneboxes, canvas) {
-    var species = null;
-    try {
-        species = this.geneboxesCallbacks[speciesFactoryType](geneboxes, canvas);
-    } catch (err) {
-        console.error("SpeciesFactory can't find a registered geneboxes callback for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
-        console.error(err);
-    }
-    if(species != null) {
-        return species
-    }
-}
-
-var _speciesFactorySingleton = new SpeciesFactory();
-
-
-var drawCrossHairs = false;
-
-function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
-  }
-
-
-function startAutoReproduce(canvasId, targetCanvasId) {
-    autoRunning = true;
-    doRepro(canvasId, targetCanvasId);
-    measureGenerationRate(Number(document.getElementById('generations').value));
-}
-
-function doRepro(sourceCanvas, targetCanvas) {
-    doReproduce(sourceCanvas, targetCanvas);
-    if(autoRunning)
-        setTimeout(function() { 
-            doRepro(sourceCanvas, targetCanvas)}, 
-                Number(document.getElementById("autoReproduceInterval").value));
-}
-
-function eraseCanvasNoCenter(canvas) {
-    var drawingContext = canvas.getContext("2d");
-    // Use the identity matrix while clearing the canvas
-    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    
-    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function eraseCanvas(canvas) {
-    // Store the current transformation matrix
-    //drawingContext.save();
-    var drawingContext = canvas.getContext("2d");
-    // Use the identity matrix while clearing the canvas
-    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    drawingContext.clearRect(0, 0, canvas.width, canvas.height);
-//    drawingContext.translate(canvas.width / 2 + 0.5, canvas.height / 2 + 0.5);
-
-    if(drawCrossHairs) {
-        drawingContext.beginPath();
-        // Draw crosshairs
-        drawingContext.moveTo(-100, 0);
-        drawingContext.lineTo(100,0);
-        drawingContext.moveTo(0, -100);
-        drawingContext.lineTo(0,100);
-        drawingContext.closePath;
-        drawingContext.lineWidth = 0.5;
-        drawingContext.strokeStyle = "red";
-        drawingContext.stroke();
-    }
-}
-
-var Mode = {
-        // Values not the same as Classic Blind Watchmaker
-        Preliminary: 1, 
-        Breeding: 2, 
-        Albuming: 3, 
-        Phyloging: 4, 
-        Killing: 5, 
-        Moving: 6, 
-        Detaching: 7, 
-        Randoming: 8, 
-        Engineering: 9, 
-        Drifting: 10, 
-        Highlighting: 11, 
-        PlayingBack: 12, 
-        Triangling: 13, 
-        Sweeping: 14,
-        properties: {
-            1: {name: "Preliminary"},
-            2: {name: "Breeding"},
-            3: {name: "Albuming"},
-            4: {name: "Phyloging"},
-            5: {name: "Killing"},
-            6: {name: "Moving"},
-            7: {name: "Detaching"},
-            8: {name: "Randoming"},
-            9: {name: "Engineering"},
-            10: {name: "Drifting"},
-            11: {name: "Highlighting"},
-            12: {name: "PlayingBack"},
-            13: {name: "Triangling"},
-            14: {name: "Sweeping"},
-        },
-}
-
-
-$.widget('dawk.blindWatchmaker', {
-    options: {
-        sessionCount: 0,
-    } ,
-    _create: function () {
-        var ul = $('<ul class="watchmakerTabs"></ul>');
-        this.element.append(ul);
-        this.element.tabs({activate: this.on_activate});
-        var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
-        availableSpecies.forEach(availableSpecie => {
-            this.newWatchmakerSession(availableSpecie)
-        })
-        this.element.tabs('option', 'active', 0);
-        this.element.tabs("refresh");
-    },
-    on_activate: function (event, ui) {
-    },
-    raiseAlert: function() {
-    },
-    newWatchmakerSession: function(species) {
-        var index = this.options.sessionCount;
-        this.options.sessionCount++;
-        var uuid = uuidv4();
-        var sessionName = species //+ ' ' + index;
-        var newWSession = new WatchmakerSession(species)
-
-        var string = '<li>'
-        string += '<a href="#' + uuid + '">' 
-        
-        var sessionIcon = newWSession.options.sessionIcon
-        if(sessionIcon)
-            string += '<img src="' + newWSession.options.sessionIcon + '">'
-        string += sessionName 
-        + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-        var newTabLi = $(string);
-        var ul = this.element.find('ul').get(0);
-        $(ul).append(newTabLi);
-        var div = $('<div id="' + uuid + '"></div>');
-        this.element.append(div);
-        div.watchmakerSessionTab({
-            'session': newWSession,
-            'name': sessionName, 'blindWatchmaker': this, species: species});
-        var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-
-    },
-    closeSession: function() {
-        var selectedIndex = this.element.tabs('option', 'active');
-        var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
-        var ul = this.element.find('ul.watchmakerTabs').get(0);
-        var liToRemove = $(ul).find('li').get(selectedIndex);
-        var divToRemove = $(this.element).find('div').get(selectedIndex);
-        $(divToRemove).remove();
-        $(liToRemove).remove();
-        this.element.tabs("refresh");
-    }
-});$.widget('dawk.watchmakerSessionTab', {
-    options: {
-        species: null,
-        session: null,
-        name: 'Default Session',
-        blindWatchmaker: null
-    },
-    raiseAlert: function(newMenu) {
-        var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
-        $(blindWatchmaker.element).blindWatchmaker('raiseAlert');
-    },
-    buildMenu: function(menuContents) {
-        var li;
-        li = $('<li><div>New Breeding</div></li>');
-        menuContents.append(li);
-        this._on(li, {click: 'newbreedingView'});
-
-        li = $('<li><div>New Engineering</div></li>');
-        menuContents.append(li);
-        this._on(li, {click: 'newengineeringView'});
-        var activeIndex = $(this.element).tabs("option", "active");
-        var activeView = $(this.element).find('.watchmakerView').get(activeIndex);
-
-    },
-    on_activate: function (event, ui) {
-        // One of the session's views, like Breeding, has just become active.
-        var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
-//      $(parents).watchmakerView('buildMenu');
-        $(ui.newPanel).trigger('dawk:viewGainedFocus');
-    },   
-    _create: function () {
-        let options = this.options
-        var species = options.species
-        this.element.addClass('watchmakerSessionTab');
-        var ul = $('<ul class="watchmakerViewTabs"></ul>');
-        this.element.append(ul); 
-        this.element.tabs({activate: this.on_activate});
-        switch(options.session.options.defaultView) {
-        case 'Engineering':
-            this.newEngineeringView();
-            break
-        case 'Breeding':
-        default:
-            this.newBreedingView();
-        }
-        this.element.tabs('option', 'active', 0);
-        this.element.tabs("refresh");
-    },
-    newBreedingView: function(biomorph) {
-        var species = this.options.species
-        var uuid = uuidv4();
-        var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
-            + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-        var newTabLi = $(string);
-        var ul = this.element.find('ul').get(0);
-        $(ul).append(newTabLi);
-        var div = $('<div id="' + uuid + '"></div>');
-        this.element.append(div);
-        div.breedingView({
-            session: this.options.session, 
-            watchmakerSessionTab: this, 
-            species: species,
-            biomorph: biomorph});
-        $(newTabLi).find('.ui-closable-tab').click(
-                function() {
-                    var tabContainerDiv = $(this).closest(".ui-tabs")
-                    .attr("id");
-                    var panelId = $(this).closest("li").remove().attr(
-                    "aria-controls");
-                    $("#" + panelId).remove();
-                    $("#" + tabContainerDiv).tabs("refresh");
-                    var tabCount = $("#" + tabContainerDiv).find(
-                    ".ui-closable-tab").length;
-                    if (tabCount < 1) {
-                        $("#" + tabContainerDiv).hide();
-                    }
-                });    
-        this.element.tabs("refresh");
-        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-
-    },
-    newEngineeringView: function(biomorph) {
-        var uuid = uuidv4();
-        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
-            + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-        var newTabLi = $(string);
-        var ul = this.element.find('ul').get(0);
-        $(ul).append(newTabLi);
-        var div = $('<div id="' + uuid + '"></div>');
-        this.element.append(div);
-        div.engineeringView({session: this.options.session, 
-            biomorph: biomorph,
-            watchmakerSessionTab: this});
-        $('.ui-closable-tab').click(
-                function() {
-                    var tabContainerDiv = $(this).closest(".ui-tabs")
-                    .attr("id");
-                    var panelId = $(this).closest("li").remove().attr(
-                    "aria-controls");
-                    $("#" + panelId).remove();
-                    $("#" + tabContainerDiv).tabs("refresh");
-                    var tabCount = $("#" + tabContainerDiv).find(
-                    ".ui-closable-tab").length;
-                    if (tabCount < 1) {
-                        $("#" + tabContainerDiv).hide();
-                    }
-                });    
-
-        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-    },
-    newPedigreeView: function(biomorph) {
-        var uuid = uuidv4();
-        var viewIcon = 'img/Pedigree_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
-            + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-        var newTabLi = $(string);
-        var ul = this.element.find('ul').get(0);
-        $(ul).append(newTabLi);
-        var div = $('<div id="' + uuid + '"></div>');
-        this.element.append(div);
-        div.pedigreeView({session: this.options.session, 
-            biomorph: biomorph,
-            watchmakerSessionTab: this});
-        $('.ui-closable-tab').click(
-                function() {
-                    var tabContainerDiv = $(this).closest(".ui-tabs")
-                    .attr("id");
-                    var panelId = $(this).closest("li").remove().attr(
-                    "aria-controls");
-                    $("#" + panelId).remove();
-                    $("#" + tabContainerDiv).tabs("refresh");
-                    var tabCount = $("#" + tabContainerDiv).find(
-                    ".ui-closable-tab").length;
-                    if (tabCount < 1) {
-                        $("#" + tabContainerDiv).hide();
-                    }
-                });    
-
-        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-    }    
-});
-
-function WatchmakerSession(species) {
-    this.options = []
-    this.myPenSize = 1;
-    this.trianglable = false
-    this.arrayable = false
-    this.species = species
-    _speciesFactorySingleton.initializeSession(species, this)
-}
-
-WatchmakerSession.prototype.menuclick = function(event) {
-    console.log('WatchmakerSession menuclick')
-    return true
-}
-
-WatchmakerSession.prototype.buildMenus = function(menu) {
-    
-}
-
-WatchmakerSession.prototype.viewGainedFocus = function(view) {
-
-}
 function Breeding() {}
 
 Breeding.createTimingDialog = function(appendTo, positionOf)  {
@@ -1498,302 +1754,6 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
     console.log(div)
 
     return div
-}
-
-$.widget('dawk.sub_menu', {
-    options: {
-        title: ''
-    },
-    _create: function() {
-        let title = this.options.title
-        $(this.element).addClass('menu' + title)
-        $(this.element).append(
-                $('<a>').text(title),
-                $('<ul>').addClass('sub_menu')
-        )
-    },
-    appendcheckboxmenuitem: function(title, menuid, hidden) {
-        let a = this.appendmenuitem(title, menuid, hidden).children('a').get(0)
-        let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
-        checkbox.prependTo(a)
-    },
-    appendmenuitem: function(title, menuid, hidden) {
-        let li = $('<li>')
-        li.addClass('menuitem' + menuid)
-        if(hidden) {
-            $(li).css('display','none')
-        }
-        let a = $('<a>' + title + '</a>')
-        li.append(a)
-        $(a).data('menuid', menuid)
-        this._on(a, {'click': function (event){
-            this.menuclick(event)}})
-            $(this.element).find('> ul').append(li);
-        return li
-    },
-    menuclick: function(event) {
-        $(this.element).closest('.watchmakerMenuBar').dropdownmenu('menuclick', event)
-    }
-
-})
-
-$.widget('dawk.filemenu', $.dawk.sub_menu, {
-    options: {
-        title: 'File'
-    },
-    _create: function() {
-        this._super();
-        this.appendmenuitem('Load to Album... (L)', 'LoadToAlbum')
-        this.appendmenuitem('Load as Fossils... (O)', 'LoadAsFossils')
-        this.appendmenuitem('Save Biomorph...', 'SaveBiomorph')
-        this.appendmenuitem('Save Fossils... (F)', 'SaveFossils')
-        this.appendmenuitem('Save Album... (S)', 'SaveAlbum')
-        this.appendmenuitem('Close Album (W)', 'CloseAlbum')
-        this.appendmenuitem('Timing', 'Timing')
-        this.appendmenuitem('Quit (Q)', 'Quit')
-    }
-})
-
-$.widget('dawk.editmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Edit'
-    },
-    _create: function() {
-        this._super();
-        this.appendmenuitem('Undo (Z)', 'Undo')
-        this.appendmenuitem('----')
-        this.appendmenuitem('Cut (X)', 'Cut')
-        this.appendmenuitem('Copy (C)', 'Copy')
-        this.appendmenuitem('Paste (V)', 'Paste')
-        this.appendmenuitem('Clear', 'Clear')
-        this.appendmenuitem('----')
-        this.appendmenuitem('Highlight Biomorph', 'HighlightBiomorph')
-        this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
-        this.appendmenuitem('Show Album', 'ShowAlbum')
-    }
-})
-
-$.widget('dawk.operationmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Operation'
-    },
-    _create: function() {
-        this._super();
-        this.appendmenuitem('Breed (B)', 'Breed')
-        this.appendmenuitem('Drift (D)', 'Drift')
-        this.appendmenuitem('Engineering (E)', 'Engineering')
-        this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
-        this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
-        this.appendmenuitem('Play Back Fossils', 'PlayBackFossils')
-        this.appendmenuitem('Recording Fossils (R)', 'RecordingFossils')
-        if(this.options.session.trianglable) {
-            this.appendmenuitem('Triangle (T)', 'Triangle')
-        }
-        if(this.options.session.arrayable) {
-            this.appendmenuitem('Array', 'Array')
-        }
-    }
-})
-
-$.widget('dawk.animalmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Animal'
-    },
-    _create: function() {
-        this._super();
-        let basicTypes = this.options.session.options.basicTypes
-        for(let i = 0; i < basicTypes.length; i++) {
-            this.appendmenuitem(basicTypes[i], 'Animal' + basicTypes[i])
-        }
-    }
-})
-
-$.widget('dawk.viewmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'View'
-    },
-    _create: function() {
-        this._super();
-        this.appendmenuitem('More Rows', 'MoreRows')
-        this.appendmenuitem('Fewer Rows', 'FewerRows')
-        this.appendmenuitem('More Columns','MoreColumns')
-        this.appendmenuitem('Fewer Columns','FewerColumns')
-        this.appendmenuitem('Thicker Pen','ThickerPen')
-        this.appendmenuitem('Thinner Pen','ThinnerPen')
-        this.appendmenuitem('Drift Sweep','DriftSweep')
-        if(this.options.session.trianglable) {
-            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
-            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
-            this.appendmenuitem('Make right of triangle','MakeRightOfTtriangle')
-        }
-    }
-})
-
-
-$.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Pedigree'
-    },
-    _create: function() {
-        this._super();
-        $(this).addClass('pedigreeMenu')
-        this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
-        this.appendmenuitem('----', 'PedigreeSep', true)
-        this.appendcheckboxmenuitem('Draw Out Offspring (2)','DrawOutOffspring', true)
-        this.appendcheckboxmenuitem('No Mirrors (3)','NoMirrors', true)
-        this.appendcheckboxmenuitem('Single Mirror (4)','SingleMirror', true)
-        this.appendcheckboxmenuitem('Double Mirror (5)','DoubleMirror', true)
-        this.appendmenuitem('----', 'PedigreeSep', true)
-        this.appendcheckboxmenuitem('Move (6)','Move', true)
-        this.appendcheckboxmenuitem('Detach (7)','Detach', true)
-        this.appendcheckboxmenuitem('Kill (8)','Kill', true)
-    }
-})
-
-$.widget('dawk.helpmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Help'
-    },
-    _create: function() {
-        this._super();
-        this.appendmenuitem('Help with current operation', 'HelpWithCurrentOperation')
-        this.appendmenuitem('Miscellaneous Help', 'MiscellaneousHelp')
-        this.appendmenuitem('About Blind Watchmaker', 'AboutBlindWatchmaker')
-    }
-})
-
-$.widget('dawk.dropdownmenu', {
-    options: {
-        session: null
-    },
-    _create: function() {
-        let menu = $('<ul>').addClass('sm sm-watchmaker')
-        menu.appendTo(this.element)
-        $("<li>").filemenu({session: this.options.session}).appendTo(menu)
-        $("<li>").editmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").pedigreemenu({session: this.options.session}).appendTo(menu)
-        $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
-        this.options.session.buildMenus(menu)
-        menu.smartmenus()
-    },
-    appendsubmenu: function(title) {
-        let sub_menu = $('<li>').sub_menu({title: title})
-        $(this.element).find('> ul').append(sub_menu)
-        return sub_menu
-    },
-    menuclick: function(event) {
-        this.options.menuHandler.menuclick(event)
-    }
-})
-
-$.widget('dawk.watchmakerView', {
-    options: {
-        session: null,
-    },
-    _create: function() {
-        $(this.element).addClass('watchmakerView')
-        this.buildMenus()
-
-    },
-    buildMenus: function() {
-        let menubar = $('<div class="watchmakerMenuBar"></div>')
-        $(menubar).appendTo(this.element)
-        let menuHandler = new MenuHandler(this.options.session)
-        this.options.menuHandler = menuHandler
-
-        $(menubar).dropdownmenu({menuHandler: menuHandler,
-            session: this.options.session});
-
-        $(menubar).find("ul.dropdown li").hover(function(){
-
-            $(this).addClass("hover");
-            $('ul:first',this).css('visibility', 'visible');
-
-        }, function(){
-
-            $(this).removeClass("hover");
-            $('ul:first',this).css('visibility', 'hidden');
-
-        });
-
-        $(menubar).find("ul.dropdown li ul li:has(ul)").find("a:first").append(" &raquo; ");
-
-    },
-    _init: function() {
-        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
-    },
-    viewGainedFocus: function(event) {
-    },
-
-})
-
-function MenuHandler(session) {
-    this.session = session
-    this.nextMenuHandler = null
-}
-
-MenuHandler.prototype.menuclick = function(event) {
-    console.log('Menuhandler menuclick')
-    let result = this.session.menuclick(event)
-    console.log(result)
-    if(result) {
-        let menuid = $(event.target).data('menuid')
-        let target = event.target
-        console.log('WatchmakerView menu ' + menuid)
-        if(menuid.startsWith('Animal')) {
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
-            console.log(midCanvas)
-            eraseCanvas(midCanvas)
-            var biomorph = $(midCanvas).data('genotype')
-            biomorph.doPerson(menuid.substring(6))
-            biomorph.develop()
-            return false
-        }
-        switch(menuid) {
-        case 'Breed': 
-            console.log('Breeding')
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newBreedingView", biomorph);
-            return false
-        case 'Engineering':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newEngineeringView", biomorph);
-            return false
-        case 'DisplayPedigree':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
-                    "newPedigreeView", biomorph);
-            return false
-        case 'HopefulMonster':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            console.log(this.session.options.hopefulMonsterBasicType)
-            biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
-            biomorph.develop()
-            return false
-        case 'AboutBlindWatchmaker':
-            $("<div>").about({appendTo: this.element,
-            })
-            return false
-        }
-        // Do generic stuff here
-        // Then call view-specific handler
-        if(this.nextMenuHandler) {
-            this.nextMenuHandler.menuclick(event)
-        }
-        return true;
-    }
 }
 
 function getBiomorphFromCanvas(canvas) {
@@ -2055,506 +2015,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             return false;
         },
     });
-});var Mirrors = {
-        NoMirrors: 1,
-        SingleMirror: 2,
-        DoubleMirror: 4,
-        properties: {
-            1: {name: "NoMirrors"},
-            2: {name: "SingleMirror"},
-            4: {name: "DoubleMirror"}
-        },
-}
-
-
-
-
-//the widget definition, where "custom" is the namespace,
-//"colorize" the widget name
-$.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
-    options: { 
-        theMode: Mode.Phyloging,
-        rays: Mirrors.NoMirrors,
-        species: null,
-        biomorph: null,
-        rootGod: null,
-        phyloging: null,
-        specialFull: null,
-        theGod: null,
-        godCounter: 0
-    },
-    viewGainedFocus: function(event) {
-        let session = $(this).pedigreeView("option", "session")
-        session.viewGainedFocus(session, this)
-    },
-    _create: function (options) {
-        this._super()
-        
-        $(this.element).addClass('pedigreeView')
-        
-        this.options.rootGod = new God()
-        this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
-        let container = $("<div class='container'>")
-        container.appendTo(this.element)
-        let div = $("<div class='pedigreeFamilialLineCanvas'>")
-        div.appendTo(container)
-        let familialLineCanvas = $("<canvas width='1000' height='600'>")
-        familialLineCanvas.appendTo(div)
-        this.options.familialLineCanvas = familialLineCanvas[0]
-        div = $("<div class='pedigreeDrawOutLineDiv'>")
-        
-        div.appendTo(container)
-        let canvas = $("<canvas class='drawOutCanvas' width='1000' height='600'>")
-        this.options.drawOutCanvas = canvas[0]
-        canvas.appendTo(div)
-        
-        let pedigreeDiv = $('<div class="pedigreeDiv">')
-        pedigreeDiv.addClass('boxes')
-        pedigreeDiv.appendTo(container)
-        this._on(pedigreeDiv, {
-            mouseup: function(event) { this.drawoutmouseup(event) },
-            mousemove: function(event) { this.drawoutmousemove(event) },
-        })
-        
-        this.phylognew(this.options.biomorph)
-
-    },
-    buildMenus: function(menu) {
-        this._super('buildMenus')
-        // Reverse default hidden state to show Pedigree mode.
-        $(this.element).find('.menuitemDrawOutOffspring').css('display', 'block')
-        $(this.element).find('.menuitemMove').css('display', 'block')
-        $(this.element).find('.menuitemDetach').css('display', 'block')
-        $(this.element).find('.menuitemKill').css('display', 'block')
-        $(this.element).find('.menuitemNoMirrors').css('display', 'block')
-        $(this.element).find('.menuitemSingleMirror').css('display', 'block')
-        $(this.element).find('.menuitemDoubleMirror').css('display', 'block')       
-        $(this.element).find('.menuitemPedigreeSep').css('display', 'block')       
-        // Default checked state for new Pedigree views
-        $(this.element).find('.menuitemDrawOutOffspring img').css('display', 'inline-block')
-        $(this.element).find('.menuitemMove img').css('display', 'none')
-        $(this.element).find('.menuitemDetach img').css('display', 'none')
-        $(this.element).find('.menuitemKill img').css('display', 'none')
-        $(this.element).find('.menuitemNoMirrors img').css('display', 'inline-block')
-        $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
-        $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
-    },
-    markIf: function(thisFull) {
-        $(this.element).find('canvas').removeClass('midBox')
-        $(thisFull.genome.drawer).addClass('midBox')
-    },
-    phylognew: function(biomorph) {
-        let options = this.options
-        let tempGod = new God()
-        tempGod.nextGod = null;
-        this.findLastGod();
-        let theGod = options.theGod
-        tempGod.previousGod = theGod;
-        theGod.nextGod = tempGod;
-        theGod = tempGod;
-        theGod.adam = new Full(biomorph);
-        biomorph.full = theGod.adam
-        theGod.adam.surround = biomorph.getRect();
-        Triangle.atLeast(theGod.adam.surround);
-        if(this.options.specialFull != null) {
-            this.options.specialFull.prec = theGod.adam
-        }                                                                                        
-        theGod.adam.next = this.options.specialFull;
-        this.options.specialFull = theGod.adam;
-        this.options.specialFull.prec = null;
-        
-        let screenRect = $(this.element).find('.pedigreeDiv')[0].getBoundingClientRect()
-        let x = Math.trunc(screenRect.width / 2);
-        let y = Math.trunc(screenRect.height / 2);
-
-        this.addone(theGod.adam, new Point(x,y))
-    },
-    
-    addone: function(full, point) {
-        let biomorph = full.genome
-        let surround = full.surround
-        let biomorphWidth = surround.right - surround.left
-        let biomorphHeight = surround.bottom - surround.top
-        let left = point.h - biomorphWidth / 2
-        let top = point.v - biomorphHeight / 2;
-        let canvas = $("<canvas class='pedigreeMorphCanvas'>")
-        canvas.attr('height', Math.trunc(biomorphHeight))
-        canvas.attr('width', Math.trunc(biomorphWidth))
-        canvas.css('left', left)
-        canvas.css('top', top)
-        canvas.addClass('pedigreeBox midBox')
-        $(this.element).find('.pedigreeDiv').append(canvas)
-        biomorph.drawer = canvas[0]
-        $(canvas).data('genotype', biomorph)
-        biomorph.develop()
-        this._on(canvas, {
-            mousedown: function(event) { this.morphmousedown(event) },
-            mouseup: function(event) { this.morphmouseup(event) },
-            mousemove: function(event) { this.morphmousemove(event) },
-        })
-        console.log('God')
-        console.log(this.options.rootGod)
-        this.allLines(this.options.rootGod)
-    },
-    spawnone: function(thisFull, here) {
-        let biomorph = thisFull.genome
-        
-        let spawn = biomorph.reproduce(null)
-        let current = new Full(spawn)
-        spawn.full = current
-        current.origin = here    
-        current.surround = current.genome.getRect();
-        Triangle.atLeast(current.surround);
-
-        current.parent = thisFull;
-        current.elderSib = thisFull.lastBorn;
-        if(current.elderSib != null) {
-            current.elderSib.youngerSib = current;
-        }
-        current.lastBorn = null;
-        current.youngerSib = null;
-        if(thisFull.lastBorn == null) {
-            thisFull.firstBorn = current;
-        }
-        thisFull.lastBorn = current;
-        current.next = this.options.specialFull;  //{puts currentfull at head of list}
-        this.options.specialFull.prec = current;  //{Updates seniority pointer of previous head}
-//        oldSpecialFull = specialFull; // value never used
-        this.options.specialFull = current; // {Gives new head its proper title}
-        this.options.specialFull.prec = null; // {Probably unnecessary but good form}
-        this.addone(current, here)
-        this.markIf(current);
-    },
-    spawnmany: function(thisFull, point) {
-        let target = this.options.phyloging
-        let offset = $(target).offset()
-        let pedigreeOffset = $(target).parent().offset()
-        let x = offset.left - pedigreeOffset.left + target.width / 2;
-        let y = offset.top - pedigreeOffset.top + target.height / 2;
-        let radients = this.getradiants(new Point(x,y), point, this.options.rays)
-        for(i = 0; i < this.options.rays; i++) {
-            this.spawnone(thisFull, radients[i])
-        }
-        this.options.phyloging = null
-    },
-    getradiants: function(from, goal, spokes) {
-        dx = goal.h - from.h;
-        dy = goal.v - from.v;
-        var here = []
-        here.push(new Point(from.h + dx, from.v + dy))
-        here.push(new Point(from.h - dx, from.v - dy))
-        here.push(new Point(from.h - dy, from.v + dx))
-        here.push(new Point(from.h + dy, from.v - dx))
-        return here
-    },
-    radiate: function(from, goal, spokes, ctx) {
-        let here = this.getradiants(from, goal, spokes)
-        for(let j = 0; j < spokes; j++) {
-            ctx.moveTo(from.h, from.v);
-            ctx.lineTo(here[j].h, here[j].v)
-        }
-    }, 
-    dragoutline: function(x,y) {
-        let canvas = this.options.drawOutCanvas
-        let parent = this.options.phyloging
-        let parentX = Number($(parent).css('left').replace('px', '')) + parent.width / 2
-        let parentY = Number($(parent).css('top').replace('px', '')) + parent.height / 2
-        let ctx = canvas.getContext('2d')
-        ctx.beginPath()
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.strokeStyle = "Black"
-        ctx.lineWidth = 1
-        this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
-        ctx.closePath()
-        ctx.stroke()
-    },
-    cleardragoutline: function() {
-        let canvas = this.options.drawOutCanvas
-        let ctx = canvas.getContext('2d')
-        ctx.beginPath()
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-        ctx.closePath()
-    },
-    connect: function(nucleusFull, orbitFull) {
-        if((nucleusFull != null) && (orbitFull != null)) {
-            console.log('connect')
-            let ctx = this.options.familialLineCanvas.getContext('2d')
-            ctx.strokeStyle = 'Black';
-            ctx.lineWidth = 1;
-            ctx.beginPath()
-            ctx.moveTo(nucleusFull.centre.h, nucleusFull.centre.v);
-            this.options.thereAreLines = true;
-            ctx.lineTo(orbitFull.centre.h, orbitFull.centre.v);
-            ctx.stroke()
-            ctx.closePath()
-        }
-    },
-    findLastGod: function() { //{Delivers last God in theGod}
-        let thisGod = this.options.rootGod
-        this.options.godCounter = 1;
-        if(thisGod.nextGod == null) {
-            this.options.theGod = thisGod
-        } else {
-            tryGod(thisGod)
-        } 
-    },
-    
-//  {Isolates ThisFull from all except its descendants, leaving rest of}
-//  {pedigree hierarchical linked list tidied up and pointing elsewhere.}
-//  {Does not touch linear Specialfull linked list, since this reflects}
-//  {spatial relations on screen, and nonrelatives can cover each other}
-    detach: function(thisFull) {
-        if(thisFull.parent != null) {
-            this.connect(thisFull, thisFull.parent);
-            if(thisFull.parent.lastBorn == thisFull) {
-                thisFull.parent.lastBorn = thisFull.elderSib;
-            }
-            if(thisFull.parent.firstBorn == thisFull) {
-                thisFull.parent.firstBorn = thisFull.youngerSib;
-            }
-        }// {of whitening line connecting with thisFull's parent}
-        if(thisFull.youngerSib != null) {
-            thisFull.youngerSib.elderSib = thisFull.elderSib;
-        }
-        if(thisFull.elderSib != null) {
-            thisFull.elderSib.youngerSib = thisFull.youngerSib;
-        }
-        thisFull.elderSib = null;
-        thisFull.youngerSib = null;
-        thisFull.parent = null;
-        tempGod = new God()
-        tempGod.nextGod = null;
-        this.findLastGod()
-        tempGod.previousGod = this.options.theGod;
-        tempGod.adam = thisFull;
-        theGod.nextGod = tempGod;
-        theGod = tempGod;
-        this.markIf(thisFull); //make midBox
-    },
-    redrawLines: function(thisFull) {
-        
-        if(thisFull != null) {
-            let ctx = this.options.familialLineCanvas.getContext('2d')
-            ctx.strokeStyle = 'Black';
-            ctx.lineWidth = 1;
-            ctx.beginPath()
-
-            if(thisFull.parent != null) {
-                ctx.moveTo(thisFull.centre.h, thisFull.centre.v);
-                ctx.lineTo(thisFull.parent.centre.h, thisFull.parent.centre.v);
-                ctx.stroke()
-                ctx.closePath()
-            }
-            if(thisFull.lastBorn != null) {
-//                this.redrawAll(thisFull.lastBorn);
-            }
-        } 
-    },
-    allLines: function(theGod) {
-        if(theGod != null) {
-            if(theGod.adam != null) {
-                this.redrawLines(theGod.adam);
-            }
-            if(theGod.nextGod != null) {
-                this.allLines(theGod.nextGod)
-            }
-        }
-    },
-
-    childLine: function(thisFull, child) {
-        this.connect(thisFull, child);
-        if(child.youngerSib != null) {
-            this.childLine(thisFull, child.youngerSib);
-        } 
-    },
-
-    localLines: function(thisFull) {
-        if(thisFull.parent != null) {
-            this.connect(thisFull, thisFull.parent);
-        }
-        if(thisFull.firstBorn != null) {
-            this.childLine(thisFull, thisFull.firstBorn)
-        } 
-    },
-    kill: function(target) {
-        $(target).remove()
-    },
-    morphmousedown: function(event) {
-        // Move the selected morph to the front
-        $(this.element).find('.pedigreeDiv').append(event.target)
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            let target = event.target
-            // Bring it to the front
-            $(this.element).find('.pedigreeDiv').append(target)
-            // User pressed on a morph. Record it as a potential parent.
-            this.options.phyloging = target
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            this.kill(event.target)
-            break
-        }
-    },
-    morphmousemove: function(event) {
-        if(this.options.theMode == Mode.Phyloging) {
-            event.stopPropagation()
-            if(this.options.phyloging != null) {
-                let target = event.target
-                let offset = $(target).offset()
-                let pedigreeOffset = $(target).parent().offset()
-                let x = offset.left - pedigreeOffset.left;
-                let y = offset.top - pedigreeOffset.top;
-                this.dragoutline(x, y)
-            }
-        }
-    },
-    morphmouseup: function(event) {
-        let target = event.target
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            event.stopPropagation()
-            if(event.target != this.options.phyloging) {
-                this.cleardragoutline()
-                let target = event.target
-                let offset = $(target).offset()
-                let pedigreeOffset = $(target).parent().offset()
-                let x = offset.left - pedigreeOffset.left;
-                let y = offset.top - pedigreeOffset.top;
-                thisFull = $(target).data('genotype').full
-                this.spawnmany(thisFull, new Point(x, y))
-            } else {
-                // Let go inside original morph. Don't reproduce
-                this.options.phyloging = null
-            }
-
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
-        }
-    },
-    
-    drawoutmouseup: function(event) {
-        let target = event.target
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            this.cleardragoutline()
-            if(this.options.phyloging != null) {
-                let offset = $(event.target).offset()
-                let x = event.pageX - offset.left;
-                let y = event.pageY - offset.top;
-                thisFull = $(this.options.phyloging).data('genotype').full
-                this.spawnmany(thisFull, new Point(x, y))
-            }            
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
-        }
-    },
-    drawoutmousemove: function(event) {
-        
-        switch(this.options.theMode) {
-        case Mode.Phyloging:
-            if(this.options.phyloging != null) {
-                let offset = $(event.target).offset()
-                let x = event.pageX - offset.left;
-                let y = event.pageY - offset.top;
-                this.dragoutline(x, y)
-            }
-            break
-        case Mode.Moving:
-            break
-        case Mode.Detaching:
-            break
-        case Mode.Killing:
-            break
-        }
-    },    
-    updatePedigreeModeCheckboxes: function(name) {
-        let drawOutOffspring = $(this.element).find('.menuitemDrawOutOffspring img')
-        let move = $(this.element).find('.menuitemMove img')
-        let detach = $(this.element).find('.menuitemDetach img')
-        let kill = $(this.element).find('.menuitemKill img')
-        switch(name) {
-        case 'DrawOutOffspring':
-            if(this.options.theMode == Mode.Moving) {
-                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
-            }
-            this.options.theMode = Mode.Phyloging
-            drawOutOffspring.css('display', 'inline-block')
-            move.css('display', 'none')
-            detach.css('display', 'none')
-            kill.css('display', 'none')
-            break
-        case 'Move':
-            this.options.theMode = Mode.Moving
-            drawOutOffspring.css('display', 'none')
-            move.css('display', 'inline-block')
-            detach.css('display', 'none')
-            kill.css('display', 'none')
-            $(this.element).find('.pedigreeDiv canvas').draggable()
-            break
-        case 'Detach':
-            if(this.options.theMode == Mode.Moving) {
-                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
-            }
-            this.options.theMode = Mode.Detaching
-            drawOutOffspring.css('display', 'none')
-            move.css('display', 'none')
-            detach.css('display', 'inline-block')
-            kill.css('display', 'none')
-            break
-        case 'Kill':
-            if(this.options.theMode == Mode.Moving) {
-                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
-            }
-            this.options.theMode = Mode.Killing
-            drawOutOffspring.css('display', 'none')
-            move.css('display', 'none')
-            detach.css('display', 'none')
-            kill.css('display', 'inline-block')
-            break
-        }
-    },
-    updateMirrorCheckboxes: function(name) {
-        let noMirrors = $(this.element).find('.menuitemNoMirrors img')
-        let singleMirror = $(this.element).find('.menuitemSingleMirror img')
-        let doubleMirror = $(this.element).find('.menuitemDoubleMirror img')        
-        switch(name) {
-        case 'NoMirrors':
-            this.options.rays = Mirrors.NoMirrors
-            noMirrors.css('display', 'inline-block')
-            singleMirror.css('display', 'none')
-            doubleMirror.css('display', 'none')
-            break
-        case 'SingleMirror':
-            this.options.rays = Mirrors.SingleMirror
-            noMirrors.css('display', 'none')
-            singleMirror.css('display', 'inline-block')
-            doubleMirror.css('display', 'none')
-            break
-        case 'DoubleMirror':
-            this.options.rays = Mirrors.DoubleMirror
-            noMirrors.css('display', 'none')
-            singleMirror.css('display', 'none')
-            doubleMirror.css('display', 'inline-block')
-            break
-        }
-    }
-})
-
-
+});
 function PedigreeMenuHandler() {
 }
 
@@ -3590,42 +3051,597 @@ Pedigree.prototype.PhylogNew  = function(biomorph) {
     this.allLines(rootGod);
 //  ClipRect(pRect);
 }
-$.widget('dawk.about', {
-    options: {
-        slides: ['img/AboutBlindWatchmaker_PICT_26817_463x287.png',
-            'img/AboutColourWatchmaker_PICT_00257_486x352.png',
-            'img/AboutArthromorphs.png',
-            'img/AboutWatchmakerJS2.png'
-        ]
+var Mirrors = {
+        NoMirrors: 1,
+        SingleMirror: 2,
+        DoubleMirror: 4,
+        properties: {
+            1: {name: "NoMirrors"},
+            2: {name: "SingleMirror"},
+            4: {name: "DoubleMirror"}
+        },
+}
+
+
+
+
+//the widget definition, where "custom" is the namespace,
+//"colorize" the widget name
+$.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
+    options: { 
+        theMode: Mode.Phyloging,
+        rays: Mirrors.NoMirrors,
+        species: null,
+        biomorph: null,
+        rootGod: null,
+        phyloging: null,
+        specialFull: null,
+        theGod: null,
+        godCounter: 0
     },
-    _create: function() {
-        let slides = this.options.slides
-        for(let i = 0; i < slides.length; i++) {
-            let div = $("<div>").appendTo(this.element)
-            // this is your chance to conditionally add a widget instead of an img.
-            let img = $("<img>").appendTo(div)
-            $(img).attr('src', slides[i])
-            if(i == 0) {
-                $(img).addClass('active')
+    viewGainedFocus: function(event) {
+        let session = $(this).pedigreeView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
+    _create: function (options) {
+        this._super()
+        
+        $(this.element).addClass('pedigreeView')
+        
+        this.options.rootGod = new God()
+        this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
+        let container = $("<div class='container'>")
+        container.appendTo(this.element)
+        let div = $("<div class='pedigreeFamilialLineCanvas'>")
+        div.appendTo(container)
+        let familialLineCanvas = $("<canvas width='1000' height='600'>")
+        familialLineCanvas.appendTo(div)
+        this.options.familialLineCanvas = familialLineCanvas[0]
+        div = $("<div class='pedigreeDrawOutLineDiv'>")
+        
+        div.appendTo(container)
+        let canvas = $("<canvas class='drawOutCanvas' width='1000' height='600'>")
+        this.options.drawOutCanvas = canvas[0]
+        canvas.appendTo(div)
+        
+        let pedigreeDiv = $('<div class="pedigreeDiv pedigreeDrawOutOffspring">')
+        pedigreeDiv.addClass('boxes')
+        pedigreeDiv.appendTo(container)
+        this._on(pedigreeDiv, {
+            mouseup: function(event) { this.drawoutmouseup(event) },
+            mousemove: function(event) { this.drawoutmousemove(event) },
+        })
+        
+        this.phylognew(this.options.biomorph)
+
+    },
+    buildMenus: function(menu) {
+        this._super('buildMenus')
+        // Reverse default hidden state to show Pedigree mode.
+        $(this.element).find('.menuitemDrawOutOffspring').css('display', 'block')
+        $(this.element).find('.menuitemMove').css('display', 'block')
+        $(this.element).find('.menuitemDetach').css('display', 'block')
+        $(this.element).find('.menuitemKill').css('display', 'block')
+        $(this.element).find('.menuitemNoMirrors').css('display', 'block')
+        $(this.element).find('.menuitemSingleMirror').css('display', 'block')
+        $(this.element).find('.menuitemDoubleMirror').css('display', 'block')       
+        $(this.element).find('.menuitemPedigreeSep').css('display', 'block')       
+        // Default checked state for new Pedigree views
+        $(this.element).find('.menuitemDrawOutOffspring img').css('display', 'inline-block')
+        $(this.element).find('.menuitemMove img').css('display', 'none')
+        $(this.element).find('.menuitemDetach img').css('display', 'none')
+        $(this.element).find('.menuitemKill img').css('display', 'none')
+        $(this.element).find('.menuitemNoMirrors img').css('display', 'inline-block')
+        $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
+        $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
+    },
+    markIf: function(thisFull) {
+        $(this.element).find('canvas').removeClass('midBox')
+        $(thisFull.genome.drawer).addClass('midBox')
+    },
+    phylognew: function(biomorph) {
+        let options = this.options
+        let tempGod = new God()
+        tempGod.nextGod = null;
+        this.findLastGod();
+        let theGod = options.theGod
+        tempGod.previousGod = theGod;
+        theGod.nextGod = tempGod;
+        theGod = tempGod;
+        theGod.adam = new Full(biomorph);
+        biomorph.full = theGod.adam
+        theGod.adam.surround = biomorph.getRect();
+        Triangle.atLeast(theGod.adam.surround);
+        if(this.options.specialFull != null) {
+            this.options.specialFull.prec = theGod.adam
+        }                                                                                        
+        theGod.adam.next = this.options.specialFull;
+        this.options.specialFull = theGod.adam;
+        this.options.specialFull.prec = null;
+        
+        let screenRect = $(this.element).find('.pedigreeDiv')[0].getBoundingClientRect()
+        let x = Math.trunc(screenRect.width / 2);
+        let y = Math.trunc(screenRect.height / 2);
+
+        this.addone(theGod.adam, new Point(x,y))
+    },
+    
+    addone: function(full, point) {
+        let biomorph = full.genome
+        let surround = full.surround
+        let biomorphWidth = surround.right - surround.left
+        let biomorphHeight = surround.bottom - surround.top
+        let left = point.h - biomorphWidth / 2
+        let top = point.v - biomorphHeight / 2;
+        let canvas = $("<canvas class='pedigreeMorphCanvas'>")
+        canvas.attr('height', Math.trunc(biomorphHeight))
+        canvas.attr('width', Math.trunc(biomorphWidth))
+        canvas.css('left', left)
+        canvas.css('top', top)
+        canvas.addClass('pedigreeBox midBox')
+        $(this.element).find('.pedigreeDiv').append(canvas)
+        biomorph.drawer = canvas[0]
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        this._on(canvas, {
+            mousedown: function(event) { this.morphmousedown(event) },
+            mouseup: function(event) { this.morphmouseup(event) },
+            mousemove: function(event) { this.morphmousemove(event) },
+        })
+        console.log('God')
+        console.log(this.options.rootGod)
+        this.allLines(this.options.rootGod)
+    },
+    spawnone: function(thisFull, here) {
+        let biomorph = thisFull.genome
+        
+        let spawn = biomorph.reproduce(null)
+        let current = new Full(spawn)
+        spawn.full = current
+        current.origin = here    
+        current.surround = current.genome.getRect();
+        Triangle.atLeast(current.surround);
+
+        current.parent = thisFull;
+        current.elderSib = thisFull.lastBorn;
+        if(current.elderSib != null) {
+            current.elderSib.youngerSib = current;
+        }
+        current.lastBorn = null;
+        current.youngerSib = null;
+        if(thisFull.lastBorn == null) {
+            thisFull.firstBorn = current;
+        }
+        thisFull.lastBorn = current;
+        current.next = this.options.specialFull;  //{puts currentfull at head of list}
+        this.options.specialFull.prec = current;  //{Updates seniority pointer of previous head}
+//        oldSpecialFull = specialFull; // value never used
+        this.options.specialFull = current; // {Gives new head its proper title}
+        this.options.specialFull.prec = null; // {Probably unnecessary but good form}
+        this.addone(current, here)
+        this.markIf(current);
+    },
+    spawnmany: function(thisFull, point) {
+        let target = this.options.phyloging
+        let offset = $(target).offset()
+        let pedigreeOffset = $(target).parent().offset()
+        let x = offset.left - pedigreeOffset.left + target.width / 2;
+        let y = offset.top - pedigreeOffset.top + target.height / 2;
+        let radients = this.getradiants(new Point(x,y), point, this.options.rays)
+        for(i = 0; i < this.options.rays; i++) {
+            this.spawnone(thisFull, radients[i])
+        }
+        this.options.phyloging = null
+    },
+    getradiants: function(from, goal, spokes) {
+        dx = goal.h - from.h;
+        dy = goal.v - from.v;
+        var here = []
+        here.push(new Point(from.h + dx, from.v + dy))
+        here.push(new Point(from.h - dx, from.v - dy))
+        here.push(new Point(from.h - dy, from.v + dx))
+        here.push(new Point(from.h + dy, from.v - dx))
+        return here
+    },
+    radiate: function(from, goal, spokes, ctx) {
+        let here = this.getradiants(from, goal, spokes)
+        for(let j = 0; j < spokes; j++) {
+            ctx.moveTo(from.h, from.v);
+            ctx.lineTo(here[j].h, here[j].v)
+        }
+    }, 
+    dragoutline: function(x,y) {
+        let canvas = this.options.drawOutCanvas
+        let parent = this.options.phyloging
+        let parentX = Number($(parent).css('left').replace('px', '')) + parent.width / 2
+        let parentY = Number($(parent).css('top').replace('px', '')) + parent.height / 2
+        let ctx = canvas.getContext('2d')
+        ctx.beginPath()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.strokeStyle = "Black"
+        ctx.lineWidth = 1
+        this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
+        ctx.closePath()
+        ctx.stroke()
+    },
+    cleardragoutline: function() {
+        let canvas = this.options.drawOutCanvas
+        let ctx = canvas.getContext('2d')
+        ctx.beginPath()
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.closePath()
+    },
+    connect: function(nucleusFull, orbitFull) {
+        if((nucleusFull != null) && (orbitFull != null)) {
+            console.log('connect')
+            let ctx = this.options.familialLineCanvas.getContext('2d')
+            ctx.strokeStyle = 'Black';
+            ctx.lineWidth = 1;
+            ctx.beginPath()
+            ctx.moveTo(nucleusFull.centre.h, nucleusFull.centre.v);
+            this.options.thereAreLines = true;
+            ctx.lineTo(orbitFull.centre.h, orbitFull.centre.v);
+            ctx.stroke()
+            ctx.closePath()
+        }
+    },
+    findLastGod: function() { //{Delivers last God in theGod}
+        let thisGod = this.options.rootGod
+        this.options.godCounter = 1;
+        if(thisGod.nextGod == null) {
+            this.options.theGod = thisGod
+        } else {
+            tryGod(thisGod)
+        } 
+    },
+    
+//  {Isolates ThisFull from all except its descendants, leaving rest of}
+//  {pedigree hierarchical linked list tidied up and pointing elsewhere.}
+//  {Does not touch linear Specialfull linked list, since this reflects}
+//  {spatial relations on screen, and nonrelatives can cover each other}
+    detach: function(thisFull) {
+        if(thisFull.parent != null) {
+            this.connect(thisFull, thisFull.parent);
+            if(thisFull.parent.lastBorn == thisFull) {
+                thisFull.parent.lastBorn = thisFull.elderSib;
+            }
+            if(thisFull.parent.firstBorn == thisFull) {
+                thisFull.parent.firstBorn = thisFull.youngerSib;
+            }
+        }// {of whitening line connecting with thisFull's parent}
+        if(thisFull.youngerSib != null) {
+            thisFull.youngerSib.elderSib = thisFull.elderSib;
+        }
+        if(thisFull.elderSib != null) {
+            thisFull.elderSib.youngerSib = thisFull.youngerSib;
+        }
+        thisFull.elderSib = null;
+        thisFull.youngerSib = null;
+        thisFull.parent = null;
+        tempGod = new God()
+        tempGod.nextGod = null;
+        this.findLastGod()
+        tempGod.previousGod = this.options.theGod;
+        tempGod.adam = thisFull;
+        theGod.nextGod = tempGod;
+        theGod = tempGod;
+        this.markIf(thisFull); //make midBox
+    },
+    redrawLines: function(thisFull) {
+        
+        if(thisFull != null) {
+            let ctx = this.options.familialLineCanvas.getContext('2d')
+            ctx.strokeStyle = 'Black';
+            ctx.lineWidth = 1;
+            ctx.beginPath()
+
+            if(thisFull.parent != null) {
+                ctx.moveTo(thisFull.centre.h, thisFull.centre.v);
+                ctx.lineTo(thisFull.parent.centre.h, thisFull.parent.centre.v);
+                ctx.stroke()
+                ctx.closePath()
+            }
+            if(thisFull.lastBorn != null) {
+//                this.redrawAll(thisFull.lastBorn);
+            }
+        } 
+    },
+    allLines: function(theGod) {
+        if(theGod != null) {
+            if(theGod.adam != null) {
+                this.redrawLines(theGod.adam);
+            }
+            if(theGod.nextGod != null) {
+                this.allLines(theGod.nextGod)
             }
         }
-        $(this.element).dialog({
-//            open: function (event, ui) {
-//                $(this.element).css('overflow', 'hidden'); //this line does the actual hiding
-//              },
-            width: '1240px',
-            classes: 
-            {
-                "ui-dialog": "about",
-                "ui-dialog-titlebar": "dialogNoTitle",
+    },
+
+    childLine: function(thisFull, child) {
+        this.connect(thisFull, child);
+        if(child.youngerSib != null) {
+            this.childLine(thisFull, child.youngerSib);
+        } 
+    },
+
+    localLines: function(thisFull) {
+        if(thisFull.parent != null) {
+            this.connect(thisFull, thisFull.parent);
+        }
+        if(thisFull.firstBorn != null) {
+            this.childLine(thisFull, thisFull.firstBorn)
+        } 
+    },
+    kill: function(target) {
+        $(target).remove()
+    },
+    morphmousedown: function(event) {
+        // Move the selected morph to the front
+        $(this.element).find('.pedigreeDiv').append(event.target)
+        switch(this.options.theMode) {
+        case Mode.Phyloging:
+            let target = event.target
+            // Bring it to the front
+            $(this.element).find('.pedigreeDiv').append(target)
+            // User pressed on a morph. Record it as a potential parent.
+            this.options.phyloging = target
+            break
+        case Mode.Moving:
+            break
+        case Mode.Detaching:
+            break
+        case Mode.Killing:
+            this.kill(event.target)
+            break
+        }
+    },
+    morphmousemove: function(event) {
+        if(this.options.theMode == Mode.Phyloging) {
+            event.stopPropagation()
+            if(this.options.phyloging != null) {
+                let target = event.target
+                let offset = $(target).offset()
+                let pedigreeOffset = $(target).parent().offset()
+                let x = offset.left - pedigreeOffset.left;
+                let y = offset.top - pedigreeOffset.top;
+                this.dragoutline(x, y)
             }
-        ,
-        modal: true
-        })
-        $(this.element).slick({
-            slidesToShow: 1,
-            autoplay: true,
-            autoplaySpeed: 5000,
-        });
+        }
+    },
+    morphmouseup: function(event) {
+        let target = event.target
+        switch(this.options.theMode) {
+        case Mode.Phyloging:
+            event.stopPropagation()
+            if(event.target != this.options.phyloging) {
+                this.cleardragoutline()
+                let target = event.target
+                let offset = $(target).offset()
+                let pedigreeOffset = $(target).parent().offset()
+                let x = offset.left - pedigreeOffset.left;
+                let y = offset.top - pedigreeOffset.top;
+                thisFull = $(target).data('genotype').full
+                this.spawnmany(thisFull, new Point(x, y))
+            } else {
+                // Let go inside original morph. Don't reproduce
+                this.options.phyloging = null
+            }
+
+            break
+        case Mode.Moving:
+            break
+        case Mode.Detaching:
+            break
+        case Mode.Killing:
+            break
+        }
+    },
+    
+    drawoutmouseup: function(event) {
+        let target = event.target
+        switch(this.options.theMode) {
+        case Mode.Phyloging:
+            this.cleardragoutline()
+            if(this.options.phyloging != null) {
+                let offset = $(event.target).offset()
+                let x = event.pageX - offset.left;
+                let y = event.pageY - offset.top;
+                thisFull = $(this.options.phyloging).data('genotype').full
+                this.spawnmany(thisFull, new Point(x, y))
+            }            
+            break
+        case Mode.Moving:
+            break
+        case Mode.Detaching:
+            break
+        case Mode.Killing:
+            break
+        }
+    },
+    drawoutmousemove: function(event) {
+        
+        switch(this.options.theMode) {
+        case Mode.Phyloging:
+            if(this.options.phyloging != null) {
+                let offset = $(event.target).offset()
+                let x = event.pageX - offset.left;
+                let y = event.pageY - offset.top;
+                this.dragoutline(x, y)
+            }
+            break
+        case Mode.Moving:
+            break
+        case Mode.Detaching:
+            break
+        case Mode.Killing:
+            break
+        }
+    },    
+    updatePedigreeModeCheckboxes: function(name) {
+        let drawOutOffspring = $(this.element).find('.menuitemDrawOutOffspring img')
+        let move = $(this.element).find('.menuitemMove img')
+        let detach = $(this.element).find('.menuitemDetach img')
+        let kill = $(this.element).find('.menuitemKill img')
+        let pedigreeDiv = $(this.element).find('.pedigreeDiv')
+        switch(name) {
+        case 'DrawOutOffspring':
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Phyloging
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeDetach pedigreeMove')
+            $(pedigreeDiv).addClass('pedigreeDrawOutOffspring')
+            
+            drawOutOffspring.css('display', 'inline-block')
+            move.css('display', 'none')
+            detach.css('display', 'none')
+            kill.css('display', 'none')
+            break
+        case 'Move':
+            this.options.theMode = Mode.Moving
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeDetach pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeMove')
+            drawOutOffspring.css('display', 'none')
+            move.css('display', 'inline-block')
+            detach.css('display', 'none')
+            kill.css('display', 'none')
+            $(this.element).find('.pedigreeDiv canvas').draggable()
+            break
+        case 'Detach':
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Detaching
+            $(pedigreeDiv).removeClass('pedigreeKill pedigreeMove pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeDetach')
+            drawOutOffspring.css('display', 'none')
+            move.css('display', 'none')
+            detach.css('display', 'inline-block')
+            kill.css('display', 'none')
+            break
+        case 'Kill':
+            if(this.options.theMode == Mode.Moving) {
+                $(this.element).find('.pedigreeDiv canvas').draggable('destroy')
+            }
+            this.options.theMode = Mode.Killing
+            $(pedigreeDiv).removeClass('pedigreeDetach pedigreeMove pedigreeDrawOutOffspring')
+            $(pedigreeDiv).addClass('pedigreeKill')
+            drawOutOffspring.css('display', 'none')
+            move.css('display', 'none')
+            detach.css('display', 'none')
+            kill.css('display', 'inline-block')
+            break
+        }
+    },
+    updateMirrorCheckboxes: function(name) {
+        let noMirrors = $(this.element).find('.menuitemNoMirrors img')
+        let singleMirror = $(this.element).find('.menuitemSingleMirror img')
+        let doubleMirror = $(this.element).find('.menuitemDoubleMirror img')        
+        switch(name) {
+        case 'NoMirrors':
+            this.options.rays = Mirrors.NoMirrors
+            noMirrors.css('display', 'inline-block')
+            singleMirror.css('display', 'none')
+            doubleMirror.css('display', 'none')
+            break
+        case 'SingleMirror':
+            this.options.rays = Mirrors.SingleMirror
+            noMirrors.css('display', 'none')
+            singleMirror.css('display', 'inline-block')
+            doubleMirror.css('display', 'none')
+            break
+        case 'DoubleMirror':
+            this.options.rays = Mirrors.DoubleMirror
+            noMirrors.css('display', 'none')
+            singleMirror.css('display', 'none')
+            doubleMirror.css('display', 'inline-block')
+            break
+        }
     }
 })
+function SpeciesFactory() {
+    this.constructorFunctions = {}
+    this.sessionInitializers = {}
+    this.geneboxesWidgets = {}
+    this.geneboxesCallbacks = {}
+    this.concoctors = {}
+}
+
+SpeciesFactory.prototype.registerSpeciesType = function(speciesType, 
+        constructorFunction, 
+        sessionInitializer,
+        geneboxesWidget,
+        geneboxesCallback) {
+    this.constructorFunctions[speciesType] = constructorFunction
+    this.sessionInitializers[speciesType] = sessionInitializer
+    this.geneboxesWidgets[speciesType] = geneboxesWidget
+    this.geneboxesCallbacks[speciesType] = geneboxesCallback
+//    console.log("Registered Species Type " + speciesType)
+}
+
+SpeciesFactory.prototype.getRegisteredSpecies = function() {
+    return Object.keys(this.constructorFunctions)
+}
+
+SpeciesFactory.prototype.getSpecies = function(speciesFactoryType, session, canvas) {
+    var species = null;
+    try {
+        species = this.constructorFunctions[speciesFactoryType](session, canvas)
+    } catch (err) {
+        console.error(err)
+        console.error("SpeciesFactory can't find a registered species for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        console.error('session')
+        console.error(session)
+        console.error('drawer')
+        console.error(drawer)
+        console.error('geneboxes')
+        console.error(geneboxes)
+
+    }
+    if(species != null)
+        return species;
+}
+SpeciesFactory.prototype.initializeSession = function(speciesFactoryType, session) {
+    var species = null;
+    try {
+        species = this.sessionInitializers[speciesFactoryType](session);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered session initializer for type '" 
+                + speciesFactoryType + "'. Valid values are " + 
+                Object.keys(this.sessionInitializers));
+        console.error(err);
+    }
+    if(species != null)
+        return species;
+}
+
+SpeciesFactory.prototype.geneboxes = function(speciesFactoryType, 
+        geneboxes, geneboxes_options) {
+    var species = null;
+    try {
+        species = this.geneboxesWidgets[speciesFactoryType](geneboxes, geneboxes_options);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered geneboxes widget for type '" + speciesFactoryType 
+                + "'. Valid values are " + Object.keys(this.geneboxesWidgets))
+        console.error(err);
+    }
+    if(species != null) {
+        return species;
+    }
+}
+
+SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType, 
+        geneboxes, canvas) {
+    var species = null;
+    try {
+        species = this.geneboxesCallbacks[speciesFactoryType](geneboxes, canvas);
+    } catch (err) {
+        console.error("SpeciesFactory can't find a registered geneboxes callback for type '" + speciesFactoryType + "'. Valid values are " + this.properties);
+        console.error(err);
+    }
+    if(species != null) {
+        return species
+    }
+}
+
+var _speciesFactorySingleton = new SpeciesFactory();

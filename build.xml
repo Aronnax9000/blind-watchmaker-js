@@ -14,105 +14,121 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="depends" description="description">
+    <target name="default" depends="app_plus_species_modules,baked" description="description">
        
     </target>
 
     <!-- - - - - - - - - - - - - - - - - - 
           target: depends                      
          - - - - - - - - - - - - - - - - - -->
-    <target name="depends">
+    <target name="app_plus_species_modules">
         <concat destfile="docs/js/watchmaker.js">
-            <fileset file="js/app/jquery.easing.1.3.js" />
-            <fileset file="js/app/drawing_context.js" />
-        	<fileset file="js/app/drawing_context_canvas2d.js" />
-        	<fileset file="js/app/drawing_context_nop.js" />
-        	<fileset file="js/app/drawing_context_svg.js" />
-        	<fileset file="js/app/breeding_box.js" />
-            <fileset file="js/app/breeding_boxes.js" />
-        	<fileset file="js/app/watchmaker_geom.js" />
-            <fileset file="js/app/species_factory.js" />
+            <fileset file="js/lib/easing/jquery.easing.1.3.js" />
             <fileset file="js/app/app.js" />
             <fileset file="js/app/blind_watchmaker.js" />
-            <fileset file="js/app/watchmaker_session.js" />
-            <fileset file="js/app/breeding_timing.js" />
-        	<fileset file="js/app/watchmaker_view.js" />
-        	<fileset file="js/app/breeding.js" />
-        	<fileset file="js/app/engineering_view.js" />
-            <fileset file="js/app/engineering_box.js" />
-            <fileset file="js/app/pedigree.js" />
-            <fileset file="js/app/pedigree_eden.js" />
+            <fileset file="js/app/session.js" />
             <fileset file="js/app/about.js" />
+            <fileset file="js/app/drawing/watchmaker_geom.js" />
+            <fileset file="js/app/drawing/drawing_context.js" />
+        	<fileset file="js/app/drawing/drawing_context_canvas2d.js" />
+        	<fileset file="js/app/drawing/drawing_context_nop.js" />
+        	<fileset file="js/app/drawing/drawing_context_svg.js" />
+            <fileset file="js/app/view/view.js" />
+        	<fileset file="js/app/view/breeding/breeding_box.js" />
+            <fileset file="js/app/view/breeding/breeding_boxes.js" />
+            <fileset file="js/app/view/breeding/breeding_timing.js" />
+        	<fileset file="js/app/view/breeding/breeding.js" />
+        	<fileset file="js/app/view/engineering/engineering_view.js" />
+            <fileset file="js/app/view/engineering/engineering_box.js" />
+            <fileset file="js/app/view/pedigree/pedigree_menuhandler.js" />
+            <fileset file="js/app/view/pedigree/pedigree_eden.js" />
+            <fileset file="js/app/view/pedigree/pedigree.js" />
+            <fileset file="js/species/species_factory.js" />
         </concat>
         <concat destfile="docs/js/biomorphs.js">
-            <fileset file="js/biomorphs/biomorph_swelltype.js" />
-            <fileset file="js/biomorphs/biomorph_types.js" />
-            <fileset file="js/biomorphs/biomorph_geneboxes.js" />
-            <fileset file="js/biomorphs/biomorph_spokesgene_genebox.js" />
-            <fileset file="js/biomorphs/biomorph_boundingbox.js" />
-            <fileset file="js/biomorphs/biomorph_triangle.js" />
-            <fileset file="js/biomorphs/biomorphs.js" />
+            <fileset file="js/species/biomorphs/biomorph.js" />
+            <fileset file="js/species/biomorphs/biomorph_develop.js" />
+            <fileset file="js/species/biomorphs/biomorph_swelltype.js" />
+            <fileset file="js/species/biomorphs/biomorph_types.js" />
+            <fileset file="js/species/biomorphs/biomorph_geneboxes.js" />
+            <fileset file="js/species/biomorphs/biomorph_spokesgene_genebox.js" />
+            <fileset file="js/species/biomorphs/biomorph_boundingbox.js" />
+            <fileset file="js/species/biomorphs/biomorph_triangle.js" />
         </concat>
     	<concat destfile="docs/js/monochrome.js">
-            <fileset file="js/monochrome/monochrome_buildmenus.js" />
-            <fileset file="js/monochrome/monochrome_session.js" />
-            <fileset file="js/monochrome/monochrome_doperson.js" />
-            <fileset file="js/monochrome/monochrome_triangle.js" />
-            <fileset file="js/monochrome/monochrome_manipulation.js" />
-            <fileset file="js/monochrome/monochrome_genotype.js" />
-            <fileset file="js/monochrome/monochrome_mutate.js" />
-            <fileset file="js/monochrome/monochrome_dosaltation.js" />
-            <fileset file="js/monochrome/monochrome_pic.js" />
-            <fileset file="js/monochrome/monochrome_develop.js" />
-            <fileset file="js/monochrome/monochrome_genebox.js" />
-            <fileset file="js/monochrome/monochrome_geneboxes.js" />
-            <fileset file="js/monochrome/monochrome.js" />
-            <fileset file="js/monochrome/monochrome_boundingbox.js" />
+            <fileset file="js/species/monochrome/monochrome.js" />
+            <fileset file="js/species/monochrome/monochrome_buildmenus.js" />
+            <fileset file="js/species/monochrome/monochrome_session.js" />
+            <fileset file="js/species/monochrome/monochrome_doperson.js" />
+            <fileset file="js/species/monochrome/monochrome_triangle.js" />
+            <fileset file="js/species/monochrome/monochrome_manipulation.js" />
+            <fileset file="js/species/monochrome/monochrome_genotype.js" />
+            <fileset file="js/species/monochrome/monochrome_mutate.js" />
+            <fileset file="js/species/monochrome/monochrome_dosaltation.js" />
+            <fileset file="js/species/monochrome/monochrome_pic.js" />
+            <fileset file="js/species/monochrome/monochrome_develop.js" />
+            <fileset file="js/species/monochrome/monochrome_genebox.js" />
+            <fileset file="js/species/monochrome/monochrome_geneboxes.js" />
+            <fileset file="js/species/monochrome/monochrome_boundingbox.js" />
     	</concat>
         <concat destfile="docs/js/minimal.js">
-            <fileset file="js/minimal/species_minimal.js" />
+            <fileset file="js/species/minimal/species_minimal.js" />
         </concat>
         <concat destfile="docs/js/arthromorph.js">
-            <fileset file="js/arthromorph/arthromorph_atomkind.js" />
-            <fileset file="js/arthromorph/arthromorph.js" />
-            <fileset file="js/arthromorph/arthromorph_doperson.js" />
-            <fileset file="js/arthromorph/arthromorph_mutate.js" />
-            <fileset file="js/arthromorph/arthromorph_develop.js" />
-            <fileset file="js/arthromorph/arthromorph_boundingbox.js" />
-        	
+            <fileset file="js/species/arthromorph/arthromorph_atomkind.js" />
+            <fileset file="js/species/arthromorph/arthromorph.js" />
+            <fileset file="js/species/arthromorph/arthromorph_doperson.js" />
+            <fileset file="js/species/arthromorph/arthromorph_mutate.js" />
+            <fileset file="js/species/arthromorph/arthromorph_develop.js" />
+            <fileset file="js/species/arthromorph/arthromorph_boundingbox.js" />
         </concat>
         <concat destfile="docs/js/colour_biomorph.js">
-            <fileset file="js/colour_biomorph/colour_biomorph_session.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_geneboxes.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_mutate.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_colour.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_develop.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_manipulation.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph.js" />
-            <fileset file="js/colour_biomorph/colour_pic.js" />
-            <fileset file="js/colour_biomorph/colour_biomorph_boundingbox.js" />
+            <fileset file="js/species/colour_biomorph/colour_pic.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_types.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_session.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_geneboxes.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_mutate.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_colour.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_develop.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_manipulation.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_boundingbox.js" />
         </concat>
         <concat destfile="docs/js/triay_shell.js">
-            <fileset file="js/triay_shell/triay_shell_genebox.js" />
-            <fileset file="js/triay_shell/triay_shell_geneboxes.js" />
-            <fileset file="js/triay_shell/triay_shell.js" />
-            <fileset file="js/triay_shell/triay_shell_boundingbox.js" />
-            <fileset file="js/triay_shell/shell-bundle.js" />
+            <fileset file="js/species/triay_shell/triay_shell_genebox.js" />
+            <fileset file="js/species/triay_shell/triay_shell_geneboxes.js" />
+            <fileset file="js/species/triay_shell/triay_shell.js" />
+            <fileset file="js/species/triay_shell/triay_shell_boundingbox.js" />
+            <fileset file="js/species/triay_shell/shell-bundle.js" />
         </concat>
         <concat destfile="docs/js/triay_biomorph.js">
-            <fileset file="js/triay_biomorph/triay_biomorph_geneboxes.js" />
-            <fileset file="js/triay_biomorph/triay_biomorph.js" />
-            <fileset file="js/triay_biomorph/triay_biomorph_doperson.js" />
-            <fileset file="js/triay_biomorph/triay_biomorph_manipulation.js" />
-            <fileset file="js/triay_biomorph/biomorph-bundle.js" />
-            <fileset file="js/triay_biomorph/triay_boundingbox.js" />
+            <fileset file="js/species/triay_biomorph/triay_biomorph_geneboxes.js" />
+            <fileset file="js/species/triay_biomorph/triay_biomorph.js" />
+            <fileset file="js/species/triay_biomorph/triay_biomorph_doperson.js" />
+            <fileset file="js/species/triay_biomorph/triay_biomorph_manipulation.js" />
+            <fileset file="js/species/triay_biomorph/biomorph-bundle.js" />
+            <fileset file="js/species/triay_biomorph/triay_boundingbox.js" />
         </concat>
         <concat destfile="docs/css/watchmaker.css">
-            <fileset file="css/watchmaker_boxes.css" />
-            <fileset file="css/style.css" />
-            <fileset file="css/geneboxes.css" />
-            <fileset file="css/dropdown.css" />
+            <concat destfile="docs/css/watchmaker.css">
+                <fileset file="css/about.css" />
+                <fileset file="css/watchmaker_boxes.css" />
+                <fileset file="css/style.css" />
+                <fileset file="css/geneboxes.css" />
+                <fileset file="css/dropdown.css" />
+            </concat>
         </concat>
     </target>
+    <target name="baked">
+        <concat destfile="docs/js/watchmaker_baked.js">
+            <fileset file="docs/js/watchmaker.js" />
+            <fileset file="docs/js/biomorphs.js" />
+            <fileset file="docs/js/monochrome.js" />
+            <fileset file="docs/js/triay_biomorph.js.js" />
+            <fileset file="docs/js/colour_biomorph.js" />
+            <fileset file="docs/js/triay_shell.js" />
+            <fileset file="docs/js/arthromorph.js" />
+        </concat>
+	</target>
 
 </project>

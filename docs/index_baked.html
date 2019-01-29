@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>Blind Watchmaker Suite by Richard Dawkins -- JavaScript Edition</title>
+<link rel="icon" href="favicon.ico?v=1.1"> 
+<link rel="stylesheet" href="jquery/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="css/watchmaker.css">
+<link rel="stylesheet" type="text/css" href="css/slick/slick.css"/>
+<link rel="stylesheet" type="text/css" href="css/slick/slick-theme.css"/>
+<link href='css/sm-core-css.css' rel='stylesheet' type='text/css' />
+<link href='css/sm-watchmaker.css' rel='stylesheet' type='text/css' />
+
+
+<script src="jquery/jquery-3.3.1.min.js"></script>
+<script src="jquery/jquery-ui.min.js"></script>
+<script src="slick/slick.min.js"></script>
+<!-- SmartMenus jQuery plugin -->
+<script src="smartmenus-1.1.0/jquery.smartmenus.min.js" type="text/javascript"></script>
+<script src="js/watchmaker_baked.js"></script>
+<!-- 
+<script src="js/minimal.js"></script>
+ -->
+<script type="text/javascript">
+
+
+$(document).ready(
+        function() {
+            $('.blindWatchmaker').blindWatchmaker();
+            $(".ui-closable-tab").click(
+                    function() {
+                        var tabContainerDiv = $(this).closest(".ui-tabs")
+                                .attr("id");
+                        var panelId = $(this).closest("li").remove().attr(
+                                "aria-controls");
+                        $("#" + panelId).remove();
+                        $("#" + tabContainerDiv).tabs("refresh");
+                        var tabCount = $("#" + tabContainerDiv).find(
+                                ".ui-closable-tab").length;
+                        if (tabCount < 1) {
+                            $("#" + tabContainerDiv).hide();
+                        }
+                    });
+        });
+</script>
+
+</head>
+
+<body>
+	<!--  class="ui-state-disabled" on li you don't want enabled -->
+	<div class="blindWatchmaker"></div>
+</body>
+</html>

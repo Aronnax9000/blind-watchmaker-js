@@ -1,0 +1,86 @@
+body {font-family: sans-serif}
+.wrapper {
+    display: table;
+    table-layout: fixed;
+    font-family: monospace;
+//    font-size: 0.75em;
+    white-space: pre;
+
+    width:90%;
+
+    background-color:aqua;
+}
+.wrapper div {
+    display: table-cell;
+}
+
+.dialogNoTitle .ui-dialog-titlebar {display:none}
+
+.dialogNoTitle {display: none;}
+
+.headerwrapper {
+    display: table;
+    table-layout: fixed;
+    font-family: sans-serif;
+    font-size: 1.25em;
+    white-space: normal;
+
+    width:90%;
+
+    background-color:aqua;
+}
+.headerwrapper div {
+    display: table-cell;
+}
+
+.ui-dialog-title {
+    font-size: 12px
+}
+
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+
+div {
+	font-size: 14pt;
+}
+
+
+
+.ui-icon-circle-close {
+    cursor: pointer;
+}
+
+.ui-widget.ui-widget-content {
+    border: 0px none;
+}
+.ui-widget-content {
+    border: 0px none;
+    background: #ffffff;
+    color: #333333;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
+    margin: 0px;
+    border-style: none;
+    border-width: 0px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+/*  display: none; */
+}
+
+.ui-dialog { border: 1px solid black;} 
+/* .ui-dialog-titlebar {  display: none; } */
+
+
+
+
+

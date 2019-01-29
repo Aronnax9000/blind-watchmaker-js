@@ -65,8 +65,8 @@ $.widget('dawk.blindWatchmaker', {
         var sessionIcon = newWSession.options.sessionIcon
         if(sessionIcon)
             string += '<img src="' + newWSession.options.sessionIcon + '">'
-        string += sessionName 
-        + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        string += sessionName + '</a>'
+//        string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);

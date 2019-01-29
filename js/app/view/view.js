@@ -156,7 +156,11 @@ $.widget('dawk.helpmenu', $.dawk.sub_menu, {
         this._super();
         this.appendmenuitem('Help with current operation', 'HelpWithCurrentOperation')
         this.appendmenuitem('Miscellaneous Help', 'MiscellaneousHelp')
-        this.appendmenuitem('About Blind Watchmaker', 'AboutBlindWatchmaker')
+        this.appendmenuitem('About Classic Blind Watchmaker', 'AboutClassicBlindWatchmaker')
+        this.appendmenuitem('About Classic Exhibition Colour', 'AboutClassicExhibitionColour')
+        this.appendmenuitem('About Classic Arthomorphs', 'AboutClassicArthromorphs')
+        this.appendmenuitem('About WatchmakerJS', 'AboutWatchmakerJS')
+        this.appendmenuitem('Donate', 'Donate')
     }
 })
 
@@ -280,9 +284,20 @@ MenuHandler.prototype.menuclick = function(event) {
             biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
             biomorph.develop()
             return false
-        case 'AboutBlindWatchmaker':
-            $("<div>").about({appendTo: this.element,
-            })
+        case 'AboutClassicBlindWatchmaker':
+            $("<div>").about({index:0, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicExhibitionColour':
+            $("<div>").about({index:1, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicArthromorphs':
+            $("<div>").about({index:2, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutWatchmakerJS':
+            $("<div>").about({index:3, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'Donate':
+            document.location = 'https://alancanon.net/donate' 
             return false
         }
         // Do generic stuff here

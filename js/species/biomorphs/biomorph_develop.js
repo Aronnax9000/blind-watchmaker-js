@@ -1,8 +1,4 @@
 
-function Biomorphs() {
-    
-}
-
 Biomorphs.prototype.develop = function() {
     var drawingObject = this.drawer;
     var drawingContext = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
@@ -120,3 +116,4 @@ Biomorphs.prototype.develop = function() {
     this.pic.drawPic(offCentre);
 
 }// {develop}
+

@@ -1,0 +1,69 @@
+.pedigreeMorphCanvas {
+    position: absolute;
+    background-color: White;
+}
+
+.drawOutCanvas {
+    border: 1px solid black;
+    z-index: 1;
+    padding: 0px;
+    position: relative;
+}
+
+
+.pedigreeDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.pedigreeMove {
+    cursor: url(cursor/pointyHand.png), auto;
+}
+
+.pedigreeDrawOutOffspring {
+    cursor: url(cursor/pedigree_cursor.png), auto;
+}
+.pedigreeDetach {
+    cursor: url(cursor/scissors.png), auto;
+}
+.pedigreeKill {
+    cursor: url(cursor/gun.png), auto;
+}
+
+.pedigreeBox {
+    z-index: 1 padding: 0px;
+    position: relative;
+    border: 1px solid black
+}
+
+.pedigreeFamilialLineCanvas {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -10;
+}
+
+.pedigreeDrawOutLineDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+}
+
+.pedigreeDrawOutMousingDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2147483647;
+}
+

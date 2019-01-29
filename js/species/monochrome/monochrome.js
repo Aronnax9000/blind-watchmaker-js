@@ -18,9 +18,6 @@
 function Monochrome(session, drawer) {
     this.session = session
     this.drawer = drawer
-    // Hang the new biomorph off of the drawing element as a data attribute,
-    // so the GUI can shift focus from one biomorph to another in response
-    // to GUI events, such as mouseover in breeding view.
     this.gene = chromosome()
     this.dGene = new Array(10)
     for(let i = 0; i < 10; i++) {

@@ -1,4 +1,13 @@
-.boxes {
+.about {
+    padding: 0px;
+    margin: 0px;
+}
+
+.aboutnomarginymcboatface {
+    padding: 0px;
+    margin: 0px;
+	
+}.boxes {
 	position: relative;
 	width: 1000px;
 	height: 600px;
