@@ -42,6 +42,7 @@
             <fileset file="js/app/view/engineering/engineering_box.js" />
             <fileset file="js/app/view/pedigree/pedigree_menuhandler.js" />
             <fileset file="js/app/view/pedigree/pedigree_eden.js" />
+            <fileset file="js/app/view/pedigree/pedigree_showastext.js" />
             <fileset file="js/app/view/pedigree/pedigree.js" />
             <fileset file="js/species/species_factory.js" />
         </concat>

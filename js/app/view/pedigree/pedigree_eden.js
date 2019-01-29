@@ -8,7 +8,7 @@
 //firstBorn;
 //lastBorn;
 //eldersib;
-//youngersib;
+//youngerSib;
 //prec, next;
 //damaged{,Blackened}
 
@@ -25,7 +25,7 @@ function Full(genome) {
     this.firstBorn = null
     this.lastBorn = null
     this.eldersib = null
-    this.youngersib = null
+    this.youngerSib = null
     this.prec = null
     this.next = null
     this.damaged = false
@@ -41,9 +41,9 @@ function Full(genome) {
 //previousGod, nextGod;
 //}
 function God() {
-    this.adam == null
-    this.previousGod == null
-    this.nextGod == null
+    this.adam = null
+    this.previousGod = null
+    this.nextGod = null
 }
 
 
