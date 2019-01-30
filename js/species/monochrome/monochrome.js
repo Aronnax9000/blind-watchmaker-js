@@ -17,6 +17,9 @@
  */
 function Monochrome(session, drawer) {
     this.session = session
+    if(drawer == null) {
+        drawer = document.createElement('canvas')
+    }
     this.drawer = drawer
     this.gene = chromosome()
     this.dGene = new Array(10)

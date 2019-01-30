@@ -17,6 +17,9 @@
  */
 function Monochrome(session, drawer) {
     this.session = session
+    if(drawer == null) {
+        drawer = document.createElement('canvas')
+    }
     this.drawer = drawer
     this.gene = chromosome()
     this.dGene = new Array(10)
@@ -88,6 +91,9 @@ Monochrome.initializeSession = function(session) {
     session.buildMenus = Monochrome.buildMenus
     session.trianglable = true
     session.arrayable = true
+    session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
+    session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Chess')
+    session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Insect')
 
 }
 
@@ -296,7 +302,8 @@ Monochrome.force2 = function(r) {
     return i
 }
 
-Monochrome.triangle = function(screenwidth, screenheight, b, m) {
+Triangle.triangle = function(screenwidth, screenheight, b, m) {
+    console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     var k = Math.round(200 * screenheight / 340);
     var x = m.h - b.h;
     var y = (screenheight - m.v) - (screenheight - b.v);
@@ -306,8 +313,11 @@ Monochrome.triangle = function(screenwidth, screenheight, b, m) {
     return [r1, r2, r3];
 }
 
-Monochrome.prototype.concoct = function(r1, r2, r3, a, b, c) {
+Monochrome.prototype.concoct = function(r, a, b, c) {
     var weight
+    let r1 = r[0]
+    let r2 = r[1]
+    let r3 = r[2]
     this.segNoGene = Math.round(r1 * a.segNoGene + r2 * b.segNoGene + r3 * c.segNoGene)
 
     if(this.segNoGene < 1) {
@@ -320,7 +330,7 @@ Monochrome.prototype.concoct = function(r1, r2, r3, a, b, c) {
     for(let j = 0; j < 9; j++) {
         this.gene[j] = Math.round(r1 * a.gene[j] + r2 * b.gene[j] + r3 * c.gene[j]);
     }
-    var sizeWorry = this.segNoGene * Monochrome.twoToThe(gene[8]);
+    var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
     if(sizeWorry > WORRYMAX) {
         this.gene[8]--
     }
@@ -1165,9 +1175,6 @@ Pic.prototype.drawPic = function(place) {
         this.movePtr = this.movePtr.nextLin;
     }
     drawer.penSize(1);
-    console.log('drawer box ' + drawer.box)
-    console.log('drawer margin ' + this.margin)
-//    console.log('GetRect ' + biomorph.getRect())
 } // {DrawPic}
 Monochrome.prototype.tree = function(x, y, lgth, dir, dx, dy, thick, oddOne, order) {
     if(dir < 0)

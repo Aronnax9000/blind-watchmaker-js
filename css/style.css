@@ -85,8 +85,12 @@ div {
 }
 
 .pedigreeMorphCanvas {
-	position: absolute;
-	background-color: White;
+    position: absolute;
+    background-color: White;
+}
+
+.triangleMorphCanvas {
+    position: absolute;
 }
 
 .drawOutCanvas {

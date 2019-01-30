@@ -39,12 +39,20 @@
 }
 
 .pedigreeDiv {
-	width: 1000px;
-	height: 600px;
-	position: absolute;
-	left: 0;
-	top: 0;
-	z-index: 1;
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+.triangleDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
 }
 
 .pedigreeMove {
@@ -139,6 +147,14 @@
 
 .midBox {
 	border-width: 2px;
+}
+
+.triangleLineCanvas {
+	position: absolute;
+	left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
 }body {font-family: sans-serif}
 .wrapper {
     display: table;
@@ -226,8 +242,12 @@ div {
 }
 
 .pedigreeMorphCanvas {
-	position: absolute;
-	background-color: White;
+    position: absolute;
+    background-color: White;
+}
+
+.triangleMorphCanvas {
+    position: absolute;
 }
 
 .drawOutCanvas {

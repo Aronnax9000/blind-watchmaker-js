@@ -20,7 +20,8 @@ Monochrome.force2 = function(r) {
     return i
 }
 
-Monochrome.triangle = function(screenwidth, screenheight, b, m) {
+Triangle.triangle = function(screenwidth, screenheight, b, m) {
+    console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     var k = Math.round(200 * screenheight / 340);
     var x = m.h - b.h;
     var y = (screenheight - m.v) - (screenheight - b.v);
@@ -30,8 +31,11 @@ Monochrome.triangle = function(screenwidth, screenheight, b, m) {
     return [r1, r2, r3];
 }
 
-Monochrome.prototype.concoct = function(r1, r2, r3, a, b, c) {
+Monochrome.prototype.concoct = function(r, a, b, c) {
     var weight
+    let r1 = r[0]
+    let r2 = r[1]
+    let r3 = r[2]
     this.segNoGene = Math.round(r1 * a.segNoGene + r2 * b.segNoGene + r3 * c.segNoGene)
 
     if(this.segNoGene < 1) {
@@ -44,7 +48,7 @@ Monochrome.prototype.concoct = function(r1, r2, r3, a, b, c) {
     for(let j = 0; j < 9; j++) {
         this.gene[j] = Math.round(r1 * a.gene[j] + r2 * b.gene[j] + r3 * c.gene[j]);
     }
-    var sizeWorry = this.segNoGene * Monochrome.twoToThe(gene[8]);
+    var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
     if(sizeWorry > WORRYMAX) {
         this.gene[8]--
     }

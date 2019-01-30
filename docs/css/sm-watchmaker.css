@@ -112,6 +112,10 @@
 	max-width: 150px;
 }
 
+.sm li li {
+    max-width: 280px;
+}
+
 @media (min-width: 768px) {
   /* Switch to desktop layout
   -----------------------------------------------

@@ -26,6 +26,9 @@ Monochrome.initializeSession = function(session) {
     session.buildMenus = Monochrome.buildMenus
     session.trianglable = true
     session.arrayable = true
+    session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
+    session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Chess')
+    session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Insect')
 
 }
 

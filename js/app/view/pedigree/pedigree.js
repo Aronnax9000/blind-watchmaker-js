@@ -137,29 +137,21 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let surround = current.surround
         let height = surround.bottom - surround.top;
         let width = surround.right - surround.left;
-        console.log('wxh ' + width + 'x' + height)
         let pedigreeDiv = $(this.element).find('.pedigreeDiv')[0]
         let pRect = new Rect(0, 0, $(pedigreeDiv).width(), $(pedigreeDiv).height())
-        console.log('pRect')
-        console.log(pRect)
-        console.log()
         let error = here.v - (height / 2)
-        console.log('v error low ' + error)
         if(error < 0) {
             here.v -= error
         } 
         error = here.v + (height / 2) 
-        console.log('v error high ' + error)
         if(error > pRect.bottom) {
             here.v -= error - pRect.bottom
         }
         error = here.h - (width / 2)
-        console.log('h error low ' + error)
         if(error < 0) {
             here.h -= error
         } 
         error = here.h + (width / 2) 
-        console.log('h error high ' + error)
         if(error > pRect.right) {
             here.h -= error - pRect.right
         }
@@ -287,8 +279,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         ctx.lineTo(p2.h, p2.v);
         ctx.closePath()
         ctx.stroke()
-        console.log('finished drawLine ' + p1 + ' -> ' + p2)
-        console.log(this.options.familialLineContext)
     },
     redrawAll: function(thisFull) {
         if(thisFull != null) {
@@ -429,7 +419,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     shoot: function(thisFull) {
         this.findLastGod();
         let yesAdam = this.isAnAdam(thisFull); //{leaves theGod as thisFull's god if any}
-        console.log(yesAdam)
         if(! yesAdam) {
             this.weedOut(thisFull);
             this.kill(thisFull)
@@ -467,7 +456,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             }
 
         }
-        console.log(this.options.rootGod)
         this.allLines(this.options.rootGod);
     },
     morphmousedown: function(event) {
@@ -586,10 +574,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 let full = $(event.target).data('genotype').full
                 let canvas = full.genome.drawer
                 let offset = $(canvas).offset()
-                console.log('canvas offset ' + offset)
                 let pedigreeDivOffset = $(event.target).closest('.pedigreeDiv').offset()
-                console.log('pedigreeDiv offset ' + offset)
-                console.log(canvas.width + ',' + canvas.height)
                 full.centre.h = offset.left - pedigreeDivOffset.left + canvas.width/2
                 full.centre.v = offset.top - pedigreeDivOffset.top + canvas.height/2
 

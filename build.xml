@@ -43,6 +43,8 @@
             <fileset file="js/app/view/pedigree/pedigree_menuhandler.js" />
             <fileset file="js/app/view/pedigree/pedigree_eden.js" />
             <fileset file="js/app/view/pedigree/pedigree_showastext.js" />
+            <fileset file="js/app/view/triangle/triangle.js" />
+            <fileset file="js/app/view/triangle/triangle_menuhandler.js" />
             <fileset file="js/app/view/pedigree/pedigree.js" />
             <fileset file="js/species/species_factory.js" />
         </concat>

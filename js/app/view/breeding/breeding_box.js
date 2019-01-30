@@ -72,7 +72,6 @@ $( function() {
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
                             eraseCanvas(this)
-                            console.log('handoff complete')
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
