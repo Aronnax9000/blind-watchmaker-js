@@ -1,5 +1,183 @@
+// Number.parseFloat(x).toFixed(2);
+$.widget( "dawk.floatGenebox", $.dawk.biomorph_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    _setOption : function(key, value) {
+        this._super(key, value);
+    },
+    refresh: function() {
+        this.element.find('.geneValue')
+        .text(String(Number.parseFloat(this.options.value).toFixed(2)));
+    },    
+
+} );
+
+$.widget( "dawk.handednessGenebox", $.dawk.biomorph_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    _setOption : function(key, value) {
+        this._super(key, value);
+    },
+    refresh: function() {
+        this.element.find('.geneValue')
+        .text(this.options.value == -1 ? 'Left' : 'Right');
+    },    
+} );/*
+ * Geneboxes for Matthieu Triay's implementation of Blind Watchmaker Shells.
+ */
+$.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
+    options : {
+        engineering: true,
+        biomorph: null,
+    },
+    _create : function(options) {
+        this._super(options)
+        this._setOptions(options);
+        this.element.addClass("shellGeneboxes");
+        let template = '<div></div>';
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 1,
+            title: 'Opening'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 2,
+            title: 'Displacement'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 3,
+            title: 'Shape'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 4,
+            title: 'Translation (per outline, in the direction orthogonal to that of the parent spirtal)'}).appendTo(this.element);
+
+        $(template).handednessGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 5,
+            title: 'Handedness'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 6,
+            title: 'Displacement Mutation Size'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 7,
+            title: 'Translation Mutation Size'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 8,
+            title: 'Coarsegraininess'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 9,
+            title: 'Reach'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 10,
+            title: 'Translation gradient'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 11,
+            title: 'Shape mutation size'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 12,
+            title: 'Reach mutation size'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 13,
+            title: 'Mutation Probability'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 14,
+            title: 'Pattern'}).appendTo(this.element);
+    },
+
+    updateFromCanvas: function(canvas) {
+        var biomorph = $(canvas).data('genotype');
+        if(biomorph === undefined) {
+            return;
+        }
+        this.options.biomorph = biomorph;
+        geneboxes = $(this.element).find('.genebox');
+        var shell = biomorph.shell
+        var genebox 
+        // Opening
+        genebox = geneboxes.eq(0); 
+        genebox.floatGenebox("updateValue", shell.opening);
+        // Displacement
+        genebox = geneboxes.eq(1); 
+        genebox.floatGenebox("updateValue", shell.displacement);
+        // Shape
+        genebox = geneboxes.eq(2); 
+        genebox.floatGenebox("updateValue", shell.shape);
+        // Translation
+        genebox = geneboxes.eq(3); 
+        genebox.floatGenebox("updateValue", shell.translation);
+        // Handedness
+        genebox = geneboxes.eq(4); 
+        genebox.handednessGenebox("updateValue", shell.handedness);
+        // Displacement mutation size
+        genebox = geneboxes.eq(5); 
+        genebox.floatGenebox("updateValue", shell.mutSize.displacement);
+        // Translation mutation size
+        genebox = geneboxes.eq(6); 
+        genebox.floatGenebox("updateValue", shell.mutSize.translation);
+        // Coarsegraniness
+        genebox = geneboxes.eq(7); 
+        genebox.biomorph_genebox("updateValue", shell.coarsegraininess);
+        // Reach
+        genebox = geneboxes.eq(8); 
+        genebox.biomorph_genebox("updateValue", shell.reach);
+        // Translation gradient
+        genebox = geneboxes.eq(9); 
+        genebox.floatGenebox("updateValue", shell.translationGradient);
+        // Shape mutation size
+        genebox = geneboxes.eq(10); 
+        genebox.floatGenebox("updateValue", shell.mutSize.shape);
+        // Reach mutation size
+        genebox = geneboxes.eq(11); 
+        genebox.floatGenebox("updateValue", shell.mutSize.reach);
+        // Mutation probability
+        genebox = geneboxes.eq(12); 
+        genebox.biomorph_genebox("updateValue", shell.mutProbGene);
+        // Pattern
+        genebox = geneboxes.eq(13); 
+        genebox.biomorph_genebox("updateValue", shell.pattern);
+    },
+});
 /*
- * Constructor for the Minimal biomorph species.
+ * Constructor for the Triay Shell biomorph species.
  * 
  * A biomorph is associated with a watchmaker session, and a drawing object.
  * 
@@ -15,65 +193,56 @@
  * Scalable Vector Graphic. 
  * 
  */
+
 function Shells(session, drawer) {
-    console.log('new Shells')
     this.session = session
     this.drawer = drawer
 }
 
 Shells.initializeSession = function(session) {
-    console.log('Shells.initializeSession')
+    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
+    session.options.basicTypes = [
+        "Hopeful Monster",
+        "BasicSnail",
+        "Babylon",
+        "Angel",
+        "Oyster",
+        "Bivalve",
+        "Cone",
+        "Scallop",
+        "Eloise",
+        "Gallaghers",
+        "Rapa",
+        "Fig",
+        "RazorShell",
+        "JapaneseWonder"]
+    session.options.defaultView = 'Engineering'
+    session.options.defaultBasicType = "Hopeful Monster"
+    session.options.hopefulMonsterBasicType = "Hopeful Monster"
+
 }
 
-$.widget('dawk.shells_geneboxes', {
-    options : {
-        engineering: true,
-        biomorph: null,
-    },
-    _create : function(options) {
-        this._setOptions(options);
-
-        this.element.addClass("monochromeGeneboxes");
-        
-        for(let i = 0; i < 4; i++) {
-            var geneBoxTitle = 'Gene '+(i+1);
-            if(i == 8) {
-                geneBoxTitle += '. Floating point';
-            }
-            var geneBox = $("<div></div>").gene1to9box({
-                geneboxCollection: this, 
-                title: geneBoxTitle});
-            geneBox.gene1to9box("option", "geneboxIndex", i + 1);
-            this.element.append(geneBox);
-        }
-        
-        this.refresh();
-    },
-
-    updateFromCanvas: function(canvas) {
-    },
-});
-
-// initializes the biomorph's genotype as one of a named set of types.
+//initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
-    console.log('Shells doPerson ' + morphType)
+    var genes = null
+    if(morphType) {
+        genes = (new ShellHardcodedAnimals())[morphType]
+    }
     var drawer = this.drawer
     this.shell = new Shell(drawer.getContext('2d'), 
             drawer.width,
             drawer.height,
-            null)
+            genes)
     // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
-//    this.shell.mutProbGene = 100
+//  this.shell.mutProbGene = 100
 
 } 
 Shells.prototype.doSaltation = function() {
-    console.log('Shells.doSaltation')
     this.shell.randomize()
 }
-// initializes the biomorph's genotype to a random set of values
-// causes the biomorph's genotype to undergo a random mutation
+//initializes the biomorph's genotype to a random set of values
+//causes the biomorph's genotype to undergo a random mutation
 Shells.prototype.mutate = function() {
-    console.log('Shells.mutate')
 }
 //creates and returns a new, mutated copy of the biomorph.
 Shells.prototype.reproduce = function(element) {
@@ -81,69 +250,248 @@ Shells.prototype.reproduce = function(element) {
     child.shell = this.shell.breed(element)
     return child
 }
-// called when it is time for the biomorph to draw itself. 
+//called when it is time for the biomorph to draw itself. 
 Shells.prototype.develop = function() {
-    console.log('Shells.develop')
+//    alert('Shells.develop')
+    this.shell.generate()
     this.shell.ctx = this.drawer.getContext('2d')
     this.shell.draw()
 }
-Shells.prototype.manipulate = function(geneboxIndex, leftRightPos, rung) {
-    console.log('Shells.manipulate')
+
+Shells.prototype.copyBiomorph = function(child) {
+    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
 }
 
-//Register the Monochrome biomorph species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("Shells", 
+Shells.margarine = function (w, direction) {
+    // {we want to change by large amounts when low, small amounts when large}
+    var wMutSize = 0.1
+    var logged = Math.log(w)
+    var logchanged = logged + wMutSize * direction
+    if(logchanged > 20) {
+        logchanged = 20
+    }
+    var m = Math.exp(logchanged)
+
+    if(m < 1) {
+        m = 1
+    }
+    return m
+}
+
+Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
+    // geneboxIndex is one-based
+    var str = "Manipulation one-based geneBoxIndex:" + geneboxIndex;
+
+    var leftRightPosProperties = HorizPos.properties[leftRightPos];
+    if(leftRightPosProperties != null) {
+        str += ',' + leftRightPosProperties.name;
+    }
+    str += ' v:' + rung
+    var rungProperties = VertPos.properties[rung];
+    if(rungProperties != null) {
+        str += ',' + rungProperties.name;
+    }
+    var shell = this.shell
+    switch(geneboxIndex) {
+    case 1:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.opening = Shells.margarine(shell.opening, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.opening = Shells.margarine(shell.opening, 1)
+            break;
+        }
+        break;;
+    case 2:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.displacement -= shell.mutSize.displacement
+            break;
+        case HorizPos.RightThird: 
+            shell.displacement += shell.mutSize.displacement
+            break;
+        }
+        break;;
+    case 3:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.shape -= shell.mutSize.shape
+            break;
+        case HorizPos.RightThird: 
+            shell.shape += shell.mutSize.shape
+            break;
+        }
+        break;;
+    case 4:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translation -= shell.mutSize.translation
+            break;
+        case HorizPos.RightThird: 
+            shell.translation += shell.mutSize.translation
+            break;
+        }
+        break;
+    case 5:
+        shell.handedness = -shell.handedness
+        break;
+    case 6:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.displacement -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.displacement += 0.1
+            break;
+        }
+        break;
+    case 7:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.translation -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.translation += 0.1
+            break;
+        }
+        break;
+    case 8:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.coarsegraininess--
+            break;
+        case HorizPos.RightThird: 
+            shell.coarsegraininess++
+            break;
+        }
+        break;
+    case 9:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.reach > 1) {
+                shell.reach--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.reach++
+            break;
+        }
+        break;
+    case 10:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, 1)
+            break;
+        }
+        break;
+    case 11:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.shape > 0) {
+                shell.mutSize.shape--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.shape++
+            break;
+        }
+        break;
+    case 12:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.reach > 1) {
+                shell.mutSize.reach--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.reach++
+            break;
+        }
+        break;
+    case 13:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(shell.mutProbGene > 1) {
+                shell.mutProbGene--
+            }
+            break;
+        case HorizPos.RightThird:
+            if(shell.mutProbGene < 100) {
+                shell.mutProbGene++
+            }
+            break;
+        }
+        break;
+    case 14:
+        var keys = Object.keys(Shell.patterns)
+        keys.push('circle')
+        var pattern
+        for(let i = 0; i < keys.length; i++) {
+            if(keys[i] == shell.pattern) {
+                pattern = i
+                break
+            }
+        }
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(pattern > -1) {
+                pattern--
+                if(pattern < 0) {
+                    pattern = keys.length - 1
+                }
+            }
+            break;
+        case HorizPos.RightThird: 
+            if(pattern < keys.length - 1) { 
+                pattern++
+            } else {
+                pattern = 0
+            }
+            break;
+        }
+        shell.pattern = keys[pattern]
+//        alert("Pattern " + pattern + ":" + shell.pattern)
+        break;
+    }
+    
+    if(shell.displacement < 0) {
+        shell.displacement = 0
+    } else if(shell.displacement > 100) {
+        shell.displacement = 100
+    }
+    
+}
+
+//Register the species with the SpeciesFactory.
+_speciesFactorySingleton.registerSpeciesType("Triay Shell", 
         (function(session, drawer) { return new Shells(session, drawer)}),
         (function(session) { Shells.initializeSession(session)}),
         (function(geneboxes, geneboxes_options) { 
             $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
-        (function(geneboxes, canvas) { 
-            $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
+            (function(geneboxes, canvas) { 
+                $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
 
-//
-//function main() {
-//
-//    var canvas = document.getElementById("canvas")
-//    var wWidth = window.innerWidth
-//    var wHeight = window.innerHeight
-//
-//    canvas.width = wWidth
-//    canvas.height = wHeight
-//
-//    var ctx = canvas.getContext('2d')
-//
-//    var bio = new Shell(ctx, wWidth, wHeight, null)
-//
-//    bio.draw()
-//
-//    canvas.addEventListener('click', function () {
-//
-//        bio.randomize()
-//        bio.draw()
-//    })
-//
-//}
-
-// A shell is a set of genes which control roughly what Dawkins called
-// flare, spire and verm, as discussed in Climbing Mount Improbable. 
-// There are other genes which modify the behaviour of these.
-// It's modeled around the idea of a spiraling tube. The genes determine how the 
-// spiral unfolds, and at each stop, draws a given pattern (circle, or others).
-// The naming comes from the original code
-// - pattern: string which says what shape will be repeated and distorted
-// - opening: called "flare" in the book, determines the speed at which the tube's diameter expands
-// - displacement: called "verm" in the book, determines how close together the tube's whorls are
-// - translation: called "spire" in the book, determines how much the tube piles on itself (the height)
-// - coarsegraininess: how often is the pattern repeated along the spiral
-// - reach: how much the spiral coils
-// - handedness: wether the shells faces left or right
-// - shape: how much the shell pattern gets distorted
-// - translationGradient: modifies the translation's "easing"
-// Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
-// The genes are optional (you'll get a random shell). 
-
-
-
+//A shell is a set of genes which control roughly what Dawkins called
+//flare, spire and verm, as discussed in Climbing Mount Improbable. 
+//There are other genes which modify the behaviour of these.
+//It's modeled around the idea of a spiraling tube. The genes determine how the 
+//spiral unfolds, and at each stop, draws a given pattern (circle, or others).
+//The naming comes from the original code
+//- pattern: string which says what shape will be repeated and distorted
+//- opening: called "flare" in the book, determines the speed at which the tube's diameter expands
+//- displacement: called "verm" in the book, determines how close together the tube's whorls are
+//- translation: called "spire" in the book, determines how much the tube piles on itself (the height)
+//- coarsegraininess: how often is the pattern repeated along the spiral
+//- reach: how much the spiral coils
+//- handedness: wether the shells faces left or right
+//- shape: how much the shell pattern gets distorted
+//- translationGradient: modifies the translation's "easing"
+//Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
+//The genes are optional (you'll get a random shell). 
 
 function Shell (ctx, width, height, genes) {
     this.children = []
@@ -151,7 +499,6 @@ function Shell (ctx, width, height, genes) {
     this.canvasHeight = height
 
     this.centre = { x: Math.round(this.canvasWidth/2), y: Math.round(this.canvasHeight/2) }
-//  this.origin = _.cloneDeep(this.centre)
     this.origin = { x: this.centre.x, y: this.centre.y }
 
     // How much and how often the genes mutate is set per shell
@@ -168,30 +515,32 @@ function Shell (ctx, width, height, genes) {
     this.nbSegments = 0
     this.ctx = ctx
 
-    this.type = 'shell'
+    this.type = 'shell';
 
-        if (genes) {
-            this.opening = genes.opening
-            this.displacement = genes.displacement
-            this.shape = genes.shape
-            this.translation = genes.translation
-            this.coarsegraininess = genes.coarsegraininess
-            this.reach = genes.reach
-            this.pattern = genes.pattern
-            this.handedness = genes.handedness
-            this.translationGradient = genes.translationGradient
+    if (genes) {
+        this.opening = genes.opening
+        this.displacement = genes.displacement
+        this.shape = genes.shape
+        this.translation = genes.translation
+        this.coarsegraininess = genes.coarsegraininess
+        this.reach = genes.reach
+        this.pattern = genes.pattern
+        this.handedness = genes.handedness
+        this.translationGradient = genes.translationGradient
+        if(genes.mutSize) {
             this.mutSize = {
                     displacement: genes.mutSize.displacement,
                     translation: genes.mutSize.translation,
                     shape: genes.mutSize.shape,
                     reach: genes.mutSize.reach
             }
-            this.mutProbGene = genes.mutProbGene
-            this.generate()
         }
-        else {
-            this.randomize()
-        }
+        this.mutProbGene = genes.mutProbGene
+        this.generate()
+    }
+    else {
+        this.randomize()
+    }
 }
 
 Shell.prototype.randomize = function () {
@@ -214,8 +563,12 @@ Shell.prototype.resetCentre = function () {
 
 }
 
-Shell.random = function(lower, upper, dummy) {
+Shell.random = function(lower, upper) {
     return Math.random() * (upper - lower) + lower
+}
+
+Shell.randInt = function(lower, upper) {
+    return Math.trunc(Math.random() * (upper - lower)) + lower
 }
 
 Shell.randomSign = function() {
@@ -223,187 +576,195 @@ Shell.randomSign = function() {
     else return 1;
 }
 
-// This produces a random set of genes which have visually
-// pleasing characteristics (most of the time)
-// Each shape has a different set of boundaries to make them look better
-Shell.randomGenes = function () {
+function ShellHardcodedAnimals() {
 
-    var basicSnail = {
-            opening: Shell.random(1.5, 6.50, true),
-            displacement: Shell.random(0, 0.1, true),
-            shape: Shell.random(0.8, 1.8, true),
-            translation: Shell.random(0, 4, true),
-            coarsegraininess: Shell.random(4, 8),
-            reach: Shell.random(3, 5, true),
+    return {
+        BasicSnail: {
+            opening: Shell.random(1.5, 6.50),
+            displacement: Shell.random(0, 0.1),
+            shape: Shell.random(0.8, 1.8),
+            translation: Shell.random(0, 4),
+            coarsegraininess: Shell.randInt(4, 8),
+            reach: Shell.randInt(3, 5),
             pattern: "circle",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var Babylon = {
-            opening: Shell.random(100, 1000, true),
-            displacement: Shell.random(0, 0.25, true),
-            shape: Shell.random(2, 5, true),
-            translation:Shell.random(0, 0.3, true),
-            coarsegraininess: Shell.random(1.5, 3),
-            reach: Shell.random(2, 3),
+        },
+        Babylon: {
+            opening: Shell.random(100, 1000),
+            displacement: Shell.random(0, 0.25),
+            shape: Shell.random(2, 5),
+            translation:Shell.random(0, 0.3),
+            coarsegraininess: Shell.randInt(1, 3),
+            reach: Shell.randInt(2, 3),
             pattern: "babylon",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 8),
-    }
-
-    var Angel = {
-            opening: Shell.random(100, 1000, true),
-            displacement: Shell.random(0, 0.25, true),
-            shape: Shell.random(2, 5, true),
-            translation:Shell.random(0, 0.3, true),
-            coarsegraininess: Shell.random(1, 2.5),
-            reach: Shell.random(2, 3),
+        },
+        Angel: {
+            opening: Shell.random(100, 1000),
+            displacement: Shell.random(0, 0.25),
+            shape: Shell.random(2, 5),
+            translation:Shell.random(0, 0.3),
+            coarsegraininess: Shell.randInt(1, 3),
+            reach: Shell.randInt(2, 3),
             pattern: "angel",
             handedness: Shell.randomSign(),
             translationGradient: Shell.random(1, 8),
-    }
-
-    var Oyster = {
-            opening: Shell.random(100, 1000, true),
-            displacement: Shell.random(0, 0.2, true),
-            shape: Shell.random(2, 5, true),
-            translation: Shell.random(0, 1.5, true),
-            coarsegraininess: Shell.random(3, 4, true),
-            reach: Shell.random(2, 3, true),
+        },
+        Oyster: {
+            opening: Shell.random(100, 1000),
+            displacement: Shell.random(0, 0.2),
+            shape: Shell.random(2, 5),
+            translation: Shell.random(0, 1.5),
+            coarsegraininess: Shell.randInt(3, 4),
+            reach: Shell.randInt(2, 3),
             pattern: "oyster",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.5, 1.5, true),
-    }
+            translationGradient: Shell.random(0.5, 1.5),
+        },
 
-    // BIVALVE AND BRACHIOPOD Shell.random
-    var Bivalve = {
-            opening: Shell.random(20, 1000, true),
-            displacement: Shell.random(0, 0.25, true),
-            shape: Shell.random(1.5, 4, true),
-            translation:Shell.random(0, 0.3, true),
-            coarsegraininess: Shell.random(1.5, 3),
-            reach: Shell.random(2.2, 4, true),
+        // BIVALVE AND BRACHIOPOD Shell.random
+        Bivalve: {
+            opening: Shell.random(20, 1000),
+            displacement: Shell.random(0, 0.25),
+            shape: Shell.random(1.5, 4),
+            translation:Shell.random(0, 0.3),
+            coarsegraininess: Shell.randInt(1, 3),
+            reach: Shell.randInt(2, 4),
             pattern: "circle",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 5, true),
-    }
-
-    var Cone = {
-            opening: Shell.random(1.3, 5, true),
-            displacement: Shell.random(0, 0.5, true),
-            shape: Shell.random(1, 5, true),
-            translation: Shell.random(2.5, 4.5, true),
-            coarsegraininess: Shell.random(2, 5, true),
-            reach: Shell.random(2, 7, true),
+            translationGradient: Shell.random(1, 5),
+        },
+        Cone: {
+            opening: Shell.random(1.3, 5),
+            displacement: Shell.random(0, 0.5),
+            shape: Shell.random(1, 5),
+            translation: Shell.random(2.5, 4.5),
+            coarsegraininess: Shell.randInt(2, 5),
+            reach: Shell.randInt(2, 7),
             pattern: "whelk",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var Scallop = {
-            opening: Shell.random(100, 1000, true),
+        },
+        Scallop: {
+            opening: Shell.random(100, 1000),
             displacement: 0,
-            shape: Shell.random(1, 6, true),
-            translation: Shell.random(0, 1, true),
-            coarsegraininess: Shell.random(2, 3.5, true),
+            shape: Shell.random(1, 6),
+            translation: Shell.random(0, 1),
+            coarsegraininess: Shell.randInt(2, 4),
             reach: 3,
             pattern: "scallop",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0, 2, true),
-    }
-
-    var Eloise = {
-            opening: Shell.random(1.3, 2.5, true),
-            displacement: Shell.random(0, 0.3, true),
-            shape: Shell.random(1.5, 2, true),
-            translation: Shell.random(1.5, 3, true),
-            coarsegraininess: Shell.random(2.5, 5, true),
-            reach: Shell.random(2, 5, true),
+            translationGradient: Shell.random(0, 2),
+        },
+        Eloise: {
+            opening: Shell.random(1.3, 2.5),
+            displacement: Shell.random(0, 0.3),
+            shape: Shell.random(1.5, 2),
+            translation: Shell.random(1.5, 3),
+            coarsegraininess: Shell.randInt(2, 5),
+            reach: Shell.randInt(2, 5),
             pattern: "eloise",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 1.5, true),
-    }
-
-    var Gallaghers = {
-            opening: Shell.random(1.4, 2, true),
-            displacement: Shell.random(0, 0.1, true),
-            shape: Shell.random(1.4, 2, true),
-            translation: Shell.random(2, 6, true),
-            coarsegraininess: Shell.random(3, 5, true),
-            reach: Shell.random(3, 6, true),
+            translationGradient: Shell.random(1, 2),
+        },
+        Gallaghers: {
+            opening: Shell.random(1.4, 2),
+            displacement: Shell.random(0, 0.1),
+            shape: Shell.random(1.4, 2),
+            translation: Shell.random(2, 6),
+            coarsegraininess: Shell.randInt(3, 5),
+            reach: Shell.randInt(3, 6),
             pattern: "gallaghers",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.5, 1, true),
-    }
-
-    var Rapa = {
-            opening: Shell.random(1.4, 6, true),
-            displacement: Shell.random(0, 0.12, true),
-            shape: Shell.random(1.8, 2.7, true),
-            translation: Shell.random(0.1, 2.6, true),
-            coarsegraininess: Shell.random(3, 6, true),
+            translationGradient: Shell.random(0.5, 1),
+        },
+        Rapa: {
+            opening: Shell.random(1.4, 6),
+            displacement: Shell.random(0, 0.12),
+            shape: Shell.random(1.8, 2.7),
+            translation: Shell.random(0.1, 2.6),
+            coarsegraininess: Shell.randInt(3, 6),
             reach: 9,
             pattern: "rapa",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.8, 1.5, true),
-    }
-
-    var Lightning = {
-            opening: Shell.random(1.4, 2.2, true),
-            displacement: Shell.random(0, 0.3, true),
-            shape: Shell.random(2.5, 5, true),
-            translation: Shell.random(2, 4.5, true),
-            coarsegraininess: Shell.random(3, 6, true),
-            reach: Shell.random(2, 6, true),
+            translationGradient: Shell.random(0.8, 1.5),
+        },
+        Lightning: {
+            opening: Shell.random(1.4, 2.2),
+            displacement: Shell.random(0, 0.3),
+            shape: Shell.random(2.5, 5),
+            translation: Shell.random(2, 4.5),
+            coarsegraininess: Shell.randInt(3, 6),
+            reach: Shell.randInt(2, 6),
             pattern: "lightning",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.8, 1.2, true),
-    }
-
-    var Fig = {
-            opening: Shell.random(1.5, 4, true),
-            displacement: Shell.random(0, 0.1, true),
-            shape: Shell.random(2, 4, true),
-            translation: Shell.random(0, 4, true),
-            coarsegraininess: Shell.random(2, 4, true),
-            reach: Shell.random(3, 8, true),
+            translationGradient: Shell.random(0.8, 1.2),
+        },
+        Fig: {
+            opening: Shell.random(1.5, 4),
+            displacement: Shell.random(0, 0.1),
+            shape: Shell.random(2, 4),
+            translation: Shell.random(0, 4),
+            coarsegraininess: Shell.randInt(2, 4),
+            reach: Shell.randInt(3, 8),
             pattern: "tun",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.9, 1.1, true),
-    }
-
-    var RazorShell = {
-            opening: Shell.random(100, 1000, true),
+            translationGradient: Shell.random(0.9, 1.1),
+        },
+        RazorShell: {
+            opening: Shell.random(100, 1000),
             displacement: -0.15,
-            shape: Shell.random(4, 6, true),
-            translation: Shell.random(4, 6.2, true),
-            coarsegraininess: Shell.random(2, 3, true),
-            reach: Shell.random(1, 3, true),
+            shape: Shell.random(4, 6),
+            translation: Shell.random(4, 6.2),
+            coarsegraininess: Shell.randInt(2, 3),
+            reach: Shell.randInt(1, 3),
             pattern: "razor",
             handedness: Shell.randomSign(),
             translationGradient: 1,
-    }
-
-    var JapaneseWonder = {
-            opening: Shell.random(1.4, 2, true),
-            displacement: Shell.random(-0.2, 0.05, true),
-            shape: Shell.random(1, 3, true),
-            translation: Shell.random(3.5, 6, true),
-            coarsegraininess: Shell.random(2, 5, true),
-            reach: Shell.random(6, 10, true),
+        },
+        JapaneseWonder: {
+            opening: Shell.random(1.4, 2),
+            displacement: Shell.random(-0.2, 0.05),
+            shape: Shell.random(1, 3),
+            translation: Shell.random(3.5, 6),
+            coarsegraininess: Shell.randInt(2, 5),
+            reach: Shell.randInt(6, 10),
             pattern: "wonder",
             handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.9, 1.2, true),
+            translationGradient: Shell.random(0.9, 1.2),
+        }
     }
-    var choices = [basicSnail, Oyster, Bivalve, Cone, Scallop, Eloise, Gallaghers, Rapa, Lightning, Fig, RazorShell, JapaneseWonder]
+}
+
+//This produces a random set of genes which have visually
+//pleasing characteristics (most of the time)
+//Each shape has a different set of boundaries to make them look better
+Shell.randomGenes = function () {
+    var hardcodedAnimals = new ShellHardcodedAnimals()
+    var choices = [
+        hardcodedAnimals['BasicSnail'], 
+        hardcodedAnimals['Babylon'],
+        hardcodedAnimals['Angel'],
+        hardcodedAnimals['Oyster'],
+        hardcodedAnimals['Bivalve'],
+        hardcodedAnimals['Cone'],
+        hardcodedAnimals['Scallop'],
+        hardcodedAnimals['Eloise'], 
+        hardcodedAnimals['Gallaghers'], 
+        hardcodedAnimals['Rapa'], 
+        hardcodedAnimals['Lightning'], 
+        hardcodedAnimals['Fig'], 
+        hardcodedAnimals['RazorShell'],
+        hardcodedAnimals['JapaneseWonder']]
     //Babylon and Angel aren't used because they're very similar to Bivalves
     return choices[Math.trunc(Math.random() * choices.length)]
 }
 
-// This is a hash of patterns. Each shape is a set of 2D coordinates relative to the first point.
-// There are also w and h which are the original height and width of the shape (to allow scaling)
-// These patterns can be used instead of circles to draw the shells.
+//This is a hash of patterns. Each shape is a set of 2D coordinates relative to the first point.
+//There are also w and h which are the original height and width of the shape (to allow scaling)
+//These patterns can be used instead of circles to draw the shells.
 Shell.patterns = {
         whelk: {points:[[0.22100000000000364,793.123],[79.92,-101.91],[103.64,-230.23],[61.47,-328.6],[91.36,-484.13],[132.64,-522.82],[132.64,-530.73],[169.55,-565.84],[175.71,-565.84],[264.44,-655.47],[361.13,-708.19],[415.59,-793.44],[492.93,-774.98],[499.94,-718.73],[558.82,-637.91],[624.73,-571.11],[637.91,-565.84],[673.02,-445.48],[649.29,-302.24],[594.84,-224.05],[552.66,-180.99],[545.65,-180.15],[504.31,-138.81],[235.44,3.53],[216.99,52.72],[181.88,-8.8],[97.53,-31.63]],w:673.02,h:846.16},
         wonder: {points:[[318.977,-0.3160000000000025],[-59.25,58.5],[-119.25,123.75],[-185.25,245.25],[-209.25,287.25],[-244.5,390],[-269.25,576],[-276,739.5],[-288,779.25],[-318.75,845.25],[-194.25,836.25],[-142.5,821.25],[-120.75,804],[-98.25,776.25],[-53.25,704.25],[15,615.75],[75,537.75],[135,440.25],[195.75,333.75],[249.75,243.75],[284.25,177],[307.5,144],[307.5,134.25],[294,121.5]],w:626.25,h:845.25},
@@ -419,9 +780,9 @@ Shell.patterns = {
         angel: {points:[[582.789,-0.09300000000001774],[-24.22,23.09],[-57.09,47.32],[-179.06,119.98],[-246.53,161.5],[-286.32,185.72],[-377.16,252.32],[-447.22,318.07],[-508.64,375.16],[-519.02,379.48],[-559.68,468.58],[-583.03,530.86],[-576.11,630.34],[-532.86,708.19],[-438.57,804.21],[-352.07,844.29],[-136.68,844.29],[-6.06,820.64],[84.77,765.29],[162.62,686.57],[229.23,610.44],[262.97,506.64],[262.97,400.24],[237.88,303.36],[184.25,207.34],[132.34,139.01],[101.21,104.4]],w:846,h:844.29},
 }
 
-// To draw the shell, we first have to generate all the bounding boxes along
-// the spiral. The pattern is then scaled to fit these boxes and drawn
-// Width and height are optional and useful if the canvas has changed size
+//To draw the shell, we first have to generate all the bounding boxes along
+//the spiral. The pattern is then scaled to fit these boxes and drawn
+//Width and height are optional and useful if the canvas has changed size
 Shell.prototype.generate = function (width, height) {
 
     if (width && height) {
@@ -503,8 +864,8 @@ Shell.prototype.generate = function (width, height) {
     this.scaleToBox(0.8) // Make sure the shell fits in the box
 }
 
-// Stretches a shape to make it fit in a rectangle of w x h
-// invert = -1 or 1 to invert the coordinates (handedness)
+//Stretches a shape to make it fit in a rectangle of w x h
+//invert = -1 or 1 to invert the coordinates (handedness)
 Shell.scaleToRect = function (shape, w, h, invert) {
 
     // Calculate ratios of sizeWeWant/sizeItWas
@@ -580,8 +941,8 @@ Shell.prototype.translate = function (offsetX, offsetY) {
     }
 }
 
-// Calculates the width/height and corner coordinates of the shell
-// Useful to place multiple shells on a single canvas
+//Calculates the width/height and corner coordinates of the shell
+//Useful to place multiple shells on a single canvas
 Shell.prototype.setBoundingBox = function () {
 
     var segment
@@ -631,8 +992,8 @@ Shell.prototype.setBoundingBox = function () {
     this.box = box
 }
 
-// For each box generated, this has to be called to draw the pattern
-// with the right dimensions
+//For each box generated, this has to be called to draw the pattern
+//with the right dimensions
 Shell.prototype.drawPattern = function (segment, index) {
 
     // Height and width for the box
@@ -711,8 +1072,8 @@ Shell.prototype.draw = function (lofi) {
     this.ctx.stroke()
 }
 
-// Opening is a logarithmic value so it has its own
-// function to mutate it which converts it to meaningful values
+//Opening is a logarithmic value so it has its own
+//function to mutate it which converts it to meaningful values
 Shell.mutateOpening = function (opening) {
 
     var mutSize = 0.4
@@ -753,29 +1114,28 @@ Shell.rand100 = function() {
 }
 
 
-Shell.randInt = function(lower, upper) {
-    return Math.trunc(Math.random() * (upper - lower) + lower)
-}
+//Shell.randInt = function(lower, upper) {
+//return Math.trunc(Math.random() * (upper - lower) + lower)
+//}
 
-// The breeding process is relatively straighforward compared to the rest
-// It looks at each gene and rolls a D100. If it's under the probability, then
-// the gene will mutate by a factor of the mutSize
-// The original program's mutations were pretty limited, so to accentuate them
-// we've added more parameters and a higher size mutation
+//The breeding process is relatively straighforward compared to the rest
+//It looks at each gene and rolls a D100. If it's under the probability, then
+//the gene will mutate by a factor of the mutSize
+//The original program's mutations were pretty limited, so to accentuate them
+//we've added more parameters and a higher size mutation
 Shell.prototype.breed = function (element) {
     var child = this.getGenes()
-    console.log(child)
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
     }
 
     if (Shell.rand100() < child.mutProbGene) {
-        child.displacement += Shell.randInt(-2, 2) * child.mutSize.displacement
+        child.displacement += Shell.randInt(-2, 2) * child.displacement
         child.displacement = Math.min(Math.max(child.displacement, 0), 1)
     }
 
     if (Shell.rand100() < child.mutProbGene) {
-        child.translation += Shell.randInt(-2, 2) * child.mutSize.translation
+        child.translation += Shell.randInt(-2, 2) * child.translation
     }
 
     if (Shell.rand100() < 1) {
@@ -802,7 +1162,7 @@ Shell.prototype.breed = function (element) {
         newShell = new Shell(element.getContext('2d'), element.width, element.height, child)
     else
         newShell = new Shell(this.ctx, this.canvasWidth, this.canvasHeight, child)
-        
+
     this.children.push(newShell)
 
     return this.children[this.children.length - 1]

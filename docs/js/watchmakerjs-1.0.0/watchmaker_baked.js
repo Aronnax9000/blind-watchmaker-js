@@ -3494,7 +3494,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             secondVictim = thisFull.elderSib;
             this.wipeOut(thisFull);
             if(thisFull == null) {
-                alert('BEEP')
+                alert('BEEP1')
             } else {
                 thisFull = null
             }
@@ -3515,7 +3515,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             nextVictim = thisFull.lastBorn;
             this.wipeOut(thisFull);
             if(thisFull == null) {
-                alert('BEEP')
+                alert('BEEP2')
             } else {
                 thisFull = null
             }

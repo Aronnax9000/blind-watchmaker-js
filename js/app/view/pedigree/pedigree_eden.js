@@ -18,8 +18,10 @@
 //}
 function Full(genome) {
     this.genome = genome
+    genome.full = this
     this.surround = genome.getRect()
-    this.origin = new Point()
+    Triangle.atLeast(this.surround);
+
     this.centre = new Point()
     this.parent = null
     this.firstBorn = null

@@ -1,9 +1,0 @@
- .watchmakerView {
-    border: 1px black solid;
-    width: 100%;
-    height: 100%;
-/*    display: grid;
-    grid-template-columns: 100%;
-    grid-gap: 0px; */
-    color: #000;
-}
