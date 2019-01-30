@@ -40,7 +40,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         div.appendTo(container)
         let familialLineCanvas = $("<canvas width='1000' height='600'>")
         familialLineCanvas.appendTo(div)
-        
+
         this.options.familialLineContext = familialLineCanvas[0].getContext('2d')
         div = $("<div class='pedigreeDrawOutLineDiv'>")
 
@@ -83,7 +83,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     markIf: function(thisFull) {
         // Remove midBox class from every canvas
         $(this.element).find('canvas').removeClass('midBox')
-        
+
         if(thisFull != null) {
             // Mark this one as special
             $(thisFull.genome.drawer).addClass('midBox')
@@ -118,7 +118,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let biomorphWidth = surround.right - surround.left
         let biomorphHeight = surround.bottom - surround.top
         let left = point.h - biomorphWidth / 2
-        let top = point.v - biomorphHeight / 2;
+        let top = point.v - biomorphHeight / 2
         let canvas = $("<canvas class='pedigreeMorphCanvas'>")
         canvas.attr('height', Math.trunc(biomorphHeight))
         canvas.attr('width', Math.trunc(biomorphWidth))
@@ -145,6 +145,36 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         current.origin = here    
         current.surround = current.genome.getRect();
         Triangle.atLeast(current.surround);
+
+        let surround = current.surround
+        let height = surround.bottom - surround.top;
+        let width = surround.right - surround.left;
+        console.log('wxh ' + width + 'x' + height)
+        let pedigreeDiv = $(this.element).find('.pedigreeDiv')[0]
+        let pRect = new Rect(0, 0, $(pedigreeDiv).width(), $(pedigreeDiv).height())
+        console.log('pRect')
+        console.log(pRect)
+        console.log()
+        let error = here.v - (height / 2)
+        console.log('v error low ' + error)
+        if(error < 0) {
+            here.v -= error
+        } 
+        error = here.v + (height / 2) 
+        console.log('v error high ' + error)
+        if(error > pRect.bottom) {
+            here.v -= error - pRect.bottom
+        }
+        error = here.h - (width / 2)
+        console.log('h error low ' + error)
+        if(error < 0) {
+            here.h -= error
+        } 
+        error = here.h + (width / 2) 
+        console.log('h error high ' + error)
+        if(error > pRect.right) {
+            here.h -= error - pRect.right
+        }
 
         current.parent = thisFull;
         current.elderSib = thisFull.lastBorn;
@@ -273,7 +303,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this.options.theGod = tempGod;
         this.allLines(this.options.rootGod);
 
-//        this.markIf(thisFull); //make midBox
+//      this.markIf(thisFull); //make midBox
     },
     drawLine: function(p1, p2) {
 //      let ctx = this.options.familialLineCanvas.getContext('2d')

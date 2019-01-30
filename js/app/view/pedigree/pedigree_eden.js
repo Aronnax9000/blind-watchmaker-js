@@ -779,7 +779,6 @@ Pedigree.prototype.spawnOne = function(thisFull, here, current) {
 
 //    SetCursor(Curslist[WatchCursor]);
     current = new Full();
-    document.createElement('canvas')
     current.genome = thisFull.genome.reproduce();
     current.origin = here;
     current.genome.develop()
