@@ -169,20 +169,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let biomorph = thisFull.genome
 
         let spawn = biomorph.reproduce(null)
-        let current = new Full(spawn)
-        
-
-        current.parent = thisFull;
-        current.elderSib = thisFull.lastBorn;
-        if(current.elderSib != null) {
-            current.elderSib.youngerSib = current;
-        }
-        current.lastBorn = null;
-        current.youngerSib = null;
-        if(thisFull.lastBorn == null) {
-            thisFull.firstBorn = current;
-        }
-        thisFull.lastBorn = current;
+        let current = new Full(spawn, thisFull)
         this.bumper(current, here)
         this.addone(current, here)
         this.markIf(current);
@@ -225,10 +212,10 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         ctx.beginPath()
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
         ctx.strokeStyle = "Black";
-            ctx.lineWidth = 1
-            this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
-            ctx.closePath()
-            ctx.stroke()
+        ctx.lineWidth = 1
+        this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
+        ctx.closePath()
+        ctx.stroke()
     },
     cleardragoutline: function() {
         let canvas = this.options.drawOutCanvas
@@ -348,16 +335,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this.doAllLines(theGod)
     },
 
-    checkAdam: function(thisGod) {
+    checkAdam: function(thisGod, thisFull) {
         if(thisGod != null) {
-            if(thisGod.adam != null) {
-                if(thisGod.adam == thisFull) {
-                    theGod = thisGod
-                    return true
-                }
+            if(thisGod.adam == thisFull) {
+                this.options.theGod = thisGod
+                return true
             }
             if(thisGod.nextGod != null) {
-                return this.checkAdam(thisGod.nextGod);
+                return this.checkAdam(thisGod.nextGod, thisFull);
             }
         }
         return false
@@ -368,7 +353,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     isAnAdam: function(thisFull) {
         let tryGod = this.options.rootGod
         if(thisFull != null) {
-            return this.checkAdam(tryGod)
+            return this.checkAdam(tryGod, thisFull)
         } else {
             return false
         } 
@@ -444,13 +429,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     shoot: function(thisFull) {
         this.findLastGod();
         let yesAdam = this.isAnAdam(thisFull); //{leaves theGod as thisFull's god if any}
+        console.log(yesAdam)
         if(! yesAdam) {
             this.weedOut(thisFull);
             this.kill(thisFull)
         } else {
 //          {only comes here if trying to kill an adam}
             if(thisFull.parent != null) {
-                alert('BEEP');
+                alert('Trying to shoot an Adam, but it has a parent. And probably a navel, too.');
             }
             if(thisFull.lastBorn != null) {
                 this.killAll(thisFull.lastBorn);
@@ -465,24 +451,23 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 this.options.theMode = Mode.Preliminary;
                 this.markIf(null)
             }
-            if(theGod.previousGod == null) {
-                this.sysBeep(1)
-            } else {
-                theGod.previousGod.nextGod = theGod.nextGod;
-            }
-            if(theGod.nextGod != null) {
-                theGod.nextGod.previousGod = theGod.previousGod;
-            }
-            theGod.nextGod = null;
-            theGod.previousGod = null;
-            theGod.adam = null;
+            let theGod = this.options.theGod
             if(theGod == null) {
-                alert('BEEP!')
+                alert('Trying to shoot an Adam, and theGod is null')
             } else {
-                theGod = null
+                if(theGod.previousGod == null) {
+                    alert("Trying to shoot an Adam, and Adam's god has no previous god.")
+                } else {
+                    theGod.previousGod.nextGod = theGod.nextGod;
+                }
+                if(theGod.nextGod != null) {
+                    theGod.nextGod.previousGod = theGod.previousGod;
+                }
+                this.options.theGod = null
             }
 
         }
+        console.log(this.options.rootGod)
         this.allLines(this.options.rootGod);
     },
     morphmousedown: function(event) {
@@ -619,7 +604,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 console.log(canvas.width + ',' + canvas.height)
                 full.centre.h = offset.left - pedigreeDivOffset.left + canvas.width/2
                 full.centre.v = offset.top - pedigreeDivOffset.top + canvas.height/2
-              
+
                 this.allLines(this.options.rootGod)
             }})
             break
