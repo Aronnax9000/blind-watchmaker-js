@@ -92,7 +92,7 @@ Monochrome.initializeSession = function(session) {
 }
 
 Monochrome.buildMenus = function(menu) {
-    console.log('monochrome mutations menu')
+//    console.log('monochrome mutations menu')
     $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuPedigree')[0])
 
 }
@@ -1165,6 +1165,9 @@ Pic.prototype.drawPic = function(place) {
         this.movePtr = this.movePtr.nextLin;
     }
     drawer.penSize(1);
+    console.log('drawer box ' + drawer.box)
+    console.log('drawer margin ' + this.margin)
+//    console.log('GetRect ' + biomorph.getRect())
 } // {DrawPic}
 Monochrome.prototype.tree = function(x, y, lgth, dir, dx, dy, thick, oddOne, order) {
     if(dir < 0)

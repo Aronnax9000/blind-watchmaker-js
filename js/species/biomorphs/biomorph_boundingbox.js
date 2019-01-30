@@ -30,6 +30,7 @@ Biomorphs.prototype.getRect = function() {
         this.dummydraw()
     }
     let margin = this.pic.margin
+    
     return new Rect(0,0, margin.right - margin.left,
             margin.bottom - margin.top)
 }

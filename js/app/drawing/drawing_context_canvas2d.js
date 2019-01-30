@@ -2,6 +2,7 @@ function Canvas2DDrawer(drawingObject) {
     this.drawingObject = drawingObject;
     this.drawingContext = drawingObject.getContext('2d');
     this.bgcolor = 'White' 
+    this.box = new Rect()
 }
 
 
@@ -34,14 +35,27 @@ Canvas2DDrawer.prototype.setColor = function(color) {
   this.drawingContext.fillStyle = color;
 }
 
+Canvas2DDrawer.prototype.updateBox = function(x,y) {
+    box = this.box
+    if(box.left == null || x < box.left)
+        box.left = x;
+    if(box.right == null || x > box.right)
+        box.right = x;
+    if(box.top == null || y < box.top)
+        box.top = y;
+    if(box.bottom == null || y > box.bottom)
+        box.bottom = y;
+}
 
 Canvas2DDrawer.prototype.moveTo = function(x,y) {
     this.drawingContext.beginPath();
     this.drawingContext.moveTo(x,y);
+    this.updateBox(x,y)
 }
 Canvas2DDrawer.prototype.lineTo = function(x,y) {
     this.drawingContext.lineTo(x,y);
     this.drawingContext.stroke();
+    this.updateBox(x,y)
 }
 
 Canvas2DDrawer.prototype.frameOval = function(rect) {
@@ -59,6 +73,9 @@ Canvas2DDrawer.prototype.frameOval = function(rect) {
 
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.stroke();
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
+
 }
 
 Canvas2DDrawer.prototype.fillOval = function(rect, style) {
@@ -66,12 +83,16 @@ Canvas2DDrawer.prototype.fillOval = function(rect, style) {
     this.drawingContext.fillStyle = style;
     this.paintOval(rect)
     this.drawingContext.fillStyle = fillStyle
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
 }
 Canvas2DDrawer.prototype.eraseOval = function(rect) {
     let fillStyle = this.drawingContext.fillStyle
     this.drawingContext.fillStyle = this.bgcolor
     this.paintOval(rect)
     this.drawingContext.fillStyle = fillStyle
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
     
 }
 
@@ -101,6 +122,8 @@ Canvas2DDrawer.prototype.paintOval = function(rect) {
 
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.fill();
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
 }
 
 
@@ -108,11 +131,15 @@ Canvas2DDrawer.prototype.paintRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.fillRect(rect.left, rect.top, width, height);
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
 }
 Canvas2DDrawer.prototype.frameRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.strokeRect(rect.left, rect.top, width, height);
+    this.updateBox(rect.left,rect.top)
+    this.updateBox(rect.right,rect.bottom)
 }
 
 Canvas2DDrawer.prototype.getHeight = function() {
@@ -136,7 +163,6 @@ Canvas2DDrawer.prototype.setTransform = function(x1, x2, x3, x4, x5, x6) {
 }
 Canvas2DDrawer.prototype.clearRect = function(x1, x2, x3, x4) {
     this.drawingContext.beginPath();
-        
     this.drawingContext.clearRect(x1, x2, x3, x4);
 }
 
@@ -144,7 +170,9 @@ Canvas2DDrawer.prototype.drawLine = function(x1, y1, x2, y2) {
     var drawingContext = this.drawingContext;
     drawingContext.beginPath();
     drawingContext.moveTo(x1, y1);
+    this.updateBox(x1, y1)
     drawingContext.lineTo(x2, y2);
+    this.updateBox(x2, y2)
     drawingContext.stroke();
 }
 

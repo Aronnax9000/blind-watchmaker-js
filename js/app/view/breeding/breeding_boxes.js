@@ -103,7 +103,6 @@ $( function() {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
             var breedingView = $(this.element).closest('.breedingView')
-            console.log(breedingView)
             var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {

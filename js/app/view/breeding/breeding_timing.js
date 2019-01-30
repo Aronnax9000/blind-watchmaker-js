@@ -14,7 +14,7 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
 
     $(string).appendTo(div)
     $("<br>").appendTo(div)
-    
+
     var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
     $(useFitness).tooltip();
     $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
@@ -43,8 +43,8 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
             right:20
         },
         startButton: null,
-        generationsPreviousSecond: 0});
-    console.log(div)
+        generationsPreviousSecond: 0
+    });
 
     return div
 }

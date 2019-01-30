@@ -156,6 +156,6 @@ Arthromorph.prototype.doPerson = function(type) {
     default:     
         this.minimalAnimal()
     }
-    this.trunk.printMiddle()
+//    this.trunk.printMiddle()
 
 }

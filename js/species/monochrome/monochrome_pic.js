@@ -288,4 +288,7 @@ Pic.prototype.drawPic = function(place) {
         this.movePtr = this.movePtr.nextLin;
     }
     drawer.penSize(1);
+    console.log('drawer box ' + drawer.box)
+    console.log('drawer margin ' + this.margin)
+//    console.log('GetRect ' + biomorph.getRect())
 } // {DrawPic}

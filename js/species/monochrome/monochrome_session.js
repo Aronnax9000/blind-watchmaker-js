@@ -30,7 +30,7 @@ Monochrome.initializeSession = function(session) {
 }
 
 Monochrome.buildMenus = function(menu) {
-    console.log('monochrome mutations menu')
+//    console.log('monochrome mutations menu')
     $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuPedigree')[0])
 
 }

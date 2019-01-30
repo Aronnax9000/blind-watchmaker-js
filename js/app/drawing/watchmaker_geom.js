@@ -16,10 +16,10 @@ Point.prototype.copy = function() {
 }
 
 function Rect() {
-    this.left = 0
-    this.right = 0
-    this.top = 0
-    this.bottom = 0
+    this.left = null
+    this.right = null
+    this.top = null
+    this.bottom = null
 }
 
 /*

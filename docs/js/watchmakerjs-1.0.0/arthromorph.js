@@ -643,7 +643,7 @@ Arthromorph.prototype.doPerson = function(type) {
     default:     
         this.minimalAnimal()
     }
-    this.trunk.printMiddle()
+//    this.trunk.printMiddle()
 
 }
 
@@ -811,7 +811,7 @@ Arthromorph.prototype.mutate = function() {
         if(ok) {
             if(change == 4) {
                 if(options.duplicationMut) {
-                    console.log('duplicationMut')
+//                    console.log('duplicationMut')
 //                    targetAtom.printMiddle()
                     
                     // There is only one AnimalTrunk per animal,

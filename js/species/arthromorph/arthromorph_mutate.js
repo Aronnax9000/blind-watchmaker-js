@@ -163,7 +163,7 @@ Arthromorph.prototype.mutate = function() {
         if(ok) {
             if(change == 4) {
                 if(options.duplicationMut) {
-                    console.log('duplicationMut')
+//                    console.log('duplicationMut')
 //                    targetAtom.printMiddle()
                     
                     // There is only one AnimalTrunk per animal,

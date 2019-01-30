@@ -108,6 +108,10 @@
   border-top: 0;
 }
 
+.sm li {
+	max-width: 150px;
+}
+
 @media (min-width: 768px) {
   /* Switch to desktop layout
   -----------------------------------------------
