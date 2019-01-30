@@ -7,7 +7,7 @@
 //parent;
 //firstBorn;
 //lastBorn;
-//eldersib;
+//elderSib;
 //youngerSib;
 //prec, next;
 //damaged{,Blackened}
@@ -24,14 +24,8 @@ function Full(genome) {
     this.parent = null
     this.firstBorn = null
     this.lastBorn = null
-    this.eldersib = null
+    this.elderSib = null
     this.youngerSib = null
-    this.prec = null
-    this.next = null
-    this.damaged = false
-    this.snapHandle = null
-    this.snapBytes = null
-    this.snapBounds = new Rect()
 }
 
 //GodPtr == ^God;
