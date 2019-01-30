@@ -2601,23 +2601,35 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         }
     },
     morphmouseup: function(event) {
-        if(this.options.theMode == Mode.Phyloging) {
+        let target = event.target
+        switch(this.options.theMode) {
+        case Mode.Phyloging:
             event.stopPropagation()
-            let target = event.target
-            if(target != this.options.phyloging) {
+            if(event.target != this.options.phyloging) {
                 this.cleardragoutline()
                 let target = event.target
                 let offset = $(target).offset()
                 let pedigreeOffset = $(target).parent().offset()
+                let x = offset.left - pedigreeOffset.left;
+                let y = offset.top - pedigreeOffset.top;
                 let inneroffset = $(event.target).offset()
-                let x = event.pageX - pedigreeOffset.left;
-                let y = event.pageY - pedigreeOffset.top;
-                thisFull = $(this.options.phyloging).data('genotype').full
-                this.spawnmany(thisFull, new Point(x, y))
+                let innerx = event.pageX - offset.left;
+                let innery = event.pageY - offset.top;
+
+                thisFull = $(target).data('genotype').full
+                this.spawnmany(thisFull, new Point(x + innerx, y + innery))
             } else {
                 // Let go inside original morph. Don't reproduce
                 this.options.phyloging = null
             }
+
+            break
+        case Mode.Moving:
+            break
+        case Mode.Detaching:
+            break
+        case Mode.Killing:
+            break
         }
     },
 

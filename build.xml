@@ -14,7 +14,7 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="app_plus_species_modules,baked" description="description">
+    <target name="default" depends="app_plus_species_modules,baked,zip" description="description">
        
     </target>
 
@@ -131,5 +131,8 @@
             <fileset file="docs/js/arthromorph.js" />
         </concat>
 	</target>
-
+    <target name="zip">
+    <zip destfile="watchmakerjs-1.0.0.zip" basedir='docs'>
+    </zip>
+</target>
 </project>
