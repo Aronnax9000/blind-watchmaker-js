@@ -310,7 +310,7 @@ Monochrome.force2 = function(r) {
 Triangle.triangle = function(screenwidth, screenheight, b, m) {
     console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     // k is the equator of the triangle
-    var k = Math.round(200 * screenheight / 340); // was 200. 
+    var k = Math.round(200.5 * screenheight / 340); // was 200. 
     // horizontal difference between the mouse and the left of triangle (b)
     // positive if to the right of b, 
     var x = m.h - b.h;
