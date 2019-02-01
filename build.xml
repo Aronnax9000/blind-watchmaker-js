@@ -125,6 +125,7 @@
                 <fileset file="css/style.css" />
                 <fileset file="css/tabs.css" />
                 <fileset file="css/triangle.css" />
+                <fileset file="css/widget.css" />
             </concat>
         </concat>
     </target>

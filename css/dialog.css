@@ -1,0 +1,11 @@
+.dialogNoTitle .ui-dialog-titlebar {display:none}
+
+.dialogNoTitle {display: none;}
+
+
+.ui-dialog-title {
+    font-size: 12px
+}
+
+.ui-dialog { border: 1px solid black;} 
+

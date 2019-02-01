@@ -1,0 +1,37 @@
+.triangleMorphCanvas {
+    position: absolute;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+}
+
+.triangleCanvas {
+    border: 1px solid blue;
+    width: 1000;
+    height: 600;
+    z-index: -1;
+}
+
+.triangleDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+}
+
+.triangleLineDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+
+.triangleLineCanvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}

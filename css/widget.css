@@ -1,0 +1,9 @@
+.ui-widget.ui-widget-content {
+    border: 0px none;
+}
+.ui-widget-content {
+    border: 0px none;
+    background-color: #FFFFFF;
+    color: #333333;
+}
+

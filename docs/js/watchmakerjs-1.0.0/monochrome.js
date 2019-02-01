@@ -93,8 +93,8 @@ Monochrome.initializeSession = function(session) {
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
     console.log('init top of triangle')
     console.log(session.options.topOfTriangle)
-    session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Chess')
-    session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Insect')
+    session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Insect')
+    session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Chess')
 
 }
 
@@ -303,18 +303,26 @@ Monochrome.force2 = function(r) {
     return i
 }
 
+
+// b.h := round(134 * ScreenWidth / 512);
+// b.v := round(250 * ScreenHeight / 342);
+
 Triangle.triangle = function(screenwidth, screenheight, b, m) {
     console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     // k is the equator of the triangle
     var k = Math.round(200 * screenheight / 340); // was 200. 
-    // vertical difference between the mouse and the left of triangle
+    // horizontal difference between the mouse and the left of triangle (b)
+    // positive if to the right of b, 
     var x = m.h - b.h;
-
-    var y = (screenheight - m.v) + (screenheight - b.v);
+    // (screenheight - m.v) is how high up from the bottom we are
+    // (screenheight - b.v) is how high up from the bottom point b is.
+    // Difference is how much lower mouse is than b.
+    var y = (screenheight - m.v) - (screenheight - b.v);
 
     var r1 = y / k;
     var r3 = (x - y / 2) / k;
     var r2 = (k - x - y / 2) / k;
+    
     return [r1, r2, r3];
 }
 

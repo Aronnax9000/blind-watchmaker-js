@@ -1,36 +1,15 @@
-body {font-family: sans-serif}
-.wrapper {
-    display: table;
-    table-layout: fixed;
-    font-family: monospace;
-//    font-size: 0.75em;
-    white-space: pre;
-
-    width:90%;
-
-    background-color:aqua;
+@font-face {
+    font-family: 'MacOS7'; /*a name to be used later*/
+    src: url('font/ChicagoFLF.ttf'); /*URL to font*/
 }
-.wrapper div {
-    display: table-cell;
+
+@font-face {
+    font-family: 'MacOS8'; /*a name to be used later*/
+    src: url('font/virtue.ttf'); /*URL to font*/
 }
 
 
-.headerwrapper {
-    display: table;
-    table-layout: fixed;
-    font-family: sans-serif;
-    font-size: 1.25em;
-    white-space: normal;
-
-    width:90%;
-
-    background-color:aqua;
-}
-
-.headerwrapper div {
-    display: table-cell;
-}
-
+body {font-family: MacOs7, MacOs8, sans-serif;}
 
 input[type=checkbox]
 {
@@ -42,23 +21,10 @@ input[type=checkbox]
   padding: 10px;
 }
 
-div {
-	font-size: 14pt;
-}
-
 
 
 .ui-icon-circle-close {
     cursor: pointer;
-}
-
-.ui-widget.ui-widget-content {
-    border: 0px none;
-}
-.ui-widget-content {
-    border: 0px none;
-    background-color: 'White';
-    color: #333333;
 }
 
 
