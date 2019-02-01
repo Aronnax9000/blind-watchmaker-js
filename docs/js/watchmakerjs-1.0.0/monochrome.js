@@ -79,7 +79,6 @@ Monochrome.initializeMut = function(session) {
     session.options.mut = mut
 }
 
-//Really belongs on the session
 Monochrome.initializeSession = function(session) {
     Monochrome.initializeMut(session)
     session.options.sessionIcon = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png';
@@ -92,6 +91,8 @@ Monochrome.initializeSession = function(session) {
     session.trianglable = true
     session.arrayable = true
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
+    console.log('init top of triangle')
+    console.log(session.options.topOfTriangle)
     session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Chess')
     session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Insect')
 
@@ -304,14 +305,29 @@ Monochrome.force2 = function(r) {
 
 Triangle.triangle = function(screenwidth, screenheight, b, m) {
     console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
-    var k = Math.round(200 * screenheight / 340);
+    // k is the equator of the triangle
+    var k = Math.round(200 * screenheight / 340); // was 200. 
+    // vertical difference between the mouse and the left of triangle
     var x = m.h - b.h;
-    var y = (screenheight - m.v) - (screenheight - b.v);
+
+    var y = (screenheight - m.v) + (screenheight - b.v);
+
     var r1 = y / k;
     var r3 = (x - y / 2) / k;
     var r2 = (k - x - y / 2) / k;
     return [r1, r2, r3];
 }
+
+//// 470 x 116
+//// top of triangle
+//let a = new Point(Math.round(234 * screenWidth / 512), Math.round(51 * screenHeight / 342));
+//// 268 x 560 
+//// left of triangle
+//let b = new Point(Math.round(134 * screenWidth / 512), Math.round(250 * screenHeight / 342));
+//// 666 x 560 
+//// right of triangle
+//let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
+
 
 Monochrome.prototype.concoct = function(r, a, b, c) {
     var weight

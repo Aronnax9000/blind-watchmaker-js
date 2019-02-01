@@ -14,9 +14,6 @@ body {font-family: sans-serif}
     display: table-cell;
 }
 
-.dialogNoTitle .ui-dialog-titlebar {display:none}
-
-.dialogNoTitle {display: none;}
 
 .headerwrapper {
     display: table;
@@ -29,13 +26,11 @@ body {font-family: sans-serif}
 
     background-color:aqua;
 }
+
 .headerwrapper div {
     display: table-cell;
 }
 
-.ui-dialog-title {
-    font-size: 12px
-}
 
 input[type=checkbox]
 {
@@ -62,44 +57,10 @@ div {
 }
 .ui-widget-content {
     border: 0px none;
-    background: #ffffff;
+    background-color: 'White';
     color: #333333;
 }
 
-.ui-tabs .ui-tabs-panel {
-    padding: 0px;
-    margin: 0px;
-    border-style: none;
-    border-width: 0px;
-}
 
-.no-close .ui-dialog-titlebar-close {
-/*  display: none; */
-}
 
-.ui-dialog { border: 1px solid black;} 
-/* .ui-dialog-titlebar {  display: none; } */
 
-.watchmakerMenu {
-/*	height: 46px; */ /* Classic Mac menu bar height */
-}
-
-.pedigreeMorphCanvas {
-    position: absolute;
-    background-color: White;
-}
-
-.triangleMorphCanvas {
-    position: absolute;
-}
-
-.drawOutCanvas {
-    border: 1px solid black;
-    z-index: 1;
-    padding: 0px;
-    position: relative;
-}
-.about {
-	padding: 0px;
-	margin: 0px;
-}

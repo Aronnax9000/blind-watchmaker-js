@@ -115,10 +115,16 @@
         <concat destfile="docs/css/watchmaker.css">
             <concat destfile="docs/css/watchmaker.css">
                 <fileset file="css/about.css" />
-                <fileset file="css/watchmaker_boxes.css" />
-                <fileset file="css/style.css" />
+                <fileset file="css/boxes.css" />
+                <fileset file="css/breeding.css" />
+                <fileset file="css/dialog.css" />
+                <fileset file="css/engineering.css" />
                 <fileset file="css/geneboxes.css" />
-                <fileset file="css/dropdown.css" />
+                <fileset file="css/menu.css" />
+                <fileset file="css/pedigree.css" />
+                <fileset file="css/style.css" />
+                <fileset file="css/tabs.css" />
+                <fileset file="css/triangle.css" />
             </concat>
         </concat>
     </target>

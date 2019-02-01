@@ -19,25 +19,22 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         this.options.menuHandler.nextMenuHandler = new TriangleMenuHandler()
         let container = $("<div class='container'>")
         container.appendTo(this.element)
-        let triangleLineCanvas = $("<canvas width='1000' height='600' class='triangleLineCanvas'>")
-        triangleLineCanvas.appendTo(container)
-        triangleContext = triangleLineCanvas[0].getContext('2d')
+                
         // Draw triangle here
-        let triangleDiv = $('<div class="triangleDiv">')
-        triangleDiv.addClass('boxes')
+        let triangleDiv = $('<div class="triangleDiv"><canvas class="triangleCanvas" width="1000" height="600"></canvas></div>')
         triangleDiv.appendTo(container)
         this._on(triangleDiv, {
             mousedown: function(event) { this.mousedown(event) },
             mousemove: function(event) { this.mousemove(event) },
         })
         this.drawTriangle()
-        let session = this.options.session
-        
-        this.options.topOfTriangle = session.options.topOfTriangle
+        let sessionoptions = this.options.session.options
+        console.log(sessionoptions)
+        this.options.topOfTriangle = sessionoptions.topOfTriangle
         this.fullandadd(this.options.topOfTriangle, this.options.a)
-        this.options.leftOfTriangle = session.options.leftOfTriangle
+        this.options.leftOfTriangle = sessionoptions.leftOfTriangle
         this.fullandadd(this.options.leftOfTriangle, this.options.b)
-        this.options.rightOfTriangle = session.options.rightOfTriangle
+        this.options.rightOfTriangle = sessionoptions.rightOfTriangle
         this.fullandadd(this.options.rightOfTriangle, this.options.c)
     },
     buildMenus: function(menu) {
@@ -107,44 +104,50 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         this.addone(current, here)
         this.markIf(current);
     },
-    spawnone: function(thisFull, here) {
-        let biomorph = thisFull.genome
-
-        let spawn = biomorph.reproduce(null)
-        let current = new Full(spawn, thisFull)
-        this.bumper(current, here)
-        this.addone(current, here)
-        this.markIf(current);
-    },
     mousedown: function(event) {
-        let triangleDivOffset = $(this.element).find('.triangleDiv')[0].getBoundingClientRect()
+        let triangleDivOffset = $(this.element).find('.triangleDiv')[0].offset()
         let x = event.pageX - triangleDivOffset.left
         let y = event.pageY - triangleDivOffset.top
+        console.log('triangleDivOffset')
         console.log(triangleDivOffset)
         let m = new Point(x,y)
-        let r = Triangle.triangle(
-                triangleDivOffset.right - triangleDivOffset.left,
-                triangleDivOffset.bottom - triangleDivOffset.top, 
-                this.options.b, m);
-        let session = this.options.session
-        let newone = _speciesFactorySingleton.getSpecies(session.species, session, document.createElement('canvas'))
-        let options = this.options
-        newone.concoct(r, options.topOfTriangle, options.leftOfTriangle, options.rightOfTriangle)
-        this.fullandadd(newone, m)
+        console.log(m)
+        let triangleContext = this.options.triangleContext
+        triangleContext.strokeStyle = 'Red';
+        triangleContext.lineWidth = '1'
+        triangleContext.beginPath()
+        triangleContext.strokeRect(x-1,y-1,x+1,y+1)
+        triangleContext.closePath()
+        
+//        let r = Triangle.triangle(
+//                triangleDivOffset.right - triangleDivOffset.left,
+//                triangleDivOffset.bottom - triangleDivOffset.top, 
+//                this.options.b, m);
+//        let session = this.options.session
+//        let newone = _speciesFactorySingleton.getSpecies(session.species, session, document.createElement('canvas'))
+//        let options = this.options
+//        newone.concoct(r, options.topOfTriangle, options.leftOfTriangle, options.rightOfTriangle)
+//        this.fullandadd(newone, m)
     },
     mousemove: function(event) {
     },
     drawTriangle: function() {
-        let triangleDiv = $(this.element).find('.triangleDiv')
-        let screenWidth = triangleDiv.width()
-        let screenHeight = triangleDiv.height()
+        let triangleCanvas = $(this.element).find('.triangleCanvas')
+        let screenWidth = triangleCanvas.width()
+        let screenHeight = triangleCanvas.height()
+        console.log("drawTriangle screen dimensions: " + new Point(screenWidth, screenHeight))
         let a = new Point(Math.round(234 * screenWidth / 512), Math.round(51 * screenHeight / 342));
         let b = new Point(Math.round(134 * screenWidth / 512), Math.round(250 * screenHeight / 342));
         let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
+        this.options.a = a
+        this.options.b = b
+        this.options.c = c
         console.log(a + b + c)
-        let ctx = $(this.element).find('.triangleLineCanvas')[0].getContext('2d')
+        console.log(triangleCanvas[0])
+        let ctx = triangleCanvas[0].getContext('2d')
         ctx.strokeStyle = 'Black';
         ctx.lineWidth = 1;
+        console.log(ctx)
         ctx.beginPath()
         ctx.moveTo(a.h, a.v);
         ctx.lineTo(b.h, b.v);
@@ -152,9 +155,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         ctx.lineTo(a.h, a.v);
         ctx.closePath()
         ctx.stroke()
-        this.options.a = a
-        this.options.b = b
-        this.options.c = c
+        console.log('finished drawTriangle')
     }
 
 })

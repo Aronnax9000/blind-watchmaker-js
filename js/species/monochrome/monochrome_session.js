@@ -14,7 +14,6 @@ Monochrome.initializeMut = function(session) {
     session.options.mut = mut
 }
 
-//Really belongs on the session
 Monochrome.initializeSession = function(session) {
     Monochrome.initializeMut(session)
     session.options.sessionIcon = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png';
@@ -27,6 +26,8 @@ Monochrome.initializeSession = function(session) {
     session.trianglable = true
     session.arrayable = true
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
+    console.log('init top of triangle')
+    console.log(session.options.topOfTriangle)
     session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Chess')
     session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Insect')
 
