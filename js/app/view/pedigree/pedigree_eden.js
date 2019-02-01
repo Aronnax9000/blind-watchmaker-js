@@ -41,7 +41,6 @@ function Pedigree(options) {
     this.options = options
     this.godCounter = 0
     this.rootGod = null
-    this.thereAreLines = false
     this.theGod = null
 }
 

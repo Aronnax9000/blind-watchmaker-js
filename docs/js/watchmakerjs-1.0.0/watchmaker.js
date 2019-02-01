@@ -2168,7 +2168,6 @@ function Pedigree(options) {
     this.options = options
     this.godCounter = 0
     this.rootGod = null
-    this.thereAreLines = false
     this.theGod = null
 }
 
@@ -2188,7 +2187,8 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         biomorph: null,
         topOfTriangle: null,
         leftOfTriangle: null,
-        rightOfTriangle: null
+        rightOfTriangle: null,
+        liveOne: null
     },
     viewGainedFocus: function(event) {
         let session = $(this).triangleView("option", "session")
@@ -2210,6 +2210,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         triangleDiv.appendTo(container)
         this._on(triangleDiv, {
             mousedown: function(event) { this.mousedown(event) },
+            mouseup: function(event) { this.mouseup(event) },
             mousemove: function(event) { this.mousemove(event) },
         })
         this.drawTriangle()
@@ -2221,6 +2222,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         this.addone(this.options.leftOfTriangle, this.options.b)
         this.options.rightOfTriangle = sessionoptions.rightOfTriangle
         this.addone(this.options.rightOfTriangle, this.options.c)
+        this.options.liveone = null
     },
     buildMenus: function(menu) {
         this._super('buildMenus')
@@ -2268,29 +2270,54 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         let m = new Point(x,y)
         console.log(m)
         let triangleContext = triangleDiv.find('canvas')[0].getContext('2d')
-        triangleContext.strokeStyle = 'Red';
-        triangleContext.lineWidth = '1'
-        triangleContext.beginPath()
-        triangleContext.strokeRect(x-1,y-1,2,2)
-        triangleContext.closePath()
-        triangleContext.strokeStyle = 'Black';
         console.log("TriangleDivOffset ")
         console.log(triangleDivOffset)
-        let r = Triangle.triangle(
-                triangleDiv.width(),
-                triangleDiv.height(), 
-                this.options.b, m);
-        console.log(r)
-        console.log(r[0] + r[1] + r[2])
         let session = this.options.session
         let biomorph = _speciesFactorySingleton.getSpecies(session.species, session, 
                 document.createElement('canvas'));
                 
         let options = this.options
+        let r = Triangle.triangle(
+                triangleDiv.width(),
+                triangleDiv.height(), 
+                this.options.b, m);
         biomorph.concoct(r, options.topOfTriangle, options.leftOfTriangle, options.rightOfTriangle)
         this.addone(biomorph, m)
     },
+    mouseup: function(event) {
+        this.options.liveone = null
+    },
     mousemove: function(event) {
+        let canvas = this.options.liveone
+        if(canvas != null) {
+            let triangleDiv = $(this.element).find('.triangleDiv')
+            let biomorph = $(canvas).data('genotype')
+            let biomorphWidth = $(canvas).width()
+            let biomorphHeight = $(canvas).height()
+            console.log(biomorphWidth)
+            let x = event.pageX - triangleDiv.offset().left 
+            console.log(x)
+            let y = event.pageY - triangleDiv.offset().top 
+            let r = Triangle.triangle(
+                    triangleDiv.width(),
+                    triangleDiv.height(), 
+                    this.options.b, new Point(x,y));
+            let options = this.options.session.options
+            biomorph.concoct(r, 
+                    options.topOfTriangle, 
+                    options.leftOfTriangle, 
+                    options.rightOfTriangle)
+            biomorph.develop()
+            let surround = biomorph.getRect()
+            $(canvas).attr('width', surround.right - surround.left)
+            $(canvas).attr('height', surround.bottom - surround.top)
+            biomorph.develop()
+            let left = x - biomorphWidth / 2
+            console.log(left)
+            let top = y - biomorphHeight / 2
+            $(canvas).css('left', left)
+            $(canvas).css('top', top)
+        }
     },
     addone: function(biomorph, point) {
         let surround = biomorph.getRect()
@@ -2306,7 +2333,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         canvas.addClass('triangleBox midBox')
         biomorph.drawer = canvas
         $(canvas).data('genotype', biomorph)
-
+        this.options.liveone = canvas
         let triangleDiv = $(this.element).find('.triangleDiv')
         triangleDiv.append(canvas)
         biomorph.drawer = canvas[0]

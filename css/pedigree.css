@@ -24,17 +24,17 @@
 
 
 .pedigreeMove {
-    cursor: url(cursor/pointyHand.png), auto;
+    cursor: url(cursor/pointyHand.png) 8 8, auto;
 }
 
 .pedigreeDrawOutOffspring {
-    cursor: url(cursor/pedigree_cursor.png), auto;
+    cursor: url(cursor/pedigree_cursor.png) 8 8, auto;
 }
 .pedigreeDetach {
-    cursor: url(cursor/scissors.png), auto;
+    cursor: url(cursor/scissors.png) 8 8, auto;
 }
 .pedigreeKill {
-    cursor: url(cursor/gun.png), auto;
+    cursor: url(cursor/gun.png) 8 8, auto;
 }
 
 .pedigreeBox {

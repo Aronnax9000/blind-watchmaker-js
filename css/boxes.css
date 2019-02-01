@@ -8,12 +8,15 @@
 	color: #000;
 }
 
+.breedingView .boxes {
+    cursor: url(cursor/breed.png), auto;
+	
+}
 
 .container {
 	width: 1000px;
 	height: 600px;
 	position: relative;
-	cursor: url(cursor/breed.png), auto;
 }
 
 .boxes, .overlay {
