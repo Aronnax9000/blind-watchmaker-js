@@ -1278,7 +1278,7 @@ $.widget('dawk.viewmenu', $.dawk.sub_menu, {
         if(this.options.session.trianglable) {
             this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
             this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
-            this.appendmenuitem('Make right of triangle','MakeRightOfTtriangle')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle')
         }
     }
 })
@@ -1426,6 +1426,21 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newEngineeringView", biomorph);
             return false
+        case 'MakeTopOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.topOfTriangle = biomorph
+            return false
+        case 'MakeLeftOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.leftOfTriangle = biomorph
+            return false
+        case 'MakeRightOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.rightOfTriangle = biomorph
+            return false            
         case 'DisplayPedigree':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')
