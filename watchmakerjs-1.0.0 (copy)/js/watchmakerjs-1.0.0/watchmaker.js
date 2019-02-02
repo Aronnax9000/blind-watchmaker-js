@@ -501,7 +501,39 @@ $.widget('dawk.blindWatchmaker', {
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-    }    
+    },    
+    newTriangleView: function(biomorph) {
+        var uuid = uuidv4();
+        var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
+        var string = '<li><a href="#' + uuid + '">'
+            + '<img src="' + viewIcon + '">' 
+            + 'Triangle</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.triangleView({session: this.options.session, 
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    }     
 });
 
 function WatchmakerSession(species) {
@@ -1400,6 +1432,13 @@ MenuHandler.prototype.menuclick = function(event) {
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newPedigreeView", biomorph);
+            return false
+        case 'Triangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newTriangleView");
             return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)

@@ -7,7 +7,8 @@
     padding: 0px;
     margin: 0px;
 	
-}.boxes {
+}
+.boxes {
 	position: relative;
 	width: 1000px;
 	height: 600px;
@@ -15,6 +16,11 @@
 	display: grid;
 	grid-gap: 0px;
 	color: #000;
+	
+}
+
+.breedingView .boxes {
+	      cursor: url(cursor/breed.png), auto;
 }
 
 .engineeringBox {
@@ -35,7 +41,6 @@
 	width: 1000px;
 	height: 600px;
 	position: relative;
-	cursor: url(cursor/breed.png), auto;
 }
 
 .pedigreeDiv {

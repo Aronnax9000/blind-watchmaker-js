@@ -91,8 +91,6 @@ Monochrome.initializeSession = function(session) {
     session.trianglable = true
     session.arrayable = true
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
-    console.log('init top of triangle')
-    console.log(session.options.topOfTriangle)
     session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Insect')
     session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Chess')
 

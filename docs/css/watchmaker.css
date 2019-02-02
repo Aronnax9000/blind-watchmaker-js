@@ -18,12 +18,15 @@
 	color: #000;
 }
 
+.breedingView .boxes {
+    cursor: url(cursor/breed.png), auto;
+	
+}
 
 .container {
 	width: 1000px;
 	height: 600px;
 	position: relative;
-	cursor: url(cursor/breed.png), auto;
 }
 
 .boxes, .overlay {
@@ -81,10 +84,10 @@
 
 
 .engineeringBox {
-    cursor: url(cursor/hypodermic.png), auto;
+    cursor: url(cursor/hypodermic.png) 8 8, auto;
 }
 
-.engineeringView, .engineering, .watchmakerView {
+.watchmakerView {
     border: 1px black solid;
     width: 100%;
     height: 100%;
@@ -292,17 +295,17 @@
 
 
 .pedigreeMove {
-    cursor: url(cursor/pointyHand.png), auto;
+    cursor: url(cursor/pointyHand.png) 8 8, auto;
 }
 
 .pedigreeDrawOutOffspring {
-    cursor: url(cursor/pedigree_cursor.png), auto;
+    cursor: url(cursor/pedigree_cursor.png) 8 8, auto;
 }
 .pedigreeDetach {
-    cursor: url(cursor/scissors.png), auto;
+    cursor: url(cursor/scissors.png) 8 8, auto;
 }
 .pedigreeKill {
-    cursor: url(cursor/gun.png), auto;
+    cursor: url(cursor/gun.png) 8 8, auto;
 }
 
 .pedigreeBox {
