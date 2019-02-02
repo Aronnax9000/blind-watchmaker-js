@@ -12,6 +12,7 @@
 }
 
 .triangleDiv {
+	border: 1px black solid;
     width: 1000px;
     height: 600px;
     position: absolute;

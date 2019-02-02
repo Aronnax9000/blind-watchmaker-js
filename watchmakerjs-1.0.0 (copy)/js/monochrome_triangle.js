@@ -1,23 +1,28 @@
 Monochrome.force3 = function(r) {
     var i = Math.round(r)
-    if(i > 2) { 
-        i = 2
+    if(i > 3) { 
+        i = 3
     }
-    if(i < 0) {
-        i = 0
+    if(i < 1) {
+        i = 1
     }
+//    console.log('force3 ' + r + " -> " + i)
     return i
 }
 
 Monochrome.force2 = function(r) {
     var i = Math.round(r)
-    if(i > 1) { 
+    if(i > 2) { 
+        i = 2
+    }
+    if(i < 1) {
         i = 1
     }
-    if(i < 0) {
-        i = 0
-    }
-    return i
+    console.log('r ' + r + ' i ' + i)
+    if(i == 1) 
+        return CompletenessType.Single
+    else 
+        return CompletenessType.Double
 }
 
 
@@ -25,7 +30,7 @@ Monochrome.force2 = function(r) {
 // b.v := round(250 * ScreenHeight / 342);
 
 Triangle.triangle = function(screenwidth, screenheight, b, m) {
-    console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
+//    console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     // k is the equator of the triangle
     var k = Math.round(200.5 * screenheight / 340); // was 200. 
     // horizontal difference between the mouse and the left of triangle (b)

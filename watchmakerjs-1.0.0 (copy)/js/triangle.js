@@ -17,6 +17,14 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         this._super()
 
         $(this.element).addClass('triangleView')
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        console.log(this.options.session.species)
+        var geneboxes = $("<div class='hi'>");
+        _speciesFactorySingleton.geneboxes(this.options.session.species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes);
 
         this.options.menuHandler.nextMenuHandler = new TriangleMenuHandler()
         let container = $("<div class='container'>")
@@ -34,7 +42,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         })
         this.drawTriangle()
         let sessionoptions = this.options.session.options
-        console.log(sessionoptions)
+//        console.log(sessionoptions)
         this.options.topOfTriangle = sessionoptions.topOfTriangle
         this.addone(this.options.topOfTriangle, this.options.a)
         this.options.leftOfTriangle = sessionoptions.leftOfTriangle
@@ -92,9 +100,9 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
             let biomorph = $(canvas).data('genotype')
             let biomorphWidth = $(canvas).width()
             let biomorphHeight = $(canvas).height()
-            console.log(biomorphWidth)
+//            console.log(biomorphWidth)
             let x = event.pageX - triangleDiv.offset().left 
-            console.log(x)
+//            console.log(x)
             let y = event.pageY - triangleDiv.offset().top 
             let r = Triangle.triangle(
                     triangleDiv.width(),
@@ -111,7 +119,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
             $(canvas).attr('height', surround.bottom - surround.top)
             biomorph.develop()
             let left = x - biomorphWidth / 2
-            console.log(left)
+//            console.log(left)
             let top = y - biomorphHeight / 2
             $(canvas).css('left', left)
             $(canvas).css('top', top)
@@ -122,13 +130,8 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
                 let triangleDivOffset = triangleDiv.offset()
                 let x = event.pageX - triangleDivOffset.left
                 let y = event.pageY - triangleDivOffset.top
-                console.log('triangleDivOffset')
-                console.log(triangleDivOffset)
                 let m = new Point(x,y)
-                console.log(m)
                 let triangleContext = triangleDiv.find('canvas')[0].getContext('2d')
-                console.log("TriangleDivOffset ")
-                console.log(triangleDivOffset)
                 let session = this.options.session
                 let biomorph = _speciesFactorySingleton.getSpecies(session.species, session, 
                         document.createElement('canvas'));
@@ -142,6 +145,11 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
                 this.addone(biomorph, m)
             }
         }
+        var geneboxes = this.element.closest('.watchmakerView').find('.geneboxes').get(0);
+        _speciesFactorySingleton.updateFromCanvas(
+                this.options.session.species,
+                geneboxes, this.options.liveone)
+
     },
     addone: function(biomorph, point) {
         let surround = biomorph.getRect()
