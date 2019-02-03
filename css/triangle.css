@@ -12,12 +12,14 @@
 }
 
 .triangleDiv {
+	border: 1px black solid;
     width: 1000px;
     height: 600px;
     position: absolute;
     left: 0;
     top: 0;
     z-index: 1;
+    cursor: none;
 }
 
 .triangleLineDiv {

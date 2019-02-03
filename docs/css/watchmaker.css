@@ -1,14 +1,52 @@
-.about {
+.triangleMorphCanvas {
+    position: absolute;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+}
+
+.triangleCanvas {
+    border: 1px solid blue;
+    width: 1000;
+    height: 600;
+    z-index: -1;
+}
+
+.triangleDiv {
+	border: 1px black solid;
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    cursor: none;
+}
+
+.triangleLineDiv {
+    width: 1000px;
+    height: 600px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+}
+
+
+.triangleLineCanvas {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}.about {
     padding: 0px;
     margin: 0px;
 }
-
 
 .aboutnomarginymcboatface {
     padding: 0px;
     margin: 0px;
 	
-}.boxes {
+}
+.boxes {
 	position: relative;
 	width: 1000px;
 	height: 600px;
@@ -16,17 +54,91 @@
 	display: grid;
 	grid-gap: 0px;
 	color: #000;
+	
 }
 
 .breedingView .boxes {
-    cursor: url(cursor/breed.png), auto;
-	
+	      cursor: url(cursor/breed.png), auto;
+}
+
+.engineeringBox {
+	cursor: url(cursor/hypodermic.png), auto;
+}
+
+.engineeringView, .engineering, .watchmakerView {
+	border: 1px black solid;
+	width: 100%;
+	height: 100%;
+	display: grid;
+	grid-template-columns: 100%;
+	grid-gap: 0px;
+	color: #000;
 }
 
 .container {
 	width: 1000px;
 	height: 600px;
 	position: relative;
+}
+
+.pedigreeDiv {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+}
+
+.pedigreeMove {
+    cursor: url(cursor/pointyHand.png), auto;
+}
+
+.pedigreeDrawOutOffspring {
+    cursor: url(cursor/pedigree_cursor.png), auto;
+}
+.pedigreeDetach {
+    cursor: url(cursor/scissors.png), auto;
+}
+.pedigreeKill {
+    cursor: url(cursor/gun.png), auto;
+}
+
+.pedigreeBox {
+	z-index: 1 padding: 0px;
+	position: relative;
+	border: 1px solid black
+}
+
+.pedigreeFamilialLineCanvas {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+}
+
+.pedigreeDrawOutLineDiv {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 0;
+}
+
+.pedigreeDrawOutMousingDiv {
+	width: 1000px;
+	height: 600px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 2147483647;
+}
+
+.pointerEventsNone {
+	pointer-events: none;
 }
 
 .boxes, .overlay {
@@ -70,33 +182,107 @@
 
 .midBox {
 	border-width: 2px;
+}body {font-family: sans-serif}
+.wrapper {
+    display: table;
+    table-layout: fixed;
+    font-family: monospace;
+//    font-size: 0.75em;
+    white-space: pre;
+
+    width:90%;
+
+    background-color:aqua;
 }
+.wrapper div {
+    display: table-cell;
+}
+
 .dialogNoTitle .ui-dialog-titlebar {display:none}
 
 .dialogNoTitle {display: none;}
 
+.headerwrapper {
+    display: table;
+    table-layout: fixed;
+    font-family: sans-serif;
+    font-size: 1.25em;
+    white-space: normal;
+
+    width:90%;
+
+    background-color:aqua;
+}
+.headerwrapper div {
+    display: table-cell;
+}
 
 .ui-dialog-title {
     font-size: 12px
 }
 
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  padding: 10px;
+}
+
+div {
+	font-size: 14pt;
+}
+
+
+
+.ui-icon-circle-close {
+    cursor: pointer;
+}
+
+.ui-widget.ui-widget-content {
+    border: 0px none;
+}
+.ui-widget-content {
+    border: 0px none;
+    background: #ffffff;
+    color: #333333;
+}
+
+.ui-tabs .ui-tabs-panel {
+    padding: 0px;
+    margin: 0px;
+    border-style: none;
+    border-width: 0px;
+}
+
+.no-close .ui-dialog-titlebar-close {
+/*  display: none; */
+}
+
 .ui-dialog { border: 1px solid black;} 
+/* .ui-dialog-titlebar {  display: none; } */
 
-
-.engineeringBox {
-    cursor: url(cursor/hypodermic.png) 8 8, auto;
+.watchmakerMenu {
+/*	height: 46px; */ /* Classic Mac menu bar height */
 }
 
-.watchmakerView {
-    border: 1px black solid;
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-gap: 0px;
-    color: #000;
+.pedigreeMorphCanvas {
+	position: absolute;
+	background-color: White;
 }
 
+.drawOutCanvas {
+    border: 1px solid black;
+    z-index: 1;
+    padding: 0px;
+    position: relative;
+}
+.about {
+	padding: 0px;
+	margin: 0px;
+}
 .geneboxes {
     width: 1000px;
     height: 20px;
@@ -254,11 +440,9 @@
     bottom: 0;
 }
 
-.watchmakerMenu {
-/*  height: 46px; */ /* Classic Mac menu bar height */
-}
+
 .watchmakerMenuBar {
-	height: 50px;
+	height: 46px;
 	position: relative;
 	z-index: 2; /* Prevents overlay of popups */
 }
@@ -270,161 +454,3 @@
 	min-height: 1px;
 	width: 18px;
 }
-.pedigreeDiv {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-}
-
-.pedigreeMorphCanvas {
-    position: absolute;
-    background-color: White;
-}
-
-.drawOutCanvas {
-    border: 1px solid black;
-    z-index: 1;
-    padding: 0px;
-    position: relative;
-}
-
-
-
-
-.pedigreeMove {
-    cursor: url(cursor/pointyHand.png) 8 8, auto;
-}
-
-.pedigreeDrawOutOffspring {
-    cursor: url(cursor/pedigree_cursor.png) 8 8, auto;
-}
-.pedigreeDetach {
-    cursor: url(cursor/scissors.png) 8 8, auto;
-}
-.pedigreeKill {
-    cursor: url(cursor/gun.png) 8 8, auto;
-}
-
-.pedigreeBox {
-    z-index: 1 padding: 0px;
-    position: relative;
-    border: 1px solid black
-}
-
-.pedigreeFamilialLineCanvas {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-}
-
-.pedigreeDrawOutLineDiv {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 0;
-}
-
-.pedigreeDrawOutMousingDiv {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2147483647;
-}
-
-.pointerEventsNone {
-    pointer-events: none;
-}
-
-@font-face {
-    font-family: 'MacOS7'; /*a name to be used later*/
-    src: url('font/ChicagoFLF.ttf'); /*URL to font*/
-}
-
-@font-face {
-    font-family: 'MacOS8'; /*a name to be used later*/
-    src: url('font/virtue.ttf'); /*URL to font*/
-}
-
-
-body {font-family: MacOs7, MacOs8, sans-serif;}
-
-input[type=checkbox]
-{
-  /* Double-sized Checkboxes */
-  -ms-transform: scale(2); /* IE */
-  -moz-transform: scale(2); /* FF */
-  -webkit-transform: scale(2); /* Safari and Chrome */
-  -o-transform: scale(2); /* Opera */
-  padding: 10px;
-}
-
-
-
-.ui-icon-circle-close {
-    cursor: pointer;
-}
-
-
-
-
-.ui-tabs .ui-tabs-panel {
-    padding: 0px;
-    margin: 0px;
-    border-style: none;
-    border-width: 0px;
-}
-.triangleMorphCanvas {
-    position: absolute;
-    background-color: #FFFFFF;
-    border: 1px solid black;
-}
-
-.triangleCanvas {
-    border: 1px solid blue;
-    width: 1000;
-    height: 600;
-    z-index: -1;
-}
-
-.triangleDiv {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-}
-
-.triangleLineDiv {
-    width: 1000px;
-    height: 600px;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 0;
-}
-
-
-.triangleLineCanvas {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-}.ui-widget.ui-widget-content {
-    border: 0px none;
-}
-.ui-widget-content {
-    border: 0px none;
-    background-color: #FFFFFF;
-    color: #333333;
-}
-

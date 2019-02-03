@@ -203,7 +203,6 @@ jQuery.extend( jQuery.easing,
  * OF THE POSSIBILITY OF SUCH DAMAGE. 
  *
  */
-
 var drawCrossHairs = false;
 
 function uuidv4() {
@@ -501,7 +500,7 @@ $.widget('dawk.blindWatchmaker', {
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-    },   
+    },    
     newTriangleView: function(biomorph) {
         var uuid = uuidv4();
         var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
@@ -533,7 +532,7 @@ $.widget('dawk.blindWatchmaker', {
         var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
-    }    
+    }     
 });
 
 function WatchmakerSession(species) {
@@ -606,10 +605,10 @@ Point.prototype.copy = function() {
 }
 
 function Rect() {
-    this.left = null
-    this.right = null
-    this.top = null
-    this.bottom = null
+    this.left = 0
+    this.right = 0
+    this.top = 0
+    this.bottom = 0
 }
 
 /*
@@ -776,7 +775,6 @@ function Canvas2DDrawer(drawingObject) {
     this.drawingObject = drawingObject;
     this.drawingContext = drawingObject.getContext('2d');
     this.bgcolor = 'White' 
-    this.box = new Rect()
 }
 
 
@@ -809,27 +807,14 @@ Canvas2DDrawer.prototype.setColor = function(color) {
   this.drawingContext.fillStyle = color;
 }
 
-Canvas2DDrawer.prototype.updateBox = function(x,y) {
-    box = this.box
-    if(box.left == null || x < box.left)
-        box.left = x;
-    if(box.right == null || x > box.right)
-        box.right = x;
-    if(box.top == null || y < box.top)
-        box.top = y;
-    if(box.bottom == null || y > box.bottom)
-        box.bottom = y;
-}
 
 Canvas2DDrawer.prototype.moveTo = function(x,y) {
     this.drawingContext.beginPath();
     this.drawingContext.moveTo(x,y);
-    this.updateBox(x,y)
 }
 Canvas2DDrawer.prototype.lineTo = function(x,y) {
     this.drawingContext.lineTo(x,y);
     this.drawingContext.stroke();
-    this.updateBox(x,y)
 }
 
 Canvas2DDrawer.prototype.frameOval = function(rect) {
@@ -847,9 +832,6 @@ Canvas2DDrawer.prototype.frameOval = function(rect) {
 
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.stroke();
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
-
 }
 
 Canvas2DDrawer.prototype.fillOval = function(rect, style) {
@@ -857,16 +839,12 @@ Canvas2DDrawer.prototype.fillOval = function(rect, style) {
     this.drawingContext.fillStyle = style;
     this.paintOval(rect)
     this.drawingContext.fillStyle = fillStyle
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
 }
 Canvas2DDrawer.prototype.eraseOval = function(rect) {
     let fillStyle = this.drawingContext.fillStyle
     this.drawingContext.fillStyle = this.bgcolor
     this.paintOval(rect)
     this.drawingContext.fillStyle = fillStyle
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
     
 }
 
@@ -896,8 +874,6 @@ Canvas2DDrawer.prototype.paintOval = function(rect) {
 
     this.drawingContext.restore(); // restore to original state
     this.drawingContext.fill();
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
 }
 
 
@@ -905,15 +881,11 @@ Canvas2DDrawer.prototype.paintRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.fillRect(rect.left, rect.top, width, height);
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
 }
 Canvas2DDrawer.prototype.frameRect = function(rect) {
     var width = (rect.right - rect.left);
     var height = (rect.bottom - rect.top);
     this.drawingContext.strokeRect(rect.left, rect.top, width, height);
-    this.updateBox(rect.left,rect.top)
-    this.updateBox(rect.right,rect.bottom)
 }
 
 Canvas2DDrawer.prototype.getHeight = function() {
@@ -937,6 +909,7 @@ Canvas2DDrawer.prototype.setTransform = function(x1, x2, x3, x4, x5, x6) {
 }
 Canvas2DDrawer.prototype.clearRect = function(x1, x2, x3, x4) {
     this.drawingContext.beginPath();
+        
     this.drawingContext.clearRect(x1, x2, x3, x4);
 }
 
@@ -944,9 +917,7 @@ Canvas2DDrawer.prototype.drawLine = function(x1, y1, x2, y2) {
     var drawingContext = this.drawingContext;
     drawingContext.beginPath();
     drawingContext.moveTo(x1, y1);
-    this.updateBox(x1, y1)
     drawingContext.lineTo(x2, y2);
-    this.updateBox(x2, y2)
     drawingContext.stroke();
 }
 
@@ -1454,6 +1425,21 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newEngineeringView", biomorph);
             return false
+        case 'MakeTopOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.topOfTriangle = biomorph
+            return false
+        case 'MakeLeftOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.leftOfTriangle = biomorph
+            return false
+        case 'MakeRightOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.rightOfTriangle = biomorph
+            return false            
         case 'DisplayPedigree':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')
@@ -1474,21 +1460,6 @@ MenuHandler.prototype.menuclick = function(event) {
             console.log(this.session.options.hopefulMonsterBasicType)
             biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
             biomorph.develop()
-            return false
-        case 'MakeTopOfTriangle':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            this.session.options.topOfTriangle = biomorph
-            return false
-        case 'MakeLeftOfTriangle':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            this.session.options.leftOfTriangle = biomorph
-            return false
-        case 'MakeRightOfTriangle':
-            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
-            this.session.options.rightOfTriangle = biomorph
             return false
         case 'AboutClassicBlindWatchmaker':
             $("<div>").about({index:0, appendTo: $(event.target).closest('.watchmakerView')[0]})
@@ -1589,6 +1560,7 @@ $( function() {
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', genotype)
                             eraseCanvas(this)
+                            console.log('handoff complete')
                             // Inform the genotype that it now draws on a different
                             // canvas
                             genotype.drawer = midCanvas
@@ -1712,6 +1684,7 @@ $( function() {
             var midCanvasDiv = this.options.midCanvasDiv;
             var midCanvasDivPosition = midCanvasDiv.position();
             var breedingView = $(this.element).closest('.breedingView')
+            console.log(breedingView)
             var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
             var recursive = ! explosiveBreeding.checked;
             if(recursive) {
@@ -1801,7 +1774,7 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
 
     $(string).appendTo(div)
     $("<br>").appendTo(div)
-
+    
     var useFitness = $('<span><input type="checkbox" class="useFitness" /> Use Fitness</span>')
     $(useFitness).tooltip();
     $(useFitness).attr('title', 'Breed based on how well biomorph fits its box');
@@ -1830,8 +1803,8 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
             right:20
         },
         startButton: null,
-        generationsPreviousSecond: 0
-    });
+        generationsPreviousSecond: 0});
+    console.log(div)
 
     return div
 }
@@ -1857,132 +1830,7 @@ $( function() {
 });
 
 
-//the widget definition, where "custom" is the namespace,
-//"colorize" the widget name
-$.widget( "dawk.breedingView", $.dawk.watchmakerView, {
-    options: { 
-        species: null,
-        watchmakerSessionTab: null,
-        biomorph: null
-    },
-    viewGainedFocus: function(event) {
-        let session = $(this).breedingView("option", "session")
-        session.viewGainedFocus(session, this)
-    },
 
-    _create: function (options) {
-        this._super("_create")
-        var species = this.options.session.species
-        $(this.element).addClass('breedingView')
-        var geneboxes_options = {
-            engineering: false,
-            session: this.options.session
-        }
-        var geneboxes = $("<div>");
-        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
-        this.element.append(geneboxes);
-        var container = $("<div>");
-        container.addClass('container');
-        var boxes = $("<div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
-        this.options.boxes = boxes
-        var overlay = $("<div>");
-        overlay.addClass("overlay");
-        container.append(overlay);
-        container.append(boxes);
-
-        var overlayCanvas = $('<canvas></canvas>');
-        overlayCanvas.attr('width', 1000);
-        overlayCanvas.attr('height', 600);
-        overlayCanvas.addClass('overlayCanvas');
-        overlay.append(overlayCanvas);
-        this.element.append(container);
-
-        $("<div>").breedingOffspringCounter().appendTo(this.element)
-
-        this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
-        
-        var midCanvas = $(this.element).find('.midBox').get(0);
-        this.options.timingDialog = Breeding.createTimingDialog(this.element, boxes.element)
-        $(midCanvas).trigger('mouseover');
-        $(midCanvas).trigger('click');
-    },
-    startAutoBreeding: function(event) {
-        var startButton = $(this.options.timingDialog).find('.startAutoReproduce').get(0);
-        var text = $(startButton).text()
-        if(text == 'Stop') {
-            this.options.autoRunning = false;
-            $(startButton).text('Start');
-        } else {
-            $(startButton).text('Stop');
-            this.options.autoRunning = true;
-            this.autoBreed();
-            var generations = $(this.element).find('.generations').get(0);
-            this.measureGenerationRate(Number(generations.value));
-        }
-    },
-    autoBreed: function() {
-        var breedingBoxes = $(this.element).closest('.breedingView').find('.boxes').get(0);
-        if (this.options.autoRunning) {
-            var useFitnessCheckbox = $(this.element).find('.useFitness').get(0)
-            var useFitness = false
-            if(useFitnessCheckbox) {
-                useFitness = useFitnessCheckbox.checked;
-            }
-            var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
-            if (useFitness) {
-                var canvas = $(breedingBoxes).find('.box').get(0);
-                var biomorph = getBiomorphFromCanvas(canvas);
-                var bestSoFar = canvas;
-
-                var errorToBeat = biomorph.fitness(canvas);
-                $(breedingBoxes).find('.box').each( function(index) {
-                    canvas = this;
-                    var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
-                    if (currentError < errorToBeat) {
-                        bestSoFar = canvas;
-                        errorToBeat = currentError;
-                    }
-                });
-                $(bestSoFar).trigger('click');
-            } else {
-                var luckyParent = Math.trunc(Math.random() * numBoxes);
-                var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
-                $(luckyCanvas).trigger('click');
-            }
-            console.log($(this.element).find('.autoReproduceInterval').get(0))
-            let autoReproduceIntervalStr = $(this.element).find('.autoReproduceInterval').get(0).value 
-            var interval = Number(autoReproduceIntervalStr);
-            this._delay(this.autoBreed, interval);
-
-        }            
-    },
-    measureGenerationRate: function() {
-        var generationCounter = $(this.element).find('.generations').get(0);
-        var newGenerationValue = Number(generationCounter.value) + 1;
-        generationCounter.value = newGenerationValue;
-        var generationRate = $(this.element).find('.generationRate').get(0);
-        generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
-        this.options.generationsPreviousSecond = newGenerationValue;
-        if(this.options.autoRunning)
-            this._delay(this.measureGenerationRate, 1000);
-    }
-})
-
-function BreedingMenuHandler(breedingView) {
-    this.breedingView = breedingView
-}
-
-BreedingMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
-    console.log('BreedingMenuHandler '  + menuid)
-    switch(menuid) {
-    case 'Timing':
-        this.breedingView.options.timingDialog.dialog('open') 
-        return false    
-    }
-    return true
-}
 
 $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
     _create: function() {
@@ -2118,44 +1966,38 @@ PedigreeMenuHandler.prototype.menuclick = function(event) {
     }
     return true;
 }
-//FullPtr == ^Full;
-//FullHandle == ^FullPtr;
-//Full == RECORD
-//genome;
-//surround: Rect;
-//origin, centre: Point;
-//parent;
-//firstBorn;
-//lastBorn;
-//elderSib;
-//youngerSib;
-//prec, next;
-//damaged{,Blackened}
 
-//snapHandle: Handle;
-//snapBytes: Integer;
-//snapBounds: Rect;
-//}
-function Full(genome) {
+function Full(genome, thisFull) {
     this.genome = genome
     genome.full = this
     this.surround = genome.getRect()
     Triangle.atLeast(this.surround);
 
     this.centre = new Point()
-    this.parent = null
-    this.firstBorn = null
-    this.lastBorn = null
-    this.elderSib = null
-    this.youngerSib = null
+
+    if(thisFull != null) {
+        this.parent = thisFull;
+        this.elderSib = thisFull.lastBorn;
+        if(this.elderSib != null) {
+            this.elderSib.youngerSib = this;
+        }
+        this.lastBorn = null;
+        this.youngerSib = null;
+        if(thisFull.lastBorn == null) {
+            thisFull.firstBorn = this;
+        }
+        thisFull.lastBorn = this;
+
+    } else {
+        this.parent = null
+        this.firstBorn = null
+        this.lastBorn = null
+        this.elderSib = null
+        this.youngerSib = null
+    }
 }
 
-//GodPtr == ^God;
-//godHandle == ^GodPtr;
-//God == RECORD
-//adam;
-//previousGod, nextGod;
-//}
+
 function God() {
     this.adam = null
     this.previousGod = null
@@ -2172,960 +2014,6 @@ function Pedigree(options) {
 }
 
 
-Pedigree.prototype.created = function() {
-    return new Full()
-}
-
-
-Pedigree.prototype.checkVictim = function(mLoc, thisFull) {
-    if(thisFull.surround.ptInRect(mLoc)) {
-        return thisFull 
-    } else if(thisFull.next != null) {
-        return this.checkVictim(thisFull)
-    } else {
-        return null
-    }
-}    
-
-/*
- * Pascal version altered the value of thisFull if a victim was
- * found, && returned true. This version returns the victim && null
- * if no victim found.
- */
-Pedigree.prototype.mouseInBox = function(mLoc, thisFull) {
-    let victim = null
-    if(thisFull != null) {
-        victim = this.checkVictim(mLoc, thisFull)
-    }
-    return victim
-}
-
-Pedigree.prototype.invertRect == function(rect) {
-
-}
-
-//{highlights thisFull && its elder sibs, && all their descendants}
-Pedigree.prototype.highlightAll = function(thisFull) {
-    if(thisFull != null) {
-        invertRect(thisFull.surround)
-    }
-    if(thisFull.lastBorn != null) {
-        highlightAll(thisFull.lastBorn);
-    }
-    if(thisFull.elderSib != null) {
-        highlightAll(thisFull.elderSib);
-    } 
-}
-
-
-Pedigree.prototype.highlightPedigree = function(thisFull) {
-    if(thisFull != null) {
-        invertRect(thisFull.surround);
-        if(thisFull.lastBorn != null) {
-            highlightAll(thisFull.lastBorn);
-        }
-    }
-} 
-
-
-Pedigree.prototype.tryGod = function(thisGod) {
-    godCounter++
-    if(thisGod.nextGod == null) {
-        return thisGod
-    } else {
-        return this.tryGod(thisGod.nextGod)
-    }
-}
-
-
-
-Pedigree.prototype.findLastGod = function() { //{Delivers last God in theGod}
-    let thisGod = this.rootGod
-    this.godCounter = 1;
-    if(thisGod.nextGod == null) {
-        this.theGod = thisGod
-    } else {
-        tryGod(thisGod)
-    } 
-}
-
-Pedigree.prototype.sysBeep = function() {
-    alert('BEEP!')
-}
-
-Pedigree.prototype.AdamError = function(whichError, thisFull) {
-    if(thisFull != null) {
-        this.invertRect(thisFull.surround);
-    }
-    this.sysBeep(1);
-    this.sysBeep(1);
-    invertRect(thisFull.surround)
-}
-
-Pedigree.prototype.checkAdam = function(thisGod) {
-    if(thisGod != null) {
-        if(thisGod.adam != null) {
-            if(thisGod.adam == thisFull) {
-                return theGod = thisGod
-            }
-        }
-        if(thisGod.nextGod != null) {
-            return checkAdam(thisGod.nextGod);
-        }
-    }
-    return null
-}
-
-
-//{Returns true if thisFull is an adam}
-Pedigree.prototype.isAnAdam = function(thisFull) {
-    let tryGod = rootGod;
-    if(thisFull != null) {
-        return checkAdam(tryGod) != null;
-    } else {
-        return false
-    } 
-}
-
-Pedigree.prototype.showAllAdams = function(theGod) {
-    if(theGod != null) {
-        invertRect(theGod.adam.surround);
-        if(theGod.nextGod != null) {
-            showAllAdams(theGod.nextGod)
-        }
-    }
-}
-
-
-Pedigree.prototype.showRelatives = function(thisFull) {
-
-    if(thisFull != null) {
-
-        if(thisFull.parent != null) {
-            this.frameRect(thisFull.parent.surround);
-        }
-        if(thisFull.elderSib != null) {
-            this.frameRect(thisFull.elderSib.surround);
-        }
-        if(thisFull.youngerSib != null) {
-            this.frameRect(thisFull.youngerSib.surround);
-        }
-        if(thisFull.lastBorn != null) {
-            this.frameRect(thisFull.lastBorn.surround);
-        }
-        if(thisFull.firstBorn != null) {
-            this.frameRect(thisFull.firstBorn.surround);
-        }
-    }
-}
-
-
-Pedigree.prototype.showAllFulls = function(thisFull) {
-    if(thisFull != null) {
-        this.frameRect(thisFull.surround);
-        showRelatives(thisFull)
-    }
-    if(thisFull.next != null) {
-        showAllFulls(thisFull.next)
-    }
-}
-
-
-Pedigree.prototype.markIf = function(thisFull) {
-    if(isAnAdam(thisFull)) {
-//      FrameInnerRect(thisFull.surround);
-    }
-}
-
-Pedigree.prototype.markUp = function(thisFull) {
-    if(thisFull != null) {
-        markIf(thisFull);
-    }
-    if(thisFull.next != null) {
-        markUp(thisFull.next)
-    }
-} 
-
-
-
-
-Pedigree.prototype.redevelop = function(thisFull) {
-    tempSnap = new BitMap();
-
-    if(thisFull != null) {
-        tempSnap.baseAddr = thisFull.SnapHandle;
-        tempSnap.rowBytes = thisFull.snapBytes;
-        tempSnap.Bounds = thisFull.snapBounds;
-//      CopyBits(tempSnap, MainPtr^.PortBits, tempSnap.Bounds, thisFull.surround, srcCopy, null);
-        markIf(thisFull);
-        thisFull.damaged = false;
-    }
-} 
-
-
-Pedigree.prototype.CrossOut = function(thisFull, colour) {
-    if(thisFull != null) {
-//      MoveTo(thisFull.surround.left, thisFull.surround.top);
-//      PenPat(colour);
-//      LineTo(thisFull.surround.right, thisFull.surround.bottom);
-//      PenNormal
-    }
-}
-
-
-Pedigree.prototype.SetAllUndamaged = function(thisFull) {
-    if(thisFull != null) {
-        if(thisFull.damaged) {
-            this.crossOut(thisFull, 'White');
-            thisFull.damaged = false;
-        }
-        if(thisFull.next != null) {
-            this.setAllUndamaged(thisFull.next)
-        } 
-    }
-}
-
-
-//{Records whether any intersection between This && Other (or Other's juniors),}
-//{    in truth value of Other.damaged && This.damaged}
-Pedigree.prototype.juniorIntersection = function(thisFull, otherFull) {
-    if(thisFull != null && otherFull != null) {
-        if(thisFull != otherFull) {
-            if(thisFull.surround.sectRect(otherFull.surround, new Rect())) {
-                otherFull.damaged = true;
-                thisFull.damaged = true
-            }
-        }
-        if(otherFull.next != null) {
-            juniorIntersection(thisFull, otherFull.next);
-        }
-    }
-} 
-
-
-Pedigree.prototype.Coverer = function(thisFull) {
-    if(thisFull != null && thisFull.next != null) {
-        juniorIntersection(thisFull, thisFull.next);
-    } 
-}
-
-
-//{Records whether any intersection between This && Other (or Other's seniors,}
-//{    in truth value of Other.damaged && This.damaged}
-Pedigree.prototype.seniorIntersection = function(thisFull, otherFull) {
-    if(thisFull != null && otherFull != null) {
-        if(thisFull != otherFull) {
-
-            if(thisFull.surround.sectRect(otherFull.surround, new Rect())) {
-                return true
-            }
-        }
-        if(otherFull.prec != null) {
-            return seniorIntersection(thisFull, otherFull.prec);
-        }
-    }
-    return false
-}
-
-
-//{Returns true if(thisFull is covered by any of its own seniors}
-Pedigree.prototype.isCovered = function(thisFull) {
-    if(thisFull != null) {
-        if(thisFull.prec == null) {
-            return false
-        } else {
-            return seniorIntersection(thisFull, thisFull.prec);
-        }
-    }
-} 
-
-
-
-
-Pedigree.prototype.overEdge = function(thisFull) {
-    let destRect = new Rect();
-    this.pRect.sectRect(thisFull.surround, destRect);
-    overEdge = ! destRect.equalRect(thisFull.surround)
-} 
-
-
-Pedigree.prototype.redrawAll = function(thisFull) {
-    if(thisFull != null) {
-        this.moveTo(thisFull.centre.h, thisFull.centre.v);
-        if(thisFull.parent != null) {
-            this.lineTo(thisFull.parent.centre.h, thisFull.parent.centre.v)
-        }
-        if(thisFull.lastBorn != null) {
-            redrawAll(thisFull.lastBorn);
-        }
-        if(thisFull.elderSib != null) {
-            this.redrawAll(thisFull.elderSib);
-        } 
-    }
-}
-
-
-//{Draws line from each box to its parent, if it has one, treating}
-//{original thisFull as adam}
-Pedigree.prototype.redrawLines = function(thisFull) {
-    if(thisFull != null) {
-        MoveTo(thisFull.centre.h, thisFull.centre.v);
-        if(thisFull.parent != null) {
-            LineTo(thisFull.parent.centre.h, thisFull.parent.centre.v);
-        }
-        if(thisFull.lastBorn != null) {
-            redrawAll(thisFull.lastBorn);
-        }
-    } 
-}
-
-
-Pedigree.prototype.allLines = function(theGod) {
-    if(theGod != null) {
-        if(theGod.adam != null) {
-            redrawLines(theGod.adam);
-        }
-        if(theGod.nextGod != null) {
-            this.allLines(theGod.nextGod)
-        }
-    }
-}
-
-Pedigree.prototype.connect = function(nucleusFull, orbitFull) {
-    if((nucleusFull != null) && (orbitFull != null)) {
-        this.moveTo(nucleusFull.centre.h, nucleusFull.centre.v);
-        this.thereAreLines = true;
-        this.lineTo(orbitFull.centre.h, orbitFull.centre.v);
-    }
-}
-
-
-Pedigree.prototype.ChildLine = function(thisFull, child) {
-    this.connect(thisFull, child);
-    if(child.youngerSib != null) {
-        this.childLine(thisFull, child.youngerSib);
-    } 
-}
-
-Pedigree.prototype.localLines = function(thisFull) {
-    if(thisFull.parent != null) {
-        this.connect(thisFull, thisFull.parent);
-    }
-    if(thisFull.firstBorn != null) {
-        this.childLine(thisFull, thisFull.firstBorn)
-    } 
-}
-
-
-//{incorporates it into clip region so not drawn over in future}
-Pedigree.prototype.incorporate = function(thisFull) {
-//  RectRgn(Region2, thisFull.surround);
-//  DiffRgn(DestRegion, Region2, DestRegion); //{DestRegion now updated to include new box}
-//  SetClip(DestRegion)
-} 
-
-
-Pedigree.prototype.withdrawProtection = function(thisFull) {
-//  RectRgn(Region2, thisFull.surround);
-//  UnionRgn(DestRegion, Region2, DestRegion); {DestRegion now updated to include new box}
-//  SetClip(DestRegion)
-} 
-
-
-Pedigree.prototype.protectAll = function(thisFull) {
-    if(thisFull != null) {
-        this.incorporate(thisFull);
-    }
-    if(thisFull.next != null) {
-        this.protectAll(thisFull.next)
-    }
-} 
-
-
-Pedigree.prototype.protect = function() {
-//  RectRgn(DestRegion, pRect);
-    if(specialFull != null) {
-        this.protectAll(specialFull);
-    } 
-}
-
-
-Pedigree.prototype.protect = function() {
-//  RectRgn(DestRegion, this.pRect);
-    if(specialFull != null) {
-        protectAll(specialFull);
-    } 
-}
-
-
-Pedigree.prototype.repairThis = function(thisFull) {
-    if(thisFull != null) {
-        if(thisFull.damaged) {
-            this.redevelop(thisFull);
-            this.incorporate(thisFull);
-            thisFull.damaged = false
-        }
-        if(thisFull.next != null) {
-            this.repairThis(thisFull.next)
-        }
-    }
-} 
-
-
-Pedigree.prototype.repair = function() {
-//  RectRgn(DestRegion, this.pRect);
-    this.repairThis(specialFull)
-}
-
-
-Pedigree.prototype.WeedOut = function(thisFull) {
-    if(thisFull != null) {
-        if(thisFull.parent != null) {
-            let onlyChild = (thisFull.youngerSib == null) && (thisFull.elderSib == null);
-            if(onlyChild) {
-                thisFull.parent.lastBorn = null;
-                thisFull.parent.firstBorn = null
-            }
-        } else {
-            //{not only child}
-            if(thisFull.youngerSib == null) {
-                thisFull.parent.lastBorn = thisFull.elderSib
-            } else {
-                thisFull.youngerSib.elderSib = thisFull.elderSib;
-            }
-            if(thisFull.elderSib == null) {
-                thisFull.parent.firstBorn = thisFull.youngerSib
-            } else {
-                thisFull.elderSib.youngerSib = thisFull.youngerSib;
-            }
-        }
-    }
-}
-
-
-Pedigree.prototype.wipeOut = function(thisFull) {
-    let damageRect = thisFull.surround;
-    coverer(thisFull);
-    if(thisFull == specialFull) {
-        oldSpecialFull = specialFull;
-        specialFull = thisFull.next;
-        thisFull.prec = null;
-//      {Corrected by RD Dec 1993 to cure Norton-reported bug, bombing when ancestor Killed}
-        thisFull.next = null;
-    } else {
-        thisFull.prec.next = thisFull.next;
-    }
-    if(thisFull.next != null) {
-        thisFull.next.prec = thisFull.prec;
-    }
-    this.eraseRect(DamageRect);
-} 
-
-//{kill thisFull && all its elder sibs, including all their descendants}
-Pedigree.prototype.killAll = function(thisFull) {
-    var nextVictim
-    var secondVictim
-    if(thisFull != null) {
-        nextVictim = thisFull.lastBorn;
-        secondVictim = thisFull.elderSib;
-        this.wipeOut(thisFull);
-        if(thisFull == null) {
-            this.sysBeep(1)
-        } else {
-            thisFull = null
-        }
-    }
-    if(nextVictim != null) {
-        killAll(nextVictim);
-    }
-    if(secondVictim != null) {
-        killAll(secondVictim);
-    }
-} 
-
-
-//{kill this one && all its descendants}
-Pedigree.prototype.kill = function(thisFull) {
-    var nextVictim
-    var secondVictim
-    if(thisFull != null) {
-        nextVictim = thisFull.lastBorn;
-        this.wipeOut(thisFull);
-        if(thisFull == null) {
-            this.sysBeep(1)
-        } else {
-            thisFull = null
-        }
-        if(nextVictim != null) {
-            killAll(nextVictim);
-        }
-    }
-} 
-
-
-Pedigree.prototype.drawWholeLot = function(thisFull) {
-    if(thisFull != null) {
-        this.redevelop(thisFull);
-        this.incorporate(thisFull);
-        if(thisFull.next != null) {
-            this.drawWholeLot(thisFull.next)
-        }
-    }
-} 
-
-
-Pedigree.prototype.shoot = function(thisFull) {
-    this.findLastGod();
-    let yesAdam = isAnAdam(thisFull); //{leaves theGod as thisFull's god if any}
-    if(! yesAdam) {
-
-        this.weedOut(thisFull);
-        this.kill(thisFull)
-    } else {
-//      {only comes here if trying to kill an adam}
-        if(thisFull.parent != null) {
-            this.sysBeep(1);
-        }
-        if(thisFull.lastBorn != null) {
-            this.killAll(thisFull.lastBorn);
-            thisFull.firstBorn = null;
-            thisFull.lastBorn = null;
-        }
-        if(thisFull != null) {
-            this.wipeOut(thisFull);
-            thisFull = null
-        }
-        if(godCounter == 3) {
-            this.options.theMode = Preliminary;
-            this.special = 0
-        }
-        if(theGod.previousGod == null) {
-            this.sysBeep(1)
-        } else {
-            theGod.previousGod.nextGod = theGod.nextGod;
-        }
-        if(theGod.nextGod != null) {
-            theGod.nextGod.previousGod = theGod.previousGod;
-        }
-        theGod.nextGod = null;
-        theGod.previousGod = null;
-        theGod.adam = null;
-        if(theGod == null) {
-            this.sysBeep(1)
-        } else {
-            theGod = null
-        }
-
-    }
-//  EraseRect(pRect);
-//  RectRgn(DestRegion, pRect);
-    this.drawWholeLot(specialFull);
-    this.allLines(rootGod);
-//  ClipRect(pRect);
-} 
-
-Pedigree.prototype.shootAll = function(thisGod) {
-    if(thisGod != null) {
-        if(thisGod.adam != null) {
-            shoot(thisGod.adam);
-        }
-        if(thisGod.nextGod != null) {
-            shootAll(thisGod.nextGod)
-        }
-    }
-} 
-
-
-//{Normally called with specialFull first}
-Pedigree.prototype.massacre = function(thisFull) {
-    if(thisFull != null) {
-        shoot(thisFull);
-    }
-    if(thisFull.next != null) {
-        massacre(thisFull.next)
-    } 
-}
-
-
-//{Isolates thisFull from all except its descendants, leaving rest of}
-//{pedigree hierarchical linked list tidied up && pointing elsewhere.}
-//{Does not touch linear Specialfull linked list, since this reflects}
-//{spatial relations on screen, && nonrelatives can cover each other}
-Pedigree.prototype.Detach = function(thisFull) {
-    if(thisFull.parent != null) {
-
-//      PenPat(White);
-//      RectRgn(DestRegion, pRect);
-        this.incorporate(thisFull);
-        this.incorporate(thisFull.parent);
-        this.connect(thisFull, thisFull.parent);
-//      PenNormal;
-//      ClipRect(pRect);
-        if(thisFull.parent.lastBorn == thisFull) {
-            thisFull.parent.lastBorn = thisFull.elderSib;
-        }
-        if(thisFull.parent.firstBorn == thisFull) {
-            thisFull.parent.firstBorn = thisFull.youngerSib;
-        }
-    }// {of whitening line connecting with thisFull's parent}
-    if(thisFull.youngerSib != null) {
-        thisFull.youngerSib.elderSib = thisFull.elderSib;
-    }
-    if(thisFull.elderSib != null) {
-        thisFull.elderSib.youngerSib = thisFull.youngerSib;
-    }
-    thisFull.elderSib = null;
-    thisFull.youngerSib = null;
-    thisFull.parent = null;
-    tempGod = new God()
-    tempGod.nextGod = null;
-    this.findLastGod()
-    tempGod.previousGod = theGod;
-    tempGod.adam = thisFull;
-    theGod.nextGod = tempGod;
-    theGod = tempGod;
-    markIf(thisFull);
-}
-
-
-Pedigree.prototype.followMouse = function(thisFull) {
-//  SetCursor(CursList[WatchCursor]);
-    tempSnap.baseAddr = thisFull.snapHandle;
-    tempSnap.rowBytes = thisFull.snapBytes;
-    tempSnap.Bounds = thisFull.snapBounds;
-    if(thisFull.prec == null) {
-       // {Chosen one is already in front. No change}
-    } else {
-        //{Must bring chosen one to front, after isolating it}
-        thisFull.prec.next = thisFull.next;
-        if(thisFull.next != null) {
-            thisFull.next.prec = thisFull.prec;
-        }
-//      {Chosen one has now been isolated, still called thisFull}
-        thisFull.next = specialFull; //{This brings it to front}
-        specialFull.prec = thisFull; //{This corrects old specialfull's pointer to prec}
-        oldSpecialFull = specialFull;
-        specialFull = thisFull; //{This gives the new specialfull its proper name}
-        specialFull.prec = null;
-    }
-    coverer(thisFull); // {Records all damage done by thisFull, now also Specialfull}
-    // We will designate the most recently selected or spawned morph canvas as midBox
-    //    child[special] = specialFull.genome;
-    let wasOverEdge = overEdge(thisFull);
-    let width = thisFull.surround.right - thisFull.surround.left;
-    let height = thisFull.surround.bottom - thisFull.surround.top;
-    let halfWidth = Math.trunc(width / 2);
-    let halfHeight = Math.trunc(height / 2);
-    let damageRect = thisFull.surround;
-    this.protect();
-//  PenPat(White);
-    this.localLines(thisFull);
-//  GetMouse(mous);
-    if(thisFull != null) {
-        horizOffset = thisFull.centre.h - mous.h;
-        vertOffset = thisFull.centre.v - mous.v;
-        thisFull.surround.left = thisFull.centre.h - halfWidth;
-        thisFull.surround.right = thisFull.surround.left + width;
-        thisFull.surround.top = thisFull.centre.v - Halfheight;
-        thisFull.surround.bottom = thisFull.surround.top + Height;
-        ClipRect(pRect);
-        EraseRect(thisFull.surround);
-    }
-//  CopyBits(MainPtr^.PortBits, MyBitMap, pRect, pRect, srcCopy, null);
-//  {store background}
-//  CopyBits(tempSnap, MainPtr^.PortBits, tempSnap.Bounds, thisFull.surround, srcCopy, null); {show chosen one in front}
-//  PenMode(PatXor); {White is bad because it deletes other lines}
-//  PenPat(Black);
-    this.protect();
-    this.thereAreLines = false;
-    this.localLines(thisFull);
-//  HideCursor;
-    do {
-        oldMous = mous;
-//      REPEAT
-//      GetMouse(mous)
-//      UNTIL PtInRect(mous, pRect);
-//      ClipRect(thisFull.surround);
-//      {Bring on new one}
-//      SetClip(DestRegion);
-        if(mous.h != oldMous.h || mous.v != oldmous.v || ! stilldown) {
-            if(thisFull != null) {
-                thatFull = thisFull;
-//              ClipRect(pRect);
-//              TickValue = TickCount;
-//              if(mous.v > 100) {
-//              REPEAT
-//              UNTIL TickCount != TickValue;
-//              {an empirically suggested device for reducing flicker}
-//              CopyBits(MyBitMap, MainPtr^.PortBits, thisFull.surround, thisFull.surround, srcCopy, null); {Bring back old}
-                thisFull.centre.h = mous.h + horizOffset;
-                thisFull.centre.v = mous.v + vertOffset;
-                thisFull.surround.left = thisFull.centre.h - halfWidth;
-                thisFull.surround.right = thisFull.surround.left + width;
-                thisFull.surround.top = thisFull.centre.v - Halfheight;
-                thisFull.surround.bottom = thisFull.surround.top + Height;
-                if(this.thereAreLines) {
-//                  SetClip(DestRegion);
-                    this.localLines(thatFull); // {delete old lines}
-                }
-//              ClipRect(thisFull.surround);
-//              CopyBits(tempSnap, MainPtr^.PortBits, tempSnap.Bounds, thisFull.surround, srcCopy, null);
-//              {Bring on new one}
-                if(this.thereAreLines) {
-                    this.protect();
-                    localLines(thisFull)
-                }
-            }
-        }
-    } while (stillDown);
-//  ShowCursor;
-//  SetCursor(CursList[HandCursor]);
-//  PenNormal;
-//  ClipRect(pRect);
-    thisFull.origin.h = mous.h + horizOffset;
-    thisFull.origin.v = mous.v + vertOffset;
-    thisFull.damaged = true; // {WasOverEdge}
-//  ClipRect(pRect);
-    this.repair();
-    this.protect();
-    this.allLines(rootGod);
-//  ClipRect(pRect);
-} 
-
-
-
-
-//current was a VAR. Value is instantiated during the routine
-//via created() and returned.
-Pedigree.prototype.spawnOne = function(thisFull, here, current) {
-
-//    SetCursor(Curslist[WatchCursor]);
-    current = new Full();
-    current.genome = thisFull.genome.reproduce();
-    current.origin = here;
-    current.genome.develop()
-    current.surround = current.genome.getRect();
-    Triangle.atLeast(current.surround);
-    let surround = current.surround
-    let height = surround.bottom - surround.top;
-    widthBytes = Math.trunc((right - left) / 8)
-    if(widthBytes % 2 == 1) {
-        widthBytes = widthBytes + 1;
-    }
-    width = widthBytes * 8;
-    voffset = 0;
-    let pRect = this.pRect
-    if(surroundtop < pRect.top) {
-        voffset = pRect.top - top;
-        surround.top = pRect.top;
-        surround.bottom = surround.top + surround.height;
-    }
-    if(surround.bottom > pRect.bottom) {
-        voffset = pRect.bottom - surround.bottom;
-        surround.bottom = pRect.bottom;
-        surround.top = surround.bottom - height
-    }
-    if(surround.left < pRect.left) {
-        surround.left = pRect.left;
-        surround.right = surround.left + width
-    }
-    if(surround.right > pRect.right) {
-        surround.right = pRect.right;
-        surround.left = surround.right - width
-    }
-//  EraseRect(current.surround);
-//  FrameRect(current.surround);
-
-    current.centre.h = surround.left + Math.trunc((surround.right - surround.left) / 2)
-    current.centre.v = surround.top + Math.trunc((surround.bottom - surround.top) / 2)
-
-    here.v = current.origin.v + voffset;
-    here.h = current.centre.h;
-    DrawPic(MyPic, here, current.genome);
-    let snapBounds = current.snapBounds
-
-    snapBounds.left = 0;
-    snapBounds.right = current.surround.right - current.surround.left;
-    snapBounds.top = 0;
-    snapBounds.bottom = height
-    tempSnap.Bounds = current.snapBounds;
-    current.snapBytes = widthBytes;
-//  current.snapHandle = NewHandle(SizeNeeded);
-//  tempSnap.baseAddr = current.snapHandle;
-//  tempSnap.rowBytes = current.snapBytes;
-//  CopyBits(MainPtr^.PortBits, tempSnap, current.surround, tempSnap.Bounds, srcCopy, null);
-    current.parent = thisFull;
-    current.elderSib = thisFull.lastBorn;
-    if(current.elderSib != null) {
-        current.elderSib.youngerSib = current;
-    }
-    current.lastBorn = null;
-    current.youngerSib = null;
-    if(thisFull.lastBorn == null) {
-        thisFull.firstBorn = current;
-    }
-    thisFull.lastBorn = current;
-    current.next = specialFull;  //{puts currentfull at head of list}
-    specialFull.prec = current;  //{Updates seniority pointer of previous head}
-    oldSpecialFull = specialFull;
-    specialFull = current; // {Gives new head its proper title}
-    specialFull.prec = null; // {Probably unnecessary but good form}
-    child[Special] = current.genome;
-    markIf(current);
-} 
-
-
-Pedigree.prototype.Radiate = function(from, goal, spokes, here) {
-    dx = goal.h - from.h;
-    dy = goal.v - from.v;
-    here[0].h = from.h + dx;
-    here[0].v = from.v + dy;
-    here[1].h = from.h - dx;
-    here[1].v = from.v - dy;
-    here[2].h = from.h - dy;
-    here[2].v = from.v + dx;
-    here[3].h = from.h + dy;
-    here[3].v = from.v - dx;
-    for(let j = 0; j < spokes; i++) {
-        this.moveTo(from.h, from.v);
-        this.lineTo(here[j].h, here[j].v)
-    }
-} 
-
-
-Pedigree.prototype.drawOutFrom  = function(thisFull) {
-//  SetCursor(CursList[CrossCursor]);
-//  ClipRect(pRect);
-    if(isCovered(thisFull)) {
-        redevelop(thisFull);
-    }
-    if(thisFull.prec == null) {
-//      {Chosen one is already in front. No change}
-    } else {
-//      {Must bring chosen one to front, after isolating it}
-        thisFull.prec.next = thisFull.next;
-        if(thisFull.next != null) {
-            thisFull.next.prec = thisFull.prec;
-//          {Chosen one has now been isolated, still called thisFull}
-            thisFull.next = specialFull; //{This brings it to front}
-            specialFull.prec = thisFull; //{This corrects old specialfull's pointer to prec}
-            oldSpecialFull = specialFull;
-            specialFull = thisFull; // {This gives the new specialfull its proper name}
-            specialFull.prec = null;
-        }
-    }
-//  GetClip(SaveRegion);
-//  RectRgn(DestRegion, pRect);
-//  this.protect();
-//  PenMode(PatXor);
-//  OwnCursor(specialFull.surround, MainPtr^.PortBits, theCursor);
-//  SetCursor(theCursor);
-//  do {
-//  GetMouse(mous);
-//  UNTIL (! StillDown) || (! PtInRect(mous, thisFull.surround));
-//  PenNormal;
-//  FrameRect(thisFull.surround);
-    markIf(thisFull);
-//  child[special] = thisFull.genome;
-//  if(StillDown) {
-
-//  SetClip(DestRegion);
-//  PenMode(PatXor);
-//  Radiate(thisFull.centre, mous, Rays, here);
-    while(stillDown) {
-
-        oldMous = Mous;
-        GetMouse(mous);
-        if(mous.v < pRect.top) {
-            mous.v = pRect.top;
-        }
-        if(mous.h != oldMous.h || mous.v != oldMous.v) { 
-
-            this.radiate(thisFull.centre, oldMous, Rays, here);
-            if(! thisFull.surround.ptInRect(mous)) {
-                this.Radiate(thisFull.centre, mous, Rays, here)
-            }
-        } 
-    }
-//  {Button just released}
-//  {SetCursor(CursList[WatchCursor]);}
-    this.radiate(thisFull.centre, mous, rays, here);
-//  PenNormal;
-    j = Rays;
-//  ClipRect(pRect);
-    if(! thisFull.surround.ptInRect(mous)) {
-        while (j >= 1) {
-            theCursor.data = curslist[randcursor].mask;
-            theCursor.data[8] = 128; // {make up dot cursor}
-            theCursor.mask = theCursor.data;
-//          SetCursor(theCursor);
-            this.spawnOne(thisFull, here[j], current);
-            j--
-        }               
-    }
-    this.protect();
-    this.localLines(thisFull);
-//  ClipRect(pRect);
-//  SetCursor(CursList[DrawOutCursor]);
-} // {DrawOutFrom}
-
-Pedigree.prototype.PhylogNew  = function(biomorph) {
-    // Erase the Pedigree breeding area
-    // EraseRect(pRect);
-    tempGod = new God()
-    tempGod.nextGod = null;
-    this.findLastGod;
-    tempGod.previousGod = this.theGod;
-    this.theGod.nextGod = tempGod;
-    this.theGod = tempGod;
-    this.theGod.adam = new Full();
-    this.theGod.adam.genome = biomorph;
-    let pRect = this.pRect
-
-    theGod.adam.origin.h = Math.trunc((pRect.right - pRect.left) / 2)
-    theGod.adam.origin.v = Math.trunc((pRect.bottom - pRect.top) / 2)
-
-    delayvelop(theGod.adam.genome, theGod.adam.origin);
-    theGod.adam.surround = Margin;
-    Triangle.atLeast(theGod.adam.surround);
-    this.frameRect(theGod.adam.surround);
-    this.frameInnerRect(theGod.adam.surround);
-    let surround = theGod.adam.surround
-    let height = surround.bottom - surround.top;
-    let width = Math.trunc((surround.right - surround.left) / 8);
-    while(width % 2 == 1) {
-        width++
-    }
-    let snapBounds = theGod.adam.snapBounds
-    snapBounds.left = 0;
-    snapBounds.right = theGod.adam.surround.right - theGod.adam.surround.left;
-    snapBounds.top = 0;
-    snapBounds.bottom = height
-    tempSnap.bounds = theGod.adam.snapBounds;
-    theGod.adam.snapBytes = width;
-    theGod.adam.snapHandle = new BitMap();
-    tempSnap.baseAddr = theGod.adam.snapHandle;
-    tempSnap.rowBytes = theGod.adam.snapBytes;
-//  CopyBits(MainPtr^.PortBits, tempSnap, theGod.adam.surround, tempSnap.Bounds, srcCopy, null);
-    let adam = theGod.adam 
-    adam.centre.h = adam.surround.left + Math.trunc((adam.surround.right - adam.surround.left) / 2);
-    adam.centre.v = adam.surround.top + Math.trunc((adam.surround.bottom - adam.surround.top) / 2)
-    oldSpecialFull = specialFull;
-    //{This corrects old specialfull's pointer to prec}
-    if(specialFull != null) {
-        specialFull.prec = theGod.adam
-    }                                                                                        
-    theGod.adam.next = specialFull;
-    specialFull = theGod.adam;
-    specialFull.prec = null;
-    // {Changed July 1990}
-    this.options.theMode = Mode.Phyloging; 
-//  EraseRect(pRect);
-//  RectRgn(DestRegion, pRect);
-    drawWholeLot(specialFull);
-    this.allLines(rootGod);
-//  ClipRect(pRect);
-}
 
 Full.prototype.showAsText = function() {
     console.log(this)
@@ -3133,209 +2021,6 @@ Full.prototype.showAsText = function() {
 
 God.prototype.showAsText = function() {
     console.log(this)
-}
-$.widget( "dawk.triangleView", $.dawk.watchmakerView, {
-    options: { 
-        theMode: Mode.Triangling,
-        species: null,
-        biomorph: null,
-        topOfTriangle: null,
-        leftOfTriangle: null,
-        rightOfTriangle: null,
-        liveOne: null
-    },
-    viewGainedFocus: function(event) {
-        let session = $(this).triangleView("option", "session")
-        session.viewGainedFocus(session, this)
-    },
-    _create: function (options) {
-        this._super()
-
-        $(this.element).addClass('triangleView')
-
-        this.options.menuHandler.nextMenuHandler = new TriangleMenuHandler()
-        let container = $("<div class='container'>")
-        container.appendTo(this.element)
-                
-        // Draw triangle here
-        let triangleDiv = $('<div class="triangleLineDiv"><canvas class="triangleLineCanvas" width="1000" height="600"></canvas></div>')
-        triangleDiv.appendTo(container)
-        triangleDiv = $('<div class="triangleDiv"><canvas class="triangleLineCanvas" width="1000" height="600"></canvas></div>')
-        triangleDiv.appendTo(container)
-        this._on(triangleDiv, {
-            mousedown: function(event) { this.mousedown(event) },
-            mouseup: function(event) { this.mouseup(event) },
-            mousemove: function(event) { this.mousemove(event) },
-        })
-        this.drawTriangle()
-        let sessionoptions = this.options.session.options
-        console.log(sessionoptions)
-        this.options.topOfTriangle = sessionoptions.topOfTriangle
-        this.addone(this.options.topOfTriangle, this.options.a)
-        this.options.leftOfTriangle = sessionoptions.leftOfTriangle
-        this.addone(this.options.leftOfTriangle, this.options.b)
-        this.options.rightOfTriangle = sessionoptions.rightOfTriangle
-        this.addone(this.options.rightOfTriangle, this.options.c)
-        this.options.liveone = null
-    },
-    buildMenus: function(menu) {
-        this._super('buildMenus')
-    },
-    markIf: function(canvas) {
-        // Remove midBox class from every canvas
-        $(this.element).find('canvas').removeClass('midBox')
-
-        if(canvas != null) {
-            // Mark this one as special
-            $(canvas).addClass('midBox')
-        }
-    },
-
-    bumper:  function(current, here) {
-        let surround = current.surround
-        let height = surround.bottom - surround.top;
-        let width = surround.right - surround.left;
-        let triangleDiv = $(this.element).find('.triangleDiv')[0]
-        let pRect = new Rect(0, 0, $(triangleDiv).width(), $(triangleDiv).height())
-        let error = here.v - (height / 2)
-        if(error < 0) {
-            here.v -= error
-        } 
-        error = here.v + (height / 2) 
-        if(error > pRect.bottom) {
-            here.v -= error - pRect.bottom
-        }
-        error = here.h - (width / 2)
-        if(error < 0) {
-            here.h -= error
-        } 
-        error = here.h + (width / 2) 
-        if(error > pRect.right) {
-            here.h -= error - pRect.right
-        }
-    },
-    mousedown: function(event) {
-        let triangleDiv = $(this.element).find('.triangleDiv')
-        let triangleDivOffset = triangleDiv.offset()
-        let x = event.pageX - triangleDivOffset.left
-        let y = event.pageY - triangleDivOffset.top
-        console.log('triangleDivOffset')
-        console.log(triangleDivOffset)
-        let m = new Point(x,y)
-        console.log(m)
-        let triangleContext = triangleDiv.find('canvas')[0].getContext('2d')
-        console.log("TriangleDivOffset ")
-        console.log(triangleDivOffset)
-        let session = this.options.session
-        let biomorph = _speciesFactorySingleton.getSpecies(session.species, session, 
-                document.createElement('canvas'));
-                
-        let options = this.options
-        let r = Triangle.triangle(
-                triangleDiv.width(),
-                triangleDiv.height(), 
-                this.options.b, m);
-        biomorph.concoct(r, options.topOfTriangle, options.leftOfTriangle, options.rightOfTriangle)
-        this.addone(biomorph, m)
-    },
-    mouseup: function(event) {
-        this.options.liveone = null
-    },
-    mousemove: function(event) {
-        let canvas = this.options.liveone
-        if(canvas != null) {
-            let triangleDiv = $(this.element).find('.triangleDiv')
-            let biomorph = $(canvas).data('genotype')
-            let biomorphWidth = $(canvas).width()
-            let biomorphHeight = $(canvas).height()
-            console.log(biomorphWidth)
-            let x = event.pageX - triangleDiv.offset().left 
-            console.log(x)
-            let y = event.pageY - triangleDiv.offset().top 
-            let r = Triangle.triangle(
-                    triangleDiv.width(),
-                    triangleDiv.height(), 
-                    this.options.b, new Point(x,y));
-            let options = this.options.session.options
-            biomorph.concoct(r, 
-                    options.topOfTriangle, 
-                    options.leftOfTriangle, 
-                    options.rightOfTriangle)
-            biomorph.develop()
-            let surround = biomorph.getRect()
-            $(canvas).attr('width', surround.right - surround.left)
-            $(canvas).attr('height', surround.bottom - surround.top)
-            biomorph.develop()
-            let left = x - biomorphWidth / 2
-            console.log(left)
-            let top = y - biomorphHeight / 2
-            $(canvas).css('left', left)
-            $(canvas).css('top', top)
-        }
-    },
-    addone: function(biomorph, point) {
-        let surround = biomorph.getRect()
-        let biomorphWidth = surround.right - surround.left
-        let biomorphHeight = surround.bottom - surround.top
-        let left = point.h - biomorphWidth / 2
-        let top = point.v - biomorphHeight / 2
-        let canvas = $("<canvas class='triangleMorphCanvas'>")
-        canvas.attr('height', Math.trunc(biomorphHeight))
-        canvas.attr('width', Math.trunc(biomorphWidth))
-        canvas.css('left', left)
-        canvas.css('top', top)
-        canvas.addClass('triangleBox midBox')
-        biomorph.drawer = canvas
-        $(canvas).data('genotype', biomorph)
-        this.options.liveone = canvas
-        let triangleDiv = $(this.element).find('.triangleDiv')
-        triangleDiv.append(canvas)
-        biomorph.drawer = canvas[0]
-        $(canvas).data('genotype', biomorph)
-        biomorph.develop()
-        
-        this.markIf(canvas);
-
-    },
-    drawTriangle: function() {
-        let triangleCanvas = $(this.element).find('.triangleLineCanvas')
-        let screenWidth = triangleCanvas.width()
-        let screenHeight = triangleCanvas.height()
-        console.log("drawTriangle screen dimensions: " + new Point(screenWidth, screenHeight))
-        let a = new Point(Math.round(234 * screenWidth / 512), Math.round(51 * screenHeight / 342));
-        let b = new Point(Math.round(134 * screenWidth / 512), Math.round(250 * screenHeight / 342));
-        let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
-        this.options.a = a
-        this.options.b = b
-        this.options.c = c
-        console.log(a + b + c)
-        console.log(triangleCanvas[0])
-        let ctx = triangleCanvas[0].getContext('2d')
-        ctx.strokeStyle = 'Black';
-        ctx.lineWidth = 1;
-        console.log(ctx)
-        ctx.beginPath()
-        ctx.moveTo(a.h, a.v);
-        ctx.lineTo(b.h, b.v);
-        ctx.lineTo(c.h, c.v);
-        ctx.lineTo(a.h, a.v);
-        ctx.closePath()
-        ctx.stroke()
-        console.log('finished drawTriangle')
-    }
-
-})
-
-function TriangleMenuHandler() {
-}
-
-TriangleMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
-    switch(menuid) {
-        default:
-    }
-    return true;
 }
 var Mirrors = {
         NoMirrors: 1,
@@ -3508,20 +2193,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let biomorph = thisFull.genome
 
         let spawn = biomorph.reproduce(null)
-        let current = new Full(spawn)
-        
-
-        current.parent = thisFull;
-        current.elderSib = thisFull.lastBorn;
-        if(current.elderSib != null) {
-            current.elderSib.youngerSib = current;
-        }
-        current.lastBorn = null;
-        current.youngerSib = null;
-        if(thisFull.lastBorn == null) {
-            thisFull.firstBorn = current;
-        }
-        thisFull.lastBorn = current;
+        let current = new Full(spawn, thisFull)
         this.bumper(current, here)
         this.addone(current, here)
         this.markIf(current);
@@ -3564,10 +2236,10 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         ctx.beginPath()
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
         ctx.strokeStyle = "Black";
-            ctx.lineWidth = 1
-            this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
-            ctx.closePath()
-            ctx.stroke()
+        ctx.lineWidth = 1
+        this.radiate(new Point(parentX, parentY), new Point(x, y), this.options.rays, ctx)
+        ctx.closePath()
+        ctx.stroke()
     },
     cleardragoutline: function() {
         let canvas = this.options.drawOutCanvas
@@ -3687,16 +2359,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this.doAllLines(theGod)
     },
 
-    checkAdam: function(thisGod) {
+    checkAdam: function(thisGod, thisFull) {
         if(thisGod != null) {
-            if(thisGod.adam != null) {
-                if(thisGod.adam == thisFull) {
-                    theGod = thisGod
-                    return true
-                }
+            if(thisGod.adam == thisFull) {
+                this.options.theGod = thisGod
+                return true
             }
             if(thisGod.nextGod != null) {
-                return this.checkAdam(thisGod.nextGod);
+                return this.checkAdam(thisGod.nextGod, thisFull);
             }
         }
         return false
@@ -3707,7 +2377,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     isAnAdam: function(thisFull) {
         let tryGod = this.options.rootGod
         if(thisFull != null) {
-            return this.checkAdam(tryGod)
+            return this.checkAdam(tryGod, thisFull)
         } else {
             return false
         } 
@@ -3783,13 +2453,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     shoot: function(thisFull) {
         this.findLastGod();
         let yesAdam = this.isAnAdam(thisFull); //{leaves theGod as thisFull's god if any}
+        console.log(yesAdam)
         if(! yesAdam) {
             this.weedOut(thisFull);
             this.kill(thisFull)
         } else {
 //          {only comes here if trying to kill an adam}
             if(thisFull.parent != null) {
-                alert('BEEP');
+                alert('Trying to shoot an Adam, but it has a parent. And probably a navel, too.');
             }
             if(thisFull.lastBorn != null) {
                 this.killAll(thisFull.lastBorn);
@@ -3804,24 +2475,23 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 this.options.theMode = Mode.Preliminary;
                 this.markIf(null)
             }
-            if(theGod.previousGod == null) {
-                this.sysBeep(1)
-            } else {
-                theGod.previousGod.nextGod = theGod.nextGod;
-            }
-            if(theGod.nextGod != null) {
-                theGod.nextGod.previousGod = theGod.previousGod;
-            }
-            theGod.nextGod = null;
-            theGod.previousGod = null;
-            theGod.adam = null;
+            let theGod = this.options.theGod
             if(theGod == null) {
-                alert('BEEP!')
+                alert('Trying to shoot an Adam, and theGod is null')
             } else {
-                theGod = null
+                if(theGod.previousGod == null) {
+                    alert("Trying to shoot an Adam, and Adam's god has no previous god.")
+                } else {
+                    theGod.previousGod.nextGod = theGod.nextGod;
+                }
+                if(theGod.nextGod != null) {
+                    theGod.nextGod.previousGod = theGod.previousGod;
+                }
+                this.options.theGod = null
             }
 
         }
+        console.log(this.options.rootGod)
         this.allLines(this.options.rootGod);
     },
     morphmousedown: function(event) {
@@ -3958,7 +2628,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 console.log(canvas.width + ',' + canvas.height)
                 full.centre.h = offset.left - pedigreeDivOffset.left + canvas.width/2
                 full.centre.v = offset.top - pedigreeDivOffset.top + canvas.height/2
-              
+
                 this.allLines(this.options.rootGod)
             }})
             break
@@ -4100,3 +2770,347 @@ SpeciesFactory.prototype.updateFromCanvas = function(speciesFactoryType,
 }
 
 var _speciesFactorySingleton = new SpeciesFactory();
+$.widget( "dawk.triangleView", $.dawk.watchmakerView, {
+    options: { 
+        theMode: Mode.Triangling,
+        species: null,
+        biomorph: null,
+        topOfTriangle: null,
+        leftOfTriangle: null,
+        rightOfTriangle: null,
+        liveOne: null,
+        inhibitspawn: false
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).triangleView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
+    _create: function (options) {
+        this._super()
+
+        $(this.element).addClass('triangleView')
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        console.log(this.options.session.species)
+        var geneboxes = $("<div class='hi'>");
+        _speciesFactorySingleton.geneboxes(this.options.session.species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes);
+
+        this.options.menuHandler.nextMenuHandler = new TriangleMenuHandler()
+        let container = $("<div class='container'>")
+        container.appendTo(this.element)
+                
+        // Draw triangle here
+        let triangleDiv = $('<div class="triangleLineDiv"><canvas class="triangleLineCanvas" width="1000" height="600"></canvas></div>')
+        triangleDiv.appendTo(container)
+        triangleDiv = $('<div class="triangleDiv"><canvas class="triangleLineCanvas" width="1000" height="600"></canvas></div>')
+        triangleDiv.appendTo(container)
+        this._on(triangleDiv, {
+            mousedown: function(event) { this.mousedown(event) },
+            mouseup: function(event) { this.mouseup(event) },
+            mousemove: function(event) { this.mousemove(event) },
+        })
+        this.drawTriangle()
+        let sessionoptions = this.options.session.options
+//        console.log(sessionoptions)
+        this.options.topOfTriangle = sessionoptions.topOfTriangle
+        this.addone(this.options.topOfTriangle, this.options.a)
+        this.options.leftOfTriangle = sessionoptions.leftOfTriangle
+        this.addone(this.options.leftOfTriangle, this.options.b)
+        this.options.rightOfTriangle = sessionoptions.rightOfTriangle
+        this.addone(this.options.rightOfTriangle, this.options.c)
+        this.options.liveone = null
+    },
+    buildMenus: function(menu) {
+        this._super('buildMenus')
+    },
+    markIf: function(canvas) {
+        // Remove midBox class from every canvas
+        $(this.element).find('canvas').removeClass('midBox')
+
+        if(canvas != null) {
+            // Mark this one as special
+            $(canvas).addClass('midBox')
+        }
+    },
+
+    bumper:  function(current, here) {
+        let surround = current.surround
+        let height = surround.bottom - surround.top;
+        let width = surround.right - surround.left;
+        let triangleDiv = $(this.element).find('.triangleDiv')[0]
+        let pRect = new Rect(0, 0, $(triangleDiv).width(), $(triangleDiv).height())
+        let error = here.v - (height / 2)
+        if(error < 0) {
+            here.v -= error
+        } 
+        error = here.v + (height / 2) 
+        if(error > pRect.bottom) {
+            here.v -= error - pRect.bottom
+        }
+        error = here.h - (width / 2)
+        if(error < 0) {
+            here.h -= error
+        } 
+        error = here.h + (width / 2) 
+        if(error > pRect.right) {
+            here.h -= error - pRect.right
+        }
+    },
+    mousedown: function(event) {
+        this.options.liveone = null
+        this.options.inhibitspawn = false
+    },
+    mouseup: function(event) {
+    },
+    mousemove: function(event) {
+        let canvas = this.options.liveone
+        if(canvas != null) {
+            let triangleDiv = $(this.element).find('.triangleDiv')
+            let biomorph = $(canvas).data('genotype')
+            let biomorphWidth = $(canvas).width()
+            let biomorphHeight = $(canvas).height()
+//            console.log(biomorphWidth)
+            let x = event.pageX - triangleDiv.offset().left 
+//            console.log(x)
+            let y = event.pageY - triangleDiv.offset().top 
+            let r = Triangle.triangle(
+                    triangleDiv.width(),
+                    triangleDiv.height(), 
+                    this.options.b, new Point(x,y));
+            let options = this.options.session.options
+            biomorph.concoct(r, 
+                    options.topOfTriangle, 
+                    options.leftOfTriangle, 
+                    options.rightOfTriangle)
+            biomorph.develop()
+            let surround = biomorph.getRect()
+            $(canvas).attr('width', surround.right - surround.left)
+            $(canvas).attr('height', surround.bottom - surround.top)
+            biomorph.develop()
+            let left = x - biomorphWidth / 2
+//            console.log(left)
+            let top = y - biomorphHeight / 2
+            $(canvas).css('left', left)
+            $(canvas).css('top', top)
+        } else {
+            if(! this.options.inhibitspawn) {
+                this.options.inhibitspawn = true
+                let triangleDiv = $(this.element).find('.triangleDiv')
+                let triangleDivOffset = triangleDiv.offset()
+                let x = event.pageX - triangleDivOffset.left
+                let y = event.pageY - triangleDivOffset.top
+                let m = new Point(x,y)
+                let triangleContext = triangleDiv.find('canvas')[0].getContext('2d')
+                let session = this.options.session
+                let biomorph = _speciesFactorySingleton.getSpecies(session.species, session, 
+                        document.createElement('canvas'));
+                        
+                let options = this.options
+                let r = Triangle.triangle(
+                        triangleDiv.width(),
+                        triangleDiv.height(), 
+                        this.options.b, m);
+                biomorph.concoct(r, options.topOfTriangle, options.leftOfTriangle, options.rightOfTriangle)
+                this.addone(biomorph, m)
+            }
+        }
+        var geneboxes = this.element.closest('.watchmakerView').find('.geneboxes').get(0);
+        _speciesFactorySingleton.updateFromCanvas(
+                this.options.session.species,
+                geneboxes, this.options.liveone)
+
+    },
+    addone: function(biomorph, point) {
+        let surround = biomorph.getRect()
+        let biomorphWidth = surround.right - surround.left
+        let biomorphHeight = surround.bottom - surround.top
+        let left = point.h - biomorphWidth / 2
+        let top = point.v - biomorphHeight / 2
+        let canvas = $("<canvas class='triangleMorphCanvas'>")
+        canvas.attr('height', Math.trunc(biomorphHeight))
+        canvas.attr('width', Math.trunc(biomorphWidth))
+        canvas.css('left', left)
+        canvas.css('top', top)
+        canvas.addClass('triangleBox midBox')
+        biomorph.drawer = canvas
+        $(canvas).data('genotype', biomorph)
+        this.options.liveone = canvas
+        let triangleDiv = $(this.element).find('.triangleDiv')
+        triangleDiv.append(canvas)
+        biomorph.drawer = canvas[0]
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        
+        this.markIf(canvas);
+
+    },
+    drawTriangle: function() {
+        let triangleCanvas = $(this.element).find('.triangleLineCanvas')
+        let screenWidth = triangleCanvas.width()
+        let screenHeight = triangleCanvas.height()
+        console.log("drawTriangle screen dimensions: " + new Point(screenWidth, screenHeight))
+        let a = new Point(Math.round(234 * screenWidth / 512), Math.round(51 * screenHeight / 342));
+        let b = new Point(Math.round(134 * screenWidth / 512), Math.round(250 * screenHeight / 342));
+        let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
+        this.options.a = a
+        this.options.b = b
+        this.options.c = c
+        console.log(a + b + c)
+        console.log(triangleCanvas[0])
+        let ctx = triangleCanvas[0].getContext('2d')
+        ctx.strokeStyle = 'Black';
+        ctx.lineWidth = 1;
+        console.log(ctx)
+        ctx.beginPath()
+        ctx.moveTo(a.h, a.v);
+        ctx.lineTo(b.h, b.v);
+        ctx.lineTo(c.h, c.v);
+        ctx.lineTo(a.h, a.v);
+        ctx.closePath()
+        ctx.stroke()
+        console.log('finished drawTriangle')
+    }
+
+})
+
+function TriangleMenuHandler() {
+}
+
+TriangleMenuHandler.prototype.menuclick = function(event) {
+    let target = event.target
+    let menuid = $(target).data('menuid')
+    switch(menuid) {
+        default:
+    }
+    return true;
+}
+
+//the widget definition, where "custom" is the namespace,
+//"colorize" the widget name
+$.widget( "dawk.breedingView", $.dawk.watchmakerView, {
+    options: { 
+        species: null,
+        watchmakerSessionTab: null,
+        biomorph: null
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).breedingView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
+
+    _create: function (options) {
+        this._super("_create")
+        var species = this.options.session.species
+        $(this.element).addClass('breedingView')
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div>");
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes);
+        var container = $("<div>");
+        container.addClass('container');
+        var boxes = $("<div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+        this.options.boxes = boxes
+        var overlay = $("<div>");
+        overlay.addClass("overlay");
+        container.append(overlay);
+        container.append(boxes);
+
+        var overlayCanvas = $('<canvas></canvas>');
+        overlayCanvas.attr('width', 1000);
+        overlayCanvas.attr('height', 600);
+        overlayCanvas.addClass('overlayCanvas');
+        overlay.append(overlayCanvas);
+        this.element.append(container);
+
+        $("<div>").breedingOffspringCounter().appendTo(this.element)
+
+        this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
+        
+        var midCanvas = $(this.element).find('.midBox').get(0);
+        this.options.timingDialog = Breeding.createTimingDialog(this.element, boxes.element)
+        $(midCanvas).trigger('mouseover');
+        $(midCanvas).trigger('click');
+    },
+    startAutoBreeding: function(event) {
+        var startButton = $(this.options.timingDialog).find('.startAutoReproduce').get(0);
+        var text = $(startButton).text()
+        if(text == 'Stop') {
+            this.options.autoRunning = false;
+            $(startButton).text('Start');
+        } else {
+            $(startButton).text('Stop');
+            this.options.autoRunning = true;
+            this.autoBreed();
+            var generations = $(this.element).find('.generations').get(0);
+            this.measureGenerationRate(Number(generations.value));
+        }
+    },
+    autoBreed: function() {
+        var breedingBoxes = $(this.element).closest('.breedingView').find('.boxes').get(0);
+        if (this.options.autoRunning) {
+            var useFitnessCheckbox = $(this.element).find('.useFitness').get(0)
+            var useFitness = false
+            if(useFitnessCheckbox) {
+                useFitness = useFitnessCheckbox.checked;
+            }
+            var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
+            if (useFitness) {
+                var canvas = $(breedingBoxes).find('.box').get(0);
+                var biomorph = getBiomorphFromCanvas(canvas);
+                var bestSoFar = canvas;
+
+                var errorToBeat = biomorph.fitness(canvas);
+                $(breedingBoxes).find('.box').each( function(index) {
+                    canvas = this;
+                    var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
+                    if (currentError < errorToBeat) {
+                        bestSoFar = canvas;
+                        errorToBeat = currentError;
+                    }
+                });
+                $(bestSoFar).trigger('click');
+            } else {
+                var luckyParent = Math.trunc(Math.random() * numBoxes);
+                var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
+                $(luckyCanvas).trigger('click');
+            }
+            console.log($(this.element).find('.autoReproduceInterval').get(0))
+            let autoReproduceIntervalStr = $(this.element).find('.autoReproduceInterval').get(0).value 
+            var interval = Number(autoReproduceIntervalStr);
+            this._delay(this.autoBreed, interval);
+
+        }            
+    },
+    measureGenerationRate: function() {
+        var generationCounter = $(this.element).find('.generations').get(0);
+        var newGenerationValue = Number(generationCounter.value) + 1;
+        generationCounter.value = newGenerationValue;
+        var generationRate = $(this.element).find('.generationRate').get(0);
+        generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
+        this.options.generationsPreviousSecond = newGenerationValue;
+        if(this.options.autoRunning)
+            this._delay(this.measureGenerationRate, 1000);
+    }
+})
+
+function BreedingMenuHandler(breedingView) {
+    this.breedingView = breedingView
+}
+
+BreedingMenuHandler.prototype.menuclick = function(event) {
+    let target = event.target
+    let menuid = $(target).data('menuid')
+    console.log('BreedingMenuHandler '  + menuid)
+    switch(menuid) {
+    case 'Timing':
+        this.breedingView.options.timingDialog.dialog('open') 
+        return false    
+    }
+    return true
+}
