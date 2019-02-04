@@ -468,3 +468,7 @@ div {
 	min-height: 1px;
 	width: 18px;
 }
+
+.tabicon {
+	padding: 2px;
+}

@@ -26,7 +26,6 @@ $( function() {
         },
         doDrift: function() {
             if(this.options.dodrift) {
-                console.log('drift')
                 let canvas = this.options.canvas
                 let biomorph = $(canvas).data('genotype').reproduce(canvas)
                 $(canvas).data('genotype', biomorph)

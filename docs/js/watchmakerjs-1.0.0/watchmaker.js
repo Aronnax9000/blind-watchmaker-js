@@ -906,7 +906,7 @@ $.widget('dawk.blindWatchmaker', {
 
         var sessionIcon = newWSession.options.sessionIcon
         if(sessionIcon)
-            string += '<img src="' + newWSession.options.sessionIcon + '">'
+            string += '<img class="tabicon" src="' + newWSession.options.sessionIcon + '">'
             string += sessionName + '</a>'
             if(this.options.closeable) {
             string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -982,7 +982,7 @@ $.widget('dawk.watchmakerSessionTab', {
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
+            + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
@@ -1018,7 +1018,7 @@ $.widget('dawk.watchmakerSessionTab', {
         var uuid = this.uuidv4();
         var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
+            + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
@@ -1049,9 +1049,9 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newDriftView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png';
+        var viewIcon = 'img/IconDrift_ALAN_32x32.png';
         var string = '<li><a href="#' + uuid + '">'
-        + '<!--<img src="' + viewIcon + '">-->' 
+        + '<img class="tabicon" src="' + viewIcon + '">' 
         + 'Drift</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
@@ -1084,7 +1084,7 @@ $.widget('dawk.watchmakerSessionTab', {
         var uuid = this.uuidv4();
         var viewIcon = 'img/Pedigree_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
+            + '<img class="tabicon" class="tabicon" src="' + viewIcon + '">' 
             + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
@@ -1117,7 +1117,7 @@ $.widget('dawk.watchmakerSessionTab', {
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
-            + '<img src="' + viewIcon + '">' 
+            + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Triangle</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
@@ -2056,7 +2056,6 @@ $( function() {
         },
         doDrift: function() {
             if(this.options.dodrift) {
-                console.log('drift')
                 let canvas = this.options.canvas
                 let biomorph = $(canvas).data('genotype').reproduce(canvas)
                 $(canvas).data('genotype', biomorph)
