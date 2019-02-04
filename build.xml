@@ -62,6 +62,7 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/biomorphs.js">
             <fileset file="js/species/biomorphs/biomorphs.js" />
+            <fileset file="js/species/biomorphs/biomorphs_develop.js" />
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />

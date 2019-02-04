@@ -871,6 +871,7 @@ WatchmakerSession.prototype.viewGainedFocus = function(view) {
 $.widget('dawk.blindWatchmaker', {
     options: {
         sessionCount: 0,
+        closeable: false
     },
     uuidv4: function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -901,14 +902,16 @@ $.widget('dawk.blindWatchmaker', {
         var newWSession = new WatchmakerSession(species)
 
         var string = '<li>'
-            string += '<a href="#' + uuid + '">' 
+            string += '<a href="#' + uuid + '">';
 
-            var sessionIcon = newWSession.options.sessionIcon
-            if(sessionIcon)
-                string += '<img src="' + newWSession.options.sessionIcon + '">'
-                string += sessionName + '</a>'
-//              string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-                var newTabLi = $(string);
+        var sessionIcon = newWSession.options.sessionIcon
+        if(sessionIcon)
+            string += '<img src="' + newWSession.options.sessionIcon + '">'
+            string += sessionName + '</a>'
+            if(this.options.closeable) {
+            string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            }
+            var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
@@ -953,8 +956,8 @@ $.widget('dawk.watchmakerSessionTab', {
     on_activate: function (event, ui) {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
-//      $(parents).watchmakerView('buildMenu');
-        $(ui.newPanel).trigger('dawk:viewGainedFocus');
+        $(ui.oldPanel).trigger('dawk:viewLostFocus', ui);
+        $(ui.newPanel).trigger('dawk:viewGainedFocus', ui);
     },   
     _create: function () {
         let options = this.options
@@ -1446,8 +1449,13 @@ $.widget('dawk.watchmakerView', {
     },
     _create: function() {
         $(this.element).addClass('watchmakerView')
-        this.buildMenus()
+        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
+        
+        $(this.element).on(
+                'dawk:viewLostFocus', this.viewLostFocus)
+        
 
+        this.buildMenus()
     },
     buildMenus: function() {
         let menubar = $('<div class="watchmakerMenuBar"></div>')
@@ -1474,9 +1482,14 @@ $.widget('dawk.watchmakerView', {
 
     },
     _init: function() {
-        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
     },
-    viewGainedFocus: function(event) {
+    viewGainedFocus: function(data) {
+        console.log('View gained focus')
+        console.log(data)
+    },
+    viewLostFocus: function(data) {
+        console.log('View lost focus' + data)
+        console.log(data)
     },
 
 })
@@ -1501,6 +1514,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
 
     },
     viewGainedFocus: function(event) {
+        console.log('breeding viewGainedFocus')
         let session = $(this).breedingView("option", "session")
         session.viewGainedFocus(session, this)
     },
@@ -1677,13 +1691,10 @@ $.widget( "dawk.breedingBoxes", {
     produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
         if(k < numBoxes) {
             var sourceCanvas = $(this.element).find('.midBox').get(0);
-            console.log($(this.element).find('canvas'))
             var targetCanvas = $(this.element).find('canvas').get(k);
             $(targetCanvas).css({ left: "0px", top: "0px" });
             if (k != midBox) {
                 var position = $(targetCanvas).parent().position();
-                console.log('targetCanvas ' + k)
-                console.log(targetCanvas)
                 var deltaX = midCanvasDivPosition.left - position.left;
                 var deltaY = midCanvasDivPosition.top - position.top;
                 // Move the target canvas to the centre
@@ -1991,13 +2002,24 @@ $.widget( "dawk.breedingOffspringCounter", {
             
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
-        $(driftDiv).driftBox('doDrift')
+        $(driftDiv).driftBox('update')
+        $(driftDiv).driftBox('startDrift')
         
     },
-    viewGainedFocus: function(event) {
-        let session = $(this).driftView("option", "session")
-        session.viewGainedFocus(session, this)
+    viewGainedFocus: function(event, ui) {
+        console.log('drift view gained focus')
+        console.log(ui)
+        driftDiv = $(ui.newPanel).find('.driftBox') 
+        $(driftDiv).driftBox("startDrift")
     },
+    viewLostFocus: function(event, ui) {
+        console.log('drift view lost focus')
+        console.log(ui.oldPanel)
+        driftDiv = $(ui.oldPanel).find('.driftBox') 
+        $(driftDiv).driftBox("stopDrift")
+        
+    },
+
     // Called when created, and later when changing options
     _refresh: function() {
     },
@@ -2016,6 +2038,7 @@ $( function() {
             canvas: null,
             width: 200,
             height: 200,
+            dodrift: false
         },
         _create: function() {
             this.element.addClass('driftBox');
@@ -2028,22 +2051,33 @@ $( function() {
             canvas.addClass('midBox');
 
             this.element.append(canvas);
-            
+
 
         },
         doDrift: function() {
-            let canvas = this.options.canvas
-            console.log(canvas)
-            let biomorph = $(canvas).data('genotype').reproduce(canvas)
-            $(canvas).data('genotype', biomorph)
-            biomorph.develop()
-            this.update()
-            this._delay(this.doDrift, 0);
+            if(this.options.dodrift) {
+                console.log('drift')
+                let canvas = this.options.canvas
+                let biomorph = $(canvas).data('genotype').reproduce(canvas)
+                $(canvas).data('genotype', biomorph)
+                biomorph.develop()
+                this.update()
+                this._delay(this.doDrift, 0);
+            } 
+        },
+        stopDrift: function() {
+            this.options.dodrift = false
+        },
+        startDrift: function() {
+            if(! this.options.dodrift) {
+                this.options.dodrift = true
+                this.doDrift()
+            }
         },
         update: function() {
             var parentView = this.element.closest('.watchmakerView')[0];
             var geneboxes = $(parentView)
-                .find('.geneboxes').get(0);
+            .find('.geneboxes').get(0);
             let canvas = $(this.element).find('canvas')[0]
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     canvas)

@@ -55,13 +55,10 @@ $.widget( "dawk.breedingBoxes", {
     produceKthOffspring: function (numBoxes, midBox, k, midCanvasDivPosition, recursive) {
         if(k < numBoxes) {
             var sourceCanvas = $(this.element).find('.midBox').get(0);
-            console.log($(this.element).find('canvas'))
             var targetCanvas = $(this.element).find('canvas').get(k);
             $(targetCanvas).css({ left: "0px", top: "0px" });
             if (k != midBox) {
                 var position = $(targetCanvas).parent().position();
-                console.log('targetCanvas ' + k)
-                console.log(targetCanvas)
                 var deltaX = midCanvasDivPosition.left - position.left;
                 var deltaY = midCanvasDivPosition.top - position.top;
                 // Move the target canvas to the centre

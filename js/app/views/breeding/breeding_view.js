@@ -9,6 +9,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
 
     },
     viewGainedFocus: function(event) {
+        console.log('breeding viewGainedFocus')
         let session = $(this).breedingView("option", "session")
         session.viewGainedFocus(session, this)
     },

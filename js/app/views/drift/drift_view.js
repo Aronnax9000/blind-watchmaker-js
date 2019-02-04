@@ -26,13 +26,24 @@ $.widget('dawk.driftView', $.dawk.watchmakerView, {
             
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
-        $(driftDiv).driftBox('doDrift')
+        $(driftDiv).driftBox('update')
+        $(driftDiv).driftBox('startDrift')
         
     },
-    viewGainedFocus: function(event) {
-        let session = $(this).driftView("option", "session")
-        session.viewGainedFocus(session, this)
+    viewGainedFocus: function(event, ui) {
+        console.log('drift view gained focus')
+        console.log(ui)
+        driftDiv = $(ui.newPanel).find('.driftBox') 
+        $(driftDiv).driftBox("startDrift")
     },
+    viewLostFocus: function(event, ui) {
+        console.log('drift view lost focus')
+        console.log(ui.oldPanel)
+        driftDiv = $(ui.oldPanel).find('.driftBox') 
+        $(driftDiv).driftBox("stopDrift")
+        
+    },
+
     // Called when created, and later when changing options
     _refresh: function() {
     },

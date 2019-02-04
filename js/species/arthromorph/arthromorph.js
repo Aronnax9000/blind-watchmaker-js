@@ -1138,6 +1138,8 @@ Arthromorph.prototype.drawInBox = function() {
         verticalOffset = start - midriff;
     }
     var drawingContext = _drawerFactorySingleton.getDrawer('canvas2d', this.drawer);
+    drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    drawingContext.clearRect(0, 0, this.drawer.width, this.drawer.height);
 
 //  this.trunk.printMiddle()
 //  console.log(this.trunk)

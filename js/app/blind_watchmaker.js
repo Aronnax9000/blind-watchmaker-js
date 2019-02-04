@@ -4,6 +4,7 @@
 $.widget('dawk.blindWatchmaker', {
     options: {
         sessionCount: 0,
+        closeable: false
     },
     uuidv4: function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -34,14 +35,16 @@ $.widget('dawk.blindWatchmaker', {
         var newWSession = new WatchmakerSession(species)
 
         var string = '<li>'
-            string += '<a href="#' + uuid + '">' 
+            string += '<a href="#' + uuid + '">';
 
-            var sessionIcon = newWSession.options.sessionIcon
-            if(sessionIcon)
-                string += '<img src="' + newWSession.options.sessionIcon + '">'
-                string += sessionName + '</a>'
-//              string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-                var newTabLi = $(string);
+        var sessionIcon = newWSession.options.sessionIcon
+        if(sessionIcon)
+            string += '<img src="' + newWSession.options.sessionIcon + '">'
+            string += sessionName + '</a>'
+            if(this.options.closeable) {
+            string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            }
+            var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
@@ -86,8 +89,8 @@ $.widget('dawk.watchmakerSessionTab', {
     on_activate: function (event, ui) {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
-//      $(parents).watchmakerView('buildMenu');
-        $(ui.newPanel).trigger('dawk:viewGainedFocus');
+        $(ui.oldPanel).trigger('dawk:viewLostFocus', ui);
+        $(ui.newPanel).trigger('dawk:viewGainedFocus', ui);
     },   
     _create: function () {
         let options = this.options

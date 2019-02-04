@@ -8,6 +8,7 @@ $( function() {
             canvas: null,
             width: 200,
             height: 200,
+            dodrift: false
         },
         _create: function() {
             this.element.addClass('driftBox');
@@ -20,22 +21,33 @@ $( function() {
             canvas.addClass('midBox');
 
             this.element.append(canvas);
-            
+
 
         },
         doDrift: function() {
-            let canvas = this.options.canvas
-            console.log(canvas)
-            let biomorph = $(canvas).data('genotype').reproduce(canvas)
-            $(canvas).data('genotype', biomorph)
-            biomorph.develop()
-            this.update()
-            this._delay(this.doDrift, 0);
+            if(this.options.dodrift) {
+                console.log('drift')
+                let canvas = this.options.canvas
+                let biomorph = $(canvas).data('genotype').reproduce(canvas)
+                $(canvas).data('genotype', biomorph)
+                biomorph.develop()
+                this.update()
+                this._delay(this.doDrift, 0);
+            } 
+        },
+        stopDrift: function() {
+            this.options.dodrift = false
+        },
+        startDrift: function() {
+            if(! this.options.dodrift) {
+                this.options.dodrift = true
+                this.doDrift()
+            }
         },
         update: function() {
             var parentView = this.element.closest('.watchmakerView')[0];
             var geneboxes = $(parentView)
-                .find('.geneboxes').get(0);
+            .find('.geneboxes').get(0);
             let canvas = $(this.element).find('canvas')[0]
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     canvas)
