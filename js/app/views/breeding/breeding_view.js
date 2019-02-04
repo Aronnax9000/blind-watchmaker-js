@@ -4,7 +4,9 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     options: { 
         species: null,
         watchmakerSessionTab: null,
-        biomorph: null
+        biomorph: null,
+        generationsPreviousSecond: 0
+
     },
     viewGainedFocus: function(event) {
         let session = $(this).breedingView("option", "session")
@@ -43,6 +45,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
         
         var midCanvas = $(this.element).find('.midBox').get(0);
+//        $("div").timingDialog({appendTo: boxes.element}).appendTo(this.element)
         this.options.timingDialog = Breeding.createTimingDialog(this.element, boxes.element)
         $(midCanvas).trigger('mouseover');
         $(midCanvas).trigger('click');
@@ -72,13 +75,13 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
             var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
             if (useFitness) {
                 var canvas = $(breedingBoxes).find('.box').get(0);
-                var biomorph = getBiomorphFromCanvas(canvas);
+                var biomorph = $(canvas).data('genotype');
                 var bestSoFar = canvas;
 
                 var errorToBeat = biomorph.fitness(canvas);
                 $(breedingBoxes).find('.box').each( function(index) {
                     canvas = this;
-                    var currentError = getBiomorphFromCanvas(canvas).fitness(canvas);
+                    var currentError = $(canvas).data('genotype').fitness(canvas);
                     if (currentError < errorToBeat) {
                         bestSoFar = canvas;
                         errorToBeat = currentError;
@@ -102,6 +105,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         var newGenerationValue = Number(generationCounter.value) + 1;
         generationCounter.value = newGenerationValue;
         var generationRate = $(this.element).find('.generationRate').get(0);
+
         generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
         this.options.generationsPreviousSecond = newGenerationValue;
         if(this.options.autoRunning)

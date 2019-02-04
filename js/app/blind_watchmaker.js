@@ -4,7 +4,13 @@
 $.widget('dawk.blindWatchmaker', {
     options: {
         sessionCount: 0,
-    } ,
+    },
+    uuidv4: function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        })
+    },
     _create: function () {
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
@@ -23,19 +29,19 @@ $.widget('dawk.blindWatchmaker', {
     newWatchmakerSession: function(species) {
         var index = this.options.sessionCount;
         this.options.sessionCount++;
-        var uuid = uuidv4();
+        var uuid = this.uuidv4();
         var sessionName = species //+ ' ' + index;
         var newWSession = new WatchmakerSession(species)
 
         var string = '<li>'
-        string += '<a href="#' + uuid + '">' 
-        
-        var sessionIcon = newWSession.options.sessionIcon
-        if(sessionIcon)
-            string += '<img src="' + newWSession.options.sessionIcon + '">'
-        string += sessionName + '</a>'
-//        string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-        var newTabLi = $(string);
+            string += '<a href="#' + uuid + '">' 
+
+            var sessionIcon = newWSession.options.sessionIcon
+            if(sessionIcon)
+                string += '<img src="' + newWSession.options.sessionIcon + '">'
+                string += sessionName + '</a>'
+//              string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+                var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
@@ -58,12 +64,20 @@ $.widget('dawk.blindWatchmaker', {
         $(liToRemove).remove();
         this.element.tabs("refresh");
     }
-});$.widget('dawk.watchmakerSessionTab', {
+});
+
+$.widget('dawk.watchmakerSessionTab', {
     options: {
         species: null,
         session: null,
         name: 'Default Session',
         blindWatchmaker: null
+    },
+    uuidv4: function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        })
     },
     raiseAlert: function(newMenu) {
         var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
@@ -95,9 +109,9 @@ $.widget('dawk.blindWatchmaker', {
     },
     newBreedingView: function(biomorph) {
         var species = this.options.species
-        var uuid = uuidv4();
+        var uuid = this.uuidv4();
         var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
+            var string = '<li><a href="#' + uuid + '">'
             + '<img src="' + viewIcon + '">' 
             + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
@@ -131,9 +145,9 @@ $.widget('dawk.blindWatchmaker', {
 
     },
     newEngineeringView: function(biomorph) {
-        var uuid = uuidv4();
+        var uuid = this.uuidv4();
         var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
+            var string = '<li><a href="#' + uuid + '">'
             + '<img src="' + viewIcon + '">' 
             + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
@@ -164,9 +178,9 @@ $.widget('dawk.blindWatchmaker', {
         this.element.tabs("option", "active", tabcount - 1);
     },
     newPedigreeView: function(biomorph) {
-        var uuid = uuidv4();
+        var uuid = this.uuidv4();
         var viewIcon = 'img/Pedigree_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
+            var string = '<li><a href="#' + uuid + '">'
             + '<img src="' + viewIcon + '">' 
             + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
@@ -197,9 +211,9 @@ $.widget('dawk.blindWatchmaker', {
         this.element.tabs("option", "active", tabcount - 1);
     },    
     newTriangleView: function(biomorph) {
-        var uuid = uuidv4();
+        var uuid = this.uuidv4();
         var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
-        var string = '<li><a href="#' + uuid + '">'
+            var string = '<li><a href="#' + uuid + '">'
             + '<img src="' + viewIcon + '">' 
             + 'Triangle</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);

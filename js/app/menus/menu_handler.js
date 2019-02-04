@@ -14,7 +14,9 @@ MenuHandler.prototype.menuclick = function(event) {
         if(menuid.startsWith('Animal')) {
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
             console.log(midCanvas)
-            eraseCanvas(midCanvas)
+            let ctx = midCanvas.getContext('2d')
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0,0, midCanvas.width, midCanvas.height)
             var biomorph = $(midCanvas).data('genotype')
             biomorph.doPerson(menuid.substring(6))
             biomorph.develop()

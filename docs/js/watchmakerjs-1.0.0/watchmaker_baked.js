@@ -1783,7 +1783,8 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     options: { 
         species: null,
         watchmakerSessionTab: null,
-        biomorph: null
+        biomorph: null,
+        generationsPreviousSecond: 0
     },
     viewGainedFocus: function(event) {
         let session = $(this).breedingView("option", "session")
@@ -1881,6 +1882,8 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         var newGenerationValue = Number(generationCounter.value) + 1;
         generationCounter.value = newGenerationValue;
         var generationRate = $(this.element).find('.generationRate').get(0);
+        console.log(newGenerationValue)
+        console.log(this.options.generationsPreviousSecond)
         generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
         this.options.generationsPreviousSecond = newGenerationValue;
         if(this.options.autoRunning)

@@ -453,13 +453,10 @@ Arthromorph.prototype.reproduce = function(element) {
         counter++
         done = child.mutate() // {If it fails, just try again until we succeed at changing something}
     } while(counter < limit && ! done);
-//    console.log('Child')
-//    child.trunk.printMiddle()
     if(counter > limit) {
         console.error('Timed out, perhaps attempting impossible duplication or deletion');
         return null
     } else {
-//      console.log(child.trunk)
         return child
     }
 }
@@ -643,7 +640,7 @@ Arthromorph.prototype.doPerson = function(type) {
     default:     
         this.minimalAnimal()
     }
-    this.trunk.printMiddle()
+//    this.trunk.printMiddle()
 
 }
 

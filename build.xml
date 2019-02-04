@@ -29,7 +29,6 @@
             <fileset file="js/app/geometry.js" />
             <fileset file="js/app/drawing.js" />
             <fileset file="js/app/watchmaker_session.js" />
-            <fileset file="js/app/watchmaker.js" />
             <fileset file="js/app/blind_watchmaker.js" />
             <fileset file="js/app/menus/dropdownmenu.js" />
             <fileset file="js/app/menus/sub_menu.js" />
@@ -45,6 +44,10 @@
             <fileset file="js/app/views/album/album_view.js" />
             <fileset file="js/app/views/album/album_page_view.js" />
             <fileset file="js/app/views/breeding/breeding_view.js" />
+            <fileset file="js/app/views/breeding/breeding_boxes.js" />
+            <fileset file="js/app/views/breeding/breeding_box.js" />
+            <fileset file="js/app/views/breeding/breeding_timing_dialog.js" />
+            <fileset file="js/app/views/breeding/breeding_offspringcounter.js" />
             <fileset file="js/app/views/drift/drift_view.js" />
             <fileset file="js/app/views/engineering/engineering_view.js" />
             <fileset file="js/app/views/engineering/engineering_box.js" />
