@@ -1,0 +1,99 @@
+function MenuHandler(session) {
+    this.session = session
+    this.nextMenuHandler = null
+}
+
+MenuHandler.prototype.menuclick = function(event) {
+    console.log('Menuhandler menuclick')
+    let result = this.session.menuclick(event)
+    console.log(result)
+    if(result) {
+        let menuid = $(event.target).data('menuid')
+        let target = event.target
+        console.log('WatchmakerView menu ' + menuid)
+        if(menuid.startsWith('Animal')) {
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
+            console.log(midCanvas)
+            eraseCanvas(midCanvas)
+            var biomorph = $(midCanvas).data('genotype')
+            biomorph.doPerson(menuid.substring(6))
+            biomorph.develop()
+            return false
+        }
+        switch(menuid) {
+        case 'Breed': 
+            console.log('Breeding')
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newBreedingView", biomorph);
+            return false
+        case 'Engineering':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newEngineeringView", biomorph);
+            return false
+        case 'MakeTopOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.topOfTriangle = biomorph
+            return false
+        case 'MakeLeftOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.leftOfTriangle = biomorph
+            return false
+        case 'MakeRightOfTriangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            this.session.options.rightOfTriangle = biomorph
+            return false            
+        case 'DisplayPedigree':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newPedigreeView", biomorph);
+            return false
+        case 'Triangle':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newTriangleView");
+            return false
+        case 'HopefulMonster':
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            console.log(this.session.options.hopefulMonsterBasicType)
+            biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
+            biomorph.develop()
+            return false
+        case 'AboutClassicBlindWatchmaker':
+            $("<div>").about({index:0, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicExhibitionColour':
+            $("<div>").about({index:1, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutClassicArthromorphs':
+            $("<div>").about({index:2, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'AboutWatchmakerJS':
+            $("<div>").about({index:3, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'Donate':
+            document.location = 'https://alancanon.net/donate' 
+            return false
+        }
+        // Do generic stuff here
+        // Then call view-specific handler
+        if(this.nextMenuHandler) {
+            this.nextMenuHandler.menuclick(event)
+        }
+        return true;
+    }
+}
+

@@ -24,32 +24,60 @@
     <target name="app_plus_species_modules">
         <concat destfile="docs/js/watchmakerjs-1.0.0/watchmaker.js">
             <fileset file="js/lib/easing/jquery.easing.1.3.js" />
+            <fileset file="js/app/about.js" />
+            <fileset file="js/app/mode.js" />
+            <fileset file="js/app/geometry.js" />
+            <fileset file="js/app/drawing.js" />
+            <fileset file="js/app/watchmaker_session.js" />
             <fileset file="js/app/watchmaker.js" />
-            <fileset file="js/app/views/triangle/triangle.js" />
-            <fileset file="js/app/views/triangle/triangle_menuhandler.js" />
+            <fileset file="js/app/blind_watchmaker.js" />
+            <fileset file="js/app/menus/dropdownmenu.js" />
+            <fileset file="js/app/menus/sub_menu.js" />
+            <fileset file="js/app/menus/menu_handler.js" />
+            <fileset file="js/app/menus/file_menu.js" />
+            <fileset file="js/app/menus/edit_menu.js" />
+            <fileset file="js/app/menus/operation_menu.js" />
+            <fileset file="js/app/menus/animal_menu.js" />
+            <fileset file="js/app/menus/help_menu.js" />
+            <fileset file="js/app/menus/pedigree_menu.js" />
+            <fileset file="js/app/menus/view_menu.js" />
+            <fileset file="js/app/views/watchmaker_view.js" />
+            <fileset file="js/app/views/album/album_view.js" />
+            <fileset file="js/app/views/album/album_page_view.js" />
             <fileset file="js/app/views/breeding/breeding_view.js" />
+            <fileset file="js/app/views/drift/drift_view.js" />
+            <fileset file="js/app/views/engineering/engineering_view.js" />
+            <fileset file="js/app/views/engineering/engineering_box.js" />
+            <fileset file="js/app/views/fossils/fossil_view.js" />
+            <fileset file="js/app/views/pedigree/pedigree.js" />
+            <fileset file="js/app/views/sweep/sweep_view.js" />
+            <fileset file="js/app/views/triangle/triangle.js" />
+            <fileset file="js/app/views/triangle/triangle_view.js" />
+            <fileset file="js/app/views/triangle/triangle_menuhandler.js" />
+            <fileset file="js/species/species_factory.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/biomorphs.js">
-            <fileset file="js/species/biomorphs.js" />
+            <fileset file="js/species/biomorphs/biomorphs.js" />
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
-            <fileset file="js/species/monochrome.js" />
-            <fileset file="js/species/monochrome_triangle.js" />
+            <fileset file="js/species/monochrome/monochrome.js" />
+            <fileset file="js/species/monochrome/monochrome_triangle.js" />
     	</concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/minimal.js">
-            <fileset file="js/species/minimal.js" />
+            <fileset file="js/species/minimal/minimal.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/arthromorph.js">
-            <fileset file="js/species/arthromorph.js" />
+            <fileset file="js/species/arthromorph/arthromorph.js" />
+            <fileset file="js/species/arthromorph/arthromorph_atom_print.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/colour_biomorph.js">
-            <fileset file="js/species/colour_biomorph.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">
-            <fileset file="js/species/triay_shell.js" />
+            <fileset file="js/species/triay_shell/triay_shell.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_biomorph.js">
-            <fileset file="js/triay_biomorph.js" />
+            <fileset file="js/species/triay_biomorph/triay_biomorph.js" />
         </concat>
         <concat destfile="docs/css/watchmaker.css">
             <concat destfile="docs/css/watchmaker.css">

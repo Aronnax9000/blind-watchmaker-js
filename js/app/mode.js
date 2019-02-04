@@ -1,0 +1,35 @@
+
+var Mode = {
+        // Values not the same as Classic Blind Watchmaker
+        Preliminary: 1, 
+        Breeding: 2, 
+        Albuming: 3, 
+        Phyloging: 4, 
+        Killing: 5, 
+        Moving: 6, 
+        Detaching: 7, 
+        Randoming: 8, 
+        Engineering: 9, 
+        Drifting: 10, 
+        Highlighting: 11, 
+        PlayingBack: 12, 
+        Triangling: 13, 
+        Sweeping: 14,
+        properties: {
+            1: {name: "Preliminary"},
+            2: {name: "Breeding"},
+            3: {name: "Albuming"},
+            4: {name: "Phyloging"},
+            5: {name: "Killing"},
+            6: {name: "Moving"},
+            7: {name: "Detaching"},
+            8: {name: "Randoming"},
+            9: {name: "Engineering"},
+            10: {name: "Drifting"},
+            11: {name: "Highlighting"},
+            12: {name: "PlayingBack"},
+            13: {name: "Triangling"},
+            14: {name: "Sweeping"},
+        },
+}
+

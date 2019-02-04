@@ -1,3 +1,16 @@
+@font-face {
+  font-family: chicagoflf;
+  src: url(font/chicagoflf.ttf);
+}
+@font-face {
+  font-family: virtue;
+  src: url(font/virtue.ttf);
+}
+
+body, .ui-widget {
+    font-family: chicagoflf;
+}
+
 .about {
     padding: 0px;
     margin: 0px;
@@ -144,7 +157,7 @@
 
 .midBox {
 	border-width: 2px;
-}body {font-family: sans-serif}
+}
 .wrapper {
     display: table;
     table-layout: fixed;
@@ -202,6 +215,7 @@ div {
 .ui-icon-circle-close {
     cursor: pointer;
 }
+
 
 .ui-widget.ui-widget-content {
     border: 0px none;
