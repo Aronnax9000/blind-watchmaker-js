@@ -27,8 +27,8 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var parentbreedingView = this.element.parents('.engineeringView').get(0);
-            var geneboxes = $(parentbreedingView)
+            var parentView = this.element.parents('.watchmakerView').get(0);
+            var geneboxes = $(parentView)
                 .find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     this.options.canvas.get(0))

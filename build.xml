@@ -49,6 +49,7 @@
             <fileset file="js/app/views/breeding/breeding_timing_dialog.js" />
             <fileset file="js/app/views/breeding/breeding_offspringcounter.js" />
             <fileset file="js/app/views/drift/drift_view.js" />
+            <fileset file="js/app/views/drift/drift_box.js" />
             <fileset file="js/app/views/engineering/engineering_view.js" />
             <fileset file="js/app/views/engineering/engineering_box.js" />
             <fileset file="js/app/views/fossils/fossil_view.js" />

@@ -67,6 +67,14 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newTriangleView");
             return false
+        case 'Drift':
+            console.log('new drift view')
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newDriftView");
+            return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')

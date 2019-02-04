@@ -1044,6 +1044,39 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     },
+    newDriftView: function(biomorph) {
+        var uuid = this.uuidv4();
+        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png';
+        var string = '<li><a href="#' + uuid + '">'
+        + '<!--<img src="' + viewIcon + '">-->' 
+        + 'Drift</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.driftView({session: this.options.session, 
+            biomorph: biomorph,
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    },
     newPedigreeView: function(biomorph) {
         var uuid = this.uuidv4();
         var viewIcon = 'img/Pedigree_32x32.png'
@@ -1241,6 +1274,14 @@ MenuHandler.prototype.menuclick = function(event) {
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newTriangleView");
+            return false
+        case 'Drift':
+            console.log('new drift view')
+            var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+            var biomorph = $(midCanvas).data('genotype')
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newDriftView");
             return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
@@ -1922,11 +1963,93 @@ $.widget( "dawk.breedingOffspringCounter", {
             var div = $.parseHTML(string);
         this.element.append(div);
     }
+});$.widget('dawk.driftView', $.dawk.watchmakerView, {
+    _create: function() {
+        this._super("_create")
+        $(this.element).addClass('driftView')
+        var species = this.options.session.species
+        
+        var geneboxes_options = {
+            engineering : false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div>")
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
+        var driftDiv = $("<div>").driftBox({ 
+            species: species,
+            height: 600,
+            width: 1000})
+        this.element.append(driftDiv)
+        var canvas = $(driftDiv).find('canvas').get(0)
+        var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
+        if(this.options.biomorph) {
+            this.options.biomorph.copyBiomorph(biomorph)
+        } else {
+            biomorph.doPerson("BasicTree")
+        }
+            
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        $(driftDiv).driftBox('doDrift')
+        
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).driftView("option", "session")
+        session.viewGainedFocus(session, this)
+    },
+    // Called when created, and later when changing options
+    _refresh: function() {
+    },
+
+    _destroy: function() {
+    },
+
+
 });/*
- * Drift view
+ * drift box
  */
-$.widget( "dawk.driftView", $.dawk.watchmakerView, {
-})
+$( function() {
+    $.widget('dawk.driftBox', {
+        options: {
+            species: null,
+            canvas: null,
+            width: 200,
+            height: 200,
+        },
+        _create: function() {
+            this.element.addClass('driftBox');
+            this.element.addClass('boxDiv');
+            var canvas = $("<canvas>");
+            this.options.canvas = canvas[0];
+            canvas.attr('width', this.options.width);
+            canvas.attr('height', this.options.height);
+            canvas.addClass('box');
+            canvas.addClass('midBox');
+
+            this.element.append(canvas);
+            
+
+        },
+        doDrift: function() {
+            let canvas = this.options.canvas
+            console.log(canvas)
+            let biomorph = $(canvas).data('genotype').reproduce(canvas)
+            $(canvas).data('genotype', biomorph)
+            biomorph.develop()
+            this.update()
+            this._delay(this.doDrift, 0);
+        },
+        update: function() {
+            var parentView = this.element.closest('.watchmakerView')[0];
+            var geneboxes = $(parentView)
+                .find('.geneboxes').get(0);
+            let canvas = $(this.element).find('canvas')[0]
+            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                    canvas)
+        },
+    });
+});
 $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create")
@@ -2010,8 +2133,8 @@ $( function() {
             });
         },
         _doMouseOver: function(event) {
-            var parentbreedingView = this.element.parents('.engineeringView').get(0);
-            var geneboxes = $(parentbreedingView)
+            var parentView = this.element.parents('.watchmakerView').get(0);
+            var geneboxes = $(parentView)
                 .find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
                     this.options.canvas.get(0))
