@@ -667,9 +667,10 @@ Arthromorph.prototype.mutate = function() {
 
     
     let targetAtom = this.findNth(this.trunk, pick); // {find the Nth atom}
-    if(targetAtom ==  null) console.log('null pick ' + pick + ' of ' + this.trunk.angle + ' size ' + size)
+    if(targetAtom ==  null) {
+        console.log('null pick ' + pick + ' of ' + this.trunk.angle + ' size ' + size)
+    }
     var kind = targetAtom.kind
-//    console.log('Picked ' + AtomKind.properties[kind].name)
     if(targetAtom == null) {
         //{Aren't pick atoms in this Animal}
         console.error('Atom count is wrong.  Fatal.  Quitting');
@@ -687,7 +688,7 @@ Arthromorph.prototype.mutate = function() {
         //  {Then jump down to the next part of the animal}
         if(kind == AtomKind.AnimalJoint || kind == AtomKind.SectionJoint || kind == AtomKind.SegmentJoint) {
             if(targetAtom.nextLikeMe == null) {
-                console.log('mutation expected targetAtom to have a nextLikeMe, and it does not.')
+                console.error('mutation expected targetAtom to have a nextLikeMe, and it does not.')
                 targetAtom.printMiddle()
                 
             }
@@ -808,8 +809,6 @@ Arthromorph.prototype.mutate = function() {
         if(ok) {
             if(change == 4) {
                 if(options.duplicationMut) {
-                    console.log('duplicationMut')
-//                    targetAtom.printMiddle()
                     
                     // There is only one AnimalTrunk per animal,
                     // so it doesn't need to use nextLikeMe to hold a reference

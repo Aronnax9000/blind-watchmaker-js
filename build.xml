@@ -29,6 +29,7 @@
             <fileset file="js/app/geometry.js" />
             <fileset file="js/app/drawing.js" />
             <fileset file="js/app/watchmaker_session.js" />
+            <fileset file="js/app/watchmaker_sessiontab.js" />
             <fileset file="js/app/blind_watchmaker.js" />
             <fileset file="js/app/menus/dropdownmenu.js" />
             <fileset file="js/app/menus/sub_menu.js" />
@@ -55,6 +56,7 @@
             <fileset file="js/app/views/fossils/fossil_view.js" />
             <fileset file="js/app/views/pedigree/pedigree.js" />
             <fileset file="js/app/views/sweep/sweep_view.js" />
+            <fileset file="js/app/views/sweep/sweep_boxes.js" />
             <fileset file="js/app/views/triangle/triangle.js" />
             <fileset file="js/app/views/triangle/triangle_view.js" />
             <fileset file="js/app/views/triangle/triangle_menuhandler.js" />
@@ -66,6 +68,12 @@
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />
+            <fileset file="js/species/monochrome/monochrome_viewgainedfocus.js" />
+            <fileset file="js/species/monochrome/monochrome_mutations_menu.js" />
+            <fileset file="js/species/monochrome/monochrome_buildmenus.js" />
+            <fileset file="js/species/monochrome/monochrome_menuclick.js" />
+            <fileset file="js/species/monochrome/monochrome_updatemutcheckbox.js" />
+            <fileset file="js/species/monochrome/monochrome_togglemut.js" />
             <fileset file="js/species/monochrome/monochrome_triangle.js" />
     	</concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/minimal.js">

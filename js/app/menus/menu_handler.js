@@ -75,6 +75,20 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newDriftView");
             return false
+        case 'DriftSweep':
+            let options = this.session.options
+            options.driftsweep = ! options.driftsweep
+            let li = $(target).closest('li')
+            if(options.driftsweep) {
+                $(li).addClass('checked')
+                $(li).find('img').css('display', 'inline-block')
+            } else {
+                $(li).removeClass('checked')
+                $(li).find('img').css('display', 'none')
+            }
+            console.log('DriftSweep ' + options.driftsweep)
+            console.log(target)
+            return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')

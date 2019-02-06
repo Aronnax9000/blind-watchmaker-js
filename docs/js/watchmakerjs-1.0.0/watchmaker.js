@@ -849,6 +849,7 @@ function WatchmakerSession(species) {
     this.myPenSize = 1;
     this.trianglable = false
     this.arrayable = false
+    this.driftsweep = false
     this.species = species
     _speciesFactorySingleton.initializeSession(species, this)
 }
@@ -865,77 +866,6 @@ WatchmakerSession.prototype.buildMenus = function(menu) {
 WatchmakerSession.prototype.viewGainedFocus = function(view) {
 
 }
-/*
- * Blind Watchmaker, the entry point for the application.
- */
-$.widget('dawk.blindWatchmaker', {
-    options: {
-        sessionCount: 0,
-        closeable: false
-    },
-    uuidv4: function () {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        })
-    },
-    _create: function () {
-        var ul = $('<ul class="watchmakerTabs"></ul>');
-        this.element.append(ul);
-        this.element.tabs({activate: this.on_activate});
-        var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
-        availableSpecies.forEach(availableSpecie => {
-            this.newWatchmakerSession(availableSpecie)
-        })
-        this.element.tabs('option', 'active', 0);
-        this.element.tabs("refresh");
-    },
-    on_activate: function (event, ui) {
-    },
-    raiseAlert: function() {
-    },
-    newWatchmakerSession: function(species) {
-        var index = this.options.sessionCount;
-        this.options.sessionCount++;
-        var uuid = this.uuidv4();
-        var sessionName = species //+ ' ' + index;
-        var newWSession = new WatchmakerSession(species)
-
-        var string = '<li>'
-            string += '<a href="#' + uuid + '">';
-
-        var sessionIcon = newWSession.options.sessionIcon
-        if(sessionIcon)
-            string += '<img class="tabicon" src="' + newWSession.options.sessionIcon + '">'
-            string += sessionName + '</a>'
-            if(this.options.closeable) {
-            string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
-            }
-            var newTabLi = $(string);
-        var ul = this.element.find('ul').get(0);
-        $(ul).append(newTabLi);
-        var div = $('<div id="' + uuid + '"></div>');
-        this.element.append(div);
-        div.watchmakerSessionTab({
-            'session': newWSession,
-            'name': sessionName, 'blindWatchmaker': this, species: species});
-        var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-
-    },
-    closeSession: function() {
-        var selectedIndex = this.element.tabs('option', 'active');
-        var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
-        var ul = this.element.find('ul.watchmakerTabs').get(0);
-        var liToRemove = $(ul).find('li').get(selectedIndex);
-        var divToRemove = $(this.element).find('div').get(selectedIndex);
-        $(divToRemove).remove();
-        $(liToRemove).remove();
-        this.element.tabs("refresh");
-    }
-});
-
 $.widget('dawk.watchmakerSessionTab', {
     options: {
         species: null,
@@ -1058,9 +988,15 @@ $.widget('dawk.watchmakerSessionTab', {
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
-        div.driftView({session: this.options.session, 
-            biomorph: biomorph,
-            watchmakerSessionTab: this});
+        if(this.options.session.options.driftsweep) {
+            div.sweepView({session: this.options.session, 
+                biomorph: biomorph,
+                watchmakerSessionTab: this});
+        } else {
+            div.driftView({session: this.options.session, 
+                biomorph: biomorph,
+                watchmakerSessionTab: this});
+        }
         $('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -1146,6 +1082,78 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs("option", "active", tabcount - 1);
     }     
 });
+
+/*
+ * Blind Watchmaker, the entry point for the application.
+ */
+$.widget('dawk.blindWatchmaker', {
+    options: {
+        sessionCount: 0,
+        closeable: false
+    },
+    uuidv4: function () {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        })
+    },
+    _create: function () {
+        var ul = $('<ul class="watchmakerTabs"></ul>');
+        this.element.append(ul);
+        this.element.tabs({activate: this.on_activate});
+        var availableSpecies = _speciesFactorySingleton.getRegisteredSpecies()
+        availableSpecies.forEach(availableSpecie => {
+            this.newWatchmakerSession(availableSpecie)
+        })
+        this.element.tabs('option', 'active', 0);
+        this.element.tabs("refresh");
+    },
+    on_activate: function (event, ui) {
+    },
+    raiseAlert: function() {
+    },
+    newWatchmakerSession: function(species) {
+        var index = this.options.sessionCount;
+        this.options.sessionCount++;
+        var uuid = this.uuidv4();
+        var sessionName = species //+ ' ' + index;
+        var newWSession = new WatchmakerSession(species)
+
+        var string = '<li>'
+            string += '<a href="#' + uuid + '">';
+
+        var sessionIcon = newWSession.options.sessionIcon
+        if(sessionIcon)
+            string += '<img class="tabicon" src="' + newWSession.options.sessionIcon + '">'
+            string += sessionName + '</a>'
+            if(this.options.closeable) {
+            string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            }
+            var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.watchmakerSessionTab({
+            'session': newWSession,
+            'name': sessionName, 'blindWatchmaker': this, species: species});
+        var tabcount = $(this.element).children('ul.watchmakerTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+
+    },
+    closeSession: function() {
+        var selectedIndex = this.element.tabs('option', 'active');
+        var selectedDiv = $(this.element).find('.watchmakerSessionTab').get(selectedIndex);
+        var ul = this.element.find('ul.watchmakerTabs').get(0);
+        var liToRemove = $(ul).find('li').get(selectedIndex);
+        var divToRemove = $(this.element).find('div').get(selectedIndex);
+        $(divToRemove).remove();
+        $(liToRemove).remove();
+        this.element.tabs("refresh");
+    }
+});
+
 $.widget('dawk.dropdownmenu', {
     options: {
         session: null
@@ -1189,13 +1197,18 @@ $.widget('dawk.sub_menu', {
         let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
         checkbox.prependTo(a)
     },
-    appendmenuitem: function(title, menuid, hidden) {
+    appendmenuitem: function(title, menuid, hidden, imgsrc) {
         let li = $('<li>')
         li.addClass('menuitem' + menuid)
         if(hidden) {
             $(li).css('display','none')
         }
-        let a = $('<a>' + title + '</a>')
+        let str = '<a>';
+        if(imgsrc != null) {
+            str+= '<img src="' + imgsrc + '" class="menuicon" />'
+        }
+        str += title + '</a>'
+        let a = $(str)
         li.append(a)
         $(a).data('menuid', menuid)
         this._on(a, {'click': function (event){
@@ -1285,6 +1298,20 @@ MenuHandler.prototype.menuclick = function(event) {
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newDriftView");
+            return false
+        case 'DriftSweep':
+            let options = this.session.options
+            options.driftsweep = ! options.driftsweep
+            let li = $(target).closest('li')
+            if(options.driftsweep) {
+                $(li).addClass('checked')
+                $(li).find('img').css('display', 'inline-block')
+            } else {
+                $(li).removeClass('checked')
+                $(li).find('img').css('display', 'none')
+            }
+            console.log('DriftSweep ' + options.driftsweep)
+            console.log(target)
             return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
@@ -1434,11 +1461,11 @@ $.widget('dawk.viewmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Fewer Columns','FewerColumns')
         this.appendmenuitem('Thicker Pen','ThickerPen')
         this.appendmenuitem('Thinner Pen','ThinnerPen')
-        this.appendmenuitem('Drift Sweep','DriftSweep')
+        this.appendcheckboxmenuitem('Drift Sweep','DriftSweep')
         if(this.options.session.trianglable) {
-            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
-            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
-            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle')
+            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle', false, 'img/IconTriangleTop_ALAN_32x32.png')
+            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle', false, 'img/IconTriangleLeft_ALAN_32x32.png')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle', false, 'img/IconTriangleRight_ALAN_32x32.png')
         }
     }
 })
@@ -1514,7 +1541,6 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
 
     },
     viewGainedFocus: function(event) {
-        console.log('breeding viewGainedFocus')
         let session = $(this).breedingView("option", "session")
         session.viewGainedFocus(session, this)
     },
@@ -1736,16 +1762,11 @@ $.widget( "dawk.breedingBoxes", {
     },
 
     produceLitter: function(numBoxes, midBox) {
-        var midCanvasDiv = this.options.midCanvasDiv;
-        console.log('produceLitter')
-        console.log(midCanvasDiv)
-        var midCanvasDivPosition = midCanvasDiv.position();
-        console.log(midCanvasDivPosition)
-
-        var breedingView = $(this.element).closest('.breedingView')
-        console.log(breedingView)
-        var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
-        var recursive = ! explosiveBreeding.checked;
+        let midCanvasDiv = this.options.midCanvasDiv;
+        let midCanvasDivPosition = midCanvasDiv.position();
+        let breedingView = $(this.element).closest('.breedingView')
+        let explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
+        let recursive = ! explosiveBreeding.checked;
         if(recursive) {
             this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
         } else {
@@ -1772,7 +1793,6 @@ $.widget( "dawk.breedingBoxes", {
                 isMidBox: isMidBox, 
                 species: species,
                 breedingBoxes: this}).appendTo(boxes);
-            console.log('appended canvas')
             if(isMidBox) {
                 // Create a biomorph and render it on the middle canvas.
                 this.options.midCanvasDiv = canvasDiv
@@ -1959,7 +1979,6 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
         },
         startButton: null,
         generationsPreviousSecond: 0});
-    console.log(div)
 
     return div
 }
@@ -2420,29 +2439,21 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         let surround = current.surround
         let height = surround.bottom - surround.top;
         let width = surround.right - surround.left;
-        console.log('wxh ' + width + 'x' + height)
         let pedigreeDiv = $(this.element).find('.pedigreeDiv')[0]
         let pRect = new Rect(0, 0, $(pedigreeDiv).width(), $(pedigreeDiv).height())
-        console.log('pRect')
-        console.log(pRect)
-        console.log()
         let error = here.v - (height / 2)
-        console.log('v error low ' + error)
         if(error < 0) {
             here.v -= error
         } 
         error = here.v + (height / 2) 
-        console.log('v error high ' + error)
         if(error > pRect.bottom) {
             here.v -= error - pRect.bottom
         }
         error = here.h - (width / 2)
-        console.log('h error low ' + error)
         if(error < 0) {
             here.h -= error
         } 
         error = here.h + (width / 2) 
-        console.log('h error high ' + error)
         if(error > pRect.right) {
             here.h -= error - pRect.right
         }
@@ -2570,8 +2581,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         ctx.lineTo(p2.h, p2.v);
         ctx.closePath()
         ctx.stroke()
-        console.log('finished drawLine ' + p1 + ' -> ' + p2)
-        console.log(this.options.familialLineContext)
     },
     redrawAll: function(thisFull) {
         if(thisFull != null) {
@@ -2712,7 +2721,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     shoot: function(thisFull) {
         this.findLastGod();
         let yesAdam = this.isAnAdam(thisFull); //{leaves theGod as thisFull's god if any}
-        console.log(yesAdam)
         if(! yesAdam) {
             this.weedOut(thisFull);
             this.kill(thisFull)
@@ -2750,7 +2758,6 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
             }
 
         }
-        console.log(this.options.rootGod)
         this.allLines(this.options.rootGod);
     },
     morphmousedown: function(event) {
@@ -2881,10 +2888,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
                 let full = $(event.target).data('genotype').full
                 let canvas = full.genome.drawer
                 let offset = $(canvas).offset()
-                console.log('canvas offset ' + offset)
                 let pedigreeDivOffset = $(event.target).closest('.pedigreeDiv').offset()
-                console.log('pedigreeDiv offset ' + offset)
-                console.log(canvas.width + ',' + canvas.height)
                 full.centre.h = offset.left - pedigreeDivOffset.left + canvas.width/2
                 full.centre.v = offset.top - pedigreeDivOffset.top + canvas.height/2
 
@@ -2944,11 +2948,135 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     }
 })
 
-/*
- * Sweep view
+$.widget('dawk.sweepView', $.dawk.watchmakerView, {
+    _create: function() {
+        this._super("_create")
+        $(this.element).addClass('driftView')
+        var species = this.options.session.species
+        
+        var geneboxes_options = {
+            engineering : false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div>")
+        _speciesFactorySingleton.geneboxes(species, geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
+        
+        
+        let container = $("<div class='container'>")
+        this.element.append(container)
+
+        var sweepDiv = $("<div>").sweepBoxes({ 
+            species: species,
+            height: 200,
+            width: 200})
+       
+        container.append(sweepDiv)
+        var canvas = $(sweepDiv).find('canvas').get(0)
+        var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
+        if(this.options.biomorph) {
+            this.options.biomorph.copyBiomorph(biomorph)
+        } else {
+            biomorph.doPerson("BasicTree")
+        }
+           
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        $(sweepDiv).sweepBoxes('update')
+        $(sweepDiv).sweepBoxes('startDrift')
+        
+    },
+    viewGainedFocus: function(event, ui) {
+        console.log('drift view gained focus')
+        console.log(ui)
+        driftDiv = $(ui.newPanel).find('.driftBox') 
+        $(driftDiv).driftBox("startDrift")
+    },
+    viewLostFocus: function(event, ui) {
+        console.log('drift view lost focus')
+        console.log(ui.oldPanel)
+        driftDiv = $(ui.oldPanel).find('.driftBox') 
+        $(driftDiv).driftBox("stopDrift")
+        
+    },
+
+    // Called when created, and later when changing options
+    _refresh: function() {
+    },
+
+    _destroy: function() {
+    },
+
+
+});/*
+ * drift box
  */
-$.widget( "dawk.sweepView", $.dawk.watchmakerView, {
-})
+$( function() {
+    $.widget('dawk.sweepBoxes', {
+        options: {
+            index: 0,
+            species: null,
+            canvas: null,
+            width: 200,
+            height: 200,
+            dodrift: false
+        },
+        _create: function() {
+            this.element.addClass("boxes")
+            
+            for(let i = 0; i < 15; i++) {
+                var canvas = $("<canvas class='boxDiv'>");
+                canvas.attr('width', this.options.width);
+                canvas.attr('height', this.options.height);
+                canvas.addClass('box');
+                canvas.addClass('midBox');
+                this.element.append(canvas);
+            }
+            console.log('on create ' + this.options.index)
+
+        },
+        doDrift: function() {
+            if(this.options.dodrift) {
+                let index = this.options.index
+                let canvases = $(this.element).find('canvas')
+                let parentCanvas = canvases[index]
+                console.log('parent canvas ' + index)
+                console.log(parentCanvas)
+                $(parentCanvas).removeClass('midBox')
+                index = (index + 1) % 15
+                
+                let daughterCanvas = canvases[index]
+                $(daughterCanvas).addClass('midBox')
+                let biomorph = $(parentCanvas).data('genotype').reproduce(daughterCanvas)
+                $(daughterCanvas).data('genotype', biomorph)
+                console.log('daughter canvas ' + this.options.index)
+                console.log(daughterCanvas)
+                biomorph.develop()
+                
+                this.update()
+                this.options.index = index
+                this._delay(this.doDrift, 0);
+            } 
+        },
+        stopDrift: function() {
+            this.options.dodrift = false
+        },
+        startDrift: function() {
+            if(! this.options.dodrift) {
+                this.options.dodrift = true
+                this.doDrift()
+            }
+        },
+        update: function() {
+            var parentView = this.element.closest('.watchmakerView')[0];
+            var geneboxes = $(parentView)
+            .find('.geneboxes').get(0);
+            let canvas = $(this.element).find('canvas')[this.options.index]
+            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                    canvas)
+        },
+    });
+});
 
 function Triangle() {}
 

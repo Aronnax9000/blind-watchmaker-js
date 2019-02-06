@@ -100,16 +100,11 @@ $.widget( "dawk.breedingBoxes", {
     },
 
     produceLitter: function(numBoxes, midBox) {
-        var midCanvasDiv = this.options.midCanvasDiv;
-        console.log('produceLitter')
-        console.log(midCanvasDiv)
-        var midCanvasDivPosition = midCanvasDiv.position();
-        console.log(midCanvasDivPosition)
-
-        var breedingView = $(this.element).closest('.breedingView')
-        console.log(breedingView)
-        var explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
-        var recursive = ! explosiveBreeding.checked;
+        let midCanvasDiv = this.options.midCanvasDiv;
+        let midCanvasDivPosition = midCanvasDiv.position();
+        let breedingView = $(this.element).closest('.breedingView')
+        let explosiveBreeding = breedingView.find('.explosiveBreeding').get(0)
+        let recursive = ! explosiveBreeding.checked;
         if(recursive) {
             this.produceKthOffspring(numBoxes, midBox, 0, midCanvasDivPosition, recursive);
         } else {
@@ -136,7 +131,6 @@ $.widget( "dawk.breedingBoxes", {
                 isMidBox: isMidBox, 
                 species: species,
                 breedingBoxes: this}).appendTo(boxes);
-            console.log('appended canvas')
             if(isMidBox) {
                 // Create a biomorph and render it on the middle canvas.
                 this.options.midCanvasDiv = canvasDiv

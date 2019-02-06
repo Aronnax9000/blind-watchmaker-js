@@ -4,6 +4,7 @@ function WatchmakerSession(species) {
     this.myPenSize = 1;
     this.trianglable = false
     this.arrayable = false
+    this.driftsweep = false
     this.species = species
     _speciesFactorySingleton.initializeSession(species, this)
 }

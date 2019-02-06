@@ -15,13 +15,18 @@ $.widget('dawk.sub_menu', {
         let checkbox = $("<span class='checkbox'><img src='img/checkbox.png' />&nbsp;</span>")
         checkbox.prependTo(a)
     },
-    appendmenuitem: function(title, menuid, hidden) {
+    appendmenuitem: function(title, menuid, hidden, imgsrc) {
         let li = $('<li>')
         li.addClass('menuitem' + menuid)
         if(hidden) {
             $(li).css('display','none')
         }
-        let a = $('<a>' + title + '</a>')
+        let str = '<a>';
+        if(imgsrc != null) {
+            str+= '<img src="' + imgsrc + '" class="menuicon" />'
+        }
+        str += title + '</a>'
+        let a = $(str)
         li.append(a)
         $(a).data('menuid', menuid)
         this._on(a, {'click': function (event){

@@ -10,11 +10,11 @@ $.widget('dawk.viewmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Fewer Columns','FewerColumns')
         this.appendmenuitem('Thicker Pen','ThickerPen')
         this.appendmenuitem('Thinner Pen','ThinnerPen')
-        this.appendmenuitem('Drift Sweep','DriftSweep')
+        this.appendcheckboxmenuitem('Drift Sweep','DriftSweep')
         if(this.options.session.trianglable) {
-            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle')
-            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle')
-            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle')
+            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle', false, 'img/IconTriangleTop_ALAN_32x32.png')
+            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle', false, 'img/IconTriangleLeft_ALAN_32x32.png')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle', false, 'img/IconTriangleRight_ALAN_32x32.png')
         }
     }
 })

@@ -44,23 +44,7 @@ _speciesFactorySingleton.registerSpeciesType("Monochrome",
             $(geneboxes).monochrome_geneboxes('updateFromCanvas', canvas)})
 
 );
-$.widget('dawk.monochrome_mutationsmenu', $.dawk.sub_menu, {
-    options: {
-        title: 'Mutations'
-    },
-    _create: function() {
-        this._super();
-        this.appendcheckboxmenuitem('Segmentation','Segmentation')
-        this.appendcheckboxmenuitem('Gradient','Gradient')
-        this.appendcheckboxmenuitem('Asymmetry','Asymmetry')
-        this.appendcheckboxmenuitem('Radial Sym', 'RadialSym')
-        this.appendcheckboxmenuitem('Scaling Factor', 'ScalingFactor')
-        this.appendcheckboxmenuitem('Mutation Size', 'MutationSize')
-        this.appendcheckboxmenuitem('Mutation Rate', 'MutationRate')
-        this.appendcheckboxmenuitem('Tapering twigs', 'TaperingTwigs')
-        this.appendcheckboxmenuitem('Gene 9 Gradient', 'Gene9Gradient')
-    }
-})
+
 
 Monochrome.initializeMut = function(session) {
     var mut = []
@@ -95,86 +79,9 @@ Monochrome.initializeSession = function(session) {
 
 }
 
-Monochrome.buildMenus = function(menu) {
-    console.log('monochrome mutations menu')
-    $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuPedigree')[0])
 
-}
 
-Monochrome.toggleMut = function(mut, index, target) {
-    mut[index] = ! mut[index]
-    let li = $(target).closest('li')
-    if(mut[index]) {
-        $(li).addClass('checked')
-        $(li).find('img').css('display', 'inline-block')
-    } else {
-        $(li).removeClass('checked')
-        $(li).find('img').css('display', 'none')
-    }
-}
 
-Monochrome.menuclick = function(event) {
-    console.log('Monochrome menuclick')
-    console.log(this)
-    let options = this.options
-    let target = event.target
-    let menuid = $(target).data('menuid')
-    console.log('BreedingView menu ' + menuid)
-    let mut = options.mut
-    switch(menuid) {
-    case 'Segmentation':
-        Monochrome.toggleMut(mut, 0, target)
-        return false 
-    case 'Gradient':
-        Monochrome.toggleMut(mut, 1, target)
-        return false 
-    case 'Asymmetry':
-        Monochrome.toggleMut(mut, 2, target)
-        return false 
-    case 'RadialSym':
-        Monochrome.toggleMut(mut, 3, target)
-        return false 
-    case 'ScalingFactor':
-        Monochrome.toggleMut(mut, 4, target)
-        return false 
-    case 'MutationSize':
-        Monochrome.toggleMut(mut, 5, target)
-        return false 
-    case 'MutationRate':
-        Monochrome.toggleMut(mut, 6, target)
-        return false 
-    case 'TaperingTwigs':
-        Monochrome.toggleMut(mut, 7, target)
-        return false 
-    case 'Gene9Gradient':
-        Monochrome.toggleMut(mut, 8, target)
-        return false 
-    }
-    console.log('returning true')
-    return true // Event not processed
-}
-
-Monochrome.updateMutCheckbox = function(mut, view, index, name) {
-    let menuitem = $(view).find('.menuitem' + name)[0]
-    if(mut[index]) {
-        $(menuitem).find('img').css('display', 'inline-block')
-    } else {
-        $(menuitem).find('img').css('display', 'none')
-    }
-}
-
-Monochrome.viewGainedFocus = function(session, view) {
-    let mut = session.options.mut
-    Monochrome.updateMutCheckbox(mut, view, 0, 'Segmentation')
-    Monochrome.updateMutCheckbox(mut, view, 1, 'Gradient')
-    Monochrome.updateMutCheckbox(mut, view, 2, 'Asymmetry')
-    Monochrome.updateMutCheckbox(mut, view, 3, 'RadialSym')
-    Monochrome.updateMutCheckbox(mut, view, 4, 'ScalingFactor')
-    Monochrome.updateMutCheckbox(mut, view, 5, 'MutationSize')
-    Monochrome.updateMutCheckbox(mut, view, 6, 'MutationRate')
-    Monochrome.updateMutCheckbox(mut, view, 7, 'TaperingTwigs')
-    Monochrome.updateMutCheckbox(mut, view, 8, 'Gene9Gradient')
-}
 
 Monochrome.prototype.basicTree = function () {
     this.makeGenes(-10, -20, -20, -15, -15, 0, 15, 15, 7);
@@ -1328,6 +1235,104 @@ Monochrome.prototype.dummydraw = Biomorphs.prototype.dummydraw
 Monochrome.prototype.getWidth = Biomorphs.prototype.getWidth
 Monochrome.prototype.getHeight = Biomorphs.prototype.getHeight
 Monochrome.prototype.getRect = Biomorphs.prototype.getRect
+
+Monochrome.viewGainedFocus = function(session, view) {
+    let mut = session.options.mut
+    Monochrome.updateMutCheckbox(mut, view, 0, 'Segmentation')
+    Monochrome.updateMutCheckbox(mut, view, 1, 'Gradient')
+    Monochrome.updateMutCheckbox(mut, view, 2, 'Asymmetry')
+    Monochrome.updateMutCheckbox(mut, view, 3, 'RadialSym')
+    Monochrome.updateMutCheckbox(mut, view, 4, 'ScalingFactor')
+    Monochrome.updateMutCheckbox(mut, view, 5, 'MutationSize')
+    Monochrome.updateMutCheckbox(mut, view, 6, 'MutationRate')
+    Monochrome.updateMutCheckbox(mut, view, 7, 'TaperingTwigs')
+    Monochrome.updateMutCheckbox(mut, view, 8, 'Gene9Gradient')
+    let menuitem = $(view).find('.menuitemDriftSweep')[0]
+    if(session.options.driftsweep) {
+        $(menuitem).find('img').css('display', 'inline-block')
+    } else {
+        $(menuitem).find('img').css('display', 'none')
+    }
+}
+$.widget('dawk.monochrome_mutationsmenu', $.dawk.sub_menu, {
+    options: {
+        title: 'Mutations'
+    },
+    _create: function() {
+        this._super();
+        this.appendcheckboxmenuitem('Segmentation','Segmentation')
+        this.appendcheckboxmenuitem('Gradient','Gradient')
+        this.appendcheckboxmenuitem('Asymmetry','Asymmetry')
+        this.appendcheckboxmenuitem('Radial Sym', 'RadialSym')
+        this.appendcheckboxmenuitem('Scaling Factor', 'ScalingFactor')
+        this.appendcheckboxmenuitem('Mutation Size', 'MutationSize')
+        this.appendcheckboxmenuitem('Mutation Rate', 'MutationRate')
+        this.appendcheckboxmenuitem('Tapering twigs', 'TaperingTwigs')
+        this.appendcheckboxmenuitem('Gene 9 Gradient', 'Gene9Gradient')
+    }
+})
+Monochrome.buildMenus = function(menu) {
+    $("<li>").monochrome_mutationsmenu().insertBefore($(menu).find('.menuPedigree')[0])
+}
+
+Monochrome.menuclick = function(event) {
+    let options = this.options
+    let target = event.target
+    let menuid = $(target).data('menuid')
+    let mut = options.mut
+    switch(menuid) {
+    case 'Segmentation':
+        Monochrome.toggleMut(mut, 0, target)
+        return false 
+    case 'Gradient':
+        Monochrome.toggleMut(mut, 1, target)
+        return false 
+    case 'Asymmetry':
+        Monochrome.toggleMut(mut, 2, target)
+        return false 
+    case 'RadialSym':
+        Monochrome.toggleMut(mut, 3, target)
+        return false 
+    case 'ScalingFactor':
+        Monochrome.toggleMut(mut, 4, target)
+        return false 
+    case 'MutationSize':
+        Monochrome.toggleMut(mut, 5, target)
+        return false 
+    case 'MutationRate':
+        Monochrome.toggleMut(mut, 6, target)
+        return false 
+    case 'TaperingTwigs':
+        Monochrome.toggleMut(mut, 7, target)
+        return false 
+    case 'Gene9Gradient':
+        Monochrome.toggleMut(mut, 8, target)
+        return false 
+    }
+    console.log('returning true')
+    return true // Event not processed
+}
+
+
+Monochrome.updateMutCheckbox = function(mut, view, index, name) {
+    let menuitem = $(view).find('.menuitem' + name)[0]
+    if(mut[index]) {
+        $(menuitem).find('img').css('display', 'inline-block')
+    } else {
+        $(menuitem).find('img').css('display', 'none')
+    }
+}
+Monochrome.toggleMut = function(mut, index, target) {
+    mut[index] = ! mut[index]
+    let li = $(target).closest('li')
+    if(mut[index]) {
+        $(li).addClass('checked')
+        $(li).find('img').css('display', 'inline-block')
+    } else {
+        $(li).removeClass('checked')
+        $(li).find('img').css('display', 'none')
+    }
+}
 Monochrome.force3 = function(r) {
     var i = Math.round(r)
     if(i > 3) { 

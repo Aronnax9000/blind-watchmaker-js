@@ -44,7 +44,6 @@ Breeding.createTimingDialog = function(appendTo, positionOf)  {
         },
         startButton: null,
         generationsPreviousSecond: 0});
-    console.log(div)
 
     return div
 }
