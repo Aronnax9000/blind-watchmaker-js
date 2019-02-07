@@ -47,6 +47,7 @@
 
 body, .ui-widget, .ui-widget button {
     font-family: chicagoflf;
+    width: 1000px;
 }
 
 .about {
