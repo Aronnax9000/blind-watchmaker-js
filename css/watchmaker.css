@@ -9,6 +9,9 @@
 
 body, .ui-widget, .ui-widget button {
     font-family: chicagoflf;
+}
+
+body {
     width: 1000px;
 }
 
