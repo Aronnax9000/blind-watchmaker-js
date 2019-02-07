@@ -1,479 +1,3 @@
-// Number.parseFloat(x).toFixed(2);
-$.widget( "dawk.floatGenebox", $.dawk.biomorph_genebox, {
-    _create: function(options) {
-        this._super(options)
-    },
-    _init : function() {
-        this.options.hasLeftRight = true;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = false;
-        this._super();
-    },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    refresh: function() {
-        this.element.find('.geneValue')
-        .text(String(Number.parseFloat(this.options.value).toFixed(2)));
-    },    
-
-} );
-
-$.widget( "dawk.handednessGenebox", $.dawk.biomorph_genebox, {
-    _create: function(options) {
-        this._super(options)
-    },
-    _init : function() {
-        this.options.hasLeftRight = true;
-        this.options.hasMid = false;
-        this.options.hasGradient = false;
-        this.options.hasColor = false;
-        this._super();
-    },
-    _setOption : function(key, value) {
-        this._super(key, value);
-    },
-    refresh: function() {
-        this.element.find('.geneValue')
-        .text(this.options.value == -1 ? 'Left' : 'Right');
-    },    
-} );/*
- * Geneboxes for Matthieu Triay's implementation of Blind Watchmaker Shells.
- */
-$.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
-    options : {
-        engineering: true,
-        biomorph: null,
-    },
-    _create : function(options) {
-        this._super(options)
-        this._setOptions(options);
-        this.element.addClass("shellGeneboxes");
-        let template = '<div></div>';
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 1,
-            title: 'Opening'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 2,
-            title: 'Displacement'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 3,
-            title: 'Shape'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 4,
-            title: 'Translation (per outline, in the direction orthogonal to that of the parent spirtal)'}).appendTo(this.element);
-
-        $(template).handednessGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 5,
-            title: 'Handedness'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 6,
-            title: 'Displacement Mutation Size'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 7,
-            title: 'Translation Mutation Size'}).appendTo(this.element);
-
-        $(template).biomorph_genebox({
-            geneboxCollection: this,
-            geneboxIndex: 8,
-            title: 'Coarsegraininess'}).appendTo(this.element);
-
-        $(template).biomorph_genebox({
-            geneboxCollection: this,
-            geneboxIndex: 9,
-            title: 'Reach'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 10,
-            title: 'Translation gradient'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 11,
-            title: 'Shape mutation size'}).appendTo(this.element);
-
-        $(template).floatGenebox({
-            geneboxCollection: this,
-            geneboxIndex: 12,
-            title: 'Reach mutation size'}).appendTo(this.element);
-
-        $(template).biomorph_genebox({
-            geneboxCollection: this,
-            geneboxIndex: 13,
-            title: 'Mutation Probability'}).appendTo(this.element);
-
-        $(template).biomorph_genebox({
-            geneboxCollection: this,
-            geneboxIndex: 14,
-            title: 'Pattern'}).appendTo(this.element);
-    },
-
-    updateFromCanvas: function(canvas) {
-        var biomorph = $(canvas).data('genotype');
-        if(biomorph === undefined) {
-            return;
-        }
-        this.options.biomorph = biomorph;
-        geneboxes = $(this.element).find('.genebox');
-        var shell = biomorph.shell
-        var genebox 
-        // Opening
-        genebox = geneboxes.eq(0); 
-        genebox.floatGenebox("updateValue", shell.opening);
-        // Displacement
-        genebox = geneboxes.eq(1); 
-        genebox.floatGenebox("updateValue", shell.displacement);
-        // Shape
-        genebox = geneboxes.eq(2); 
-        genebox.floatGenebox("updateValue", shell.shape);
-        // Translation
-        genebox = geneboxes.eq(3); 
-        genebox.floatGenebox("updateValue", shell.translation);
-        // Handedness
-        genebox = geneboxes.eq(4); 
-        genebox.handednessGenebox("updateValue", shell.handedness);
-        // Displacement mutation size
-        genebox = geneboxes.eq(5); 
-        genebox.floatGenebox("updateValue", shell.mutSize.displacement);
-        // Translation mutation size
-        genebox = geneboxes.eq(6); 
-        genebox.floatGenebox("updateValue", shell.mutSize.translation);
-        // Coarsegraniness
-        genebox = geneboxes.eq(7); 
-        genebox.biomorph_genebox("updateValue", shell.coarsegraininess);
-        // Reach
-        genebox = geneboxes.eq(8); 
-        genebox.biomorph_genebox("updateValue", shell.reach);
-        // Translation gradient
-        genebox = geneboxes.eq(9); 
-        genebox.floatGenebox("updateValue", shell.translationGradient);
-        // Shape mutation size
-        genebox = geneboxes.eq(10); 
-        genebox.floatGenebox("updateValue", shell.mutSize.shape);
-        // Reach mutation size
-        genebox = geneboxes.eq(11); 
-        genebox.floatGenebox("updateValue", shell.mutSize.reach);
-        // Mutation probability
-        genebox = geneboxes.eq(12); 
-        genebox.biomorph_genebox("updateValue", shell.mutProbGene);
-        // Pattern
-        genebox = geneboxes.eq(13); 
-        genebox.biomorph_genebox("updateValue", shell.pattern);
-    },
-});
-/*
- * Constructor for the Triay Shell biomorph species.
- * 
- * A biomorph is associated with a watchmaker session, and a drawing object.
- * 
- * From the watchmaker session, the biomorph may draw global rules such as
- * the settings for allowed mutations, and what sort of drawing context should
- * be used to render images. The biomorph may also report changes
- * in its state to the session. The supplied session object must include a property of
- * 'species', a string containing the name of the registered species.
- * 
- * The drawing object is the document element representing the drawing surface
- * for the biomorph's body. In the original implementation, this is an HTML canvas
- * element, but support is contemplated for other drawing contexts, such as a SVG 
- * Scalable Vector Graphic. 
- * 
- */
-
-function Shells(session, drawer) {
-    this.session = session
-    this.drawer = drawer
-}
-
-Shells.initializeSession = function(session) {
-    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
-    session.options.basicTypes = [
-        "Hopeful Monster",
-        "BasicSnail",
-        "Babylon",
-        "Angel",
-        "Oyster",
-        "Bivalve",
-        "Cone",
-        "Scallop",
-        "Eloise",
-        "Gallaghers",
-        "Rapa",
-        "Fig",
-        "RazorShell",
-        "JapaneseWonder"]
-    session.options.defaultView = 'Engineering'
-    session.options.defaultBasicType = "Hopeful Monster"
-    session.options.hopefulMonsterBasicType = "Hopeful Monster"
-
-}
-
-//initializes the biomorph's genotype as one of a named set of types.
-Shells.prototype.doPerson = function(morphType) {
-    var genes = null
-    if(morphType) {
-        genes = (new ShellHardcodedAnimals())[morphType]
-    }
-    var drawer = this.drawer
-    this.shell = new Shell(drawer.getContext('2d'), 
-            drawer.width,
-            drawer.height,
-            genes)
-    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
-//  this.shell.mutProbGene = 100
-
-} 
-Shells.prototype.doSaltation = function() {
-    this.shell.randomize()
-}
-//initializes the biomorph's genotype to a random set of values
-//causes the biomorph's genotype to undergo a random mutation
-Shells.prototype.mutate = function() {
-}
-//creates and returns a new, mutated copy of the biomorph.
-Shells.prototype.reproduce = function(element) {
-    var child = new Shells(this.session, element)
-    child.shell = this.shell.breed(element)
-    return child
-}
-//called when it is time for the biomorph to draw itself. 
-Shells.prototype.develop = function() {
-//    alert('Shells.develop')
-    this.shell.generate()
-    this.shell.ctx = this.drawer.getContext('2d')
-    this.shell.draw()
-}
-
-Shells.prototype.copyBiomorph = function(child) {
-    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
-}
-
-Shells.margarine = function (w, direction) {
-    // {we want to change by large amounts when low, small amounts when large}
-    var wMutSize = 0.1
-    var logged = Math.log(w)
-    var logchanged = logged + wMutSize * direction
-    if(logchanged > 20) {
-        logchanged = 20
-    }
-    var m = Math.exp(logchanged)
-
-    if(m < 1) {
-        m = 1
-    }
-    return m
-}
-
-Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
-    // geneboxIndex is one-based
-    var str = "Manipulation one-based geneBoxIndex:" + geneboxIndex;
-
-    var leftRightPosProperties = HorizPos.properties[leftRightPos];
-    if(leftRightPosProperties != null) {
-        str += ',' + leftRightPosProperties.name;
-    }
-    str += ' v:' + rung
-    var rungProperties = VertPos.properties[rung];
-    if(rungProperties != null) {
-        str += ',' + rungProperties.name;
-    }
-    var shell = this.shell
-    switch(geneboxIndex) {
-    case 1:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.opening = Shells.margarine(shell.opening, -1)
-            break;
-        case HorizPos.RightThird: 
-            shell.opening = Shells.margarine(shell.opening, 1)
-            break;
-        }
-        break;;
-    case 2:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.displacement -= shell.mutSize.displacement
-            break;
-        case HorizPos.RightThird: 
-            shell.displacement += shell.mutSize.displacement
-            break;
-        }
-        break;;
-    case 3:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.shape -= shell.mutSize.shape
-            break;
-        case HorizPos.RightThird: 
-            shell.shape += shell.mutSize.shape
-            break;
-        }
-        break;;
-    case 4:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.translation -= shell.mutSize.translation
-            break;
-        case HorizPos.RightThird: 
-            shell.translation += shell.mutSize.translation
-            break;
-        }
-        break;
-    case 5:
-        shell.handedness = -shell.handedness
-        break;
-    case 6:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.mutSize.displacement -= 0.1
-            break;
-        case HorizPos.RightThird: 
-            shell.mutSize.displacement += 0.1
-            break;
-        }
-        break;
-    case 7:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.mutSize.translation -= 0.1
-            break;
-        case HorizPos.RightThird: 
-            shell.mutSize.translation += 0.1
-            break;
-        }
-        break;
-    case 8:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.coarsegraininess--
-            break;
-        case HorizPos.RightThird: 
-            shell.coarsegraininess++
-            break;
-        }
-        break;
-    case 9:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            if(shell.reach > 1) {
-                shell.reach--
-            }
-            break;
-        case HorizPos.RightThird: 
-            shell.reach++
-            break;
-        }
-        break;
-    case 10:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            shell.translationGradient = Shells.margarine(shell.translationGradient, -1)
-            break;
-        case HorizPos.RightThird: 
-            shell.translationGradient = Shells.margarine(shell.translationGradient, 1)
-            break;
-        }
-        break;
-    case 11:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            if(shell.mutSize.shape > 0) {
-                shell.mutSize.shape--
-            }
-            break;
-        case HorizPos.RightThird: 
-            shell.mutSize.shape++
-            break;
-        }
-        break;
-    case 12:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            if(shell.mutSize.reach > 1) {
-                shell.mutSize.reach--
-            }
-            break;
-        case HorizPos.RightThird: 
-            shell.mutSize.reach++
-            break;
-        }
-        break;
-    case 13:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(shell.mutProbGene > 1) {
-                shell.mutProbGene--
-            }
-            break;
-        case HorizPos.RightThird:
-            if(shell.mutProbGene < 100) {
-                shell.mutProbGene++
-            }
-            break;
-        }
-        break;
-    case 14:
-        var keys = Object.keys(Shell.patterns)
-        keys.push('circle')
-        var pattern
-        for(let i = 0; i < keys.length; i++) {
-            if(keys[i] == shell.pattern) {
-                pattern = i
-                break
-            }
-        }
-        switch(leftRightPos) {
-        case HorizPos.LeftThird: 
-            if(pattern > -1) {
-                pattern--
-                if(pattern < 0) {
-                    pattern = keys.length - 1
-                }
-            }
-            break;
-        case HorizPos.RightThird: 
-            if(pattern < keys.length - 1) { 
-                pattern++
-            } else {
-                pattern = 0
-            }
-            break;
-        }
-        shell.pattern = keys[pattern]
-//        alert("Pattern " + pattern + ":" + shell.pattern)
-        break;
-    }
-    
-    if(shell.displacement < 0) {
-        shell.displacement = 0
-    } else if(shell.displacement > 100) {
-        shell.displacement = 100
-    }
-    
-}
-
-//Register the species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("Triay Shell", 
-        (function(session, drawer) { return new Shells(session, drawer)}),
-        (function(session) { Shells.initializeSession(session)}),
-        (function(geneboxes, geneboxes_options) { 
-            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
-            (function(geneboxes, canvas) { 
-                $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
 
 //A shell is a set of genes which control roughly what Dawkins called
 //flare, spire and verm, as discussed in Climbing Mount Improbable. 
@@ -501,9 +25,8 @@ function Shell (ctx, width, height, genes) {
     this.centre = { x: Math.round(this.canvasWidth/2), y: Math.round(this.canvasHeight/2) }
     this.origin = { x: this.centre.x, y: this.centre.y }
 
-    // How much and how often the genes mutate is set per shell
-    // as it was in the original code
-    this.mutProbGene = 10
+
+    this.mutProbGene = 50
     this.mutSize = {
             displacement: 0.2,
             translation: 0.8,
@@ -554,7 +77,6 @@ Shell.prototype.randomize = function () {
     this.pattern = genes.pattern
     this.handedness = genes.handedness
     this.translationGradient = genes.translationGradient
-
     this.generate()
 }
 
@@ -576,186 +98,28 @@ Shell.randomSign = function() {
     else return 1;
 }
 
-function ShellHardcodedAnimals() {
-
-    return {
-        BasicSnail: {
-            opening: Shell.random(1.5, 6.50),
-            displacement: Shell.random(0, 0.1),
-            shape: Shell.random(0.8, 1.8),
-            translation: Shell.random(0, 4),
-            coarsegraininess: Shell.randInt(4, 8),
-            reach: Shell.randInt(3, 5),
-            pattern: "circle",
-            handedness: Shell.randomSign(),
-            translationGradient: 1,
-        },
-        Babylon: {
-            opening: Shell.random(100, 1000),
-            displacement: Shell.random(0, 0.25),
-            shape: Shell.random(2, 5),
-            translation:Shell.random(0, 0.3),
-            coarsegraininess: Shell.randInt(1, 3),
-            reach: Shell.randInt(2, 3),
-            pattern: "babylon",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 8),
-        },
-        Angel: {
-            opening: Shell.random(100, 1000),
-            displacement: Shell.random(0, 0.25),
-            shape: Shell.random(2, 5),
-            translation:Shell.random(0, 0.3),
-            coarsegraininess: Shell.randInt(1, 3),
-            reach: Shell.randInt(2, 3),
-            pattern: "angel",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 8),
-        },
-        Oyster: {
-            opening: Shell.random(100, 1000),
-            displacement: Shell.random(0, 0.2),
-            shape: Shell.random(2, 5),
-            translation: Shell.random(0, 1.5),
-            coarsegraininess: Shell.randInt(3, 4),
-            reach: Shell.randInt(2, 3),
-            pattern: "oyster",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.5, 1.5),
-        },
-
-        // BIVALVE AND BRACHIOPOD Shell.random
-        Bivalve: {
-            opening: Shell.random(20, 1000),
-            displacement: Shell.random(0, 0.25),
-            shape: Shell.random(1.5, 4),
-            translation:Shell.random(0, 0.3),
-            coarsegraininess: Shell.randInt(1, 3),
-            reach: Shell.randInt(2, 4),
-            pattern: "circle",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 5),
-        },
-        Cone: {
-            opening: Shell.random(1.3, 5),
-            displacement: Shell.random(0, 0.5),
-            shape: Shell.random(1, 5),
-            translation: Shell.random(2.5, 4.5),
-            coarsegraininess: Shell.randInt(2, 5),
-            reach: Shell.randInt(2, 7),
-            pattern: "whelk",
-            handedness: Shell.randomSign(),
-            translationGradient: 1,
-        },
-        Scallop: {
-            opening: Shell.random(100, 1000),
-            displacement: 0,
-            shape: Shell.random(1, 6),
-            translation: Shell.random(0, 1),
-            coarsegraininess: Shell.randInt(2, 4),
-            reach: 3,
-            pattern: "scallop",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0, 2),
-        },
-        Eloise: {
-            opening: Shell.random(1.3, 2.5),
-            displacement: Shell.random(0, 0.3),
-            shape: Shell.random(1.5, 2),
-            translation: Shell.random(1.5, 3),
-            coarsegraininess: Shell.randInt(2, 5),
-            reach: Shell.randInt(2, 5),
-            pattern: "eloise",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(1, 2),
-        },
-        Gallaghers: {
-            opening: Shell.random(1.4, 2),
-            displacement: Shell.random(0, 0.1),
-            shape: Shell.random(1.4, 2),
-            translation: Shell.random(2, 6),
-            coarsegraininess: Shell.randInt(3, 5),
-            reach: Shell.randInt(3, 6),
-            pattern: "gallaghers",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.5, 1),
-        },
-        Rapa: {
-            opening: Shell.random(1.4, 6),
-            displacement: Shell.random(0, 0.12),
-            shape: Shell.random(1.8, 2.7),
-            translation: Shell.random(0.1, 2.6),
-            coarsegraininess: Shell.randInt(3, 6),
-            reach: 9,
-            pattern: "rapa",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.8, 1.5),
-        },
-        Lightning: {
-            opening: Shell.random(1.4, 2.2),
-            displacement: Shell.random(0, 0.3),
-            shape: Shell.random(2.5, 5),
-            translation: Shell.random(2, 4.5),
-            coarsegraininess: Shell.randInt(3, 6),
-            reach: Shell.randInt(2, 6),
-            pattern: "lightning",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.8, 1.2),
-        },
-        Fig: {
-            opening: Shell.random(1.5, 4),
-            displacement: Shell.random(0, 0.1),
-            shape: Shell.random(2, 4),
-            translation: Shell.random(0, 4),
-            coarsegraininess: Shell.randInt(2, 4),
-            reach: Shell.randInt(3, 8),
-            pattern: "tun",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.9, 1.1),
-        },
-        RazorShell: {
-            opening: Shell.random(100, 1000),
-            displacement: -0.15,
-            shape: Shell.random(4, 6),
-            translation: Shell.random(4, 6.2),
-            coarsegraininess: Shell.randInt(2, 3),
-            reach: Shell.randInt(1, 3),
-            pattern: "razor",
-            handedness: Shell.randomSign(),
-            translationGradient: 1,
-        },
-        JapaneseWonder: {
-            opening: Shell.random(1.4, 2),
-            displacement: Shell.random(-0.2, 0.05),
-            shape: Shell.random(1, 3),
-            translation: Shell.random(3.5, 6),
-            coarsegraininess: Shell.randInt(2, 5),
-            reach: Shell.randInt(6, 10),
-            pattern: "wonder",
-            handedness: Shell.randomSign(),
-            translationGradient: Shell.random(0.9, 1.2),
-        }
-    }
-}
-
 //This produces a random set of genes which have visually
 //pleasing characteristics (most of the time)
 //Each shape has a different set of boundaries to make them look better
 Shell.randomGenes = function () {
     var hardcodedAnimals = new ShellHardcodedAnimals()
     var choices = [
-        hardcodedAnimals['BasicSnail'], 
-        hardcodedAnimals['Babylon'],
-        hardcodedAnimals['Angel'],
-        hardcodedAnimals['Oyster'],
-        hardcodedAnimals['Bivalve'],
+        hardcodedAnimals['Snail'], 
+        hardcodedAnimals['Turitella'], 
+        hardcodedAnimals['Bivalve'], 
+        hardcodedAnimals['Ammonite'], 
+        hardcodedAnimals['Nautilus'],
+        hardcodedAnimals['Brachiopod'],
         hardcodedAnimals['Cone'],
+        hardcodedAnimals['Whelk'],
         hardcodedAnimals['Scallop'],
         hardcodedAnimals['Eloise'], 
         hardcodedAnimals['Gallaghers'], 
         hardcodedAnimals['Rapa'], 
         hardcodedAnimals['Lightning'], 
-        hardcodedAnimals['Fig'], 
+        hardcodedAnimals['Sundial'], 
+        hardcodedAnimals['Fig'],
+        hardcodedAnimals['Tun'],
         hardcodedAnimals['RazorShell'],
         hardcodedAnimals['JapaneseWonder']]
     //Babylon and Angel aren't used because they're very similar to Bivalves
@@ -778,6 +142,7 @@ Shell.patterns = {
         babylon: {points:[[261.341,17.070999999999984],[-21.07,23.41],[-34.33,28.09],[-148.26,245.8],[-224.73,407.32],[-243.45,444.77],[-262.18,500.18],[-262.18,531.39],[-252.04,648.43],[-218.49,715.54],[-172.45,763.14],[-117.05,799.03],[43.69,827.13],[81.15,827.13],[170.1,802.16],[321.48,699.93],[409.66,613.32],[455.7,494.71],[462.72,390.93],[451.01,335.53],[403.42,239.55],[351.14,169.33],[280.13,96.76],[266.08,89.73],[240.34,70.23],[213.8,47.6],[146.7,7.02],[109.24,-11.7],[84.27,-17.16],[60.09,-10.14]],w:724.9,h:844.29},
         oyster: {points:[[-0.46699999999998454,42.03999999999998],[39.01,41.36],[73.34,71.01],[81.93,92.07],[110.8,120.17],[137.33,135.77],[175.57,172.44],[205.22,201.32],[231.75,245.8],[240.33,275.44],[236.43,328.51],[203.66,432.29],[175.57,470.52],[145.13,528.26],[126.41,548.55],[101.44,578.98],[71.79,658.58],[88.95,681.2],[95.98,715.53],[84.27,767.82],[66.33,789.66],[66.33,799.03],[108.46,802.16],[230.97,778.74],[317.58,690.57],[348.8,643.75],[414.34,522.8],[442.43,419.8],[461.16,327.72],[451.02,245.01],[419.02,177.91],[390.15,137.34],[354.26,111.58],[295.74,53.84],[177.91,0],[103.78,-29.65],[60.86,-42.13],[34.33,-35.11],[14.04,-18.72]],w:461.16,h:844.29},
         angel: {points:[[582.789,-0.09300000000001774],[-24.22,23.09],[-57.09,47.32],[-179.06,119.98],[-246.53,161.5],[-286.32,185.72],[-377.16,252.32],[-447.22,318.07],[-508.64,375.16],[-519.02,379.48],[-559.68,468.58],[-583.03,530.86],[-576.11,630.34],[-532.86,708.19],[-438.57,804.21],[-352.07,844.29],[-136.68,844.29],[-6.06,820.64],[84.77,765.29],[162.62,686.57],[229.23,610.44],[262.97,506.64],[262.97,400.24],[237.88,303.36],[184.25,207.34],[132.34,139.01],[101.21,104.4]],w:846,h:844.29},
+        sundial: {points:[[131,0],[134,0],[135,1],[141,1],[142,2],[145,2],[146,3],[146,5],[147,6],[147,7],[154,7],[155,6],[161,6],[162,7],[165,7],[166,8],[170,8],[171,9],[174,9],[175,10],[177,10],[178,11],[180,11],[181,12],[183,12],[184,13],[185,13],[186,14],[188,14],[189,15],[191,15],[192,16],[193,16],[194,17],[195,17],[196,18],[197,18],[199,20],[200,20],[201,21],[202,21],[203,22],[204,22],[205,23],[206,23],[212,29],[213,29],[218,34],[219,34],[223,38],[223,39],[227,43],[227,44],[231,48],[231,49],[232,50],[232,51],[233,52],[233,53],[234,54],[234,55],[235,56],[235,57],[239,61],[239,62],[240,63],[240,64],[241,65],[241,66],[242,67],[242,69],[243,70],[243,71],[244,72],[244,74],[245,75],[245,76],[246,77],[246,79],[247,80],[247,82],[248,83],[248,84],[249,85],[249,87],[250,88],[250,89],[251,90],[251,92],[252,93],[252,96],[250,98],[250,103],[249,104],[249,110],[248,111],[248,114],[250,116],[250,117],[252,119],[252,120],[253,121],[253,122],[255,124],[255,125],[256,126],[256,127],[258,129],[258,130],[257,130],[256,131],[252,131],[251,130],[248,130],[247,129],[243,129],[242,128],[238,128],[237,127],[234,127],[233,128],[231,128],[230,129],[228,129],[227,130],[225,130],[220,135],[220,136],[217,139],[217,140],[216,140],[215,139],[213,139],[212,138],[211,138],[210,137],[209,137],[208,138],[204,138],[203,139],[201,139],[198,142],[197,142],[195,144],[194,144],[191,147],[190,147],[188,149],[187,149],[186,150],[185,150],[184,151],[183,151],[182,152],[181,152],[180,153],[179,153],[178,154],[177,154],[176,155],[175,155],[174,156],[173,156],[172,157],[171,157],[170,158],[169,158],[168,159],[166,159],[165,160],[164,160],[163,161],[162,161],[161,162],[159,162],[158,163],[157,163],[156,164],[154,164],[153,165],[151,165],[150,166],[146,166],[145,167],[137,167],[136,168],[129,168],[128,169],[123,169],[122,170],[116,170],[115,169],[109,169],[108,168],[98,168],[97,167],[89,167],[87,165],[86,165],[83,162],[82,162],[80,160],[79,160],[78,159],[77,159],[75,157],[74,157],[73,156],[72,156],[71,155],[70,155],[68,153],[67,153],[66,152],[65,152],[64,151],[63,151],[62,150],[60,150],[59,149],[58,149],[57,148],[56,148],[54,146],[53,146],[51,144],[50,144],[48,142],[47,142],[45,140],[44,140],[41,137],[40,138],[39,138],[38,139],[37,139],[36,140],[35,140],[33,142],[32,142],[31,143],[29,143],[28,142],[27,142],[25,140],[25,139],[23,137],[23,136],[21,134],[21,133],[22,132],[22,131],[17,131],[16,132],[13,132],[11,130],[11,129],[14,126],[14,124],[13,123],[13,121],[12,120],[12,118],[4,110],[4,108],[3,107],[3,105],[2,104],[2,101],[1,100],[1,60],[2,60],[2,59],[4,57],[4,56],[3,55],[3,53],[2,52],[2,51],[3,50],[3,49],[4,48],[4,47],[5,46],[5,44],[6,43],[6,42],[7,41],[7,40],[8,39],[8,38],[9,37],[9,36],[10,35],[10,33],[11,32],[11,31],[12,30],[12,29],[21,20],[22,20],[28,14],[31,14],[32,13],[37,13],[38,12],[43,12],[44,11],[49,11],[50,10],[55,10],[56,9],[61,9],[62,8],[68,8],[69,7],[74,7],[75,6],[80,6],[81,5],[86,5],[87,4],[92,4],[93,3],[98,3],[99,2],[103,2],[104,3],[110,3],[111,4],[116,4],[117,3],[121,3],[122,2],[125,2],[126,1],[130,1],[131,0],[131,0]],w:259,h:171},
 }
 
 //To draw the shell, we first have to generate all the bounding boxes along
@@ -1168,3 +533,709 @@ Shell.prototype.breed = function (element) {
     return this.children[this.children.length - 1]
 
 }
+function ShellHardcodedAnimals() {
+
+    return {
+        'Snail': {
+            opening: 1.66,
+            displacement: 0,
+            shape: 1.2,
+            translation: 2,
+            coarsegraininess: 4,
+            reach: 5,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        'Turitella': {
+            opening: 1.30,
+            displacement: 0,
+            shape: 1,
+            translation: 8.2,
+            coarsegraininess: 8,
+            reach: 10,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,  
+        },
+        'Bivalve': {
+            opening: 1000,
+            displacement: 0,
+            shape: 1.2,
+            translation: 0.5,
+            mutProb: 50,
+            coarsegraininess: 2,
+            reach: 1,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Ammonite: {
+            opening: 2,
+            displacement: 0,
+            shape: 1,
+            translation: 0,
+            coarsegraininess: 8,
+            reach: 3,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Nautilus: {
+            opening: 3.4,
+            displacement: 0,
+            shape: 1.2,
+            translation: 0,
+            coarsegraininess: 8,
+            reach: 3,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Brachiopod: {
+            opening: 10000,
+            displacement: 0,
+            shape: 1,
+            translation: 0,
+            coarsegraininess: 2,
+            reach: 3,
+            pattern: "circle",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Cone: {
+            opening: 1.66,
+            displacement: 0,
+            shape: 3,
+            translation: 3.5,
+            coarsegraininess: 2,
+            reach: 3,
+            pattern: "whelk",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Whelk: {
+            opening: 1.7,
+            displacement: 0,
+            shape: 2,
+            translation: 4,
+            coarsegraininess: 2,
+            reach: 6,
+            pattern: "whelk",
+            handedness: 1,
+            translationGradient: 1,
+
+        },
+        Scallop: {
+            opening: 10000,
+            displacement: 0,
+            shape: 1,
+            translation: 0,
+            coarsegraininess: 2,
+            reach: 3,
+            pattern: "scallop",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Eloise: {
+            opening: 1.4,
+            displacement: 0,
+            shape: 1.7,
+            translation: 3.5,
+            coarsegraininess: 4,
+            reach: 6,
+            pattern: "eloise",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Gallaghers: {
+            opening: 1.66,
+            displacement: 0,
+            shape: 1.8,
+            translation: 5,
+            coarsegraininess: 4,
+            reach: 6,
+            pattern: "gallaghers",
+            handedness: -1,
+            translationGradient: 1,
+        },
+        Rapa: {
+            opening: 1.66,
+            displacement: 0,
+            shape: 2,
+            translation: 2.2,
+            coarsegraininess: 4,
+            reach: 9,
+            pattern: "rapa",
+            handedness: 1,
+            translationGradient: 1,
+        }, 
+        Lightning: {
+            opening: 1.66,
+            displacement: 0,
+            shape: 3.5,
+            translation: 4,
+            coarsegraininess: 4,
+            reach: 6,
+            pattern: "lightning",
+            handedness: -1,
+            translationGradient: 0.9,
+        }, 
+        Sundial: {
+            opening: 1.384,
+            displacement: 0.261,
+            shape: 0.618,
+            translation: 1.055,
+            coarsegraininess: 2,
+            reach: 10,
+            pattern: "sundial", // pattern 152
+            handedness: 1,
+            translationGradient: 1,
+        },
+        Fig: {
+            opening: 2,
+            displacement: 0,
+            shape: 3,
+            translation: 3.5,
+            coarsegraininess: 2,
+            reach: 8,
+            pattern: "tun", 
+            handedness: 1,
+            translationGradient: 0.95,
+        }, 
+        Tun: {
+            opening: 2,
+            displacement: 0,
+            shape: 2,
+            translation: 2.8,
+            coarsegraininess: 2,
+            reach: 8,
+            pattern: "tun",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        RazorShell: {
+            opening: 1000,
+            displacement: 0,
+            shape: 8,
+            translation: 6,
+            coarsegraininess: 2,
+            reach: 1,
+            pattern: "razor",
+            handedness: 1,
+            translationGradient: 1,
+        },
+        JapaneseWonder: {
+            opening: 1.7,
+            displacement: 0,
+            shape: 1.3,
+            translation: 4.2,
+            coarsegraininess: 2,
+            reach: 8,
+            pattern: "wonder",
+            handedness: 1,
+            translationGradient: 1,
+        }
+    }
+}
+
+
+/*
+ * Constructor for the Triay Shell biomorph species.
+ * 
+ * A biomorph is associated with a watchmaker session, and a drawing object.
+ * 
+ * From the watchmaker session, the biomorph may draw global rules such as
+ * the settings for allowed mutations, and what sort of drawing context should
+ * be used to render images. The biomorph may also report changes
+ * in its state to the session. The supplied session object must include a property of
+ * 'species', a string containing the name of the registered species.
+ * 
+ * The drawing object is the document element representing the drawing surface
+ * for the biomorph's body. In the original implementation, this is an HTML canvas
+ * element, but support is contemplated for other drawing contexts, such as a SVG 
+ * Scalable Vector Graphic. 
+ * 
+ */
+
+function Shells(session, drawer) {
+    this.session = session
+    this.drawer = drawer
+}
+
+Shells.initializeSession = function(session) {
+    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
+    session.options.basicTypes = [
+        "Snail",
+        "Turitella",
+        "Bivalve",
+        "Ammonite",
+        "Nautilus",
+        "Brachiopod",
+        "Cone",
+        "Whelk",
+        "Scallop",
+        "Eloise",
+        "Gallaghers",
+        "Rapa",
+        "Lightning",
+        "Sundial",
+        "Fig",
+        "Tun",
+        "RazorShell",
+        "JapaneseWonder"]
+    session.options.defaultView = 'Engineering'
+    session.options.defaultBasicType = "Snail"
+    session.options.hopefulMonsterBasicType = "Hopeful Monster"
+    session.options.mut = [true, true, true, true, true, false, false]
+//    Topan := snail;
+//    Leftan := Turritella;
+//    Rightan := bivalve;
+    session.options.wDetails = {
+            start: 1.2,
+            by: 1.5,
+            till: 10
+    }
+    session.options.dDetails = {
+            start: 0,
+            by: 0.2,
+            till: 0.6
+}
+    session.options.tDetails = {
+            start: 0,
+            by: 2,
+            till: 8
+    }    
+    session.options.threshold = 20
+}
+
+//initializes the biomorph's genotype as one of a named set of types.
+Shells.prototype.doPerson = function(morphType) {
+    var genes = null
+    if(morphType) {
+        genes = (new ShellHardcodedAnimals())[morphType]
+    }
+    var drawer = this.drawer
+    this.shell = new Shell(drawer.getContext('2d'), 
+            drawer.width,
+            drawer.height,
+            genes)
+    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
+//  this.shell.mutProbGene = 100
+
+} 
+Shells.prototype.doSaltation = function() {
+    this.shell.randomize()
+}
+//initializes the biomorph's genotype to a random set of values
+//causes the biomorph's genotype to undergo a random mutation
+Shells.prototype.mutate = function() {
+}
+//creates and returns a new, mutated copy of the biomorph.
+Shells.prototype.reproduce = function(element) {
+    var child = new Shells(this.session, element)
+    child.shell = this.shell.breed(element)
+    return child
+}
+//called when it is time for the biomorph to draw itself. 
+Shells.prototype.develop = function() {
+//    alert('Shells.develop')
+    this.shell.generate()
+    this.shell.ctx = this.drawer.getContext('2d')
+    this.shell.draw()
+}
+
+Shells.prototype.copyBiomorph = function(child) {
+    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
+}
+
+Shells.margarine = function (w, direction) {
+    // {we want to change by large amounts when low, small amounts when large}
+    var wMutSize = 0.1
+    var logged = Math.log(w)
+    var logchanged = logged + wMutSize * direction
+    if(logchanged > 20) {
+        logchanged = 20
+    }
+    var m = Math.exp(logchanged)
+
+    if(m < 1) {
+        m = 1
+    }
+    return m
+}
+
+//Register the species with the SpeciesFactory.
+_speciesFactorySingleton.registerSpeciesType("Snails", 
+        (function(session, drawer) { return new Shells(session, drawer)}),
+        (function(session) { Shells.initializeSession(session)}),
+        (function(geneboxes, geneboxes_options) { 
+            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
+            (function(geneboxes, canvas) { 
+                $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
+Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
+    // geneboxIndex is one-based
+    var str = "Manipulation one-based geneBoxIndex:" + geneboxIndex;
+
+    var leftRightPosProperties = HorizPos.properties[leftRightPos];
+    if(leftRightPosProperties != null) {
+        str += ',' + leftRightPosProperties.name;
+    }
+    str += ' v:' + rung
+    var rungProperties = VertPos.properties[rung];
+    if(rungProperties != null) {
+        str += ',' + rungProperties.name;
+    }
+    var shell = this.shell
+    switch(geneboxIndex) {
+    case 1:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.opening = Shells.margarine(shell.opening, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.opening = Shells.margarine(shell.opening, 1)
+            break;
+        }
+        break;;
+    case 2:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.displacement -= shell.mutSize.displacement
+            break;
+        case HorizPos.RightThird: 
+            shell.displacement += shell.mutSize.displacement
+            break;
+        }
+        break;;
+    case 3:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.shape -= shell.mutSize.shape
+            break;
+        case HorizPos.RightThird: 
+            shell.shape += shell.mutSize.shape
+            break;
+        }
+        break;;
+    case 4:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translation -= shell.mutSize.translation
+            break;
+        case HorizPos.RightThird: 
+            shell.translation += shell.mutSize.translation
+            break;
+        }
+        break;
+    case 5:
+        shell.handedness = -shell.handedness
+        break;
+    case 6:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.displacement -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.displacement += 0.1
+            break;
+        }
+        break;
+    case 7:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.mutSize.translation -= 0.1
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.translation += 0.1
+            break;
+        }
+        break;
+    case 8:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.coarsegraininess--
+            break;
+        case HorizPos.RightThird: 
+            shell.coarsegraininess++
+            break;
+        }
+        break;
+    case 9:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.reach > 1) {
+                shell.reach--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.reach++
+            break;
+        }
+        break;
+    case 10:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, -1)
+            break;
+        case HorizPos.RightThird: 
+            shell.translationGradient = Shells.margarine(shell.translationGradient, 1)
+            break;
+        }
+        break;
+    case 11:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.shape > 0) {
+                shell.mutSize.shape--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.shape++
+            break;
+        }
+        break;
+    case 12:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(shell.mutSize.reach > 1) {
+                shell.mutSize.reach--
+            }
+            break;
+        case HorizPos.RightThird: 
+            shell.mutSize.reach++
+            break;
+        }
+        break;
+    case 13:
+        switch(leftRightPos) {
+        case HorizPos.LeftThird:
+            if(shell.mutProbGene > 1) {
+                shell.mutProbGene--
+            }
+            break;
+        case HorizPos.RightThird:
+            if(shell.mutProbGene < 100) {
+                shell.mutProbGene++
+            }
+            break;
+        }
+        break;
+    case 14:
+        var keys = Object.keys(Shell.patterns)
+        keys.push('circle')
+        var pattern
+        for(let i = 0; i < keys.length; i++) {
+            if(keys[i] == shell.pattern) {
+                pattern = i
+                break
+            }
+        }
+        switch(leftRightPos) {
+        case HorizPos.LeftThird: 
+            if(pattern > -1) {
+                pattern--
+                if(pattern < 0) {
+                    pattern = keys.length - 1
+                }
+            }
+            break;
+        case HorizPos.RightThird: 
+            if(pattern < keys.length - 1) { 
+                pattern++
+            } else {
+                pattern = 0
+            }
+            break;
+        }
+        shell.pattern = keys[pattern]
+//        alert("Pattern " + pattern + ":" + shell.pattern)
+        break;
+    }
+    
+    if(shell.displacement < 0) {
+        shell.displacement = 0
+    } else if(shell.displacement > 100) {
+        shell.displacement = 100
+    }
+    
+}
+
+// Number.parseFloat(x).toFixed(2);
+$.widget( "dawk.floatGenebox", $.dawk.biomorph_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    _setOption : function(key, value) {
+        this._super(key, value);
+    },
+    refresh: function() {
+        this.element.find('.geneValue')
+        .text(String(Number.parseFloat(this.options.value).toFixed(2)));
+    },    
+
+} );
+
+$.widget( "dawk.handednessGenebox", $.dawk.biomorph_genebox, {
+    _create: function(options) {
+        this._super(options)
+    },
+    _init : function() {
+        this.options.hasLeftRight = true;
+        this.options.hasMid = false;
+        this.options.hasGradient = false;
+        this.options.hasColor = false;
+        this._super();
+    },
+    _setOption : function(key, value) {
+        this._super(key, value);
+    },
+    refresh: function() {
+        this.element.find('.geneValue')
+        .text(this.options.value == -1 ? 'Left' : 'Right');
+    },    
+} );/*
+ * Geneboxes for Matthieu Triay's implementation of Blind Watchmaker Shells.
+ */
+$.widget('dawk.shells_geneboxes', $.dawk.geneboxes, {
+    options : {
+        engineering: true,
+        biomorph: null,
+    },
+    _create : function(options) {
+        this._super(options)
+        this._setOptions(options);
+        this.element.addClass("shellGeneboxes");
+        let template = '<div></div>';
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 1,
+            title: 'Opening'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 2,
+            title: 'Displacement'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 3,
+            title: 'Shape'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 4,
+            title: 'Translation (per outline, in the direction orthogonal to that of the parent spirtal)'}).appendTo(this.element);
+
+        $(template).handednessGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 5,
+            title: 'Handedness'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 6,
+            title: 'Displacement Mutation Size'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 7,
+            title: 'Translation Mutation Size'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 8,
+            title: 'Coarsegraininess'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 9,
+            title: 'Reach'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 10,
+            title: 'Translation gradient'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 11,
+            title: 'Shape mutation size'}).appendTo(this.element);
+
+        $(template).floatGenebox({
+            geneboxCollection: this,
+            geneboxIndex: 12,
+            title: 'Reach mutation size'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 13,
+            title: 'Mutation Probability'}).appendTo(this.element);
+
+        $(template).biomorph_genebox({
+            geneboxCollection: this,
+            geneboxIndex: 14,
+            title: 'Pattern'}).appendTo(this.element);
+    },
+
+    updateFromCanvas: function(canvas) {
+        var biomorph = $(canvas).data('genotype');
+        if(biomorph === undefined) {
+            return;
+        }
+        this.options.biomorph = biomorph;
+        geneboxes = $(this.element).find('.genebox');
+        var shell = biomorph.shell
+        var genebox 
+        // Opening
+        genebox = geneboxes.eq(0); 
+        genebox.floatGenebox("updateValue", shell.opening);
+        // Displacement
+        genebox = geneboxes.eq(1); 
+        genebox.floatGenebox("updateValue", shell.displacement);
+        // Shape
+        genebox = geneboxes.eq(2); 
+        genebox.floatGenebox("updateValue", shell.shape);
+        // Translation
+        genebox = geneboxes.eq(3); 
+        genebox.floatGenebox("updateValue", shell.translation);
+        // Handedness
+        genebox = geneboxes.eq(4); 
+        genebox.handednessGenebox("updateValue", shell.handedness);
+        // Displacement mutation size
+        genebox = geneboxes.eq(5); 
+        genebox.floatGenebox("updateValue", shell.mutSize.displacement);
+        // Translation mutation size
+        genebox = geneboxes.eq(6); 
+        genebox.floatGenebox("updateValue", shell.mutSize.translation);
+        // Coarsegraniness
+        genebox = geneboxes.eq(7); 
+        genebox.biomorph_genebox("updateValue", shell.coarsegraininess);
+        // Reach
+        genebox = geneboxes.eq(8); 
+        genebox.biomorph_genebox("updateValue", shell.reach);
+        // Translation gradient
+        genebox = geneboxes.eq(9); 
+        genebox.floatGenebox("updateValue", shell.translationGradient);
+        // Shape mutation size
+        genebox = geneboxes.eq(10); 
+        genebox.floatGenebox("updateValue", shell.mutSize.shape);
+        // Reach mutation size
+        genebox = geneboxes.eq(11); 
+        genebox.floatGenebox("updateValue", shell.mutSize.reach);
+        // Mutation probability
+        genebox = geneboxes.eq(12); 
+        genebox.biomorph_genebox("updateValue", shell.mutProbGene);
+        // Pattern
+        genebox = geneboxes.eq(13); 
+        genebox.biomorph_genebox("updateValue", shell.pattern);
+    },
+});

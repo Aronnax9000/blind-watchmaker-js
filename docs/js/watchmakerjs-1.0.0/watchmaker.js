@@ -2199,7 +2199,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             if(this.options.biomorph) {
                 this.options.biomorph.copyBiomorph(biomorph)
             } else {
-                biomorph.doPerson("BasicTree")
+                biomorph.doPerson(this.options.session.options.defaultBasicType)
             }
 
         jQuery.data(canvas, 'genotype', biomorph)

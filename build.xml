@@ -88,6 +88,10 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">
             <fileset file="js/species/triay_shell/triay_shell.js" />
+            <fileset file="js/species/triay_shell/triay_shell_hardcodedanimals.js" />
+            <fileset file="js/species/triay_shell/triay_shell_shells.js" />
+            <fileset file="js/species/triay_shell/triay_shell_shells_manipulation.js" />
+            <fileset file="js/species/triay_shell/triay_shell_geneboxes.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_biomorph.js">
             <fileset file="js/species/triay_biomorph/triay_biomorph.js" />
