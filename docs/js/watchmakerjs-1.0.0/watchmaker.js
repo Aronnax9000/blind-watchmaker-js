@@ -853,6 +853,8 @@ function WatchmakerSession(species) {
     this.buildMenus = function(menu) {}
     this.updateMenus = function(session, view) {}
     this.species = species
+    this.fossilizing = false
+    this.fossilrecord = null
     _speciesFactorySingleton.initializeSession(species, this)
 }
 
@@ -973,12 +975,46 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs("refresh");
         this.element.tabs("option", "active", tabcount - 1);
     },
+    newPlayBackFossils: function(biomorph) {
+        var uuid = this.uuidv4();
+        var viewIcon = 'img/IconFossils_ALAN_32x32.png';
+        var string = '<li><a href="#' + uuid + '">'
+        + '<img class="tabicon" src="' + viewIcon + '">' 
+        + 'Fossils'
+        + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.fossilsView({session: this.options.session, 
+            watchmakerSessionTab: this});
+        $('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+    },
     newDriftView: function(biomorph) {
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconDrift_ALAN_32x32.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
-        + 'Drift</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        + (this.options.session.options.driftsweep ? 'Drift Sweep': 'Drift')
+        + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
@@ -1258,6 +1294,13 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newEngineeringView", biomorph);
             return false
+        case 'InitializeFossilRecord':
+            this.session.fossilrecord = []
+            this.session.fossilizing = true
+            let recordingFossils = $(target).closest('.watchmakerMenuBar').find('.menuitemRecordingFossils').eq(0)
+            $(recordingFossils).addClass('checked')
+            $(recordingFossils).find('img').css('display', 'inline-block')
+            return false
         case 'MakeTopOfTriangle':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')
@@ -1294,6 +1337,14 @@ MenuHandler.prototype.menuclick = function(event) {
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newDriftView");
+            return false
+        case 'PlayBackFossils':
+            let fossilrecord = this.session.fossilrecord
+            if(fossilrecord != null && fossilrecord.length != 0) {
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newPlayBackFossils");
+            }
             return false
         case 'DriftSweep':
             let options = this.session.options
@@ -1389,7 +1440,7 @@ $.widget('dawk.operationmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
         this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
         this.appendmenuitem('Play Back Fossils', 'PlayBackFossils')
-        this.appendmenuitem('Recording Fossils (R)', 'RecordingFossils')
+        this.appendcheckboxmenuitem('Recording Fossils (R)', 'RecordingFossils')
         if(this.options.session.trianglable) {
             this.appendmenuitem('Triangle (T)', 'Triangle')
         }
@@ -1511,6 +1562,12 @@ $.widget('dawk.watchmakerView', {
         } else {
             $(menuitem).find('img').css('display', 'none')
         }
+        menuitem = $(view).find('.menuitemRecordingFossils')[0]
+        if(session.fossilizing) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
     },
     viewLostFocus: function(event, ui) {
     },
@@ -1551,7 +1608,6 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
 
     },
     viewGainedFocus: function(event, ui) {
-        console.log('breedingView gained focus')
         let session  = $(this).breedingView("option", "session")
         $(this).breedingView("updateMenus", session, this)
         session.updateMenus(session, this)
@@ -1642,7 +1698,6 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
                 var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
                 $(luckyCanvas).trigger('click');
             }
-            console.log($(this.element).find('.autoReproduceInterval').get(0))
             let autoReproduceIntervalStr = $(this.element).find('.autoReproduceInterval').get(0).value 
             var interval = Number(autoReproduceIntervalStr);
             this._delay(this.autoBreed, interval);
@@ -1669,7 +1724,6 @@ function BreedingMenuHandler(breedingView) {
 BreedingMenuHandler.prototype.menuclick = function(event) {
     let target = event.target
     let menuid = $(target).data('menuid')
-    console.log('BreedingMenuHandler '  + menuid)
     switch(menuid) {
     case 'Timing':
         this.breedingView.options.timingDialog.dialog('open') 
@@ -1779,6 +1833,12 @@ $.widget( "dawk.breedingBoxes", {
     },
 
     produceLitter: function(numBoxes, midBox) {
+        if(this.options.session.fossilizing) {
+            let biomorph = $(this.element).find('.midBox').data('genotype')
+            console.log('recording')
+            console.log(this.options.session.fossilrecord)
+            this.options.session.fossilrecord.push(biomorph)
+        }
         let midCanvasDiv = this.options.midCanvasDiv;
         let midCanvasDivPosition = midCanvasDiv.position();
         let breedingView = $(this.element).closest('.breedingView')
@@ -1931,7 +1991,6 @@ $.widget('dawk.breedingBox', {
                         ctx.beginPath()
                         ctx.clearRect(0,0, this.width, this.height)
                         ctx.closePath()
-                        console.log('handoff complete')
                         // Inform the genotype that it now draws on a different
                         // canvas
                         genotype.drawer = midCanvas
@@ -2233,6 +2292,58 @@ $( function() {
         },
     });
 });
+/*
+ * Drift view
+ */
+$.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
+    _create: function(options) {
+        this._super("_create")
+        $(this.element).addClass('fossilsView')
+        let container = $('<div class="container">')
+        $(this.element).append(container)
+        
+        let fossilDiv = $('<div class="fossilDiv">')
+        container.append(fossilDiv)
+        let canvas = $('<canvas width="985" height="600" class="box midBox">')
+        fossilDiv.append(canvas)
+        let fossilrecord = this.options.session.fossilrecord
+        let fossilrecordmax = fossilrecord.length - 1
+        console.log('Fossil record max ' + fossilrecordmax)
+        let slider = $("<div>").slider({
+            orientation: "vertical",
+            range: "min",
+            min: 0,
+            max: fossilrecordmax,
+            value: fossilrecordmax,
+            slide: function( event, ui ) {
+                let view = $(event.target).closest('.watchmakerView')
+                $(view).fossilsView('showfossil', ui.value)
+            },
+            classes: {
+                "ui-slider": "fossil-slider",
+              }
+        });
+        
+        container.append(slider)
+        this.showfossil(fossilrecordmax)
+            
+    },
+    showfossil: function(index) {
+        let canvas = $(this.element).find('canvas')[0]
+        let biomorph = this.options.session.fossilrecord[index]
+        biomorph.drawer = canvas
+        $(canvas).data('genotype', biomorph)
+        biomorph.develop()
+        $(this.element).find('.fossil-slider').slider('option', 'max', this.options.session.fossilrecord.length - 1)
+    },
+    viewGainedFocus: function(event) {
+        let session = $(this).fossilsView("option", "session")
+        $(this).fossilsView("updateMenus", session, this)
+        $(this).find('.fossil-slider').slider('option', 'max', session.fossilrecord.length - 1)
+        session.updateMenus(session, this)
+    },
+
+})
 /*
  * Pedigree
  */

@@ -75,7 +75,6 @@ $.widget('dawk.breedingBox', {
                         ctx.beginPath()
                         ctx.clearRect(0,0, this.width, this.height)
                         ctx.closePath()
-                        console.log('handoff complete')
                         // Inform the genotype that it now draws on a different
                         // canvas
                         genotype.drawer = midCanvas

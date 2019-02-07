@@ -38,6 +38,13 @@ MenuHandler.prototype.menuclick = function(event) {
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newEngineeringView", biomorph);
             return false
+        case 'InitializeFossilRecord':
+            this.session.fossilrecord = []
+            this.session.fossilizing = true
+            let recordingFossils = $(target).closest('.watchmakerMenuBar').find('.menuitemRecordingFossils').eq(0)
+            $(recordingFossils).addClass('checked')
+            $(recordingFossils).find('img').css('display', 'inline-block')
+            return false
         case 'MakeTopOfTriangle':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
             var biomorph = $(midCanvas).data('genotype')
@@ -74,6 +81,14 @@ MenuHandler.prototype.menuclick = function(event) {
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newDriftView");
+            return false
+        case 'PlayBackFossils':
+            let fossilrecord = this.session.fossilrecord
+            if(fossilrecord != null && fossilrecord.length != 0) {
+            var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newPlayBackFossils");
+            }
             return false
         case 'DriftSweep':
             let options = this.session.options

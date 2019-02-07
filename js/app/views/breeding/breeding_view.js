@@ -9,7 +9,6 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
 
     },
     viewGainedFocus: function(event, ui) {
-        console.log('breedingView gained focus')
         let session  = $(this).breedingView("option", "session")
         $(this).breedingView("updateMenus", session, this)
         session.updateMenus(session, this)
@@ -100,7 +99,6 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
                 var luckyCanvas = $(breedingBoxes).find('.box').get(luckyParent);
                 $(luckyCanvas).trigger('click');
             }
-            console.log($(this.element).find('.autoReproduceInterval').get(0))
             let autoReproduceIntervalStr = $(this.element).find('.autoReproduceInterval').get(0).value 
             var interval = Number(autoReproduceIntervalStr);
             this._delay(this.autoBreed, interval);
@@ -127,7 +125,6 @@ function BreedingMenuHandler(breedingView) {
 BreedingMenuHandler.prototype.menuclick = function(event) {
     let target = event.target
     let menuid = $(target).data('menuid')
-    console.log('BreedingMenuHandler '  + menuid)
     switch(menuid) {
     case 'Timing':
         this.breedingView.options.timingDialog.dialog('open') 

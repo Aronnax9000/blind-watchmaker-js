@@ -43,6 +43,12 @@ $.widget('dawk.watchmakerView', {
         } else {
             $(menuitem).find('img').css('display', 'none')
         }
+        menuitem = $(view).find('.menuitemRecordingFossils')[0]
+        if(session.fossilizing) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
     },
     viewLostFocus: function(event, ui) {
     },

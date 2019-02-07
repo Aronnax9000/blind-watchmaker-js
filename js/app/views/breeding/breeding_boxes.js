@@ -100,6 +100,12 @@ $.widget( "dawk.breedingBoxes", {
     },
 
     produceLitter: function(numBoxes, midBox) {
+        if(this.options.session.fossilizing) {
+            let biomorph = $(this.element).find('.midBox').data('genotype')
+            console.log('recording')
+            console.log(this.options.session.fossilrecord)
+            this.options.session.fossilrecord.push(biomorph)
+        }
         let midCanvasDiv = this.options.midCanvasDiv;
         let midCanvasDivPosition = midCanvasDiv.position();
         let breedingView = $(this.element).closest('.breedingView')

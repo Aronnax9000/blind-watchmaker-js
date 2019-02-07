@@ -53,7 +53,7 @@
             <fileset file="js/app/views/drift/drift_box.js" />
             <fileset file="js/app/views/engineering/engineering_view.js" />
             <fileset file="js/app/views/engineering/engineering_box.js" />
-            <fileset file="js/app/views/fossils/fossil_view.js" />
+            <fileset file="js/app/views/fossils/fossils_view.js" />
             <fileset file="js/app/views/pedigree/pedigree.js" />
             <fileset file="js/app/views/sweep/sweep_view.js" />
             <fileset file="js/app/views/sweep/sweep_boxes.js" />

@@ -11,7 +11,7 @@ $.widget('dawk.operationmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
         this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
         this.appendmenuitem('Play Back Fossils', 'PlayBackFossils')
-        this.appendmenuitem('Recording Fossils (R)', 'RecordingFossils')
+        this.appendcheckboxmenuitem('Recording Fossils (R)', 'RecordingFossils')
         if(this.options.session.trianglable) {
             this.appendmenuitem('Triangle (T)', 'Triangle')
         }

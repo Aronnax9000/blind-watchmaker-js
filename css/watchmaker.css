@@ -429,3 +429,19 @@ div {
 .tabicon {
 	padding: 2px;
 }
+
+.fossil-slider {
+    height: 600px;
+    width: 15px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.fossilDiv {
+	height: 600px;
+	width: 985px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
