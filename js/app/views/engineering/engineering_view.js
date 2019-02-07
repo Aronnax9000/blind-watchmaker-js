@@ -3,7 +3,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this._super("_create")
         $(this.element).addClass('engineeringView')
         var species = this.options.session.species
-        
+
         var geneboxes_options = {
             engineering : true,
             session: this.options.session
@@ -15,23 +15,24 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             species: species,
             height: 600,
             width: 1000})
-        this.element.append(engineeringDiv)
-        var canvas = $(engineeringDiv).find('canvas').get(0)
-        var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
-        if(this.options.biomorph) {
-            this.options.biomorph.copyBiomorph(biomorph)
-        } else {
-            biomorph.doPerson("BasicTree")
-        }
-            
+            this.element.append(engineeringDiv)
+            var canvas = $(engineeringDiv).find('canvas').get(0)
+            var biomorph = _speciesFactorySingleton.getSpecies(species, this.options.session, canvas)
+            if(this.options.biomorph) {
+                this.options.biomorph.copyBiomorph(biomorph)
+            } else {
+                biomorph.doPerson("BasicTree")
+            }
+
         jQuery.data(canvas, 'genotype', biomorph)
         biomorph.develop()
         $(canvas).trigger('mouseover')
-        
+
     },
     viewGainedFocus: function(event) {
         let session = $(this).engineeringView("option", "session")
-        session.viewGainedFocus(session, this)
+        $(this).engineeringView("updateMenus", session, this)
+        session.updateMenus(session, this)
     },
     // Called when created, and later when changing options
     _refresh: function() {

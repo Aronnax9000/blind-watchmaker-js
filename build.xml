@@ -68,7 +68,7 @@
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />
-            <fileset file="js/species/monochrome/monochrome_viewgainedfocus.js" />
+            <fileset file="js/species/monochrome/monochrome_updatemenus.js" />
             <fileset file="js/species/monochrome/monochrome_mutations_menu.js" />
             <fileset file="js/species/monochrome/monochrome_buildmenus.js" />
             <fileset file="js/species/monochrome/monochrome_menuclick.js" />

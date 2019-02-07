@@ -68,9 +68,9 @@ Monochrome.initializeSession = function(session) {
     session.options.basicTypes = ["BasicTree", "Chess", "Insect", "Hopeful Monster"]
     session.options.defaultBasicType = "BasicTree";
     session.options.hopefulMonsterBasicType = "Hopeful Monster";
-    session.viewGainedFocus = Monochrome.viewGainedFocus
-    session.menuclick = Monochrome.menuclick
+    session.updateMenus = Monochrome.updateMenus
     session.buildMenus = Monochrome.buildMenus
+    session.menuclick = Monochrome.menuclick
     session.trianglable = true
     session.arrayable = true
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
@@ -1236,7 +1236,7 @@ Monochrome.prototype.getWidth = Biomorphs.prototype.getWidth
 Monochrome.prototype.getHeight = Biomorphs.prototype.getHeight
 Monochrome.prototype.getRect = Biomorphs.prototype.getRect
 
-Monochrome.viewGainedFocus = function(session, view) {
+Monochrome.updateMenus = function(session, view) {
     let mut = session.options.mut
     Monochrome.updateMutCheckbox(mut, view, 0, 'Segmentation')
     Monochrome.updateMutCheckbox(mut, view, 1, 'Gradient')
@@ -1247,12 +1247,7 @@ Monochrome.viewGainedFocus = function(session, view) {
     Monochrome.updateMutCheckbox(mut, view, 6, 'MutationRate')
     Monochrome.updateMutCheckbox(mut, view, 7, 'TaperingTwigs')
     Monochrome.updateMutCheckbox(mut, view, 8, 'Gene9Gradient')
-    let menuitem = $(view).find('.menuitemDriftSweep')[0]
-    if(session.options.driftsweep) {
-        $(menuitem).find('img').css('display', 'inline-block')
-    } else {
-        $(menuitem).find('img').css('display', 'none')
-    }
+
 }
 $.widget('dawk.monochrome_mutationsmenu', $.dawk.sub_menu, {
     options: {
@@ -1341,7 +1336,6 @@ Monochrome.force3 = function(r) {
     if(i < 1) {
         i = 1
     }
-//    console.log('force3 ' + r + " -> " + i)
     return i
 }
 
@@ -1353,7 +1347,6 @@ Monochrome.force2 = function(r) {
     if(i < 1) {
         i = 1
     }
-    console.log('r ' + r + ' i ' + i)
     if(i == 1) 
         return CompletenessType.Single
     else 

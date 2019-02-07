@@ -30,8 +30,6 @@ $( function() {
                 let index = this.options.index
                 let canvases = $(this.element).find('canvas')
                 let parentCanvas = canvases[index]
-                console.log('parent canvas ' + index)
-                console.log(parentCanvas)
                 $(parentCanvas).removeClass('midBox')
                 index = (index + 1) % 15
                 
@@ -39,8 +37,6 @@ $( function() {
                 $(daughterCanvas).addClass('midBox')
                 let biomorph = $(parentCanvas).data('genotype').reproduce(daughterCanvas)
                 $(daughterCanvas).data('genotype', biomorph)
-                console.log('daughter canvas ' + this.options.index)
-                console.log(daughterCanvas)
                 biomorph.develop()
                 
                 this.update()

@@ -11,7 +11,8 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
     },
     viewGainedFocus: function(event) {
         let session = $(this).triangleView("option", "session")
-        session.viewGainedFocus(session, this)
+        $(this).triangleView("updateMenus", session, this)
+        session.updateMenus(session, this)
     },
     _create: function (options) {
         this._super()

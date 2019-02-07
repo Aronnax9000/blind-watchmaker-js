@@ -31,17 +31,15 @@ $.widget('dawk.driftView', $.dawk.watchmakerView, {
         
     },
     viewGainedFocus: function(event, ui) {
-        console.log('drift view gained focus')
-        console.log(ui)
-        driftDiv = $(ui.newPanel).find('.driftBox') 
+        let session = $(this).driftView('option', 'session')
+        session.updateMenus(session)
+        $(this).driftView("updateMenus", session, this)
+        driftDiv = $(this).find('.driftBox') 
         $(driftDiv).driftBox("startDrift")
     },
     viewLostFocus: function(event, ui) {
-        console.log('drift view lost focus')
-        console.log(ui.oldPanel)
-        driftDiv = $(ui.oldPanel).find('.driftBox') 
+        driftDiv = $(this).find('.driftBox') 
         $(driftDiv).driftBox("stopDrift")
-        
     },
 
     // Called when created, and later when changing options

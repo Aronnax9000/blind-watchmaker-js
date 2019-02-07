@@ -6,7 +6,6 @@ Monochrome.force3 = function(r) {
     if(i < 1) {
         i = 1
     }
-//    console.log('force3 ' + r + " -> " + i)
     return i
 }
 
@@ -18,7 +17,6 @@ Monochrome.force2 = function(r) {
     if(i < 1) {
         i = 1
     }
-    console.log('r ' + r + ' i ' + i)
     if(i == 1) 
         return CompletenessType.Single
     else 

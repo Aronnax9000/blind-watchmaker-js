@@ -37,15 +37,15 @@ $.widget('dawk.sweepView', $.dawk.watchmakerView, {
         
     },
     viewGainedFocus: function(event, ui) {
-        console.log('drift view gained focus')
-        console.log(ui)
-        driftDiv = $(ui.newPanel).find('.driftBox') 
+        let session = $(this).sweepView('option', 'session')
+        $(this).sweepView("updateMenus", session, this)
+        session.updateMenus(session, this)
+        driftDiv = $(this).find('.driftBox') 
         $(driftDiv).driftBox("startDrift")
     },
     viewLostFocus: function(event, ui) {
-        console.log('drift view lost focus')
-        console.log(ui.oldPanel)
-        driftDiv = $(ui.oldPanel).find('.driftBox') 
+
+        driftDiv = $(this).find('.driftBox') 
         $(driftDiv).driftBox("stopDrift")
         
     },

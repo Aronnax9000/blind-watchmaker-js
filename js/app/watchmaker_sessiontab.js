@@ -18,8 +18,8 @@ $.widget('dawk.watchmakerSessionTab', {
     on_activate: function (event, ui) {
         // One of the session's views, like Breeding, has just become active.
         var newlyActiveView = $(ui.newTab).parents('.watchmakerView').get(0);
-        $(ui.oldPanel).trigger('dawk:viewLostFocus', ui);
-        $(ui.newPanel).trigger('dawk:viewGainedFocus', ui);
+        $(ui.oldPanel).trigger('viewLostFocus');
+        $(ui.newPanel).trigger('viewGainedFocus');
     },   
     _create: function () {
         let options = this.options

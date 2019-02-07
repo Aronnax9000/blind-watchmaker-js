@@ -8,9 +8,16 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         generationsPreviousSecond: 0
 
     },
-    viewGainedFocus: function(event) {
-        let session = $(this).breedingView("option", "session")
-        session.viewGainedFocus(session, this)
+    viewGainedFocus: function(event, ui) {
+        console.log('breedingView gained focus')
+        let session  = $(this).breedingView("option", "session")
+        $(this).breedingView("updateMenus", session, this)
+        session.updateMenus(session, this)
+        // resume animation (if enabled) here?
+    },
+    viewLostFocus: function(event, ui) {
+        this._super(event, ui)
+        // stop animation here
     },
 
     _create: function (options) {

@@ -105,7 +105,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     viewGainedFocus: function(event) {
         let session = $(this).pedigreeView("option", "session")
-        session.viewGainedFocus(session, this)
+        $(this).pedigreeView("updateMenus", session, this)
+        session.updateMenus(session, this)
     },
     _create: function (options) {
         this._super()

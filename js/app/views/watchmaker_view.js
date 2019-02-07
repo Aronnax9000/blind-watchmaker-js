@@ -4,10 +4,8 @@ $.widget('dawk.watchmakerView', {
     },
     _create: function() {
         $(this.element).addClass('watchmakerView')
-        $(this.element).on('dawk:viewGainedFocus', this.viewGainedFocus)
-        
-        $(this.element).on(
-                'dawk:viewLostFocus', this.viewLostFocus)
+        $(this.element).on('viewGainedFocus', this.viewGainedFocus)
+        $(this.element).on('viewLostFocus', this.viewLostFocus)
         
 
         this.buildMenus()
@@ -38,13 +36,15 @@ $.widget('dawk.watchmakerView', {
     },
     _init: function() {
     },
-    viewGainedFocus: function(data) {
-        console.log('View gained focus')
-        console.log(data)
+    updateMenus: function(session, view) {
+        let menuitem = $(view).find('.menuitemDriftSweep')[0]
+        if(session.options.driftsweep) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
     },
-    viewLostFocus: function(data) {
-        console.log('View lost focus' + data)
-        console.log(data)
+    viewLostFocus: function(event, ui) {
     },
 
 })
