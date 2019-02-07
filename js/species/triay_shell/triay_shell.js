@@ -28,8 +28,8 @@ function Shell (ctx, width, height, genes) {
 
     this.mutProbGene = 50
     this.mutSize = {
-            displacement: 0.2,
-            translation: 0.8,
+            displacement: 0.01,
+            translation: 0.1,
             shape: 1,
             reach: 1
     }
@@ -76,6 +76,7 @@ Shell.prototype.randomize = function () {
     this.reach = genes.reach
     this.pattern = genes.pattern
     this.handedness = genes.handedness
+    this.mutProbGene = 50
     this.translationGradient = genes.translationGradient
     this.generate()
 }
@@ -90,7 +91,7 @@ Shell.random = function(lower, upper) {
 }
 
 Shell.randInt = function(lower, upper) {
-    return Math.trunc(Math.random() * (upper - lower)) + lower
+    return Math.trunc(Math.random() * (upper - lower + 1)) + lower
 }
 
 Shell.randomSign = function() {
@@ -441,9 +442,9 @@ Shell.prototype.draw = function (lofi) {
 //function to mutate it which converts it to meaningful values
 Shell.mutateOpening = function (opening) {
 
-    var mutSize = 0.4
+    var wMutSize = 0.1
     var logged = Math.log(opening)
-    var logchanged = logged + mutSize * Shell.randomSign()
+    var logchanged = logged + wMutSize * Shell.randomSign()
 
     if (logchanged > 20) {
         logchanged = 20
@@ -495,30 +496,20 @@ Shell.prototype.breed = function (element) {
     }
 
     if (Shell.rand100() < child.mutProbGene) {
-        child.displacement += Shell.randInt(-2, 2) * child.displacement
+        child.displacement += Shell.randInt(-2, 2) * child.displacement * child.mutSize.displacement
         child.displacement = Math.min(Math.max(child.displacement, 0), 1)
     }
 
     if (Shell.rand100() < child.mutProbGene) {
-        child.translation += Shell.randInt(-2, 2) * child.translation
+        child.translation += Shell.randInt(-2, 2) * child.translation * child.mutSize.translation
     }
 
     if (Shell.rand100() < 1) {
         child.handedness = -child.handedness
     }
 
-    // These three are in addition to the original program and offer a 
-    // little more visual variety
 
-    if (Shell.rand100() < child.mutProbGene) {
-        child.shape += Shell.randomSign() * child.mutSize.shape
-    }
-
-    if (Shell.rand100() < child.mutProbGene) {
-        child.reach += Shell.randomSign() * child.mutSize.reach
-    }
-    // Changed threshold to 100 from 5 for demo purposes. 
-    if (Shell.rand100() < 100) {
+    if (Shell.rand100() < 5) {
         var patternKeys = Object.keys(Shell.patterns);
         child.pattern = patternKeys[Math.trunc(Math.random() * patternKeys.length)]
     }

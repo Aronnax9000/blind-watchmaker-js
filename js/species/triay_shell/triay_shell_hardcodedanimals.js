@@ -2,6 +2,7 @@ function ShellHardcodedAnimals() {
 
     return {
         'Snail': {
+            mutProbGene: 50,
             opening: 1.66,
             displacement: 0,
             shape: 1.2,
@@ -13,6 +14,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         'Turitella': {
+            mutProbGene: 50,
             opening: 1.30,
             displacement: 0,
             shape: 1,
@@ -24,6 +26,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,  
         },
         'Bivalve': {
+            mutProbGene: 50,
             opening: 1000,
             displacement: 0,
             shape: 1.2,
@@ -36,6 +39,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Ammonite: {
+            mutProbGene: 50,
             opening: 2,
             displacement: 0,
             shape: 1,
@@ -47,6 +51,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Nautilus: {
+            mutProbGene: 50,
             opening: 3.4,
             displacement: 0,
             shape: 1.2,
@@ -58,6 +63,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Brachiopod: {
+            mutProbGene: 50,
             opening: 10000,
             displacement: 0,
             shape: 1,
@@ -69,6 +75,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Cone: {
+            mutProbGene: 50,
             opening: 1.66,
             displacement: 0,
             shape: 3,
@@ -80,6 +87,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Whelk: {
+            mutProbGene: 50,
             opening: 1.7,
             displacement: 0,
             shape: 2,
@@ -92,6 +100,7 @@ function ShellHardcodedAnimals() {
 
         },
         Scallop: {
+            mutProbGene: 50,
             opening: 10000,
             displacement: 0,
             shape: 1,
@@ -103,6 +112,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Eloise: {
+            mutProbGene: 50,
             opening: 1.4,
             displacement: 0,
             shape: 1.7,
@@ -114,6 +124,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Gallaghers: {
+            mutProbGene: 50,
             opening: 1.66,
             displacement: 0,
             shape: 1.8,
@@ -125,6 +136,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Rapa: {
+            mutProbGene: 50,
             opening: 1.66,
             displacement: 0,
             shape: 2,
@@ -136,6 +148,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         }, 
         Lightning: {
+            mutProbGene: 50,
             opening: 1.66,
             displacement: 0,
             shape: 3.5,
@@ -147,6 +160,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 0.9,
         }, 
         Sundial: {
+            mutProbGene: 50,
             opening: 1.384,
             displacement: 0.261,
             shape: 0.618,
@@ -158,6 +172,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         Fig: {
+            mutProbGene: 50,
             opening: 2,
             displacement: 0,
             shape: 3,
@@ -169,6 +184,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 0.95,
         }, 
         Tun: {
+            mutProbGene: 50,
             opening: 2,
             displacement: 0,
             shape: 2,
@@ -180,6 +196,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         RazorShell: {
+            mutProbGene: 50,
             opening: 1000,
             displacement: 0,
             shape: 8,
@@ -191,6 +208,7 @@ function ShellHardcodedAnimals() {
             translationGradient: 1,
         },
         JapaneseWonder: {
+            mutProbGene: 50,
             opening: 1.7,
             displacement: 0,
             shape: 1.3,
