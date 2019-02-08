@@ -111,7 +111,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newPlayBackFossils: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconFossils_ALAN_32x32.png';
+        var viewIcon = 'img/IconFossilRecord_ALAN_32x32.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
         + 'Fossils'

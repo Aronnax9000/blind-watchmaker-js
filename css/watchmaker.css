@@ -249,11 +249,13 @@ div {
 }
 
 .ui-state-default a, .ui-state-default a:link {
-	color: #1f2b59
+	color: #1f2b59;
+    font-size: 18px;
 }
 
 .ui-state-active a, .ui-state-active a:link {
-	color: #ffffff
+	color: #ffffff;
+	font-size: 18px;
 }
 
 .watchmakerMenu {
