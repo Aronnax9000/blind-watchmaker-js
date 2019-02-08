@@ -126,6 +126,9 @@ MenuHandler.prototype.menuclick = function(event) {
         case 'Donate':
             document.location = 'https://alancanon.net/donate' 
             return false
+        case 'Quit':
+            document.location = 'https://richarddawkins.net/' 
+            return false
         }
         // Do generic stuff here
         // Then call view-specific handler
