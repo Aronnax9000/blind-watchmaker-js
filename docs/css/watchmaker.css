@@ -278,12 +278,20 @@ div {
 /* .ui-dialog-titlebar {  display: none; } */
 
 .ui-tabs-nav .ui-state-active a  {
-    background: #3092c0;
+    background: #1f2b59;
 }
 
 .ui-state-active, .ui-widget-content .ui-state-active, 
 .ui-widget-header .ui-state-active {
-    background: #3092c0;
+    background: #1f2b59;
+}
+
+.ui-state-default a, .ui-state-default a:link {
+	color: #1f2b59
+}
+
+.ui-state-active a, .ui-state-active a:link {
+	color: #ffffff
 }
 
 .watchmakerMenu {
