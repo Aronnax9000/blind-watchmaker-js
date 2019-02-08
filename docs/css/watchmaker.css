@@ -277,6 +277,15 @@ div {
 .ui-dialog { border: 1px solid black;} 
 /* .ui-dialog-titlebar {  display: none; } */
 
+.ui-tabs-nav .ui-state-active a  {
+    background: #3092c0;
+}
+
+.ui-state-active, .ui-widget-content .ui-state-active, 
+.ui-widget-header .ui-state-active {
+    background: #3092c0;
+}
+
 .watchmakerMenu {
 /*	height: 46px; */ /* Classic Mac menu bar height */
 }
@@ -469,8 +478,10 @@ div {
 }
 
 .tabicon {
-	padding: 2px;
+	padding-top: 8px;
+	padding-right: 15px;
 }
+
 
 .fossil-slider {
     height: 600px;
