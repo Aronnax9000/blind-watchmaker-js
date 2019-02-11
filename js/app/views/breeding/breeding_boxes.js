@@ -126,7 +126,7 @@ $.widget( "dawk.breedingBoxes", {
         var session = this.options.session
         var species = this.options.session.species
         var boxes = this.element
-        $(boxes).attr('id', 'boxes').addClass('boxes')
+        $(boxes).addClass('boxes')
         this.element.append(boxes)
         var numBoxes = this.options.numBoxes
         var midBox = Math.trunc(numBoxes / 2)

@@ -25,6 +25,49 @@ body {
     margin: 0px;
 	
 }
+
+
+
+.albumPageContainer {
+    position: relative;
+    width: 1000px;
+    height: 600px;
+    color: #000;
+    
+}
+
+.albumPageContainerIndex {
+    display: grid;
+    grid-gap: 0px;
+    grid-template-columns: 50% 50%;
+}
+
+.albumCanvas.midBox {
+	background-color: grey;
+}
+
+.albumBoxesPageNo {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+
+.albumBoxes:hover {
+	border: 1px solid black;
+}
+
+.albumBoxes {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+    display: grid;
+    grid-gap: 0px;
+    color: #000;
+    
+}
 .boxes {
 	position: relative;
 	width: 1000px;
@@ -278,6 +321,49 @@ div {
 .about {
 	padding: 0px;
 	margin: 0px;
+}
+.file-dialog {
+    padding: 0px;
+    margin: 0px;
+}
+.fileList .fileSize {
+    text-align: right;	
+}
+.previewFile {
+	border: 1px black solid;
+}
+
+.file-preview-slider
+{
+    height: 400px;
+    width: 15px;
+}
+
+.fileSelected {
+	color: white;
+	background-color: black
+}
+
+.fileListPreviewFlexDiv {
+	border: 1px black solid;
+	height:400px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between; 
+	align-items: flex-start;
+}
+
+
+.fileListElement {
+    font-size:smaller;
+}
+.fileList {
+	display: grid;
+	width: 50%;
+    grid-gap: 0px;
+	grid-template-columns: 70% 30%;
+    padding: 0px;
+    margin: 0px;
 }
 .geneboxes {
     width: 1000px;

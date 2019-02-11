@@ -54,6 +54,7 @@ function Canvas2DDrawer(drawingObject) {
 }
 
 
+
 Canvas2DDrawer.prototype.erase = function() {
     // Store the current transformation matrix
     //drawingContext.save();
@@ -91,6 +92,10 @@ Canvas2DDrawer.prototype.moveTo = function(x,y) {
 Canvas2DDrawer.prototype.lineTo = function(x,y) {
     this.drawingContext.lineTo(x,y);
     this.drawingContext.stroke();
+}
+
+Canvas2DDrawer.prototype.scale = function(scale) {
+    this.drawingContext.scale(scale, scale)
 }
 
 Canvas2DDrawer.prototype.frameOval = function(rect) {

@@ -303,14 +303,16 @@ Biomorphs.prototype.getRect = function() {
             margin.bottom - margin.top)
 }
 
-Biomorphs.prototype.develop = function() {
+Biomorphs.prototype.develop = function(scale) {
     var drawingObject = this.drawer;
     var drawingContext = _drawerFactorySingleton.getDrawer('canvas2d', drawingObject);
     // Use the identity matrix while clearing the canvas
     drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     drawingContext.clearRect(0, 0, drawingObject.width, drawingObject.height);
     drawingContext.translate(drawingObject.width / 2 + 0.5, drawingObject.height / 2 + 0.5);
-
+    if(scale != null) {
+        drawingContext.scale(scale)
+    }
     var dx = [0,0,0,0,0,0,0,0];
     var dy = [0,0,0,0,0,0,0,0];
 

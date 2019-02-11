@@ -39,6 +39,43 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
+    newAlbumView: function(biomorph) {
+        var species = this.options.species
+        var uuid = this.uuidv4();
+        var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
+            var string = '<li><a href="#' + uuid + '">'
+            + '<img class="tabicon" src="' + viewIcon + '">' 
+            + 'Album</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+        var newTabLi = $(string);
+        var ul = this.element.find('ul').get(0);
+        $(ul).append(newTabLi);
+        var div = $('<div id="' + uuid + '"></div>');
+        this.element.append(div);
+        div.albumView({
+            session: this.options.session, 
+            watchmakerSessionTab: this, 
+            species: species,
+            biomorph: biomorph});
+        $(newTabLi).find('.ui-closable-tab').click(
+                function() {
+                    var tabContainerDiv = $(this).closest(".ui-tabs")
+                    .attr("id");
+                    var panelId = $(this).closest("li").remove().attr(
+                    "aria-controls");
+                    $("#" + panelId).remove();
+                    $("#" + tabContainerDiv).tabs("refresh");
+                    var tabCount = $("#" + tabContainerDiv).find(
+                    ".ui-closable-tab").length;
+                    if (tabCount < 1) {
+                        $("#" + tabContainerDiv).hide();
+                    }
+                });    
+        this.element.tabs("refresh");
+        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+        this.element.tabs("refresh");
+        this.element.tabs("option", "active", tabcount - 1);
+
+    },
     newBreedingView: function(biomorph) {
         var species = this.options.species
         var uuid = this.uuidv4();

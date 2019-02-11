@@ -1,6 +1,8 @@
 
 function WatchmakerSession(species) {
     this.options = []
+    this.album = []
+    this.files = []
     this.myPenSize = 1;
     this.trianglable = false
     this.arrayable = false

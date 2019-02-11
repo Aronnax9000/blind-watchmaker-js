@@ -76,7 +76,7 @@ Monochrome.initializeSession = function(session) {
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
     session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Insect')
     session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Chess')
-
+    session.serializationSize = 40
 }
 
 

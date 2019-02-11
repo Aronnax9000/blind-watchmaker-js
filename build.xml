@@ -44,6 +44,7 @@
             <fileset file="js/app/views/watchmaker_view.js" />
             <fileset file="js/app/views/album/album_view.js" />
             <fileset file="js/app/views/album/album_page_view.js" />
+            <fileset file="js/app/views/album/file_dialog.js" />
             <fileset file="js/app/views/breeding/breeding_view.js" />
             <fileset file="js/app/views/breeding/breeding_boxes.js" />
             <fileset file="js/app/views/breeding/breeding_box.js" />
@@ -75,6 +76,7 @@
             <fileset file="js/species/monochrome/monochrome_updatemutcheckbox.js" />
             <fileset file="js/species/monochrome/monochrome_togglemut.js" />
             <fileset file="js/species/monochrome/monochrome_triangle.js" />
+            <fileset file="js/species/monochrome/monochrome_serialization.js" />
     	</concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/minimal.js">
             <fileset file="js/species/minimal/minimal.js" />

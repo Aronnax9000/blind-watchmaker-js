@@ -2,7 +2,10 @@ function MenuHandler(session) {
     this.session = session
     this.nextMenuHandler = null
 }
-
+MenuHandler.prototype.getBiomorph = function(event) {
+    let midCanvas = $(event.target).closest('.watchmakerView').find('.midBox').eq(0)
+    return $(midCanvas).data('genotype')
+}
 MenuHandler.prototype.menuclick = function(event) {
     console.log('Menuhandler menuclick')
     let result = this.session.menuclick(event)
@@ -17,16 +20,38 @@ MenuHandler.prototype.menuclick = function(event) {
             let ctx = midCanvas.getContext('2d')
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0,0, midCanvas.width, midCanvas.height)
-            var biomorph = $(midCanvas).data('genotype')
+            let biomorph = $(midCanvas).data('genotype')
             biomorph.doPerson(menuid.substring(6))
             biomorph.develop()
             return false
         }
         switch(menuid) {
+        case 'AddBiomorphToAlbum':
+            let album = this.session.album
+            if(album.length < 60) {
+                album.push(this.getBiomorph(event))
+                console.log(album)
+            } else {
+                // poop
+            }
+            return false
+        case 'LoadToAlbum':
+            $("<div>").fileDialog({session:this.session, appendTo: $(event.target).closest('.watchmakerView')[0]})
+            return false
+        case 'ShowAlbum':
+            if(this.session.album.length != 0) {
+                var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newAlbumView", biomorph);
+                
+            } else {
+                alert('Add Biomorph to Album first.')
+            }
+            return false
         case 'Breed': 
             console.log('Breeding')
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-            var biomorph = $(midCanvas).data('genotype')
+            biomorph = this.getBiomorph(event)
             var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
             $(watchmakerSessionTab).watchmakerSessionTab(
                     "newBreedingView", biomorph);

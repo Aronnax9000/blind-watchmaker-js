@@ -8,6 +8,7 @@ $.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
         let container = $('<div class="container">')
         $(this.element).append(container)
         
+        
         let fossilDiv = $('<div class="fossilDiv">')
         container.append(fossilDiv)
         let canvas = $('<canvas width="985" height="600" class="box midBox">')
