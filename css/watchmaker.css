@@ -343,6 +343,16 @@ div {
 	color: white;
 	background-color: black
 }
+.fileButtonDiv {
+    display: flex; 
+    flex-direction: row;
+    justify-content: space-between; 
+    align-items: flex-start;
+}
+.fileButtonHidden {
+    display: none; 
+}
+
 
 .fileListPreviewFlexDiv {
 	border: 1px black solid;
@@ -354,10 +364,10 @@ div {
 }
 
 
-.fileListElement {
-    font-size:smaller;
+.fileListElement, .fileSize, .ui-widget button {
+    font-size: 12px;
 }
-.fileList {
+.fileList, .fileListPreviewHeader {
 	display: grid;
 	width: 50%;
     grid-gap: 0px;
@@ -365,6 +375,11 @@ div {
     padding: 0px;
     margin: 0px;
 }
+
+.fileControlRow {
+	display: inline;
+}
+
 .geneboxes {
     width: 1000px;
     height: 20px;

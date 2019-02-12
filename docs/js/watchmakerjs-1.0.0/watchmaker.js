@@ -1833,10 +1833,24 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         "ui-dialog": "file-dialog",
     },
     _create: function() {
-        let input = $('<input type="file" class="fileInput" multiple >')
+
         $(this.element).addClass('fileDialog')
         $(this.element).attr('title', 'Load to Album')
-        $(this.element).append(input)
+        let buttonDiv = $('<div class="fileButtonDiv">').appendTo(this.element)
+        let input = $('<input type="file" class="fileInput" multiple >')
+        $(buttonDiv).append(input)       
+        let addSelectedToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Biomorph to Session Album</button>')
+        $(buttonDiv).append(addSelectedToSessionAlbum)
+        this._on(addSelectedToSessionAlbum, {click: function(event) {this.addbiomorphtoalbum(event)}})
+        let addSelectedAlbumToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Album to Session Album</button>')
+        $(buttonDiv).append(addSelectedAlbumToSessionAlbum)
+        this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.addalbumtoalbum(event)}})
+        let openAlbum = $('<button class="fileDialogButton fileButtonHidden">Open Album</button>')
+        this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.openalbum(event)}})
+        $(buttonDiv).append(openAlbum)
+
+        $(this.element).append($("<div class='fileListPreviewHeader'><div class='file'>Album Name</div><div class='fileSize'>Biomorphs</div></div>"))
+
         let fileListPreviewFlexDiv = $('<div class="fileListPreviewFlexDiv">')
         $(this.element).append(fileListPreviewFlexDiv)
         let fileList = $('<div>').addClass('fileList')
@@ -1845,8 +1859,8 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         this._on(input, {change: function(event) {
             this.filechange(event)
         }})
-        this.options.width = 800
-        this.options.height = 480
+        this.options.width = 850
+        this.options.height = 520
         this.options.modal = true
         $(fileListPreviewFlexDiv).append($('<canvas width="400" height="400" class="previewFile">'))
         let slider = $("<div>").slider({
@@ -1864,7 +1878,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
               }
         });
         $(fileListPreviewFlexDiv).append(slider)
-        
+
         return this._super()
     },
     showalbumitem: function(index) {
@@ -1893,7 +1907,6 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         let str = ''
         let fileList = fileDialog.find('.fileList')
         $(fileList).empty()
-        $(fileList).append($("<div class='file'>Album Name</div><div class='fileSize'>Biomorphs</div>"))
         this.loadsessionfiles(fileList)
         for(let i = 0; i < files.length; i++) {
             let file = files[i]
@@ -1905,21 +1918,18 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             this._on(fileDiv, {click: function(event) {this.fileselected(event)}})
             $(fileList).append($('<div class="fileSize">' + biomorphFile.biomorphcount + '</div>'))
         }
-        let addSelectedToSessionAlbum = $('<button>Add Selected Biomorph to Session Album</button>')
-        $(fileList).append(addSelectedToSessionAlbum)
-        let addSelectedAlbumToSessionAlbum = $('<button>Add Selected Album to Session Album</button>')
-        $(fileList).append(addSelectedAlbumToSessionAlbum)
-        let openAlbum = $('<button>Open Album</button>')
-        $(fileList).append(openAlbum)
+
+
+        
     },
     fileselected: function(event) {
         $(event.target).closest('.fileList').find('.fileListElement').removeClass('fileSelected')
         $(event.target).addClass('fileSelected')
-        
         let file = $(event.target).data('file')
         
         console.log('File selected ' + file.file.name)
         let fileDialog = $(event.target).closest('.fileDialog')
+        $(fileDialog).find('.fileDialogButton').removeClass('fileButtonHidden')
         let session = this.options.session // $(fileDialog).fileDialog('option', 'session')
         let canvas = fileDialog.find('canvas.previewFile')[0]
         console.log(canvas)
