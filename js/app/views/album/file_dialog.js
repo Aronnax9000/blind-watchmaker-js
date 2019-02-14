@@ -1,9 +1,3 @@
-function BiomorphFile(session, file) {
-    this.session = session
-    this.file = file
-    this.biomorphcount = file.size / session.serializationSize
-    this.data = null
-}
 
 
 $.widget('dawk.fileDialog', $.ui.dialog, {
@@ -24,7 +18,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         $(buttonDiv).append(addSelectedAlbumToSessionAlbum)
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.addalbumtoalbum(event)}})
         let openAlbum = $('<button class="fileDialogButton fileButtonHidden">Open Album</button>')
-        this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.openalbum(event)}})
+        this._on(openAlbum, {click: function(event) {this.openalbum(event)}})
         $(buttonDiv).append(openAlbum)
 
         $(this.element).append($("<div class='fileListPreviewHeader'><div>Album Name</div><div>Biomorphs</div></div>"))
@@ -86,19 +80,21 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             var audio = new Audio('sounds/newbip.mp3');
             audio.play();
         } else {
-            console.log("adding all " + biomorphs.length)
             for(let i = 0; i < biomorphs.length; i++) {
-                console.log(i)
                 let newBiomorph = _speciesFactorySingleton.getSpecies(
                         session.species, session, canvas);
                 biomorphs[i].copyBiomorph(newBiomorph)
                 sessionAlbumBiomorphs.push(newBiomorph)
             }
-            console.log(sessionAlbumBiomorphs)
         }
     },
     openalbum: function(event) {
-
+        let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+        let selectedDiv = $(event.target).closest('.fileDialog').find('.albumSelected')[0]
+        let album = $(selectedDiv).data('album')
+        $(watchmakerSessionTab).watchmakerSessionTab(
+                "newAlbumView", album);
+        this.close()
     },
     showalbumitem: function(index) {
         
@@ -113,7 +109,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         let sessionAlbums = this.options.session.albums
         for(let j = 0; j < sessionAlbums.length; j++) {
             let album = sessionAlbums[j]
-            if(album.file != null) {
+            if(album.file.file != null) {
                 let file = album.file.file
                 let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
                 $(fileList).append(fileDiv)

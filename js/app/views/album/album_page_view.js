@@ -5,7 +5,8 @@ $.widget( "dawk.albumPageView", {
     options: {
         pageNumber: 0,
         isIndexView: true,
-        album: null
+        album: null,
+        title: 'Album'
     },
     _create: function() {
         this._super()
@@ -30,19 +31,31 @@ $.widget( "dawk.albumPageView", {
         $(this.element).find('canvas').removeClass('midBox')
         $(target).addClass('midBox')
     },
+    gotoindex: function() {
+        console.log('gotoindex')
+        this.options.isIndexView = true
+        let albumView = $(this.element).closest('.albumView')[0]
+        $(albumView).albumView('showindex')
+    },
     developAll: function() {
         $(this.element).empty()
-        $("<p class='albumBoxesPageNo'>Album Page " + (this.options.pageNumber + 1) + "</p>").appendTo(this.element)
+        let p = $("<p class='albumBoxesPageNo'>" + this.options.title + " Page " + (this.options.pageNumber + 1) + "</p>")
+        $(p).appendTo(this.element)
+        if(! this.options.isIndexView) {
+            let indexButton = $("<button>Index</button>")
+            $(indexButton).appendTo(p)
+            this._on(indexButton, {click: function(event) {
+                event.stopPropagation()
+                this.gotoindex()
+            }})
+        }
 
         biomorphs = this.options.album.biomorphs
-        console.log(biomorphs)
         let pageNumber = this.options.pageNumber
         let startIndex = pageNumber * 15
         let endIndex = startIndex + 15
-        console.log('start ' + startIndex + ' end ' + endIndex)
         if(startIndex < biomorphs.length) {
             for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
-                console.log('canvas biomorphs ' + i)
                 let biomorph = biomorphs[i]
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
@@ -80,6 +93,5 @@ $.widget( "dawk.albumPageView", {
         let session  = $(this).albumPageView("option", "session")
         $(this).albumPageView("updateMenus", session, this)
         session.updateMenus(session, this)
-        // resume animation (if enabled) here?
     },
 })

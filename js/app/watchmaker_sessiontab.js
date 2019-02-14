@@ -39,7 +39,7 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newAlbumView: function(biomorph) {
+    newAlbumView: function(album) {
         var species = this.options.species
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
@@ -55,7 +55,7 @@ $.widget('dawk.watchmakerSessionTab', {
             session: this.options.session, 
             watchmakerSessionTab: this, 
             species: species,
-            biomorph: biomorph});
+            album: album});
         $(newTabLi).find('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
