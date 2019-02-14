@@ -912,7 +912,7 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newAlbumView: function(biomorph) {
+    newAlbumView: function(album) {
         var species = this.options.species
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
@@ -928,7 +928,7 @@ $.widget('dawk.watchmakerSessionTab', {
             session: this.options.session, 
             watchmakerSessionTab: this, 
             species: species,
-            biomorph: biomorph});
+            album: album});
         $(newTabLi).find('.ui-closable-tab').click(
                 function() {
                     var tabContainerDiv = $(this).closest(".ui-tabs")
@@ -1337,7 +1337,7 @@ MenuHandler.prototype.menuclick = function(event) {
             if(this.session.album.length != 0) {
                 var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
-                        "newAlbumView", biomorph);
+                        "newAlbumView");
                 
             } else {
                 alert('Add Biomorph to Album first.')
@@ -1638,10 +1638,19 @@ $.widget('dawk.watchmakerView', {
     },
 
 })
+function BiomorphFile(session, file) {
+    this.session = session
+    this.file = file
+    if(file != null) {
+        this.biomorphcount = file.size / session.serializationSize
+    }
+    this.data = null
+}
+
 function Album(name, session) {
     this.name = name
     this.session = session
-    this.file = null
+    this.file = new BiomorphFile(session, null)
     this.biomorphs = []
     session.albums.push(this)
 }
@@ -1656,23 +1665,15 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         album: null
     },
     viewGainedFocus: function(event, ui) {
-        console.log('albumView gained focus')
         let session  = $(this).albumView("option", "session")
         $(this).albumView("updateMenus", session, this)
         session.updateMenus(session, this)
-        console.log(this)
         let albumPages = $(this).find('.albumBoxes')
-        console.log(albumPages)
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
     },
     clear: function(event, ui) {
-        console.log('clear')
-        console.log(this)
         let canvas = $(this.element).find('.midBox')[0]
-        console.log(canvas)
         let biomorph = $(canvas).data('genotype')
-        console.log('biomorph')
-        console.log(biomorph)
         let biomorphs = this.options.album.biomorphs
         for(let i = 0; i < biomorphs.length; i++) {
             if(biomorph == biomorphs[i]) {
@@ -1682,22 +1683,37 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         }
         $(canvas).remove()
         let albumPages = $(this).find('.albumBoxes')
-        console.log(albumPages)
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
         
     },
     showPage: function(pageNumber) {
-        console.log(pageNumber)
-        
+        console.log('showpage ' + pageNumber)
         $(this.element).find('.albumBoxes').each(function() {
+            
             let candidatePageNo = $(this).albumPageView('option', 'pageNumber')
-            console.log('candidatepage' + candidatePageNo)
+            
             if(candidatePageNo != pageNumber) {
-                $(this).css('display', 'none')
+                $(this).addClass('albumBoxesHidden')
             }
         })
         $(this.element).find('.albumPageContainer').removeClass('albumPageContainerIndex')
         
+    },
+    savealbum: function() {
+        $('<div>').saveDialog({album: this.options.album,
+            session: this.options.session,
+            appendTo: this.element})
+    },
+    showindex: function() {
+        console.log('albumView.showindex')
+        let albumBoxes = $(this.element).find('.albumBoxes')
+        albumBoxes.each(function() {
+            $(this).removeClass('albumBoxesHidden')
+            $(this).albumPageView('option', 'isIndexView', true)
+            $(this).albumPageView('developAll')
+            console.log(this)
+        })
+        $(this.element).find('.albumPageContainer').addClass('albumPageContainerIndex')
     },
     _create: function() {
         this._super()
@@ -1723,9 +1739,11 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
             let albumPageView = $('<div>').albumPageView({
                 pageNumber: i, 
                 'album': this.options.album, 
-                session: this.options.session})
+                session: this.options.session,
+                title: this.options.album.name})
             $(container).append(albumPageView)
             $(albumPageView).albumPageView('developAll')
+            
         }
         this.options.menuHandler.nextMenuHandler = new AlbumMenuHandler()
    
@@ -1736,14 +1754,18 @@ function AlbumMenuHandler() {
 }
 
 AlbumMenuHandler.prototype.menuclick = function(event) {
-    console.log('Album Menu Clear')
     let target = event.target
     let menuid = $(target).data('menuid')
     switch(menuid) {
     case 'Clear':
         $(event.target).closest('.albumView').albumView('clear', event, null)
         return false
+    case 'SaveAlbum': 
+        let view = $(event.target).closest('.albumView').albumView('savealbum', event, null)
+
+        return false
     }
+    
     return true;
 }
 /*
@@ -1753,7 +1775,8 @@ $.widget( "dawk.albumPageView", {
     options: {
         pageNumber: 0,
         isIndexView: true,
-        album: null
+        album: null,
+        title: 'Album'
     },
     _create: function() {
         this._super()
@@ -1778,19 +1801,31 @@ $.widget( "dawk.albumPageView", {
         $(this.element).find('canvas').removeClass('midBox')
         $(target).addClass('midBox')
     },
+    gotoindex: function() {
+        console.log('gotoindex')
+        this.options.isIndexView = true
+        let albumView = $(this.element).closest('.albumView')[0]
+        $(albumView).albumView('showindex')
+    },
     developAll: function() {
         $(this.element).empty()
-        $("<p class='albumBoxesPageNo'>Album Page " + (this.options.pageNumber + 1) + "</p>").appendTo(this.element)
+        let p = $("<p class='albumBoxesPageNo'>" + this.options.title + " Page " + (this.options.pageNumber + 1) + "</p>")
+        $(p).appendTo(this.element)
+        if(! this.options.isIndexView) {
+            let indexButton = $("<button>Index</button>")
+            $(indexButton).appendTo(p)
+            this._on(indexButton, {click: function(event) {
+                event.stopPropagation()
+                this.gotoindex()
+            }})
+        }
 
         biomorphs = this.options.album.biomorphs
-        console.log(biomorphs)
         let pageNumber = this.options.pageNumber
         let startIndex = pageNumber * 15
         let endIndex = startIndex + 15
-        console.log('start ' + startIndex + ' end ' + endIndex)
         if(startIndex < biomorphs.length) {
             for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
-                console.log('canvas biomorphs ' + i)
                 let biomorph = biomorphs[i]
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
@@ -1828,15 +1863,8 @@ $.widget( "dawk.albumPageView", {
         let session  = $(this).albumPageView("option", "session")
         $(this).albumPageView("updateMenus", session, this)
         session.updateMenus(session, this)
-        // resume animation (if enabled) here?
     },
 })
-function BiomorphFile(session, file) {
-    this.session = session
-    this.file = file
-    this.biomorphcount = file.size / session.serializationSize
-    this.data = null
-}
 
 
 $.widget('dawk.fileDialog', $.ui.dialog, {
@@ -1857,7 +1885,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         $(buttonDiv).append(addSelectedAlbumToSessionAlbum)
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.addalbumtoalbum(event)}})
         let openAlbum = $('<button class="fileDialogButton fileButtonHidden">Open Album</button>')
-        this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.openalbum(event)}})
+        this._on(openAlbum, {click: function(event) {this.openalbum(event)}})
         $(buttonDiv).append(openAlbum)
 
         $(this.element).append($("<div class='fileListPreviewHeader'><div>Album Name</div><div>Biomorphs</div></div>"))
@@ -1919,19 +1947,21 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             var audio = new Audio('sounds/newbip.mp3');
             audio.play();
         } else {
-            console.log("adding all " + biomorphs.length)
             for(let i = 0; i < biomorphs.length; i++) {
-                console.log(i)
                 let newBiomorph = _speciesFactorySingleton.getSpecies(
                         session.species, session, canvas);
                 biomorphs[i].copyBiomorph(newBiomorph)
                 sessionAlbumBiomorphs.push(newBiomorph)
             }
-            console.log(sessionAlbumBiomorphs)
         }
     },
     openalbum: function(event) {
-
+        let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+        let selectedDiv = $(event.target).closest('.fileDialog').find('.albumSelected')[0]
+        let album = $(selectedDiv).data('album')
+        $(watchmakerSessionTab).watchmakerSessionTab(
+                "newAlbumView", album);
+        this.close()
     },
     showalbumitem: function(index) {
         
@@ -1946,7 +1976,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         let sessionAlbums = this.options.session.albums
         for(let j = 0; j < sessionAlbums.length; j++) {
             let album = sessionAlbums[j]
-            if(album.file != null) {
+            if(album.file.file != null) {
                 let file = album.file.file
                 let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
                 $(fileList).append(fileDiv)
@@ -2010,6 +2040,41 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         biomorph.readFromArrayBuffer(file.data, 0)
         biomorph.develop()
     }
+})
+
+
+$.widget('dawk.saveDialog', $.ui.dialog, {
+    options: {
+        "ui-dialog": "file-dialog",
+    },
+    _create: function() {
+
+        $(this.element).addClass('saveDialog')
+        $(this.element).attr('title', 'Save Album')
+
+        this.options.width = 450
+        this.options.height = 350
+        this.options.modal = true
+        let album = this.options.album
+        let biomorphs = album.biomorphs
+        let bufferLength = biomorphs.length * this.options.session.serializationSize;
+        console.log(bufferLength)
+        album.file.data = new ArrayBuffer(bufferLength)
+        for(let i = 0; i < biomorphs.length; i++) {
+            biomorphs[i].writeToArrayBuffer(album.file.data, i)
+        }
+        var binary = '';
+        var bytes = new Uint8Array( album.file.data );
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode( bytes[ i ] );
+        }
+        let base64 = window.btoa( binary );
+        $('<a href="data:application/octet-stream;base64,' + base64 + '">Download album</a>').appendTo(this.element)
+        return this._super()
+        
+        
+    },
 })
 
 
