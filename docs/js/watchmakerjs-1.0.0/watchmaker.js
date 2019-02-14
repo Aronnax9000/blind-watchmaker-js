@@ -1899,7 +1899,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             this.filechange(event)
         }})
         this.options.width = 450
-        this.options.height = 350
+        this.options.height = 380
         this.options.modal = true
         $(fileListPreviewFlexDiv).append($('<canvas width="200" height="200" class="previewFile">'))
         let slider = $("<div>").slider({
@@ -1917,8 +1917,13 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             }
         });
         $(fileListPreviewFlexDiv).append(slider)
-
+        $('<div class="status"></status>').appendTo(this.element)
         return this._super()
+    },
+    updatestatus: function(message) {
+        var status = $(this.element).find('.status')
+        $(status).text(message)
+        setTimeout(function(){ $(status).empty() }, 3000);        
     },
     addbiomorphtoalbum: function(event) {
         let session = this.options.session
@@ -1930,7 +1935,9 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         biomorph.copyBiomorph(newBiomorph)
         if(session.album.biomorphs.length < 60) {
             session.album.biomorphs.push(newBiomorph)
+            this.updatestatus('Added biomorph to session album')
         } else {
+            this.updatestatus('Session album is full')
             var audio = new Audio('sounds/newbip.mp3');
             audio.play();
         }
@@ -1946,6 +1953,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         if(sessionAlbumBiomorphs.length + biomorphs.length > 60) {
             var audio = new Audio('sounds/newbip.mp3');
             audio.play();
+            this.updatestatus('Not enough room in session album to add all biomorphs.')
         } else {
             for(let i = 0; i < biomorphs.length; i++) {
                 let newBiomorph = _speciesFactorySingleton.getSpecies(
@@ -1953,6 +1961,8 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
                 biomorphs[i].copyBiomorph(newBiomorph)
                 sessionAlbumBiomorphs.push(newBiomorph)
             }
+            this.updatestatus('Added all biomorphs to session album')
+
         }
     },
     openalbum: function(event) {
@@ -1964,7 +1974,6 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         this.close()
     },
     showalbumitem: function(index) {
-        
         let canvas = $(this.element).find('canvas')[0]
         let selectedDiv = $(this.element).find('.albumSelected')[0]
         let biomorph = $(selectedDiv).data('album').biomorphs[index]
@@ -1996,6 +2005,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         $(fileList).empty()
         this.loadsessionalbums(fileList)
         let session = this.options.session
+        let totalBiomorphs = 0
         for(let i = 0; i < files.length; i++) {
             let file = files[i]
             let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
@@ -2020,6 +2030,8 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             }
             reader.readAsArrayBuffer(file)
         }
+        this.updatestatus('Loaded biomorphs from ' + files.length + ' files.')
+
     },
     albumselected: function(event) {
         $(event.target).closest('.fileList').find('.fileListElement').removeClass('albumSelected')
