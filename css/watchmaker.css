@@ -322,6 +322,9 @@ div {
 	padding: 0px;
 	margin: 0px;
 }
+.fileInput {
+	width: 300px;
+}
 .file-dialog {
     padding: 0px;
     margin: 0px;
@@ -335,15 +338,16 @@ div {
 
 .file-preview-slider
 {
-    height: 400px;
+    height: 200px;
     width: 15px;
 }
 
-.fileSelected {
+.albumSelected {
 	color: white;
 	background-color: black
 }
 .fileButtonDiv {
+	height: 30px;
     display: flex; 
     flex-direction: row;
     justify-content: space-between; 
@@ -353,18 +357,20 @@ div {
     display: none; 
 }
 
-
+.fileListPreviewHeader div {
+	font-size: smaller;
+}
 .fileListPreviewFlexDiv {
 	border: 1px black solid;
-	height:400px;
+	height: 200px;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between; 
+/*	justify-content: space-between; */ 
 	align-items: flex-start;
 }
 
 
-.fileListElement, .fileSize, .ui-widget button {
+.fileListElement, .fileSize, .fileInput, .ui-widget button {
     font-size: 12px;
 }
 .fileList, .fileListPreviewHeader {

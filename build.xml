@@ -42,6 +42,7 @@
             <fileset file="js/app/menus/pedigree_menu.js" />
             <fileset file="js/app/menus/view_menu.js" />
             <fileset file="js/app/views/watchmaker_view.js" />
+            <fileset file="js/app/views/album/album.js" />
             <fileset file="js/app/views/album/album_view.js" />
             <fileset file="js/app/views/album/album_page_view.js" />
             <fileset file="js/app/views/album/file_dialog.js" />

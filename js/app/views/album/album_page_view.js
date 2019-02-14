@@ -4,7 +4,8 @@
 $.widget( "dawk.albumPageView", {
     options: {
         pageNumber: 0,
-        isIndexView: true
+        isIndexView: true,
+        album: null
     },
     _create: function() {
         this._super()
@@ -26,22 +27,23 @@ $.widget( "dawk.albumPageView", {
 
     },
     canvasclicked: function (target) {
-        console.log('canvas clicked')
         $(this.element).find('canvas').removeClass('midBox')
         $(target).addClass('midBox')
     },
     developAll: function() {
-        console.log('developAll')
         $(this.element).empty()
         $("<p class='albumBoxesPageNo'>Album Page " + (this.options.pageNumber + 1) + "</p>").appendTo(this.element)
 
-        album = this.options.session.album
+        biomorphs = this.options.album.biomorphs
+        console.log(biomorphs)
         let pageNumber = this.options.pageNumber
         let startIndex = pageNumber * 15
-        let endIndex = pageNumber + 15
-        if(startIndex < album.length) {
-            for(let i = startIndex; i <  endIndex && i < album.length; i++) {
-                let biomorph = album[i]
+        let endIndex = startIndex + 15
+        console.log('start ' + startIndex + ' end ' + endIndex)
+        if(startIndex < biomorphs.length) {
+            for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
+                console.log('canvas biomorphs ' + i)
+                let biomorph = biomorphs[i]
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
                     $(canvas).attr('width', 100)
@@ -75,7 +77,6 @@ $.widget( "dawk.albumPageView", {
         }
     },
     viewGainedFocus: function(event, ui) {
-        console.log('albumPageView gained focus')
         let session  = $(this).albumPageView("option", "session")
         $(this).albumPageView("updateMenus", session, this)
         session.updateMenus(session, this)

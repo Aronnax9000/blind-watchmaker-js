@@ -3,7 +3,6 @@ function BiomorphFile(session, file) {
     this.file = file
     this.biomorphcount = file.size / session.serializationSize
     this.data = null
-    session.files.push(this)
 }
 
 
@@ -14,34 +13,34 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
     _create: function() {
 
         $(this.element).addClass('fileDialog')
-        $(this.element).attr('title', 'Load to Album')
-        let buttonDiv = $('<div class="fileButtonDiv">').appendTo(this.element)
+        $(this.element).attr('title', 'Load to Session Album')
         let input = $('<input type="file" class="fileInput" multiple >')
-        $(buttonDiv).append(input)       
-        let addSelectedToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Biomorph to Session Album</button>')
+        $(this.element).append(input)       
+        let buttonDiv = $('<div class="fileButtonDiv">').appendTo(this.element)
+        let addSelectedToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Biomorph</button>')
         $(buttonDiv).append(addSelectedToSessionAlbum)
         this._on(addSelectedToSessionAlbum, {click: function(event) {this.addbiomorphtoalbum(event)}})
-        let addSelectedAlbumToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Album to Session Album</button>')
+        let addSelectedAlbumToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add All</button>')
         $(buttonDiv).append(addSelectedAlbumToSessionAlbum)
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.addalbumtoalbum(event)}})
         let openAlbum = $('<button class="fileDialogButton fileButtonHidden">Open Album</button>')
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.openalbum(event)}})
         $(buttonDiv).append(openAlbum)
 
-        $(this.element).append($("<div class='fileListPreviewHeader'><div class='file'>Album Name</div><div class='fileSize'>Biomorphs</div></div>"))
+        $(this.element).append($("<div class='fileListPreviewHeader'><div>Album Name</div><div>Biomorphs</div></div>"))
 
         let fileListPreviewFlexDiv = $('<div class="fileListPreviewFlexDiv">')
         $(this.element).append(fileListPreviewFlexDiv)
         let fileList = $('<div>').addClass('fileList')
         $(fileListPreviewFlexDiv).append(fileList)
-        this.loadsessionfiles(fileList)
+        this.loadsessionalbums(fileList)
         this._on(input, {change: function(event) {
             this.filechange(event)
         }})
-        this.options.width = 850
-        this.options.height = 520
+        this.options.width = 450
+        this.options.height = 350
         this.options.modal = true
-        $(fileListPreviewFlexDiv).append($('<canvas width="400" height="400" class="previewFile">'))
+        $(fileListPreviewFlexDiv).append($('<canvas width="200" height="200" class="previewFile">'))
         let slider = $("<div>").slider({
             orientation: "vertical",
             range: "min",
@@ -54,28 +53,74 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             },
             classes: {
                 "ui-slider": "file-preview-slider",
-              }
+            }
         });
         $(fileListPreviewFlexDiv).append(slider)
 
         return this._super()
     },
-    showalbumitem: function(index) {
-        let canvas = $(this.element).find('canvas')[0]
+    addbiomorphtoalbum: function(event) {
+        let session = this.options.session
+        let slider = $(this.element).find('.file-preview-slider').slider("option", "value");
+        let canvas = $(this.element).find('canvas')
         let biomorph = $(canvas).data('genotype')
-        biomorph.readFromArrayBuffer(this.options.result, index)
+        let newBiomorph = _speciesFactorySingleton.getSpecies(
+                session.species, session, canvas[0]);
+        biomorph.copyBiomorph(newBiomorph)
+        if(session.album.biomorphs.length < 60) {
+            session.album.biomorphs.push(newBiomorph)
+        } else {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        }
+    },
+    addalbumtoalbum: function(event) {
+        let session = this.options.session
+        let fileDialog = $(event.target).closest('.fileDialog')
+        let selectedAlbum = fileDialog.find('.albumSelected')[0]
+        let album = $(selectedAlbum).data('album')
+        let biomorphs = album.biomorphs
+        let sessionAlbumBiomorphs = session.album.biomorphs
+        let canvas = $(fileDialog).find('canvas')[0]
+        if(sessionAlbumBiomorphs.length + biomorphs.length > 60) {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        } else {
+            console.log("adding all " + biomorphs.length)
+            for(let i = 0; i < biomorphs.length; i++) {
+                console.log(i)
+                let newBiomorph = _speciesFactorySingleton.getSpecies(
+                        session.species, session, canvas);
+                biomorphs[i].copyBiomorph(newBiomorph)
+                sessionAlbumBiomorphs.push(newBiomorph)
+            }
+            console.log(sessionAlbumBiomorphs)
+        }
+    },
+    openalbum: function(event) {
+
+    },
+    showalbumitem: function(index) {
+        
+        let canvas = $(this.element).find('canvas')[0]
+        let selectedDiv = $(this.element).find('.albumSelected')[0]
+        let biomorph = $(selectedDiv).data('album').biomorphs[index]
+        biomorph.drawer = canvas
+        $(canvas).data('genotype', biomorph)
         biomorph.develop()
     },
-    loadsessionfiles: function(fileList) {
-        let sessionFiles = this.options.session.files
-        for(let j = 0; j < sessionFiles.length; j++) {
-            let biomorphFile = sessionFiles[j]
-            let file = biomorphFile.file
-            let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
-            $(fileList).append(fileDiv)
-            $(fileDiv).data('file', biomorphFile)
-            this._on(fileDiv, {click: function(event) {this.fileselected(event)}})
-            $(fileList).append($('<div class="fileSize">' + biomorphFile.biomorphcount + '</div>'))
+    loadsessionalbums: function(fileList) {
+        let sessionAlbums = this.options.session.albums
+        for(let j = 0; j < sessionAlbums.length; j++) {
+            let album = sessionAlbums[j]
+            if(album.file != null) {
+                let file = album.file.file
+                let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
+                $(fileList).append(fileDiv)
+                $(fileDiv).data('album', album)
+                this._on(fileDiv, {click: function(event) {this.albumselected(event)}})
+                $(fileList).append($('<div class="fileSize">' + album.file.biomorphcount + '</div>'))
+            }
         }
     },
     filechange: function(event) {
@@ -83,57 +128,54 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         event.stopPropagation()
         event.preventDefault()
         let files = event.target.files
-        let str = ''
+        let str = '';
         let fileList = fileDialog.find('.fileList')
         $(fileList).empty()
-        this.loadsessionfiles(fileList)
+        this.loadsessionalbums(fileList)
+        let session = this.options.session
         for(let i = 0; i < files.length; i++) {
             let file = files[i]
             let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
             $(fileList).append(fileDiv)
-            let biomorphFile = new BiomorphFile(this.options.session, file)
-
-            $(fileDiv).data('file', biomorphFile)
-            this._on(fileDiv, {click: function(event) {this.fileselected(event)}})
+            let album = new Album(file.name, session)
+            let biomorphFile = new BiomorphFile(session, file)
+            album.file = biomorphFile
+            $(fileDiv).data('album', album)
+            this._on(fileDiv, {click: function(event) {this.albumselected(event)}})
             $(fileList).append($('<div class="fileSize">' + biomorphFile.biomorphcount + '</div>'))
+            let reader = new FileReader() 
+            reader.onload = function(e) {
+                biomorphFile.data = reader.result
+                
+                for(let index = 0; index < biomorphFile.biomorphcount; index++) {
+                    let canvas = $('<canvas>')
+                    let biomorph = _speciesFactorySingleton.getSpecies(
+                            session.species, session, canvas[0]);
+                    biomorph.readFromArrayBuffer(reader.result, index)
+                    album.biomorphs.push(biomorph)
+                }
+            }
+            reader.readAsArrayBuffer(file)
         }
-
-
-        
     },
-    fileselected: function(event) {
-        $(event.target).closest('.fileList').find('.fileListElement').removeClass('fileSelected')
-        $(event.target).addClass('fileSelected')
-        let file = $(event.target).data('file')
-        
-        console.log('File selected ' + file.file.name)
+    albumselected: function(event) {
+        $(event.target).closest('.fileList').find('.fileListElement').removeClass('albumSelected')
+        $(event.target).addClass('albumSelected')
+        let album = $(event.target).data('album')
+        let file = album.file
         let fileDialog = $(event.target).closest('.fileDialog')
         $(fileDialog).find('.fileDialogButton').removeClass('fileButtonHidden')
         let session = this.options.session // $(fileDialog).fileDialog('option', 'session')
         let canvas = fileDialog.find('canvas.previewFile')[0]
-        console.log(canvas)
         let biomorph = _speciesFactorySingleton.getSpecies(
-                        session.species, session, canvas)
+                session.species, session, canvas);
         $(canvas).data('genotype', biomorph)
-        let reader = new FileReader() 
+
         let slider = $(this.element).find('.file-preview-slider')
-
-        reader.onload = function(e) {
-            console.log('Reader result:')
-            console.log(reader.result)
-            $(fileDialog).fileDialog('option', 'result', reader.result)
-            console.log(session.serializationSize)
-            file.data = reader.result
-            let resultcount = file.file.size / session.serializationSize
-            $(fileDialog).fileDialog('option', 'resultcount', resultcount)
-            file.biomorphcount = resultcount
-            console.log('result count ' + resultcount)
-                    biomorph.readFromArrayBuffer(reader.result, 0)
-            biomorph.develop()
-            $(slider).slider('option', 'max', resultcount - 1)
-        }
-
-        reader.readAsArrayBuffer(file.file)
+        $(slider).slider("option", "max", album.biomorphs.length - 1)
+        $(slider).slider("option", "value", 0)
+        biomorph.readFromArrayBuffer(file.data, 0)
+        biomorph.develop()
     }
 })
 

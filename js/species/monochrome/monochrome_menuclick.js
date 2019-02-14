@@ -33,7 +33,6 @@ Monochrome.menuclick = function(event) {
         Monochrome.toggleMut(mut, 8, target)
         return false 
     }
-    console.log('returning true')
     return true // Event not processed
 }
 

@@ -7,16 +7,12 @@ MenuHandler.prototype.getBiomorph = function(event) {
     return $(midCanvas).data('genotype')
 }
 MenuHandler.prototype.menuclick = function(event) {
-    console.log('Menuhandler menuclick')
     let result = this.session.menuclick(event)
-    console.log(result)
     if(result) {
         let menuid = $(event.target).data('menuid')
         let target = event.target
-        console.log('WatchmakerView menu ' + menuid)
         if(menuid.startsWith('Animal')) {
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
-            console.log(midCanvas)
             let ctx = midCanvas.getContext('2d')
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0,0, midCanvas.width, midCanvas.height)
@@ -27,10 +23,9 @@ MenuHandler.prototype.menuclick = function(event) {
         }
         switch(menuid) {
         case 'AddBiomorphToAlbum':
-            let album = this.session.album
-            if(album.length < 60) {
-                album.push(this.getBiomorph(event))
-                console.log(album)
+            let biomorphs = this.session.album.biomorphs
+            if(biomorphs.length < 60) {
+                biomorphs.push(this.getBiomorph(event))
             } else {
                 // poop
             }
@@ -126,8 +121,6 @@ MenuHandler.prototype.menuclick = function(event) {
                 $(li).removeClass('checked')
                 $(li).find('img').css('display', 'none')
             }
-            console.log('DriftSweep ' + options.driftsweep)
-            console.log(target)
             return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)

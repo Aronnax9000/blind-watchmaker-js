@@ -2,6 +2,9 @@
  * Album view
  */
 $.widget( "dawk.albumView", $.dawk.watchmakerView, {
+    options: {
+        album: null
+    },
     viewGainedFocus: function(event, ui) {
         console.log('albumView gained focus')
         let session  = $(this).albumView("option", "session")
@@ -20,11 +23,10 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         let biomorph = $(canvas).data('genotype')
         console.log('biomorph')
         console.log(biomorph)
-        let album = this.options.session.album
-        for(let i = 0; i < album.length; album++) {
-            if(biomorph == album[i]) {
-                console.log('splice ' + i)
-                album.splice(i, 1)
+        let biomorphs = this.options.album.biomorphs
+        for(let i = 0; i < biomorphs.length; i++) {
+            if(biomorph == biomorphs[i]) {
+                biomorphs.splice(i, 1)
                 break
             }
         }
@@ -50,6 +52,9 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
     _create: function() {
         this._super()
         $(this.element).addClass('albumView')
+        if(this.options.album == null) {
+            this.options.album = this.options.session.album
+        }
         var species = this.options.session.species
 
         var geneboxes_options = {
@@ -65,7 +70,10 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
 
         
         for(let i = 0; i < 4; i++) {
-            let albumPageView = $('<div>').albumPageView({pageNumber: i, session: this.options.session})
+            let albumPageView = $('<div>').albumPageView({
+                pageNumber: i, 
+                'album': this.options.album, 
+                session: this.options.session})
             $(container).append(albumPageView)
             $(albumPageView).albumPageView('developAll')
         }

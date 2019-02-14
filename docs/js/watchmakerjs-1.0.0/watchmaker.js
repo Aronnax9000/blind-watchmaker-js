@@ -851,8 +851,8 @@ _drawerFactorySingleton.registerDrawerType("svg", (
 
 function WatchmakerSession(species) {
     this.options = []
-    this.album = []
-    this.files = []
+    this.albums = []
+    this.album = new Album('Session Album', this)
     this.myPenSize = 1;
     this.trianglable = false
     this.arrayable = false
@@ -1307,16 +1307,12 @@ MenuHandler.prototype.getBiomorph = function(event) {
     return $(midCanvas).data('genotype')
 }
 MenuHandler.prototype.menuclick = function(event) {
-    console.log('Menuhandler menuclick')
     let result = this.session.menuclick(event)
-    console.log(result)
     if(result) {
         let menuid = $(event.target).data('menuid')
         let target = event.target
-        console.log('WatchmakerView menu ' + menuid)
         if(menuid.startsWith('Animal')) {
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox')[0]
-            console.log(midCanvas)
             let ctx = midCanvas.getContext('2d')
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             ctx.clearRect(0,0, midCanvas.width, midCanvas.height)
@@ -1327,10 +1323,9 @@ MenuHandler.prototype.menuclick = function(event) {
         }
         switch(menuid) {
         case 'AddBiomorphToAlbum':
-            let album = this.session.album
-            if(album.length < 60) {
-                album.push(this.getBiomorph(event))
-                console.log(album)
+            let biomorphs = this.session.album.biomorphs
+            if(biomorphs.length < 60) {
+                biomorphs.push(this.getBiomorph(event))
             } else {
                 // poop
             }
@@ -1426,8 +1421,6 @@ MenuHandler.prototype.menuclick = function(event) {
                 $(li).removeClass('checked')
                 $(li).find('img').css('display', 'none')
             }
-            console.log('DriftSweep ' + options.driftsweep)
-            console.log(target)
             return false
         case 'HopefulMonster':
             var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
@@ -1645,10 +1638,23 @@ $.widget('dawk.watchmakerView', {
     },
 
 })
+function Album(name, session) {
+    this.name = name
+    this.session = session
+    this.file = null
+    this.biomorphs = []
+    session.albums.push(this)
+}
+
+
+
 /*
  * Album view
  */
 $.widget( "dawk.albumView", $.dawk.watchmakerView, {
+    options: {
+        album: null
+    },
     viewGainedFocus: function(event, ui) {
         console.log('albumView gained focus')
         let session  = $(this).albumView("option", "session")
@@ -1667,11 +1673,10 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         let biomorph = $(canvas).data('genotype')
         console.log('biomorph')
         console.log(biomorph)
-        let album = this.options.session.album
-        for(let i = 0; i < album.length; album++) {
-            if(biomorph == album[i]) {
-                console.log('splice ' + i)
-                album.splice(i, 1)
+        let biomorphs = this.options.album.biomorphs
+        for(let i = 0; i < biomorphs.length; i++) {
+            if(biomorph == biomorphs[i]) {
+                biomorphs.splice(i, 1)
                 break
             }
         }
@@ -1697,6 +1702,9 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
     _create: function() {
         this._super()
         $(this.element).addClass('albumView')
+        if(this.options.album == null) {
+            this.options.album = this.options.session.album
+        }
         var species = this.options.session.species
 
         var geneboxes_options = {
@@ -1712,7 +1720,10 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
 
         
         for(let i = 0; i < 4; i++) {
-            let albumPageView = $('<div>').albumPageView({pageNumber: i, session: this.options.session})
+            let albumPageView = $('<div>').albumPageView({
+                pageNumber: i, 
+                'album': this.options.album, 
+                session: this.options.session})
             $(container).append(albumPageView)
             $(albumPageView).albumPageView('developAll')
         }
@@ -1741,7 +1752,8 @@ AlbumMenuHandler.prototype.menuclick = function(event) {
 $.widget( "dawk.albumPageView", {
     options: {
         pageNumber: 0,
-        isIndexView: true
+        isIndexView: true,
+        album: null
     },
     _create: function() {
         this._super()
@@ -1763,22 +1775,23 @@ $.widget( "dawk.albumPageView", {
 
     },
     canvasclicked: function (target) {
-        console.log('canvas clicked')
         $(this.element).find('canvas').removeClass('midBox')
         $(target).addClass('midBox')
     },
     developAll: function() {
-        console.log('developAll')
         $(this.element).empty()
         $("<p class='albumBoxesPageNo'>Album Page " + (this.options.pageNumber + 1) + "</p>").appendTo(this.element)
 
-        album = this.options.session.album
+        biomorphs = this.options.album.biomorphs
+        console.log(biomorphs)
         let pageNumber = this.options.pageNumber
         let startIndex = pageNumber * 15
-        let endIndex = pageNumber + 15
-        if(startIndex < album.length) {
-            for(let i = startIndex; i <  endIndex && i < album.length; i++) {
-                let biomorph = album[i]
+        let endIndex = startIndex + 15
+        console.log('start ' + startIndex + ' end ' + endIndex)
+        if(startIndex < biomorphs.length) {
+            for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
+                console.log('canvas biomorphs ' + i)
+                let biomorph = biomorphs[i]
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
                     $(canvas).attr('width', 100)
@@ -1812,7 +1825,6 @@ $.widget( "dawk.albumPageView", {
         }
     },
     viewGainedFocus: function(event, ui) {
-        console.log('albumPageView gained focus')
         let session  = $(this).albumPageView("option", "session")
         $(this).albumPageView("updateMenus", session, this)
         session.updateMenus(session, this)
@@ -1824,7 +1836,6 @@ function BiomorphFile(session, file) {
     this.file = file
     this.biomorphcount = file.size / session.serializationSize
     this.data = null
-    session.files.push(this)
 }
 
 
@@ -1835,34 +1846,34 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
     _create: function() {
 
         $(this.element).addClass('fileDialog')
-        $(this.element).attr('title', 'Load to Album')
-        let buttonDiv = $('<div class="fileButtonDiv">').appendTo(this.element)
+        $(this.element).attr('title', 'Load to Session Album')
         let input = $('<input type="file" class="fileInput" multiple >')
-        $(buttonDiv).append(input)       
-        let addSelectedToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Biomorph to Session Album</button>')
+        $(this.element).append(input)       
+        let buttonDiv = $('<div class="fileButtonDiv">').appendTo(this.element)
+        let addSelectedToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Biomorph</button>')
         $(buttonDiv).append(addSelectedToSessionAlbum)
         this._on(addSelectedToSessionAlbum, {click: function(event) {this.addbiomorphtoalbum(event)}})
-        let addSelectedAlbumToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add Album to Session Album</button>')
+        let addSelectedAlbumToSessionAlbum = $('<button class="fileDialogButton fileButtonHidden">Add All</button>')
         $(buttonDiv).append(addSelectedAlbumToSessionAlbum)
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.addalbumtoalbum(event)}})
         let openAlbum = $('<button class="fileDialogButton fileButtonHidden">Open Album</button>')
         this._on(addSelectedAlbumToSessionAlbum, {click: function(event) {this.openalbum(event)}})
         $(buttonDiv).append(openAlbum)
 
-        $(this.element).append($("<div class='fileListPreviewHeader'><div class='file'>Album Name</div><div class='fileSize'>Biomorphs</div></div>"))
+        $(this.element).append($("<div class='fileListPreviewHeader'><div>Album Name</div><div>Biomorphs</div></div>"))
 
         let fileListPreviewFlexDiv = $('<div class="fileListPreviewFlexDiv">')
         $(this.element).append(fileListPreviewFlexDiv)
         let fileList = $('<div>').addClass('fileList')
         $(fileListPreviewFlexDiv).append(fileList)
-        this.loadsessionfiles(fileList)
+        this.loadsessionalbums(fileList)
         this._on(input, {change: function(event) {
             this.filechange(event)
         }})
-        this.options.width = 850
-        this.options.height = 520
+        this.options.width = 450
+        this.options.height = 350
         this.options.modal = true
-        $(fileListPreviewFlexDiv).append($('<canvas width="400" height="400" class="previewFile">'))
+        $(fileListPreviewFlexDiv).append($('<canvas width="200" height="200" class="previewFile">'))
         let slider = $("<div>").slider({
             orientation: "vertical",
             range: "min",
@@ -1875,28 +1886,74 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
             },
             classes: {
                 "ui-slider": "file-preview-slider",
-              }
+            }
         });
         $(fileListPreviewFlexDiv).append(slider)
 
         return this._super()
     },
-    showalbumitem: function(index) {
-        let canvas = $(this.element).find('canvas')[0]
+    addbiomorphtoalbum: function(event) {
+        let session = this.options.session
+        let slider = $(this.element).find('.file-preview-slider').slider("option", "value");
+        let canvas = $(this.element).find('canvas')
         let biomorph = $(canvas).data('genotype')
-        biomorph.readFromArrayBuffer(this.options.result, index)
+        let newBiomorph = _speciesFactorySingleton.getSpecies(
+                session.species, session, canvas[0]);
+        biomorph.copyBiomorph(newBiomorph)
+        if(session.album.biomorphs.length < 60) {
+            session.album.biomorphs.push(newBiomorph)
+        } else {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        }
+    },
+    addalbumtoalbum: function(event) {
+        let session = this.options.session
+        let fileDialog = $(event.target).closest('.fileDialog')
+        let selectedAlbum = fileDialog.find('.albumSelected')[0]
+        let album = $(selectedAlbum).data('album')
+        let biomorphs = album.biomorphs
+        let sessionAlbumBiomorphs = session.album.biomorphs
+        let canvas = $(fileDialog).find('canvas')[0]
+        if(sessionAlbumBiomorphs.length + biomorphs.length > 60) {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        } else {
+            console.log("adding all " + biomorphs.length)
+            for(let i = 0; i < biomorphs.length; i++) {
+                console.log(i)
+                let newBiomorph = _speciesFactorySingleton.getSpecies(
+                        session.species, session, canvas);
+                biomorphs[i].copyBiomorph(newBiomorph)
+                sessionAlbumBiomorphs.push(newBiomorph)
+            }
+            console.log(sessionAlbumBiomorphs)
+        }
+    },
+    openalbum: function(event) {
+
+    },
+    showalbumitem: function(index) {
+        
+        let canvas = $(this.element).find('canvas')[0]
+        let selectedDiv = $(this.element).find('.albumSelected')[0]
+        let biomorph = $(selectedDiv).data('album').biomorphs[index]
+        biomorph.drawer = canvas
+        $(canvas).data('genotype', biomorph)
         biomorph.develop()
     },
-    loadsessionfiles: function(fileList) {
-        let sessionFiles = this.options.session.files
-        for(let j = 0; j < sessionFiles.length; j++) {
-            let biomorphFile = sessionFiles[j]
-            let file = biomorphFile.file
-            let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
-            $(fileList).append(fileDiv)
-            $(fileDiv).data('file', biomorphFile)
-            this._on(fileDiv, {click: function(event) {this.fileselected(event)}})
-            $(fileList).append($('<div class="fileSize">' + biomorphFile.biomorphcount + '</div>'))
+    loadsessionalbums: function(fileList) {
+        let sessionAlbums = this.options.session.albums
+        for(let j = 0; j < sessionAlbums.length; j++) {
+            let album = sessionAlbums[j]
+            if(album.file != null) {
+                let file = album.file.file
+                let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
+                $(fileList).append(fileDiv)
+                $(fileDiv).data('album', album)
+                this._on(fileDiv, {click: function(event) {this.albumselected(event)}})
+                $(fileList).append($('<div class="fileSize">' + album.file.biomorphcount + '</div>'))
+            }
         }
     },
     filechange: function(event) {
@@ -1904,57 +1961,54 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         event.stopPropagation()
         event.preventDefault()
         let files = event.target.files
-        let str = ''
+        let str = '';
         let fileList = fileDialog.find('.fileList')
         $(fileList).empty()
-        this.loadsessionfiles(fileList)
+        this.loadsessionalbums(fileList)
+        let session = this.options.session
         for(let i = 0; i < files.length; i++) {
             let file = files[i]
             let fileDiv = $('<div class="file fileListElement">' + file.name + '</div>')
             $(fileList).append(fileDiv)
-            let biomorphFile = new BiomorphFile(this.options.session, file)
-
-            $(fileDiv).data('file', biomorphFile)
-            this._on(fileDiv, {click: function(event) {this.fileselected(event)}})
+            let album = new Album(file.name, session)
+            let biomorphFile = new BiomorphFile(session, file)
+            album.file = biomorphFile
+            $(fileDiv).data('album', album)
+            this._on(fileDiv, {click: function(event) {this.albumselected(event)}})
             $(fileList).append($('<div class="fileSize">' + biomorphFile.biomorphcount + '</div>'))
+            let reader = new FileReader() 
+            reader.onload = function(e) {
+                biomorphFile.data = reader.result
+                
+                for(let index = 0; index < biomorphFile.biomorphcount; index++) {
+                    let canvas = $('<canvas>')
+                    let biomorph = _speciesFactorySingleton.getSpecies(
+                            session.species, session, canvas[0]);
+                    biomorph.readFromArrayBuffer(reader.result, index)
+                    album.biomorphs.push(biomorph)
+                }
+            }
+            reader.readAsArrayBuffer(file)
         }
-
-
-        
     },
-    fileselected: function(event) {
-        $(event.target).closest('.fileList').find('.fileListElement').removeClass('fileSelected')
-        $(event.target).addClass('fileSelected')
-        let file = $(event.target).data('file')
-        
-        console.log('File selected ' + file.file.name)
+    albumselected: function(event) {
+        $(event.target).closest('.fileList').find('.fileListElement').removeClass('albumSelected')
+        $(event.target).addClass('albumSelected')
+        let album = $(event.target).data('album')
+        let file = album.file
         let fileDialog = $(event.target).closest('.fileDialog')
         $(fileDialog).find('.fileDialogButton').removeClass('fileButtonHidden')
         let session = this.options.session // $(fileDialog).fileDialog('option', 'session')
         let canvas = fileDialog.find('canvas.previewFile')[0]
-        console.log(canvas)
         let biomorph = _speciesFactorySingleton.getSpecies(
-                        session.species, session, canvas)
+                session.species, session, canvas);
         $(canvas).data('genotype', biomorph)
-        let reader = new FileReader() 
+
         let slider = $(this.element).find('.file-preview-slider')
-
-        reader.onload = function(e) {
-            console.log('Reader result:')
-            console.log(reader.result)
-            $(fileDialog).fileDialog('option', 'result', reader.result)
-            console.log(session.serializationSize)
-            file.data = reader.result
-            let resultcount = file.file.size / session.serializationSize
-            $(fileDialog).fileDialog('option', 'resultcount', resultcount)
-            file.biomorphcount = resultcount
-            console.log('result count ' + resultcount)
-                    biomorph.readFromArrayBuffer(reader.result, 0)
-            biomorph.develop()
-            $(slider).slider('option', 'max', resultcount - 1)
-        }
-
-        reader.readAsArrayBuffer(file.file)
+        $(slider).slider("option", "max", album.biomorphs.length - 1)
+        $(slider).slider("option", "value", 0)
+        biomorph.readFromArrayBuffer(file.data, 0)
+        biomorph.develop()
     }
 })
 
@@ -2039,7 +2093,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
             if(useFitnessCheckbox) {
                 useFitness = useFitnessCheckbox.checked;
             }
-            var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
+            var numBoxes = $(this.options.boxes).breedingBoxes("option", "numBoxes");
             if (useFitness) {
                 var canvas = $(breedingBoxes).find('.box').get(0);
                 var biomorph = $(canvas).data('genotype');
@@ -2486,58 +2540,56 @@ $.widget( "dawk.breedingOffspringCounter", {
 });/*
  * drift box
  */
-$( function() {
-    $.widget('dawk.driftBox', {
-        options: {
-            species: null,
-            canvas: null,
-            width: 200,
-            height: 200,
-            dodrift: false
-        },
-        _create: function() {
-            this.element.addClass('driftBox');
-            this.element.addClass('boxDiv');
-            var canvas = $("<canvas>");
-            this.options.canvas = canvas[0];
-            canvas.attr('width', this.options.width);
-            canvas.attr('height', this.options.height);
-            canvas.addClass('box');
-            canvas.addClass('midBox');
+$.widget('dawk.driftBox', {
+    options: {
+        species: null,
+        canvas: null,
+        width: 200,
+        height: 200,
+        dodrift: false
+    },
+    _create: function() {
+        this.element.addClass('driftBox');
+        this.element.addClass('boxDiv');
+        var canvas = $("<canvas>");
+        this.options.canvas = canvas[0];
+        canvas.attr('width', this.options.width);
+        canvas.attr('height', this.options.height);
+        canvas.addClass('box');
+        canvas.addClass('midBox');
 
-            this.element.append(canvas);
+        this.element.append(canvas);
 
 
-        },
-        doDrift: function() {
-            if(this.options.dodrift) {
-                let canvas = this.options.canvas
-                let biomorph = $(canvas).data('genotype').reproduce(canvas)
-                $(canvas).data('genotype', biomorph)
-                biomorph.develop()
-                this.update()
-                this._delay(this.doDrift, 0);
-            } 
-        },
-        stopDrift: function() {
-            this.options.dodrift = false
-        },
-        startDrift: function() {
-            if(! this.options.dodrift) {
-                this.options.dodrift = true
-                this.doDrift()
-            }
-        },
-        update: function() {
-            var parentView = this.element.closest('.watchmakerView')[0];
-            var geneboxes = $(parentView)
-            .find('.geneboxes').get(0);
-            let canvas = $(this.element).find('canvas')[0]
-            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
-                    canvas)
-        },
-    });
-});
+    },
+    doDrift: function() {
+        if(this.options.dodrift) {
+            let canvas = this.options.canvas
+            let biomorph = $(canvas).data('genotype').reproduce(canvas)
+            $(canvas).data('genotype', biomorph)
+            biomorph.develop()
+            this.update()
+            this._delay(this.doDrift, 0);
+        } 
+    },
+    stopDrift: function() {
+        this.options.dodrift = false
+    },
+    startDrift: function() {
+        if(! this.options.dodrift) {
+            this.options.dodrift = true
+            this.doDrift()
+        }
+    },
+    update: function() {
+        var parentView = this.element.closest('.watchmakerView')[0];
+        var geneboxes = $(parentView)
+        .find('.geneboxes').get(0);
+        let canvas = $(this.element).find('canvas')[0]
+        _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                canvas)
+    },
+})
 $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
     _create: function() {
         this._super("_create")
@@ -2596,63 +2648,62 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
 });/*
  * Engineering box
  */
-$( function() {
-    $.widget('dawk.engineeringBox', {
-        options: {
-            species: null,
-            canvas: null,
-            width: 200,
-            height: 200,
-        },
-        _create: function() {
-            this.element.addClass('engineeringBox');
-            this.element.addClass('boxDiv');
-            var canvas = $("<canvas></canvas>");
-            this.options.canvas = canvas;
-            canvas.attr('width', this.options.width);
-            canvas.attr('height', this.options.height);
-            canvas.addClass('box');
-            canvas.addClass('midBox');
 
-            this.element.append(canvas);
+$.widget('dawk.engineeringBox', {
+    options: {
+        species: null,
+        canvas: null,
+        width: 200,
+        height: 200,
+    },
+    _create: function() {
+        this.element.addClass('engineeringBox');
+        this.element.addClass('boxDiv');
+        var canvas = $("<canvas></canvas>");
+        this.options.canvas = canvas;
+        canvas.attr('width', this.options.width);
+        canvas.attr('height', this.options.height);
+        canvas.addClass('box');
+        canvas.addClass('midBox');
 
-            this._on( canvas, {
-                click: "_doCanvasClicked",
-                mouseover: "_doMouseOver"
-            });
-        },
-        _doMouseOver: function(event) {
-            var parentView = this.element.parents('.watchmakerView').get(0);
-            var geneboxes = $(parentView)
-                .find('.geneboxes').get(0);
-            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
-                    this.options.canvas.get(0))
-        },
-        _doCanvasClicked: function(event) {
-            // raise hypo dialog here.
-            var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
-                        <span style='float:none; display: inline' >\
-                    The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
-                                <br>to get a usable cursor. If in doubt hover<br>over a gene for instructions.</span></div>")
-            $(hypo).dialog({
-                dialogClass: "dialogNoTitle",
-                resizeable: false,
-                modal: true,
-                position: { my: "left top", at: "left+312 top+104", of: this.element },
-                width: 450,
-                buttons: [
-                    {
-                      text: "Okay",
-                      click: function() {
+        this.element.append(canvas);
+
+        this._on( canvas, {
+            click: "_doCanvasClicked",
+            mouseover: "_doMouseOver"
+        });
+    },
+    _doMouseOver: function(event) {
+        var parentView = this.element.parents('.watchmakerView').get(0);
+        var geneboxes = $(parentView)
+        .find('.geneboxes').get(0);
+        _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                this.options.canvas.get(0))
+    },
+    _doCanvasClicked: function(event) {
+        // raise hypo dialog here.
+        var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
+                <span style='float:none; display: inline' >\
+                The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
+        <br>to get a usable cursor. If in doubt hover<br>over a gene for instructions.</span></div>")
+        $(hypo).dialog({
+            dialogClass: "dialogNoTitle",
+            resizeable: false,
+            modal: true,
+            position: { my: "left top", at: "left+312 top+104", of: this.element },
+            width: 450,
+            buttons: [
+                {
+                    text: "Okay",
+                    click: function() {
                         $( this ).dialog( "close" );
-                      }
                     }
-                  ],
                 }
-            )
-            return false;
-        },
-    });
+                ],
+        }
+        )
+        return false;
+    },
 });
 /*
  * Drift view
@@ -3500,69 +3551,68 @@ $.widget('dawk.sweepView', $.dawk.watchmakerView, {
 
 
 });/*
- * drift box
+ * sweep box
  */
-$( function() {
-    $.widget('dawk.sweepBoxes', {
-        options: {
-            index: 0,
-            species: null,
-            canvas: null,
-            width: 200,
-            height: 200,
-            dodrift: false
-        },
-        _create: function() {
-            this.element.addClass("boxes")
-            
-            for(let i = 0; i < 15; i++) {
-                var canvas = $("<canvas class='boxDiv'>");
-                canvas.attr('width', this.options.width);
-                canvas.attr('height', this.options.height);
-                canvas.addClass('box');
-                canvas.addClass('midBox');
-                this.element.append(canvas);
-            }
-            console.log('on create ' + this.options.index)
 
-        },
-        doDrift: function() {
-            if(this.options.dodrift) {
-                let index = this.options.index
-                let canvases = $(this.element).find('canvas')
-                let parentCanvas = canvases[index]
-                $(parentCanvas).removeClass('midBox')
-                index = (index + 1) % 15
-                
-                let daughterCanvas = canvases[index]
-                $(daughterCanvas).addClass('midBox')
-                let biomorph = $(parentCanvas).data('genotype').reproduce(daughterCanvas)
-                $(daughterCanvas).data('genotype', biomorph)
-                biomorph.develop()
-                
-                this.update()
-                this.options.index = index
-                this._delay(this.doDrift, 0);
-            } 
-        },
-        stopDrift: function() {
-            this.options.dodrift = false
-        },
-        startDrift: function() {
-            if(! this.options.dodrift) {
-                this.options.dodrift = true
-                this.doDrift()
-            }
-        },
-        update: function() {
-            var parentView = this.element.closest('.watchmakerView')[0];
-            var geneboxes = $(parentView)
-            .find('.geneboxes').get(0);
-            let canvas = $(this.element).find('canvas')[this.options.index]
-            _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
-                    canvas)
-        },
-    });
+$.widget('dawk.sweepBoxes', {
+    options: {
+        index: 0,
+        species: null,
+        canvas: null,
+        width: 200,
+        height: 200,
+        dodrift: false
+    },
+    _create: function() {
+        this.element.addClass("boxes")
+
+        for(let i = 0; i < 15; i++) {
+            var canvas = $("<canvas class='boxDiv'>");
+            canvas.attr('width', this.options.width);
+            canvas.attr('height', this.options.height);
+            canvas.addClass('box');
+            canvas.addClass('midBox');
+            this.element.append(canvas);
+        }
+        console.log('on create ' + this.options.index)
+
+    },
+    doDrift: function() {
+        if(this.options.dodrift) {
+            let index = this.options.index
+            let canvases = $(this.element).find('canvas')
+            let parentCanvas = canvases[index]
+            $(parentCanvas).removeClass('midBox')
+            index = (index + 1) % 15
+
+            let daughterCanvas = canvases[index]
+            $(daughterCanvas).addClass('midBox')
+            let biomorph = $(parentCanvas).data('genotype').reproduce(daughterCanvas)
+            $(daughterCanvas).data('genotype', biomorph)
+            biomorph.develop()
+
+            this.update()
+            this.options.index = index
+            this._delay(this.doDrift, 0);
+        } 
+    },
+    stopDrift: function() {
+        this.options.dodrift = false
+    },
+    startDrift: function() {
+        if(! this.options.dodrift) {
+            this.options.dodrift = true
+            this.doDrift()
+        }
+    },
+    update: function() {
+        var parentView = this.element.closest('.watchmakerView')[0];
+        var geneboxes = $(parentView)
+        .find('.geneboxes').get(0);
+        let canvas = $(this.element).find('canvas')[this.options.index]
+        _speciesFactorySingleton.updateFromCanvas(this.options.species, geneboxes,
+                canvas)
+    },
 });
 
 function Triangle() {}

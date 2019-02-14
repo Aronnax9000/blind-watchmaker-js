@@ -78,7 +78,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
             if(useFitnessCheckbox) {
                 useFitness = useFitnessCheckbox.checked;
             }
-            var numBoxes = $(boxes).breedingBoxes("option", "numBoxes");
+            var numBoxes = $(this.options.boxes).breedingBoxes("option", "numBoxes");
             if (useFitness) {
                 var canvas = $(breedingBoxes).find('.box').get(0);
                 var biomorph = $(canvas).data('genotype');
