@@ -40,6 +40,19 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs("refresh");
     },
     newAlbumView: function(album) {
+        var alreadyOpen = null
+        $(this.element).find('.albumView').each(function() {
+            if(album == $(this).data('album')) {
+                alreadyOpen = this
+            }
+        })
+        if(alreadyOpen != null) {
+        } else {
+            this.openAlbumView(album)
+        }
+    },
+    openAlbumView: function(album) {
+    
         var species = this.options.species
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconAlbum_ALAN_32x32.png'

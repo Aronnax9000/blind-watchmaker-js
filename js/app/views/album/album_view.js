@@ -62,6 +62,7 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         if(this.options.album == null) {
             this.options.album = this.options.session.album
         }
+        $(this.element).data('album', this.options.album)
         var species = this.options.session.species
 
         var geneboxes_options = {
