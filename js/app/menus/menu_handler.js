@@ -26,8 +26,13 @@ MenuHandler.prototype.menuclick = function(event) {
             let biomorphs = this.session.album.biomorphs
             if(biomorphs.length < 60) {
                 biomorphs.push(this.getBiomorph(event))
+                console.log('trying to open session album')
+                let watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newAlbumView", this.session.album, false);
             } else {
-                // poop
+                var audio = new Audio('sounds/newbip.mp3');
+                audio.play();
             }
             return false
         case 'LoadToAlbum':
@@ -35,9 +40,9 @@ MenuHandler.prototype.menuclick = function(event) {
             return false
         case 'ShowAlbum':
             if(this.session.album.length != 0) {
-                var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                let watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
-                        "newAlbumView", this.session.album);
+                        "newAlbumView", this.session.album, true);
                 
             } else {
                 alert('Add Biomorph to Album first.')

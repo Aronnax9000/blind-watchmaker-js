@@ -69,6 +69,10 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         if(session.album.biomorphs.length < 60) {
             session.album.biomorphs.push(newBiomorph)
             this.updatestatus('Added biomorph to session album')
+            let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newAlbumView", session.album, false);
+            
         } else {
             this.updatestatus('Session album is full')
             var audio = new Audio('sounds/newbip.mp3');
@@ -95,6 +99,10 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
                 sessionAlbumBiomorphs.push(newBiomorph)
             }
             this.updatestatus('Added all biomorphs to session album')
+            let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newAlbumView", session.album, false);
+
 
         }
     },
@@ -103,7 +111,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         let selectedDiv = $(event.target).closest('.fileDialog').find('.albumSelected')[0]
         let album = $(selectedDiv).data('album')
         $(watchmakerSessionTab).watchmakerSessionTab(
-                "newAlbumView", album);
+                "newAlbumView", album, true);
         this.close()
     },
     showalbumitem: function(index) {

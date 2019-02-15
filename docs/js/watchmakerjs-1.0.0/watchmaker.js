@@ -912,7 +912,7 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newAlbumView: function(album) {
+    newAlbumView: function(album, showImmediately) {
         var alreadyOpen = null
         $(this.element).find('.albumView').each(function() {
             if(album == $(this).data('album')) {
@@ -921,10 +921,10 @@ $.widget('dawk.watchmakerSessionTab', {
         })
         if(alreadyOpen != null) {
         } else {
-            this.openAlbumView(album)
+            this.openAlbumView(album, showImmediately)
         }
     },
-    openAlbumView: function(album) {
+    openAlbumView: function(album, showImmediately) {
     
         var species = this.options.species
         var uuid = this.uuidv4();
@@ -958,10 +958,11 @@ $.widget('dawk.watchmakerSessionTab', {
                     }
                 });    
         this.element.tabs("refresh");
-        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-
+        if(showImmediately) {
+            var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+            this.element.tabs("refresh");
+            this.element.tabs("option", "active", tabcount - 1);
+        }
     },
     newBreedingView: function(biomorph) {
         var species = this.options.species
@@ -1340,8 +1341,13 @@ MenuHandler.prototype.menuclick = function(event) {
             let biomorphs = this.session.album.biomorphs
             if(biomorphs.length < 60) {
                 biomorphs.push(this.getBiomorph(event))
+                console.log('trying to open session album')
+                let watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newAlbumView", this.session.album, false);
             } else {
-                // poop
+                var audio = new Audio('sounds/newbip.mp3');
+                audio.play();
             }
             return false
         case 'LoadToAlbum':
@@ -1349,9 +1355,9 @@ MenuHandler.prototype.menuclick = function(event) {
             return false
         case 'ShowAlbum':
             if(this.session.album.length != 0) {
-                var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
+                let watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
-                        "newAlbumView", this.session.album);
+                        "newAlbumView", this.session.album, true);
                 
             } else {
                 alert('Add Biomorph to Album first.')
@@ -1951,6 +1957,10 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         if(session.album.biomorphs.length < 60) {
             session.album.biomorphs.push(newBiomorph)
             this.updatestatus('Added biomorph to session album')
+            let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newAlbumView", session.album, false);
+            
         } else {
             this.updatestatus('Session album is full')
             var audio = new Audio('sounds/newbip.mp3');
@@ -1977,6 +1987,10 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
                 sessionAlbumBiomorphs.push(newBiomorph)
             }
             this.updatestatus('Added all biomorphs to session album')
+            let watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+            $(watchmakerSessionTab).watchmakerSessionTab(
+                    "newAlbumView", session.album, false);
+
 
         }
     },
@@ -1985,7 +1999,7 @@ $.widget('dawk.fileDialog', $.ui.dialog, {
         let selectedDiv = $(event.target).closest('.fileDialog').find('.albumSelected')[0]
         let album = $(selectedDiv).data('album')
         $(watchmakerSessionTab).watchmakerSessionTab(
-                "newAlbumView", album);
+                "newAlbumView", album, true);
         this.close()
     },
     showalbumitem: function(index) {

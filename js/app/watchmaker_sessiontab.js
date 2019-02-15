@@ -39,7 +39,7 @@ $.widget('dawk.watchmakerSessionTab', {
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
     },
-    newAlbumView: function(album) {
+    newAlbumView: function(album, showImmediately) {
         var alreadyOpen = null
         $(this.element).find('.albumView').each(function() {
             if(album == $(this).data('album')) {
@@ -48,10 +48,10 @@ $.widget('dawk.watchmakerSessionTab', {
         })
         if(alreadyOpen != null) {
         } else {
-            this.openAlbumView(album)
+            this.openAlbumView(album, showImmediately)
         }
     },
-    openAlbumView: function(album) {
+    openAlbumView: function(album, showImmediately) {
     
         var species = this.options.species
         var uuid = this.uuidv4();
@@ -85,10 +85,11 @@ $.widget('dawk.watchmakerSessionTab', {
                     }
                 });    
         this.element.tabs("refresh");
-        var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
-        this.element.tabs("refresh");
-        this.element.tabs("option", "active", tabcount - 1);
-
+        if(showImmediately) {
+            var tabcount = $(this.element).children('ul.watchmakerViewTabs').children('li').length;
+            this.element.tabs("refresh");
+            this.element.tabs("option", "active", tabcount - 1);
+        }
     },
     newBreedingView: function(biomorph) {
         var species = this.options.species
