@@ -918,7 +918,8 @@ $.widget('dawk.watchmakerSessionTab', {
         var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
-            + 'Album</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            + album.name
+            + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
@@ -1337,7 +1338,7 @@ MenuHandler.prototype.menuclick = function(event) {
             if(this.session.album.length != 0) {
                 var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
-                        "newAlbumView");
+                        "newAlbumView", this.session.album);
                 
             } else {
                 alert('Add Biomorph to Album first.')
@@ -2082,7 +2083,8 @@ $.widget('dawk.saveDialog', $.ui.dialog, {
             binary += String.fromCharCode( bytes[ i ] );
         }
         let base64 = window.btoa( binary );
-        $('<a href="data:application/octet-stream;base64,' + base64 + '">Download album</a>').appendTo(this.element)
+        $('<div>WatchmakerJS cannot save files to disk on its own. Click the link below to download, or right click and choose "Save link as...", or whatever is appropriate for your browser.</div>').appendTo(this.element)
+        $('<div><a href="data:application/octet-stream;base64,' + base64 + '">Download album</a></div>').appendTo(this.element)
         return this._super()
         
         

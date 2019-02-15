@@ -89,6 +89,7 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/colour_biomorph.js">
             <fileset file="js/species/colour_biomorph/colour_biomorph.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_serialization.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">
             <fileset file="js/species/triay_shell/triay_shell.js" />

@@ -45,7 +45,8 @@ $.widget('dawk.watchmakerSessionTab', {
         var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
-            + 'Album</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            + album.name
+            + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);

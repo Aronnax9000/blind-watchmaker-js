@@ -37,7 +37,7 @@ MenuHandler.prototype.menuclick = function(event) {
             if(this.session.album.length != 0) {
                 var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
-                        "newAlbumView");
+                        "newAlbumView", this.session.album);
                 
             } else {
                 alert('Add Biomorph to Album first.')

@@ -25,7 +25,8 @@ $.widget('dawk.saveDialog', $.ui.dialog, {
             binary += String.fromCharCode( bytes[ i ] );
         }
         let base64 = window.btoa( binary );
-        $('<a href="data:application/octet-stream;base64,' + base64 + '">Download album</a>').appendTo(this.element)
+        $('<div>WatchmakerJS cannot save files to disk on its own. Click the link below to download, or right click and choose "Save link as...", or whatever is appropriate for your browser.</div>').appendTo(this.element)
+        $('<div><a href="data:application/octet-stream;base64,' + base64 + '">Download album</a></div>').appendTo(this.element)
         return this._super()
         
         

@@ -673,7 +673,7 @@ ColourBiomorph.initializeSession = function(session) {
     session.options.basicTypes = ["BasicTree", "Chess", "Insect", "New Random Start"]
     session.options.defaultBasicType = ["New Random Start"]
     session.options.hopefulMonsterBasicType = ["New Random Start"]
-    
+    session.serializationSize = 55
     ColourBiomorph.initializeMut(session)
 }
 $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
