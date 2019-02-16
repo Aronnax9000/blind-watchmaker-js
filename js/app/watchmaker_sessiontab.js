@@ -97,7 +97,7 @@ $.widget('dawk.watchmakerSessionTab', {
     newBreedingView: function(biomorph, newRandomStart) {
         var species = this.options.species
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
+        var viewIcon = 'img/IconFlipBirdToBreedingGrid_ICON_00261_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + (newRandomStart ? 'New Random Start' : 'Breeding')

@@ -81,7 +81,7 @@ $.widget('dawk.breedingBox', {
                         complete: function() {
                             // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
-                            jQuery.data(midCanvas, 'genotype', genotype)
+                            jQuery.data(midCanvas, 'genotype', biomorph)
                             let ctx = this.getContext('2d')
                             ctx.beginPath()
                             ctx.clearRect(0,0, this.width, this.height)
