@@ -32,6 +32,9 @@ $.widget('dawk.watchmakerSessionTab', {
         case 'Engineering':
             this.newEngineeringView();
             break
+        case 'NewRandomStart':
+            this.newBreedingView(null, true)
+            break
         case 'Breeding':
         default:
             this.newBreedingView();
@@ -91,19 +94,21 @@ $.widget('dawk.watchmakerSessionTab', {
             this.element.tabs("option", "active", tabcount - 1);
         }
     },
-    newBreedingView: function(biomorph) {
+    newBreedingView: function(biomorph, newRandomStart) {
         var species = this.options.species
         var uuid = this.uuidv4();
         var viewIcon = 'img/IconBreedingGridIcon_ICON_00256_32x32.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
-            + 'Breeding</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+            + (newRandomStart ? 'New Random Start' : 'Breeding')
+            + '</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
         var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');
         this.element.append(div);
         div.breedingView({
+            newRandomStart: newRandomStart,
             session: this.options.session, 
             watchmakerSessionTab: this, 
             species: species,

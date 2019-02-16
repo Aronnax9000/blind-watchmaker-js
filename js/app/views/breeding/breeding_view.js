@@ -5,7 +5,8 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         species: null,
         watchmakerSessionTab: null,
         biomorph: null,
-        generationsPreviousSecond: 0
+        generationsPreviousSecond: 0,
+        newRandomStart: false
 
     },
     viewGainedFocus: function(event, ui) {
@@ -32,7 +33,10 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this.element.append(geneboxes);
         var container = $("<div>");
         container.addClass('container');
-        var boxes = $("<div>").breedingBoxes({session: this.options.session, biomorph: this.options.biomorph})
+        var boxes = $("<div>").breedingBoxes({session: 
+            this.options.session, 
+            biomorph: this.options.biomorph,
+            newRandomStart: this.options.newRandomStart})
         this.options.boxes = boxes
         var overlay = $("<div>");
         overlay.addClass("overlay");
@@ -51,10 +55,11 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
         
         var midCanvas = $(this.element).find('.midBox').get(0);
-//        $("div").timingDialog({appendTo: boxes.element}).appendTo(this.element)
         this.options.timingDialog = Breeding.createTimingDialog(this.element, boxes.element)
         $(midCanvas).trigger('mouseover');
-        $(midCanvas).trigger('click');
+        if(! this.options.newRandomStart) {
+            $(midCanvas).trigger('click');
+        }
     },
     startAutoBreeding: function(event) {
         var startButton = $(this.options.timingDialog).find('.startAutoReproduce').get(0);

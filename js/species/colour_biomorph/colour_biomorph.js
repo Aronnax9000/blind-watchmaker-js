@@ -465,7 +465,7 @@ ColourBiomorph.prototype.doPerson = function(biomorphType) {
         case "Chess": this.chess(); break;
         case "BasicTree": this.basicTree(); break;
         case "Insect": this.insect(); break;
-        case "New Random Start":
+        case "Hopeful Monster":
         default: 
             this.basicTree()
             this.doSaltation()
@@ -670,9 +670,10 @@ ColourBiomorph.initializeSession = function(session) {
     session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png'
     session.options.trickle = 10
     session.options.palette = new Palette()
-    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "New Random Start"]
-    session.options.defaultBasicType = ["New Random Start"]
-    session.options.hopefulMonsterBasicType = ["New Random Start"]
+    session.options.basicTypes = ["BasicTree", "Chess", "Insect", "Hopeful Monster"]
+    session.options.defaultBasicType = ["Hopeful Monster"]
+    session.options.hopefulMonsterBasicType = ["Hopeful Monster"]
+    session.options.defaultView = 'NewRandomStart'
     session.serializationSize = 55
     ColourBiomorph.initializeMut(session)
 }

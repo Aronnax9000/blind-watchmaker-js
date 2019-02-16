@@ -8,6 +8,7 @@ $.widget('dawk.breedingBox', {
         breedingBoxes: null,
         width: 200,
         height: 200,
+        parentOptions: null,
     },
     _create: function() {
         this.element.addClass('boxDiv');
@@ -28,14 +29,17 @@ $.widget('dawk.breedingBox', {
         });
     },
     _doMouseOver: function(event) {
-        var parentbreedingView = this.element.parents('.breedingView').get(0);
-        var geneboxes = $(parentbreedingView)
-        .find('.geneboxes').get(0);
-        _speciesFactorySingleton.updateFromCanvas(
-                this.options.species,
-                geneboxes, this.options.canvas)
+        if($(this.options.canvas).data('genotype') != null) {
+            var parentbreedingView = this.element.parents('.breedingView').get(0);
+            var geneboxes = $(parentbreedingView)
+            .find('.geneboxes').get(0);
+            _speciesFactorySingleton.updateFromCanvas(
+                    this.options.species,
+                    geneboxes, this.options.canvas)
+        }
     },
     _doCanvasClicked: function(event) {
+        console.log('canvas clicked')
         var canvas = this.options.canvas;
         var position = this.element.position();
         var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
@@ -46,50 +50,58 @@ $.widget('dawk.breedingBox', {
         var numBoxes = boxes.options.numBoxes;
         var midBox = Math.trunc(numBoxes / 2);
         var midCanvas = $(this.element).parent().find('.midBox').get(0);
-        var genotype = jQuery.data(event.target, 'genotype');
+        var biomorph = $(event.target).data('genotype');
         var breedingBoxes = this.options.breedingBoxes;
         var clickedBoxIndex =  this.options.boxIndex;
-        if (genotype != null) {
-            // erase the other canvases
-            var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
-            $(breedingViewCanvases).each(function(index) {
-                if(index != clickedBoxIndex) {
-                    let ctx = this.getContext('2d')
-                    ctx.setTransform(1, 0, 0, 1, 0, 0);
-                    ctx.clearRect(0,0, this.width, this.height)
-                    $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
-                }
-            });
+        if (biomorph != null) {
+            event.stopPropagation()
+            if(this.options.parentOptions.newRandomStart) {
+                var watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
+                $(watchmakerSessionTab).watchmakerSessionTab(
+                        "newBreedingView", biomorph, false);
 
-            if (! this.options.isMidBox) {
-                $( canvas ).animate({
-                    left: "+=" + deltaX,
-                    top: "+=" + deltaY
-                }, { duration: 1000,                               
-                    easing: 'easeOutExpo',
-                    complete: function() {
-                        // Hand the biomorph off to the middle canvas
-                        jQuery.data(canvas, 'genotype', null)
-                        jQuery.data(midCanvas, 'genotype', genotype)
-                        let ctx = this.getContext('2d')
-                        ctx.beginPath()
-                        ctx.clearRect(0,0, this.width, this.height)
-                        ctx.closePath()
-                        // Inform the genotype that it now draws on a different
-                        // canvas
-                        genotype.drawer = midCanvas
-                        $(midCanvas).css({left:0,top:0})
-                        genotype.develop()
-                        breedingBoxes.produceLitter(numBoxes, midBox)
-                    } });
             } else {
-                breedingBoxes.produceLitter(numBoxes, midBox);
+                // erase the other canvases
+                var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
+                $(breedingViewCanvases).each(function(index) {
+                    if(index != clickedBoxIndex) {
+                        let ctx = this.getContext('2d')
+                        ctx.setTransform(1, 0, 0, 1, 0, 0);
+                        ctx.clearRect(0,0, this.width, this.height)
+                        $(this).css({left: midCanvasDivPosition.left, top: midCanvasDivPosition.top});
+                    }
+                });
+    
+                if (! this.options.isMidBox) {
+                    $( canvas ).animate({
+                        left: "+=" + deltaX,
+                        top: "+=" + deltaY
+                    }, { duration: 1000,                               
+                        easing: 'easeOutExpo',
+                        complete: function() {
+                            // Hand the biomorph off to the middle canvas
+                            jQuery.data(canvas, 'genotype', null)
+                            jQuery.data(midCanvas, 'genotype', genotype)
+                            let ctx = this.getContext('2d')
+                            ctx.beginPath()
+                            ctx.clearRect(0,0, this.width, this.height)
+                            ctx.closePath()
+                            // Inform the genotype that it now draws on a different
+                            // canvas
+                            biomorph.drawer = midCanvas
+                            $(midCanvas).css({left:0,top:0})
+                            biomorph.develop()
+                            breedingBoxes.produceLitter(numBoxes, midBox)
+                        } });
+                } else {
+                    breedingBoxes.produceLitter(numBoxes, midBox);
+                }
             }
         } else {
-            // Genotype was null
+            console.log('genotype was null')
+            // Genotype was null, newRandomStart in boxes should take care of it
         } 
         // Update the geneboxes with the genes of the new parent.
         $(midCanvasDiv).trigger("mouseover");
-        return false;
     },
 });

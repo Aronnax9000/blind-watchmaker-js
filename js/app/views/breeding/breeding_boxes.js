@@ -10,6 +10,7 @@ $.widget( "dawk.breedingBoxes", {
         cols: 3,
         numBoxes: 15,
         speciesFactory: null,
+        newRandomStart: false
     },
 
     sparkLine: function(destinationCanvas) {
@@ -118,15 +119,26 @@ $.widget( "dawk.breedingBoxes", {
                 this.produceKthOffspring(numBoxes, midBox, k, midCanvasDivPosition, recursive);
             }
         }
-
     },
-
+    newRandomStart: function(event) {
+        let canvas = $(this.options.midCanvasDiv).find('canvas').get(0)
+        let biomorph = $(canvas).data('genotype')
+        biomorph.doPerson(this.options.session.options.hopefulMonsterBasicType)
+        biomorph.develop()
+        $(canvas).trigger("mouseover");
+    },
     // The constructor
     _create: function(options) {
         var session = this.options.session
         var species = this.options.session.species
         var boxes = this.element
         $(boxes).addClass('boxes')
+        if(this.options.newRandomStart) {
+            $(boxes).addClass('newRandomStart')
+        }
+        this._on(boxes, {'click': function(event) {
+            this.newRandomStart(event)
+        }})
         this.element.append(boxes)
         var numBoxes = this.options.numBoxes
         var midBox = Math.trunc(numBoxes / 2)
@@ -136,18 +148,26 @@ $.widget( "dawk.breedingBoxes", {
                 boxIndex: j, 
                 isMidBox: isMidBox, 
                 species: species,
-                breedingBoxes: this}).appendTo(boxes);
+                breedingBoxes: this,
+                parentOptions: this.options}
+            ).appendTo(boxes);
             if(isMidBox) {
-                // Create a biomorph and render it on the middle canvas.
                 this.options.midCanvasDiv = canvasDiv
                 var canvas = $(canvasDiv).find('canvas').get(0)
+                
+                    // Create a biomorph and render it on the middle canvas.
                 var biomorph = _speciesFactorySingleton.getSpecies(
                         species, session, canvas)
-                        if(this.options.biomorph) {
-                            this.options.biomorph.copyBiomorph(biomorph)
-                        } else {
-                            biomorph.doPerson(session.options.defaultBasicType)
-                        }
+                if(this.options.newRandomStart) {
+                    biomorph.doPerson(session.options.hopefulMonsterBasicType)
+                } else {
+                    if(this.options.biomorph) {
+                        this.options.biomorph.copyBiomorph(biomorph)
+                    } else {
+                        biomorph.doPerson(session.options.defaultBasicType)
+                    }
+                }
+
                 $(canvas).data('genotype', biomorph)        
                 biomorph.develop()
             }

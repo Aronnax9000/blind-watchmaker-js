@@ -85,8 +85,13 @@ body {
 	
 }
 
-.breedingView .boxes {
+.breedingView  {
 	      cursor: url(cursor/breed.png), auto;
+}
+
+.newRandomStart {
+     cursor: url(cursor/die.png), auto;
+	
 }
 
 .engineeringBox {
