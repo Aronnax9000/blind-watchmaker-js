@@ -15,6 +15,17 @@ function WatchmakerSession(species) {
     _speciesFactorySingleton.initializeSession(species, this)
 }
 
+WatchmakerSession.prototype.getModel = function() {
+    return {options: this.options, 
+        myPenSize: this.myPenSize, 
+        trianglable: this.trianglable,
+        arrayable: this.arrayable,
+        driftsweep: this.driftsweep,
+        species: this.species,
+        fossilizing: this.fossilizing
+    }
+}
+
 WatchmakerSession.prototype.menuclick = function(event) {
     console.log('WatchmakerSession menuclick')
     return true

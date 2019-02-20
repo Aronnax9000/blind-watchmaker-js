@@ -3,8 +3,38 @@
  */
 $.widget('dawk.blindWatchmaker', {
     options: {
+        interval: 1,
+        created: null,
         sessionCount: 0,
         closeable: false
+    },
+    autosave: function() {
+        console.log('autosave')
+        this.save()
+        this._delay(this.autosave, this.options.interval * 5000);
+    },
+    save: function() {
+        let state = JSON.stringify(this.getmodel())
+        let stateBase64 = state.toString('base64')
+        var wayinfuture = new Date('09 Feb 3859 00:00:00 UTC');
+        let expiry = ';expires=' + wayinfuture.toUTCString()
+        document.cookie = 'watchmaker_state=' + stateBase64 + expiry
+        console.log(state)
+        console.log(stateBase64)
+    },
+    getsessions: function() {
+        return $(this.element).find('.watchmakerSessionTab')
+    },
+    getmodel: function () {
+        let model = {
+                created: this.options.created,
+                sessions: []
+        } 
+        $(this.getsessions()).each(function() {
+            let sessionModel = $(this).watchmakerSessionTab('getmodel')
+            model.sessions.push(sessionModel)
+        })
+        return model
     },
     uuidv4: function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -13,6 +43,8 @@ $.widget('dawk.blindWatchmaker', {
         })
     },
     _create: function () {
+        let query = document.search
+        console.log('query:' + query)
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
@@ -22,6 +54,7 @@ $.widget('dawk.blindWatchmaker', {
         })
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
+//        this.autosave()
     },
     on_activate: function (event, ui) {
     },

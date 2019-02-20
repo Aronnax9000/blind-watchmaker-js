@@ -66,12 +66,19 @@
             <fileset file="js/species/species_factory.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/biomorphs.js">
+            <fileset file="js/species/biomorphs/biomorph_geneboxes.js" />
             <fileset file="js/species/biomorphs/biomorphs.js" />
             <fileset file="js/species/biomorphs/biomorphs_develop.js" />
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />
+            <fileset file="js/species/monochrome/monochrome_doperson.js" />
+            <fileset file="js/species/monochrome/monochrome_session.js" />
+            <fileset file="js/species/monochrome/monochrome_geneboxes.js" />
+            <fileset file="js/species/monochrome/monochrome_mutate.js" />
+            <fileset file="js/species/monochrome/monochrome_manipulation.js" />
             <fileset file="js/species/monochrome/monochrome_updatemenus.js" />
+            <fileset file="js/species/monochrome/monochrome_genes_menu.js" />
             <fileset file="js/species/monochrome/monochrome_mutations_menu.js" />
             <fileset file="js/species/monochrome/monochrome_buildmenus.js" />
             <fileset file="js/species/monochrome/monochrome_menuclick.js" />
@@ -79,6 +86,7 @@
             <fileset file="js/species/monochrome/monochrome_togglemut.js" />
             <fileset file="js/species/monochrome/monochrome_triangle.js" />
             <fileset file="js/species/monochrome/monochrome_serialization.js" />
+            <fileset file="js/species/monochrome/monochrome_register_species.js" />
     	</concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/minimal.js">
             <fileset file="js/species/minimal/minimal.js" />
@@ -103,6 +111,7 @@
         </concat>
         <concat destfile="docs/css/watchmaker.css">
             <concat destfile="docs/css/watchmaker.css">
+                <fileset file="css/geneboxes.css" />
                 <fileset file="css/triangle.css" />
                 <fileset file="css/watchmaker.css" />
             </concat>

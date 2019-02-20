@@ -865,6 +865,17 @@ function WatchmakerSession(species) {
     _speciesFactorySingleton.initializeSession(species, this)
 }
 
+WatchmakerSession.prototype.getModel = function() {
+    return {options: this.options, 
+        myPenSize: this.myPenSize, 
+        trianglable: this.trianglable,
+        arrayable: this.arrayable,
+        driftsweep: this.driftsweep,
+        species: this.species,
+        fossilizing: this.fossilizing
+    }
+}
+
 WatchmakerSession.prototype.menuclick = function(event) {
     console.log('WatchmakerSession menuclick')
     return true
@@ -894,6 +905,36 @@ $.widget('dawk.watchmakerSessionTab', {
         $(ui.oldPanel).trigger('viewLostFocus');
         $(ui.newPanel).trigger('viewGainedFocus');
     },   
+    getmodel: function() {
+        return {
+            name: this.options.name, 
+            species: this.options.species,
+            session: this.options.session.getModel(),
+            views: this.getviews()
+            }
+    },
+    getviews: function() {
+        let views = []
+        let type = 'unknown view'
+        let viewmodel = null
+        let element = this.element
+        $(element).find('.watchmakerView').each(function() {
+            if($(element).hasClass('breedingView')) {
+                type = 'Breeding';
+                model = $(this).breedingView('getmodel')    
+            } else if($(element).hasClass('engineeringView')) {
+                type = 'Engineering';
+                model = $(this).engineeringView('getmodel')    
+            } else if($(element).hasClass('pedigreeView')) {
+                type = 'Pedigree';
+                model = $(this).engineeringView('getmodel')    
+            } else if($(element).hasClass('triangleView')) {
+                type = 'Triangle';
+                model = $(this).engineeringView('getmodel')    
+            }
+            
+        })
+    },
     _create: function () {
         let options = this.options
         var species = options.species
@@ -1184,8 +1225,38 @@ $.widget('dawk.watchmakerSessionTab', {
  */
 $.widget('dawk.blindWatchmaker', {
     options: {
+        interval: 1,
+        created: null,
         sessionCount: 0,
         closeable: false
+    },
+    autosave: function() {
+        console.log('autosave')
+        this.save()
+        this._delay(this.autosave, this.options.interval * 5000);
+    },
+    save: function() {
+        let state = JSON.stringify(this.getmodel())
+        let stateBase64 = state.toString('base64')
+        var wayinfuture = new Date('09 Feb 3859 00:00:00 UTC');
+        let expiry = ';expires=' + wayinfuture.toUTCString()
+        document.cookie = 'watchmaker_state=' + stateBase64 + expiry
+        console.log(state)
+        console.log(stateBase64)
+    },
+    getsessions: function() {
+        return $(this.element).find('.watchmakerSessionTab')
+    },
+    getmodel: function () {
+        let model = {
+                created: this.options.created,
+                sessions: []
+        } 
+        $(this.getsessions()).each(function() {
+            let sessionModel = $(this).watchmakerSessionTab('getmodel')
+            model.sessions.push(sessionModel)
+        })
+        return model
     },
     uuidv4: function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -1194,6 +1265,8 @@ $.widget('dawk.blindWatchmaker', {
         })
     },
     _create: function () {
+        let query = document.search
+        console.log('query:' + query)
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
@@ -1203,6 +1276,7 @@ $.widget('dawk.blindWatchmaker', {
         })
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
+//        this.autosave()
     },
     on_activate: function (event, ui) {
     },
@@ -2502,9 +2576,7 @@ $.widget('dawk.breedingBox', {
     },
     _doMouseOver: function(event) {
         if($(this.options.canvas).data('genotype') != null) {
-            var parentbreedingView = this.element.parents('.breedingView').get(0);
-            var geneboxes = $(parentbreedingView)
-            .find('.geneboxes').get(0);
+            var geneboxes = this.element.parents('.watchmakerView').find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.species,
                     geneboxes, this.options.canvas)
@@ -3024,7 +3096,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this._super()
 
         $(this.element).addClass('pedigreeView')
-
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div>");
+        _speciesFactorySingleton.geneboxes(this.options.session.species, 
+                geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
         this.options.rootGod = new God()
         this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
         let container = $("<div class='container'>")
@@ -3104,6 +3183,18 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
 
         this.addone(theGod.adam, new Point(x,y))
     },
+    morphmouseover: function(event) {
+        event.stopPropagation()
+        let biomorph = $(event.target).data('genotype')
+        if(biomorph != null) {
+            console.log('mouseover ' + ' species ' + this.options.session.species + ':'+ biomorph)
+            var geneboxes = $(event.target).closest('.watchmakerView').find('.geneboxes').get(0);
+            console.log(geneboxes)
+            _speciesFactorySingleton.updateFromCanvas(
+                    this.options.session.species,
+                    geneboxes, event.target)
+        } 
+    },
     addone: function(full, point) {
         let biomorph = full.genome
         let surround = full.surround
@@ -3123,11 +3214,13 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
         this._on(canvas, {
+            mouseover: function(event) { this.morphmouseover(event) },
             mousedown: function(event) { this.morphmousedown(event) },
             mouseup: function(event) { this.morphmouseup(event) },
             mousemove: function(event) { this.morphmousemove(event) },
         })
         this.allLines(this.options.rootGod)
+        $(canvas).trigger('mouseover')
     },
     bumper:  function(current, here) {
         let surround = current.surround

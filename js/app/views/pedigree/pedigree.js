@@ -112,7 +112,14 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         this._super()
 
         $(this.element).addClass('pedigreeView')
-
+        var geneboxes_options = {
+            engineering: false,
+            session: this.options.session
+        }
+        var geneboxes = $("<div>");
+        _speciesFactorySingleton.geneboxes(this.options.session.species, 
+                geneboxes, geneboxes_options)
+        this.element.append(geneboxes)
         this.options.rootGod = new God()
         this.options.menuHandler.nextMenuHandler = new PedigreeMenuHandler()
         let container = $("<div class='container'>")
@@ -192,6 +199,18 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
 
         this.addone(theGod.adam, new Point(x,y))
     },
+    morphmouseover: function(event) {
+        event.stopPropagation()
+        let biomorph = $(event.target).data('genotype')
+        if(biomorph != null) {
+            console.log('mouseover ' + ' species ' + this.options.session.species + ':'+ biomorph)
+            var geneboxes = $(event.target).closest('.watchmakerView').find('.geneboxes').get(0);
+            console.log(geneboxes)
+            _speciesFactorySingleton.updateFromCanvas(
+                    this.options.session.species,
+                    geneboxes, event.target)
+        } 
+    },
     addone: function(full, point) {
         let biomorph = full.genome
         let surround = full.surround
@@ -211,11 +230,13 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
         this._on(canvas, {
+            mouseover: function(event) { this.morphmouseover(event) },
             mousedown: function(event) { this.morphmousedown(event) },
             mouseup: function(event) { this.morphmouseup(event) },
             mousemove: function(event) { this.morphmousemove(event) },
         })
         this.allLines(this.options.rootGod)
+        $(canvas).trigger('mouseover')
     },
     bumper:  function(current, here) {
         let surround = current.surround

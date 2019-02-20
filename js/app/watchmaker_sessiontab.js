@@ -21,6 +21,36 @@ $.widget('dawk.watchmakerSessionTab', {
         $(ui.oldPanel).trigger('viewLostFocus');
         $(ui.newPanel).trigger('viewGainedFocus');
     },   
+    getmodel: function() {
+        return {
+            name: this.options.name, 
+            species: this.options.species,
+            session: this.options.session.getModel(),
+            views: this.getviews()
+            }
+    },
+    getviews: function() {
+        let views = []
+        let type = 'unknown view'
+        let viewmodel = null
+        let element = this.element
+        $(element).find('.watchmakerView').each(function() {
+            if($(element).hasClass('breedingView')) {
+                type = 'Breeding';
+                model = $(this).breedingView('getmodel')    
+            } else if($(element).hasClass('engineeringView')) {
+                type = 'Engineering';
+                model = $(this).engineeringView('getmodel')    
+            } else if($(element).hasClass('pedigreeView')) {
+                type = 'Pedigree';
+                model = $(this).engineeringView('getmodel')    
+            } else if($(element).hasClass('triangleView')) {
+                type = 'Triangle';
+                model = $(this).engineeringView('getmodel')    
+            }
+            
+        })
+    },
     _create: function () {
         let options = this.options
         var species = options.species

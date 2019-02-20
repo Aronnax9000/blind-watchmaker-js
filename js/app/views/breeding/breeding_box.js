@@ -30,9 +30,7 @@ $.widget('dawk.breedingBox', {
     },
     _doMouseOver: function(event) {
         if($(this.options.canvas).data('genotype') != null) {
-            var parentbreedingView = this.element.parents('.breedingView').get(0);
-            var geneboxes = $(parentbreedingView)
-            .find('.geneboxes').get(0);
+            var geneboxes = this.element.parents('.watchmakerView').find('.geneboxes').get(0);
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.species,
                     geneboxes, this.options.canvas)

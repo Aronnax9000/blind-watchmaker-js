@@ -12,6 +12,5 @@ $.widget('dawk.monochrome_mutationsmenu', $.dawk.sub_menu, {
         this.appendcheckboxmenuitem('Mutation Size', 'MutationSize')
         this.appendcheckboxmenuitem('Mutation Rate', 'MutationRate')
         this.appendcheckboxmenuitem('Tapering twigs', 'TaperingTwigs')
-        this.appendcheckboxmenuitem('Gene 9 Gradient', 'Gene9Gradient')
     }
 })
