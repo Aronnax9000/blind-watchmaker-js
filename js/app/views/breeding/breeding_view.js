@@ -127,9 +127,7 @@ function BreedingMenuHandler(breedingView) {
     this.breedingView = breedingView
 }
 
-BreedingMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
+BreedingMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
     case 'Timing':
         this.breedingView.options.timingDialog.dialog('open') 

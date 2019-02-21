@@ -2,9 +2,7 @@
 function TriangleMenuHandler() {
 }
 
-TriangleMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
+TriangleMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
         default:
     }

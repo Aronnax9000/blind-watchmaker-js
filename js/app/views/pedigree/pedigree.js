@@ -6,9 +6,7 @@
 function PedigreeMenuHandler() {
 }
 
-PedigreeMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
+PedigreeMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
     case 'DrawOutOffspring':
     case 'Move':
@@ -21,7 +19,6 @@ PedigreeMenuHandler.prototype.menuclick = function(event) {
     case 'DoubleMirror':
         $(target).closest('.pedigreeView').pedigreeView('updateMirrorCheckboxes', menuid)
         return false
-
     }
     return true;
 }

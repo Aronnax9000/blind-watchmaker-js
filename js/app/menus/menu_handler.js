@@ -41,7 +41,7 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
         }
         return false
     case 'LoadToAlbum':
-        $("<div>").fileDialog({session:this.session, appendTo: $(event.target).closest('.watchmakerView')[0]})
+        $("<div>").fileDialog({session:this.session, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
     case 'ShowAlbum':
         if(this.session.album.length != 0) {
@@ -138,16 +138,16 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
         biomorph.develop()
         return false
     case 'AboutClassicBlindWatchmaker':
-        $("<div>").about({index:0, appendTo: $(event.target).closest('.watchmakerView')[0]})
+        $("<div>").about({index:0, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
     case 'AboutClassicExhibitionColour':
-        $("<div>").about({index:1, appendTo: $(event.target).closest('.watchmakerView')[0]})
+        $("<div>").about({index:1, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
     case 'AboutClassicArthromorphs':
-        $("<div>").about({index:2, appendTo: $(event.target).closest('.watchmakerView')[0]})
+        $("<div>").about({index:2, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
     case 'AboutWatchmakerJS':
-        $("<div>").about({index:3, appendTo: $(event.target).closest('.watchmakerView')[0]})
+        $("<div>").about({index:3, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
     case 'Donate':
         document.location = 'https://alancanon.net/donate' 
@@ -159,7 +159,7 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
     // Do generic stuff here
     // Then call view-specific handler
     if(this.nextMenuHandler) {
-        this.nextMenuHandler.menuclick(event)
+        this.nextMenuHandler.menuclick(menuid, target)
     }
     return true;
 

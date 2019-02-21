@@ -1,5 +1,5 @@
 /*
- * Drift view
+ * Fossils view
  */
 $.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
     _create: function(options) {
