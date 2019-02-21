@@ -1251,7 +1251,7 @@ Monochrome.menuclick = function(event) {
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')
                 if(biomorph != null) {
-                    for(let i = 0; i < 8; i++) {
+                    for(let i = 0; i < 9; i++) {
                         biomorph.dGene[i] = SwellType.Same
                     }
                     biomorph.develop()

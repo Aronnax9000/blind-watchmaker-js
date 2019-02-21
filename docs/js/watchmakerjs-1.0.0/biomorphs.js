@@ -1,49 +1,4 @@
 
-function Biomorphs() {
-    
-}
-
-
-var SwellType = {
-    Swell: 1,
-    Shrink: 2,
-    Same: 3,
-    properties: {
-        1: {name: "Swell"},
-        2: {name: "Shrink"},
-        3: {name: "Same"}
-    },
-    swellType: function(index) {
-        switch(index) {
-        case 1:
-            return SwellType.Swell;
-        case 2:
-            return SwellType.Shrink;
-        case 3:
-            return SwellType.Same;
-        }
-    }
-}
-var CompletenessType = {
-        Single: 1,
-        Double: 2,
-        properties: {
-            1: {name: "Single", geneboxName: "Asym"},
-            2: {name: "Double", geneboxName: "Bilat"}
-        }
-};
-
-var SpokesType = {
-        NorthOnly: 1,
-        NSouth: 2,
-        Radial: 3,
-        properties: {
-            1: {name: "NorthOnly", geneboxName: "Single"},
-            2: {name: "NSouth", geneboxName: "UpDn"},
-            3: {name: "Radial", geneboxName: "Radial"}
-        }
-};
-
 var HorizPos = {
         LeftThird: 1,
         MidThird: 2,
@@ -258,6 +213,10 @@ $.widget( "dawk.spokesGenebox", $.dawk.biomorph_genebox, {
         hasMid: true,
         title: 'Spokes'
     },
+    _create: function() {
+        this.element.addClass('spokesGenebox')
+        return this._super()
+    },
     refresh: function() {
         this.refreshGradient();
         var str = this.options.value;
@@ -267,6 +226,177 @@ $.widget( "dawk.spokesGenebox", $.dawk.biomorph_genebox, {
         }
     },
 });
+
+$.widget( "dawk.gene1to9box", $.dawk.biomorph_genebox, {
+    options: {
+        hasGradient: true
+    },
+    _create: function() {
+        this.element.addClass('gene1to9box')
+        return this._super()
+    },
+
+});
+
+$.widget( "dawk.segNoGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+    _create: function() {
+        this.element.addClass('segNoGenebox')
+        return this._super()
+    },
+});
+
+$.widget( "dawk.segDistGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        hasGradient: true,
+        showSign: true
+    },
+    refresh: function() {
+        this.refreshGradient();
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+    _create: function() {
+        this.element.addClass('segDistGenebox')
+        return this._super()
+    },
+} );
+
+
+$.widget( "dawk.completenessGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var properties = CompletenessType.properties[this.options.value];
+        if(properties != null) {
+            this.element.find('.geneValue').text(properties.geneboxName);
+        }
+    },
+    _create: function() {
+        this.element.addClass('completenessGenebox')
+        return this._super()
+    },
+} );
+
+
+$.widget( "dawk.trickleGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+    _create: function() {
+        this.element.addClass('trickleGenebox')
+        return this._super()
+    },
+});
+
+$.widget( "dawk.mutSizeGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+    _create: function() {
+        this.element.addClass('mutSizeGenebox')
+        return this._super()
+    },
+});
+
+$.widget( "dawk.mutProbGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var str = this.options.value;
+        if(Number(str) > 0) {
+            this.element.find('.geneValue').text("+" + str);
+        }
+        else {
+            this.element.find('.geneValue').text(str);
+        }
+    },
+    _create: function() {
+        this.element.addClass('mutProbGenebox')
+        return this._super()
+    },
+});
+
+function Biomorphs() {
+    
+}
+
+
+var SwellType = {
+    Swell: 1,
+    Shrink: 2,
+    Same: 3,
+    properties: {
+        1: {name: "Swell"},
+        2: {name: "Shrink"},
+        3: {name: "Same"}
+    },
+    swellType: function(index) {
+        switch(index) {
+        case 1:
+            return SwellType.Swell;
+        case 2:
+            return SwellType.Shrink;
+        case 3:
+            return SwellType.Same;
+        }
+    }
+}
+var CompletenessType = {
+        Single: 1,
+        Double: 2,
+        properties: {
+            1: {name: "Single", geneboxName: "Asym"},
+            2: {name: "Double", geneboxName: "Bilat"}
+        }
+};
+
+var SpokesType = {
+        NorthOnly: 1,
+        NSouth: 2,
+        Radial: 3,
+        properties: {
+            1: {name: "NorthOnly", geneboxName: "Single"},
+            2: {name: "NSouth", geneboxName: "UpDn"},
+            3: {name: "Radial", geneboxName: "Radial"}
+        }
+};
 /*
  * Monochrome biomorph bounding box calculations.
  * Monochrome biomorphs store this as a Rect
