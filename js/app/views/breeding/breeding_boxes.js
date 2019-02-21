@@ -80,6 +80,7 @@ $.widget( "dawk.breedingBoxes", {
                             ctx.beginPath()
                             ctx.clearRect(0,0, overlayCanvas.width, overlayCanvas.height)
                             ctx.closePath()
+                            $(targetCanvas).removeClass('activeBreeding')
                             var breedingBoxes = $(targetCanvas).parent().breedingBox("option", "breedingBoxes");
                             breedingBoxes.produceKthOffspring(numBoxes, midBox, k + 1, midCanvasDivPosition, recursive);
                         }});
@@ -90,6 +91,7 @@ $.widget( "dawk.breedingBoxes", {
                     }, { queue: true, duration: 2000,
                         easing: 'easeOutExpo',
                         complete: function() {
+                            $(targetCanvas).removeClass('activeBreeding')
                         }});
                 }
             } else { // midbox
@@ -103,8 +105,6 @@ $.widget( "dawk.breedingBoxes", {
     produceLitter: function(numBoxes, midBox) {
         if(this.options.session.fossilizing) {
             let biomorph = $(this.element).find('.midBox').data('genotype')
-            console.log('recording')
-            console.log(this.options.session.fossilrecord)
             this.options.session.fossilrecord.push(biomorph)
         }
         let midCanvasDiv = this.options.midCanvasDiv;
@@ -121,11 +121,13 @@ $.widget( "dawk.breedingBoxes", {
         }
     },
     newRandomStart: function(event) {
-        let canvas = $(this.options.midCanvasDiv).find('canvas').get(0)
-        let biomorph = $(canvas).data('genotype')
-        biomorph.doPerson(this.options.session.options.hopefulMonsterBasicType)
-        biomorph.develop()
-        $(canvas).trigger("mouseover");
+        if(this.options.newRandomStart) {
+            let canvas = $(this.options.midCanvasDiv).find('canvas').get(0)
+            let biomorph = $(canvas).data('genotype')
+            biomorph.doPerson(this.options.session.options.hopefulMonsterBasicType)
+            biomorph.develop()
+            $(canvas).trigger("mouseover");
+        }
     },
     // The constructor
     _create: function(options) {

@@ -19,7 +19,6 @@ SpeciesFactory.prototype.registerSpeciesType = function(speciesType,
     this.sessionInitializers[speciesType] = sessionInitializer
     this.geneboxesWidgets[speciesType] = geneboxesWidget
     this.geneboxesCallbacks[speciesType] = geneboxesCallback
-//    console.log("Registered Species Type " + speciesType)
 }
 
 SpeciesFactory.prototype.getRegisteredSpecies = function() {

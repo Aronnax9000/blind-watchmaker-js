@@ -22,7 +22,6 @@ $.widget('dawk.sweepBoxes', {
             canvas.addClass('midBox');
             this.element.append(canvas);
         }
-        console.log('on create ' + this.options.index)
 
     },
     doDrift: function() {

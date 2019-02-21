@@ -13,7 +13,6 @@ $.widget('dawk.saveDialog', $.ui.dialog, {
         let album = this.options.album
         let biomorphs = album.biomorphs
         let bufferLength = biomorphs.length * this.options.session.serializationSize;
-        console.log(bufferLength)
         album.file.data = new ArrayBuffer(bufferLength)
         for(let i = 0; i < biomorphs.length; i++) {
             biomorphs[i].writeToArrayBuffer(album.file.data, i)

@@ -42,9 +42,14 @@ $.widget('dawk.blindWatchmaker', {
             return v.toString(16);
         })
     },
+    handlekeypress: function(event) {
+        let activeTabIdx = $(this.element).tabs('option','active');
+        let sessionTab = $('.watchmakerSessionTab').get(activeTabIdx)
+        $(sessionTab).watchmakerSessionTab('handlekeypress', event)
+        
+    },
     _create: function () {
         let query = document.search
-        console.log('query:' + query)
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
@@ -54,7 +59,10 @@ $.widget('dawk.blindWatchmaker', {
         })
         this.element.tabs('option', 'active', 0);
         this.element.tabs("refresh");
-//        this.autosave()
+        $(document).keypress(function(event) {
+            $(document).find('.blindWatchmaker').blindWatchmaker('handlekeypress',event)
+        })
+//      this.autosave()
     },
     on_activate: function (event, ui) {
     },
@@ -75,9 +83,9 @@ $.widget('dawk.blindWatchmaker', {
             string += '<img class="tabicon" src="' + newWSession.options.sessionIcon + '">'
             string += sessionName + '</a>'
             if(this.options.closeable) {
-            string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
+                string += '<span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
             }
-            var newTabLi = $(string);
+        var newTabLi = $(string);
         var ul = this.element.find('ul').get(0);
         $(ul).append(newTabLi);
         var div = $('<div id="' + uuid + '"></div>');

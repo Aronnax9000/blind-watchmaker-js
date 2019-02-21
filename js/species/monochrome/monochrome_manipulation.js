@@ -117,7 +117,6 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 12: 
-        console.log('Completeness manipulation')
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.completenessGene = CompletenessType.Single;
@@ -130,7 +129,6 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 13: 
-        console.log('Spokes manipulation')
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.spokesGene = SpokesType.NorthOnly;

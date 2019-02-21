@@ -32,7 +32,6 @@ $.widget( "dawk.albumPageView", {
         $(target).addClass('midBox')
     },
     gotoindex: function() {
-        console.log('gotoindex')
         this.options.isIndexView = true
         let albumView = $(this.element).closest('.albumView')[0]
         $(albumView).albumView('showindex')

@@ -16,7 +16,6 @@ Triangle.atLeast = function(outRect) {
 }
 
 Triangle.triangle = function(screenwidth, screenheight, b, m) {
-//    console.log(screenwidth + ',' + screenheight + ',' + b + ',' + m)
     // k is the equator of the triangle
     var k = Math.round(200.5 * screenheight / 340); // was 200. 
     // horizontal difference between the mouse and the left of triangle (b)

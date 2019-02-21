@@ -6,7 +6,9 @@ Monochrome.prototype.basicTree = function () {
         this.segNoGene = 2;
         this.segDistGene = 150;
     }
-    this.completenessGene = CompletenessType.Single;
+    if(this.session.options.genes[2]) {
+        this.completenessGene = CompletenessType.Single;
+    }
     if(this.session.options.genes[1]) {
         this.dGene[3] = SwellType.Shrink;
         this.dGene[4] = SwellType.Shrink;
@@ -82,9 +84,9 @@ Monochrome.prototype.makeGenes = function (a, b, c, d, e, f, g, h, i) {
     this.segNoGene = 1;
     this.segDistGene = 150;
     if(this.session.options.genes[2]) {
-        this.completenessGene = CompletenessType.Double;
-    } else {
         this.completenessGene = CompletenessType.Single;
+    } else {
+        this.completenessGene = CompletenessType.Double;
     }
     this.spokesGene = SpokesType.NorthOnly;
     this.trickleGene = TRICKLE;

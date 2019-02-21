@@ -37,7 +37,11 @@ $.widget('dawk.breedingBox', {
         }
     },
     _doCanvasClicked: function(event) {
-        console.log('canvas clicked')
+        event.stopPropagation()
+        if($(event.target).closest('.watchmakerView').find('.activeBreeding').length != 0) {
+            return
+        }
+        $(event.target).closest('.watchmakerView').find('.box').addClass('activeBreeding')
         var canvas = this.options.canvas;
         var position = this.element.position();
         var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
@@ -57,7 +61,6 @@ $.widget('dawk.breedingBox', {
                 var watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
                         "newBreedingView", biomorph, false);
-
             } else {
                 // erase the other canvases
                 var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
@@ -80,6 +83,7 @@ $.widget('dawk.breedingBox', {
                             // Hand the biomorph off to the middle canvas
                             jQuery.data(canvas, 'genotype', null)
                             jQuery.data(midCanvas, 'genotype', biomorph)
+                            $(midCanvas).removeClass('activeBreeding')
                             let ctx = this.getContext('2d')
                             ctx.beginPath()
                             ctx.clearRect(0,0, this.width, this.height)
@@ -92,11 +96,11 @@ $.widget('dawk.breedingBox', {
                             breedingBoxes.produceLitter(numBoxes, midBox)
                         } });
                 } else {
+                    $(midCanvas).removeClass('activeBreeding')
                     breedingBoxes.produceLitter(numBoxes, midBox);
                 }
             }
         } else {
-            console.log('genotype was null')
             // Genotype was null, newRandomStart in boxes should take care of it
         } 
         // Update the geneboxes with the genes of the new parent.

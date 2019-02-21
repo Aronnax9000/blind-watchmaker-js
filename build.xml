@@ -73,6 +73,7 @@
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />
             <fileset file="js/species/monochrome/monochrome_doperson.js" />
+            <fileset file="js/species/monochrome/monochrome_dosaltation.js" />
             <fileset file="js/species/monochrome/monochrome_session.js" />
             <fileset file="js/species/monochrome/monochrome_geneboxes.js" />
             <fileset file="js/species/monochrome/monochrome_mutate.js" />

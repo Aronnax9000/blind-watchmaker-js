@@ -1,7 +1,6 @@
 
 
 Monochrome.prototype.doSaltation = function() {
-    // {bomb 5, range check failed, here after killing top Adam}
     var mut = this.session.options.mut
     var genes = this.session.options.genes
     if(mut[0] && genes[0]) {

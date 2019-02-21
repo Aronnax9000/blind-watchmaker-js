@@ -28,7 +28,6 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         
     },
     showPage: function(pageNumber) {
-        console.log('showpage ' + pageNumber)
         $(this.element).find('.albumBoxes').each(function() {
             
             let candidatePageNo = $(this).albumPageView('option', 'pageNumber')
@@ -46,13 +45,11 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
             appendTo: this.element})
     },
     showindex: function() {
-        console.log('albumView.showindex')
         let albumBoxes = $(this.element).find('.albumBoxes')
         albumBoxes.each(function() {
             $(this).removeClass('albumBoxesHidden')
             $(this).albumPageView('option', 'isIndexView', true)
             $(this).albumPageView('developAll')
-            console.log(this)
         })
         $(this.element).find('.albumPageContainer').addClass('albumPageContainerIndex')
     },

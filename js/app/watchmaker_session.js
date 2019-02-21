@@ -27,7 +27,6 @@ WatchmakerSession.prototype.getModel = function() {
 }
 
 WatchmakerSession.prototype.menuclick = function(event) {
-    console.log('WatchmakerSession menuclick')
     return true
 }
 

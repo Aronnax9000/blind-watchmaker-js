@@ -1,10 +1,7 @@
 
 Monochrome.updateAllGeneboxes = function(species, target) {
-    console.log(this)
     $(target).closest('.watchmakerSessionTab').find('.geneboxes').each(
             function() {
-                console.log('updateAllgeneboxes ' + species)
-                console.log(this)
                 _speciesFactorySingleton.updateFromCanvas(species, this, null)
             });
 }
@@ -62,13 +59,12 @@ Monochrome.menuclick = function(event) {
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')
                 if(biomorph != null) {
-                    biomorph.completenessGene = CompletenessType.Single
+                    biomorph.completenessGene = CompletenessType.Double
                     biomorph.develop()
                 }
             })
             $(target).closest('.watchmakerSessionTab').find('.completenessGenebox').addClass('geneboxHidden')
         } else {
-            console.log('removing hidden class from Asym')
             $(target).closest('.watchmakerSessionTab').find('.completenessGenebox').removeClass('geneboxHidden')
         }
         return false 

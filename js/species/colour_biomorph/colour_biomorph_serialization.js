@@ -25,7 +25,6 @@ ColourBiomorph.prototype.readFromArrayBuffer = function(arrayBuffer, index) {
     this.limbShapeGene = view.getUint8(51) + 1;
     this.limbFillGene = view.getUint8(52) + 1;
     this.thicknessGene = view.getUint16(53)
-    console.log(this)
 }
 
 
@@ -55,5 +54,4 @@ ColourBiomorph.prototype.writeToArrayBuffer = function(arrayBuffer, index) {
     view.setUint8(51, this.limbShapeGene - 1);
     view.setUint8(52, this.limbFillGene - 1);
     view.setUint16(53, this.thicknessGene)
-    console.log(this)
 }

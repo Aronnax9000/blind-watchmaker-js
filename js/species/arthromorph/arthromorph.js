@@ -668,7 +668,7 @@ Arthromorph.prototype.mutate = function() {
     
     let targetAtom = this.findNth(this.trunk, pick); // {find the Nth atom}
     if(targetAtom ==  null) {
-        console.log('null pick ' + pick + ' of ' + this.trunk.angle + ' size ' + size)
+        console.error('null pick ' + pick + ' of ' + this.trunk.angle + ' size ' + size)
     }
     var kind = targetAtom.kind
     if(targetAtom == null) {
@@ -821,12 +821,10 @@ Arthromorph.prototype.mutate = function() {
                         targetAtom.nextLikeMe = Atom.copyExceptNext(targetAtom); // {Insert copy of me after me}
 //                      {CopyExceptNext makes sure NextLikeMe of copy now points to old NextLikeMe of target}
 //                      {So brothers are kept, and new subtree is inserted}
-//                        console.log('copy except next returned: ')
 //                        targetAtom.nextLikeMe.printMiddle()
                     }
                     if(kind == AtomKind.Joint && targetAtom.firstBelowMe) { //{last joint has claw.  When duplicate, get rid of extra claw}
 //                        alert('duplicating joint')
-//                        console.log('duplicated joint deleting claw')
                         extraClaw = targetAtom.firstBelowMe;
                         targetAtom.firstBelowMe = null;
                         extraClaw.kill();
@@ -925,7 +923,6 @@ Arthromorph.prototype.dLine = function(drawingContext, x, y, endX, endY, thick, 
 }
 
 Arthromorph.prototype.drawLine = function(drawingContext, x, y, endX, endY, thick, poles) {
-    //console.log('drawLine' + x + ' ' + y + ' ' + endX + ' ' + endY)
     if(this.session.sideways) {
         this.dLine(drawingContext, y, x, endY, endX, thick, poles)
     } else {
@@ -1025,10 +1022,8 @@ Arthromorph.prototype.draw = function(drawingContext, which, params, x, y, xCent
             alert('gradientFactor > 1000')
         }
     }
-//  console.log(params)
     paramOffset = this.session.options.paramOffset
     offset = paramOffset[kind];//{where in params to begin, see InitBoneYard}
-//  console.log("height " + which.height + "width " + which.width+ "angle " + which.angle + " offset " + offset);
 
     params[offset] = params[offset] * which.height; //{fold in this atom's params}
     params[offset + 1] = params[offset + 1] * which.width;
@@ -1049,7 +1044,6 @@ Arthromorph.prototype.draw = function(drawingContext, which, params, x, y, xCent
         y = ySeg + Math.round(params[0] / 2.0);
 //      {joint starts half way down the segment }
     } else if(kind == AtomKind.Joint) {
-//      console.log(params)
 //      {both next joint (NextLikeMe) and claw (FirstBelowMe) want x,y at end of this joint}
         let oldX = x;
         let oldY = y;
@@ -1060,7 +1054,6 @@ Arthromorph.prototype.draw = function(drawingContext, which, params, x, y, xCent
         x += xDisp;
         y += yDisp
         let thick = 1 + Math.trunc(params[3]); //{1 is minimum thickness}
-//      console.log('ang ' + ang + ' params4 ' + params[4] + ' jointscale ' + jointscale + ' xDisp ' + xDisp + ' yDisp ' + yDisp);
 
         this.drawLine(drawingContext, oldX, oldY, x, y, thick, poles); //{right side leg}
         let leftX = xCenter - (x - xCenter); //{do the left side leg}
@@ -1141,7 +1134,6 @@ Arthromorph.prototype.drawInBox = function() {
     drawingContext.clearRect(0, 0, this.drawer.width, this.drawer.height);
 
 //  this.trunk.printMiddle()
-//  console.log(this.trunk)
     this.drawAnimal(drawingContext, centre, start + verticalOffset, poles);
 }
 

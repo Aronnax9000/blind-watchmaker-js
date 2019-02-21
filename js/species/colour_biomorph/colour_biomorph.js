@@ -754,7 +754,6 @@ $.widget('dawk.colourPicker', {
         }
         $(this.element).append(template)
 
-        console.log(this.options.title)
         let engineeringBox = $(this.options.appendTo).parents('.engineeringView').find('.engineeringBox').eq(0)
         $(this.element).dialog({
             width: 220,

@@ -173,7 +173,7 @@ $.widget("dawk.biomorph_genebox", {
             leftRightPos = HorizPos.MidThird;
             rung = VertPos.BottomRung;
         } else if(target.hasClass('geneboxNaviWhole')) {
-            console.log('geneboxNaviWhole in rung calculation. Picker related? Probably not a problem.')
+            // geneboxNaviWhole in rung calculation. Picker related? Probably not a problem.
         }
         let options = this.options
         options.geneboxCollection.manipulate(options.geneboxIndex, leftRightPos, rung)

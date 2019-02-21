@@ -22,7 +22,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
             engineering: false,
             session: this.options.session
         }
-        console.log(this.options.session.species)
         var geneboxes = $("<div class='hi'>");
         _speciesFactorySingleton.geneboxes(this.options.session.species, geneboxes, geneboxes_options)
         this.element.append(geneboxes);
@@ -43,7 +42,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         })
         this.drawTriangle()
         let sessionoptions = this.options.session.options
-//      console.log(sessionoptions)
         this.options.topOfTriangle = sessionoptions.topOfTriangle
         this.addone(this.options.topOfTriangle, this.options.a)
         this.options.leftOfTriangle = sessionoptions.leftOfTriangle
@@ -101,9 +99,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
             let biomorph = $(canvas).data('genotype')
             let biomorphWidth = $(canvas).width()
             let biomorphHeight = $(canvas).height()
-//          console.log(biomorphWidth)
             let x = event.pageX - triangleDiv.offset().left 
-//          console.log(x)
             let y = event.pageY - triangleDiv.offset().top 
             if (x < triangleDiv.width() && y < triangleDiv.height() && x > 0 && y > 0) {
                 let r = Triangle.triangle(
@@ -184,19 +180,15 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         let triangleCanvas = $(this.element).find('.triangleLineCanvas')
         let screenWidth = triangleCanvas.width()
         let screenHeight = triangleCanvas.height()
-        console.log("drawTriangle screen dimensions: " + new Point(screenWidth, screenHeight))
         let a = new Point(Math.round(234 * screenWidth / 512), Math.round(51 * screenHeight / 342));
         let b = new Point(Math.round(134 * screenWidth / 512), Math.round(250 * screenHeight / 342));
         let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
         this.options.a = a
         this.options.b = b
         this.options.c = c
-        console.log(a + b + c)
-        console.log(triangleCanvas[0])
         let ctx = triangleCanvas[0].getContext('2d')
         ctx.strokeStyle = 'Black';
         ctx.lineWidth = 1;
-        console.log(ctx)
         ctx.beginPath()
         ctx.moveTo(a.h, a.v);
         ctx.lineTo(b.h, b.v);
@@ -204,7 +196,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         ctx.lineTo(a.h, a.v);
         ctx.closePath()
         ctx.stroke()
-        console.log('finished drawTriangle')
     }
 
 })

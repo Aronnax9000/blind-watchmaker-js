@@ -203,9 +203,7 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         event.stopPropagation()
         let biomorph = $(event.target).data('genotype')
         if(biomorph != null) {
-            console.log('mouseover ' + ' species ' + this.options.session.species + ':'+ biomorph)
             var geneboxes = $(event.target).closest('.watchmakerView').find('.geneboxes').get(0);
-            console.log(geneboxes)
             _speciesFactorySingleton.updateFromCanvas(
                     this.options.session.species,
                     geneboxes, event.target)

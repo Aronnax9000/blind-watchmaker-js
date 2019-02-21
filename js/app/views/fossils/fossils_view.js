@@ -15,7 +15,6 @@ $.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
         fossilDiv.append(canvas)
         let fossilrecord = this.options.session.fossilrecord
         let fossilrecordmax = fossilrecord.length - 1
-        console.log('Fossil record max ' + fossilrecordmax)
         let slider = $("<div>").slider({
             orientation: "vertical",
             range: "min",

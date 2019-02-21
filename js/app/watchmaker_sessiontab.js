@@ -11,6 +11,31 @@ $.widget('dawk.watchmakerSessionTab', {
             return v.toString(16);
         })
     },
+    handlekeypress: function(event) {
+        let activeTabIdx = $(this.element).tabs('option','active');
+        let viewTab = $(this.element).find('.watchmakerView').get(activeTabIdx)
+        if($(viewTab).hasClass('engineeringView')) {
+            $(viewTab).engineeringView('handlekeypress', event)
+        } else if($(viewTab).hasClass('breedingView')) {
+            $(viewTab).breedingView('handlekeypress', event)
+        } else if($(viewTab).hasClass('albumView')) {
+            $(viewTab).albumView('handlekeypress', event)
+        } else if($(viewTab).hasClass('pedigreeView')) {
+            $(viewTab).pedigreeView('handlekeypress', event)
+        } else if($(viewTab).hasClass('triangleView')) {
+            $(viewTab).triangleView('handlekeypress', event)
+        } else if($(viewTab).hasClass('driftView')) {
+            $(viewTab).driftView('handlekeypress', event)
+        } else if($(viewTab).hasClass('sweepView')) {
+            $(viewTab).sweepView('handlekeypress', event)
+        } else if($(viewTab).hasClass('arrayView')) {
+            $(viewTab).sweepView('handlekeypress', event)
+        } else if($(viewTab).hasClass('fossilsView')) {
+            $(viewTab).fossilsView('handlekeypress', event)
+        }
+
+        
+    },    
     raiseAlert: function(newMenu) {
         var blindWatchmaker = $(this.element).watchmakerSessionTab('option', 'blindWatchmaker');
         $(blindWatchmaker.element).blindWatchmaker('raiseAlert');

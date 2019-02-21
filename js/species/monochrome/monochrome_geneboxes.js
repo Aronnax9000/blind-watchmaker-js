@@ -63,7 +63,6 @@ $.widget('dawk.monochrome_geneboxes', $.dawk.geneboxes, {
             geneboxIndex: 10,
             title: 'Segment Number. Limited to values such that 2^Gene9 * Segment Number < 4096',
             });
-        console.log(this.options.session)
         if(! this.options.session.options.genes[0]) {
              genebox.addClass('geneboxHidden')
         }
