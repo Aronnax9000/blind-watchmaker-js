@@ -23,6 +23,7 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
             } else {
                 biomorph.doPerson(this.options.session.options.defaultBasicType)
             }
+        this.options.menuHandler.nextMenuHandler = new EngineeringMenuHandler()
 
         jQuery.data(canvas, 'genotype', biomorph)
         biomorph.develop()
@@ -54,3 +55,17 @@ $.widget('dawk.engineeringView', $.dawk.watchmakerView, {
         this._super( key, value );
     }
 });
+
+
+
+function EngineeringMenuHandler() {
+}
+
+EngineeringMenuHandler.prototype.menuclick = function(menuid, target) {
+    switch(menuid) {
+    case 'HelpWithCurrentOperation':
+        $("<div>").helpDialog({helpkey: 'ENGINEERING_HELP', appendTo: $(target).closest('.watchmakerView')})
+    }
+    return true;
+}
+

@@ -155,6 +155,9 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
     case 'Quit':
         document.location = 'https://richarddawkins.net/' 
         return false
+    case 'MiscellaneousHelp':
+        $("<div>").helpDialog({helpkey: 'MISCELLANEOUS_HELP', appendTo: $(target).closest('.watchmakerView')})
+        return false
     }
     // Do generic stuff here
     // Then call view-specific handler

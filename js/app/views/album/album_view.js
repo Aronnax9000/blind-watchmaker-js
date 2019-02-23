@@ -92,16 +92,17 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
 function AlbumMenuHandler() {
 }
 
-AlbumMenuHandler.prototype.menuclick = function(event) {
-    let target = event.target
-    let menuid = $(target).data('menuid')
+AlbumMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
     case 'Clear':
         $(event.target).closest('.albumView').albumView('clear', event, null)
         return false
     case 'SaveAlbum': 
         let view = $(event.target).closest('.albumView').albumView('savealbum', event, null)
-
+        return false
+    case 'HelpWithCurrentOperation':
+        console.log('album help')
+        $("<div>").helpDialog({helpkey: 'ALBUM_HELP', appendTo: $(target).closest('.watchmakerView')})
         return false
     }
     

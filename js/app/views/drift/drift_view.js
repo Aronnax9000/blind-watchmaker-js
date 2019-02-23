@@ -28,6 +28,8 @@ $.widget('dawk.driftView', $.dawk.watchmakerView, {
         biomorph.develop()
         $(driftDiv).driftBox('update')
         $(driftDiv).driftBox('startDrift')
+        this.options.menuHandler.nextMenuHandler = new DriftMenuHandler()
+
         
     },
     viewGainedFocus: function(event, ui) {
@@ -51,3 +53,18 @@ $.widget('dawk.driftView', $.dawk.watchmakerView, {
 
 
 });
+
+
+
+function DriftMenuHandler() {
+}
+
+DriftMenuHandler.prototype.menuclick = function(menuid, target) {
+    switch(menuid) {
+    case 'HelpWithCurrentOperation':
+        $("<div>").helpDialog({helpkey: 'DRIFT_HELP', appendTo: $(target).closest('.watchmakerView')})
+    }
+    
+    return true;
+}
+

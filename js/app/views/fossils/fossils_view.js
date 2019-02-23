@@ -31,6 +31,8 @@ $.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
         });
         
         container.append(slider)
+        this.options.menuHandler.nextMenuHandler = new FossilMenuHandler()
+
         this.showfossil(fossilrecordmax)
             
     },
@@ -50,3 +52,15 @@ $.widget( "dawk.fossilsView", $.dawk.watchmakerView, {
     },
 
 })
+
+function FossilMenuHandler() {
+}
+
+FossilMenuHandler.prototype.menuclick = function(menuid, target) {
+    switch(menuid) {
+    case 'HelpWithCurrentOperation':
+        $("<div>").helpDialog({helpkey: 'PLAYING_BACK_FOSSILS_HELP', appendTo: $(target).closest('.watchmakerView')})
+    }
+    
+    return true;
+}

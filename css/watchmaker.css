@@ -340,6 +340,10 @@ div {
     padding: 0px;
     margin: 0px;
 }
+.help-dialog {
+    padding: 0px;
+    margin: 0px;
+}
 
 .status {
 	font-size: smaller;
