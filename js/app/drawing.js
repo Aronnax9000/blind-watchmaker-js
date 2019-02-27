@@ -73,7 +73,7 @@ Canvas2DDrawer.prototype.erase = function() {
 
 Canvas2DDrawer.prototype.penSize = function(penSize) {
     if(penSize === undefined) {
-        return this.drawingContext.lineWidth * 2;
+        return this.drawingContext.lineWidth// * 2;
     } else {
         this.drawingContext.lineWidth = penSize// / 2;
     }
