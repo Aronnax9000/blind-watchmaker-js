@@ -12,6 +12,7 @@ function WatchmakerSession(species) {
     this.species = species
     this.fossilizing = false
     this.fossilrecord = null
+    this.clipboard = null
     _speciesFactorySingleton.initializeSession(species, this)
 }
 

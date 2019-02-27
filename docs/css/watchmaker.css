@@ -1,3 +1,18 @@
+.highlight-biomorph {
+	position: relative;
+}
+
+.highlight-biomorph:after {
+	content: " ";
+	z-index: 10;
+	display: block;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0,0,0,0.5)
+}
 .geneboxes {
     width: 1000px;
     height: 20px;
@@ -537,6 +552,10 @@ div {
 	width: 300px;
 }
 .file-dialog {
+    padding: 0px;
+    margin: 0px;
+}
+.help-dialog {
     padding: 0px;
     margin: 0px;
 }

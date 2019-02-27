@@ -56,7 +56,7 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
     case 'Breed': 
     case 'NewRandomStart':
         var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        biomorph = this.getBiomorph(event)
+        biomorph = this.getBiomorph(target)
         var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
         $(watchmakerSessionTab).watchmakerSessionTab(
                 "newBreedingView", biomorph, menuid == 'NewRandomStart');

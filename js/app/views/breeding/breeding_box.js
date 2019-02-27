@@ -38,10 +38,21 @@ $.widget('dawk.breedingBox', {
     },
     _doCanvasClicked: function(event) {
         event.stopPropagation()
-        if($(event.target).closest('.watchmakerView').find('.activeBreeding').length != 0) {
+        
+        let target = event.target
+        let view = $(target).closest('.watchmakerView')
+        
+        if(view.find('.highlighting').length != 0) {
+            this._doCanvasClickedHighlighting(view, target)
+        } else {
+            this._doCanvasClickedBreed(view, target)
+        }
+    },
+    _doCanvasClickedBreed: function(view, target) {
+        if(view.find('.activeBreeding').length != 0) {
             return
         }
-        $(event.target).closest('.watchmakerView').find('.box').addClass('activeBreeding')
+        view.find('.box').addClass('activeBreeding')
         var canvas = this.options.canvas;
         var position = this.element.position();
         var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
@@ -52,11 +63,11 @@ $.widget('dawk.breedingBox', {
         var numBoxes = boxes.options.numBoxes;
         var midBox = Math.trunc(numBoxes / 2);
         var midCanvas = $(this.element).parent().find('.midBox').get(0);
-        var biomorph = $(event.target).data('genotype');
+        var biomorph = $(target).data('genotype');
         var breedingBoxes = this.options.breedingBoxes;
         var clickedBoxIndex =  this.options.boxIndex;
         if (biomorph != null) {
-            event.stopPropagation()
+//            event.stopPropagation()
             if(this.options.parentOptions.newRandomStart) {
                 var watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
