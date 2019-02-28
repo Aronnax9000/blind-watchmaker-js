@@ -24,6 +24,7 @@ Monochrome.initializeMut = function(session) {
     mut.push(false) // Mutation Size
     mut.push(false) // Mutation Rate
     mut.push(true)  // Tapering Twigs (Gene9 Gradient)
+    mut.push(true)  // Allow Gene9 to be 0
     session.options.mut = mut
 }
 

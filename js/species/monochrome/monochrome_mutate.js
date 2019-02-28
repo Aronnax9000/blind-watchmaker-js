@@ -13,8 +13,9 @@ Monochrome.prototype.mutate = function() {
             this.gene[j] += this.direction(this);
     if(Monochrome.randInt(100) < this.mutProbGene) 
         this.gene[8] += this.direction9();
-    if(this.gene[8] < 1) 
-        this.gene[8] = 1;
+    let gene8Limit = mut[8] ? 0 : 1
+    if(this.gene[8] < gene8Limit) 
+        this.gene[8] = gene8Limit;
     var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
     if(sizeWorry > WORRYMAX) {
         this.gene[8]--; 

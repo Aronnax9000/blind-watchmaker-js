@@ -48,6 +48,9 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.gene[8]--;
+            let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+            if(this.gene[8] < gene8Limit) 
+                this.gene[8] = gene8Limit;
             break;
         case HorizPos.RightThird: 
             // The Pascal original incremented gene 9 unconditionally,
@@ -56,8 +59,9 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             // This version does the test first, then increments gene 9 only
             // if it is safe to do so.
             var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8] + 1);
-            if(sizeWorry <= WORRYMAX)
+            if(sizeWorry <= WORRYMAX) {
                 this.gene[8]++;
+            }
             break;
         case HorizPos.MidThird:
             if(this.session.options.genes[1]) {
@@ -183,9 +187,11 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             break;
         }
     }
-    if(this.gene[8] < 1) {
-        this.gene[8] = 1;
+    let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+    if(this.gene[8] < gene8Limit) {
+        this.gene[8] = gene8Limit;
     }
+
 
     if(this.segNoGene < 1) {
         this.segNoGene = 1;

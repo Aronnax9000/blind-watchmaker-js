@@ -175,6 +175,9 @@ Monochrome.menuclick = function(event) {
     case 'TaperingTwigs':
         Monochrome.toggleMut(mut, 7, target)
         return false 
+    case 'Gene9CanBeZero':
+        Monochrome.toggleMut(mut, 8, target)
+        return false 
     }
     return true // Event not processed
 }

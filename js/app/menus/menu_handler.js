@@ -40,6 +40,13 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
             audio.play();
         }
         return false
+    case 'Copy':
+        this.session.clipboard = this.getBiomorph(target)
+        return false
+    case 'Cut': 
+        this.session.clipboard = this.getBiomorph(target)
+        this.handleMenu('Clear', target)
+        return false
     case 'LoadToAlbum':
         $("<div>").fileDialog({session:this.session, appendTo: $(target).closest('.watchmakerView')[0]})
         return false

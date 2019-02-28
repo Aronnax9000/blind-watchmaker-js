@@ -12,7 +12,7 @@ $.widget('dawk.editmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Paste (V)', 'Paste')
         this.appendmenuitem('Clear', 'Clear')
         this.appendmenuitem('----')
-        this.appendmenuitem('Highlight Biomorph', 'HighlightBiomorph')
+        this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)
         this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
         this.appendmenuitem('Show Album', 'ShowAlbum')
     }

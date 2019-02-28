@@ -73,8 +73,9 @@ Biomorphs.prototype.develop = function(scale) {
         var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
         if(sizeWorry > WORRYMAX)
             this.gene[8] = this.gene[8] - 1;
-        if(this.gene[8] < 1) {
-            this.gene[8] = 1;
+        let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+        if(this.gene[8] < gene8Limit) {
+            this.gene[8] = gene8Limit;
         }
         this.tree(here.h, here.v, order, 2, dx, dy, thick, oddOne, order);
     }

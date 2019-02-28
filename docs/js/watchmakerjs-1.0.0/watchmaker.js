@@ -1467,6 +1467,13 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
             audio.play();
         }
         return false
+    case 'Copy':
+        this.session.clipboard = this.getBiomorph(target)
+        return false
+    case 'Cut': 
+        this.session.clipboard = this.getBiomorph(target)
+        this.handleMenu('Clear', target)
+        return false
     case 'LoadToAlbum':
         $("<div>").fileDialog({session:this.session, appendTo: $(target).closest('.watchmakerView')[0]})
         return false
@@ -1602,7 +1609,7 @@ $.widget('dawk.editmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Paste (V)', 'Paste')
         this.appendmenuitem('Clear', 'Clear')
         this.appendmenuitem('----')
-        this.appendmenuitem('Highlight Biomorph', 'HighlightBiomorph')
+        this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)
         this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
         this.appendmenuitem('Show Album', 'ShowAlbum')
     }
@@ -2490,6 +2497,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     }
 })
 
+
 function BreedingMenuHandler(breedingView) {
     this.breedingView = breedingView
 }
@@ -2500,6 +2508,9 @@ BreedingMenuHandler.prototype.menuclick = function(menuid, target) {
         this.breedingView.options.timingDialog.dialog('open') 
         return false    
     case 'HelpWithCurrentOperation':
+        $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        return false    
+    case 'HighlightBiomorph':
         $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
         return false    
     }
@@ -4259,16 +4270,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
     buildMenus: function(menu) {
         this._super('buildMenus')
     },
-//    markIf: function(canvas) {
-//        // Remove midBox class from every canvas
-//        $(this.element).find('canvas').removeClass('midBox')
-//
-//        if(canvas != null) {
-//            // Mark this one as special
-//            $(canvas).addClass('midBox')
-//        }
-//    },
-
     bumper:  function(current, here) {
         let surround = current.surround
         let height = surround.bottom - surround.top;
@@ -4380,9 +4381,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         biomorph.drawer = canvas[0]
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
-
-        //this.markIf(canvas);
-
     },
     drawTriangle: function() {
         let triangleCanvas = $(this.element).find('.triangleLineCanvas')

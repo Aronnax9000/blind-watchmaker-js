@@ -53,16 +53,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
     buildMenus: function(menu) {
         this._super('buildMenus')
     },
-//    markIf: function(canvas) {
-//        // Remove midBox class from every canvas
-//        $(this.element).find('canvas').removeClass('midBox')
-//
-//        if(canvas != null) {
-//            // Mark this one as special
-//            $(canvas).addClass('midBox')
-//        }
-//    },
-
     bumper:  function(current, here) {
         let surround = current.surround
         let height = surround.bottom - surround.top;
@@ -174,9 +164,6 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         biomorph.drawer = canvas[0]
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
-
-        //this.markIf(canvas);
-
     },
     drawTriangle: function() {
         let triangleCanvas = $(this.element).find('.triangleLineCanvas')

@@ -48,6 +48,7 @@
             <fileset file="js/app/views/album/file_dialog.js" />
             <fileset file="js/app/views/album/save_dialog.js" />
             <fileset file="js/app/views/breeding/breeding_view.js" />
+            <fileset file="js/app/views/breeding/breeding_menuhandler.js" />
             <fileset file="js/app/views/breeding/breeding_boxes.js" />
             <fileset file="js/app/views/breeding/breeding_box.js" />
             <fileset file="js/app/views/breeding/breeding_timing_dialog.js" />
@@ -68,6 +69,7 @@
             <fileset file="js/species/species_factory.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/biomorphs.js">
+            <fileset file="js/species/biomorphs/biomorph_genebox.js" />
             <fileset file="js/species/biomorphs/biomorph_geneboxes.js" />
             <fileset file="js/species/biomorphs/biomorphs.js" />
             <fileset file="js/species/biomorphs/biomorphs_develop.js" />
