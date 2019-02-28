@@ -55,18 +55,12 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
         return false
     case 'Breed': 
     case 'NewRandomStart':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        biomorph = this.getBiomorph(target)
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-        $(watchmakerSessionTab).watchmakerSessionTab(
-                "newBreedingView", biomorph, menuid == 'NewRandomStart');
+         $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
+                "newBreedingView", this.getBiomorph(target), menuid == 'NewRandomStart');        
         return false
     case 'Engineering':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-        $(watchmakerSessionTab).watchmakerSessionTab(
-                "newEngineeringView", biomorph);
+        $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
+                "newEngineeringView", this.getBiomorph(target));
         return false
     case 'InitializeFossilRecord':
         this.session.fossilrecord = []
@@ -76,46 +70,31 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
         $(recordingFossils).find('img').css('display', 'inline-block')
         return false
     case 'MakeTopOfTriangle':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        this.session.options.topOfTriangle = biomorph
+        this.session.options.topOfTriangle = this.getBiomorph(target)
         return false
     case 'MakeLeftOfTriangle':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        this.session.options.leftOfTriangle = biomorph
+        this.session.options.leftOfTriangle = this.getBiomorph(target)
         return false
     case 'MakeRightOfTriangle':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        this.session.options.rightOfTriangle = biomorph
+        this.session.options.rightOfTriangle = this.getBiomorph(target)
         return false            
     case 'DisplayPedigree':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-        $(watchmakerSessionTab).watchmakerSessionTab(
-                "newPedigreeView", biomorph);
+        $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
+                "newPedigreeView", this.getBiomorph(target));
         return false
     case 'Triangle':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-        $(watchmakerSessionTab).watchmakerSessionTab(
+        $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
                 "newTriangleView");
         return false
     case 'Drift':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-        $(watchmakerSessionTab).watchmakerSessionTab(
+        $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
                 "newDriftView");
         return false
     case 'PlayBackFossils':
         let fossilrecord = this.session.fossilrecord
         if(fossilrecord != null && fossilrecord.length != 0) {
-        var watchmakerSessionTab = $(target).closest('.watchmakerSessionTab').eq(0)
-            $(watchmakerSessionTab).watchmakerSessionTab(
+        
+            $(target).closest('.watchmakerSessionTab').watchmakerSessionTab(
                     "newPlayBackFossils");
         }
         return false
@@ -132,8 +111,7 @@ MenuHandler.prototype.handleMenu = function(menuid, target) {
         }
         return false
     case 'HopefulMonster':
-        var midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
-        var biomorph = $(midCanvas).data('genotype')
+        var biomorph = this.getBiomorph(target)
         biomorph.doPerson(this.session.options.hopefulMonsterBasicType)
         biomorph.develop()
         return false

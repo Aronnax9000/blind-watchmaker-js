@@ -22,7 +22,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
             engineering: false,
             session: this.options.session
         }
-        var geneboxes = $("<div class='hi'>");
+        var geneboxes = $("<div>");
         _speciesFactorySingleton.geneboxes(this.options.session.species, geneboxes, geneboxes_options)
         this.element.append(geneboxes);
 
@@ -53,15 +53,15 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
     buildMenus: function(menu) {
         this._super('buildMenus')
     },
-    markIf: function(canvas) {
-        // Remove midBox class from every canvas
-        $(this.element).find('canvas').removeClass('midBox')
-
-        if(canvas != null) {
-            // Mark this one as special
-            $(canvas).addClass('midBox')
-        }
-    },
+//    markIf: function(canvas) {
+//        // Remove midBox class from every canvas
+//        $(this.element).find('canvas').removeClass('midBox')
+//
+//        if(canvas != null) {
+//            // Mark this one as special
+//            $(canvas).addClass('midBox')
+//        }
+//    },
 
     bumper:  function(current, here) {
         let surround = current.surround
@@ -87,6 +87,8 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         }
     },
     mousedown: function(event) {
+        $(event.target).closest('.watchmakerView').find('canvas').removeClass('midBox')
+        $(this.options.liveone).addClass('midBox')
         this.options.liveone = null
         this.options.inhibitspawn = false
     },
@@ -163,7 +165,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         canvas.attr('width', Math.trunc(biomorphWidth))
         canvas.css('left', left)
         canvas.css('top', top)
-        canvas.addClass('triangleBox midBox')
+        canvas.addClass('triangleBox')
         biomorph.drawer = canvas
         $(canvas).data('genotype', biomorph)
         this.options.liveone = canvas
@@ -173,7 +175,7 @@ $.widget( "dawk.triangleView", $.dawk.watchmakerView, {
         $(canvas).data('genotype', biomorph)
         biomorph.develop()
 
-        this.markIf(canvas);
+        //this.markIf(canvas);
 
     },
     drawTriangle: function() {
