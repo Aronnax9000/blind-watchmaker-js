@@ -28,29 +28,11 @@ body {
 	
 }
 
-.breedingView  {
-	      cursor: url(cursor/breed.png), auto;
-}
 
 .newRandomStart {
      cursor: url(cursor/die.png), auto;
 	
 }
-
-.engineeringBox {
-	cursor: url(cursor/hypodermic.png), auto;
-}
-
-.engineeringView, .engineering, .watchmakerView {
-	border: 1px black solid;
-	width: 100%;
-	height: 100%;
-	display: grid;
-	grid-template-columns: 100%;
-	grid-gap: 0px;
-	color: #000;
-}
-
 .container {
 	width: 1000px;
 	height: 600px;
@@ -147,7 +129,7 @@ input[type=checkbox]
 }
 
 div {
-	font-size: 14pt;
+	font-size: 12pt;
 }
 
 
@@ -205,17 +187,7 @@ div {
 /*	height: 46px; */ /* Classic Mac menu bar height */
 }
 
-.pedigreeMorphCanvas {
-	position: absolute;
-	background-color: White;
-}
 
-.drawOutCanvas {
-    border: 1px solid black;
-    z-index: 1;
-    padding: 0px;
-    position: relative;
-}
 .about {
 	padding: 0px;
 	margin: 0px;

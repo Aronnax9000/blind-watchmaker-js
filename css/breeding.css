@@ -1,3 +1,8 @@
+.breedingView  {
+          cursor: url(cursor/breed.png), auto;
+}
+
+
 .highlighted {
 	position: relative;
 }

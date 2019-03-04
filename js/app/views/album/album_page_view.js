@@ -28,8 +28,8 @@ $.widget( "dawk.albumPageView", {
 
     },
     canvasclicked: function (target) {
-        $(this.element).find('canvas').removeClass('midBox')
-        $(target).addClass('midBox')
+        $(this.element).find('.highlighted').removeClass('highlighted')
+        $(target).closest('div').addClass('highlighted')
     },
     gotoindex: function() {
         this.options.isIndexView = true
@@ -56,15 +56,21 @@ $.widget( "dawk.albumPageView", {
         if(startIndex < biomorphs.length) {
             for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
                 let biomorph = biomorphs[i]
+                let div = $('<div>')
+                div.appendTo(this.element)
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
+                    $(div).attr('width', 100)
+                    $(div).attr('height', 100)
                     $(canvas).attr('width', 100)
                     $(canvas).attr('height', 100)
                 } else {
+                    $(div).attr('width', 200)
+                    $(div).attr('height', 200)
                     $(canvas).attr('width', 200)
                     $(canvas).attr('height', 200)
                 }
-                this.element.append(canvas)
+                div.append(canvas)
 
                 this._on(canvas, {
                     mouseover: function(event) {
