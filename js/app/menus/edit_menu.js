@@ -10,7 +10,9 @@ $.widget('dawk.editmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Cut (X)', 'Cut')
         this.appendmenuitem('Copy (C)', 'Copy')
         this.appendmenuitem('Paste (V)', 'Paste')
-        this.appendmenuitem('Clear', 'Clear')
+        if(this.options.type == 'Album') {
+            this.appendmenuitem('Clear', 'Clear')
+        }
         this.appendmenuitem('----')
         if(this.options.type == 'Breeding') {
             this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)

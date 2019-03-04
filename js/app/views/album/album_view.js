@@ -3,7 +3,8 @@
  */
 $.widget( "dawk.albumView", $.dawk.watchmakerView, {
     options: {
-        album: null
+        album: null,
+        type: 'Album'
     },
     viewGainedFocus: function(event, ui) {
         let session  = $(this).albumView("option", "session")
@@ -12,8 +13,9 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         let albumPages = $(this).find('.albumBoxes')
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
     },
-    clear: function(event, ui) {
-        let canvas = $(this.element).find('.midBox')[0]
+    clear: function(target, ui) {
+        let div = $(this.element).find('.highlighted')
+        let canvas = $(div).find('canvas')[0]
         let biomorph = $(canvas).data('genotype')
         let biomorphs = this.options.album.biomorphs
         for(let i = 0; i < biomorphs.length; i++) {
@@ -22,7 +24,7 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
                 break
             }
         }
-        $(canvas).remove()
+        $(div).remove()
         let albumPages = $(this).find('.albumBoxes')
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
         
@@ -82,19 +84,42 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
                 title: this.options.album.name})
             $(container).append(albumPageView)
             $(albumPageView).albumPageView('developAll')
-            
         }
-        this.options.menuHandler.nextMenuHandler = new AlbumMenuHandler()
+        this.options.menuHandler.nextMenuHandler = new AlbumMenuHandler(this.options.session)
    
     }
 })
 
-function AlbumMenuHandler() {
+function AlbumMenuHandler(session) {
+    this.session = session
 }
 
 AlbumMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
     case 'Clear':
+        $(target).closest('.albumView').albumView('clear', target, null)
+        return false
+    case 'Paste':
+        if(this.session.clipboard == null) {
+            return
+        }
+        let albumView = $(target).closest('.albumView')
+        console.log(albumView)
+        let album = albumView.albumView('option', 'album')
+        console.log(album)
+        let biomorphs = album.biomorphs
+
+        let newBiomorph = _speciesFactorySingleton.getSpecies(
+                this.session.species, this.session, null);
+        this.session.clipboard.copyBiomorph(newBiomorph)
+        if(biomorphs.length < 60) {
+            biomorphs.push(newBiomorph)
+            albumView.find('.albumBoxes').albumPageView('developAll')
+        } else {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        }
+        
         $(event.target).closest('.albumView').albumView('clear', event, null)
         return false
     case 'SaveAlbum': 

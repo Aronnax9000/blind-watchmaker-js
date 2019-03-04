@@ -1433,7 +1433,12 @@ MenuHandler.prototype.getBiomorph = function(target) {
     } else {
         midCanvas = midCanvas.eq(0)
     }
-    return $(midCanvas).data('genotype')
+    let biomorph = $(midCanvas).data('genotype')
+    let newBiomorph = _speciesFactorySingleton.getSpecies(
+        this.session.species, this.session, null);
+    biomorph.copyBiomorph(newBiomorph)
+
+    return newBiomorph
 }
 
 MenuHandler.prototype.menuclick = function(event) {
@@ -1609,7 +1614,9 @@ $.widget('dawk.editmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Cut (X)', 'Cut')
         this.appendmenuitem('Copy (C)', 'Copy')
         this.appendmenuitem('Paste (V)', 'Paste')
-        this.appendmenuitem('Clear', 'Clear')
+        if(this.options.type == 'Album') {
+            this.appendmenuitem('Clear', 'Clear')
+        }
         this.appendmenuitem('----')
         if(this.options.type == 'Breeding') {
             this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)
@@ -1951,7 +1958,8 @@ function Album(name, session) {
  */
 $.widget( "dawk.albumView", $.dawk.watchmakerView, {
     options: {
-        album: null
+        album: null,
+        type: 'Album'
     },
     viewGainedFocus: function(event, ui) {
         let session  = $(this).albumView("option", "session")
@@ -1960,8 +1968,9 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
         let albumPages = $(this).find('.albumBoxes')
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
     },
-    clear: function(event, ui) {
-        let canvas = $(this.element).find('.midBox')[0]
+    clear: function(target, ui) {
+        let div = $(this.element).find('.highlighted')
+        let canvas = $(div).find('canvas')[0]
         let biomorph = $(canvas).data('genotype')
         let biomorphs = this.options.album.biomorphs
         for(let i = 0; i < biomorphs.length; i++) {
@@ -1970,7 +1979,7 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
                 break
             }
         }
-        $(canvas).remove()
+        $(div).remove()
         let albumPages = $(this).find('.albumBoxes')
         $(albumPages).each(function() {$(this).albumPageView('developAll')})
         
@@ -2030,19 +2039,42 @@ $.widget( "dawk.albumView", $.dawk.watchmakerView, {
                 title: this.options.album.name})
             $(container).append(albumPageView)
             $(albumPageView).albumPageView('developAll')
-            
         }
-        this.options.menuHandler.nextMenuHandler = new AlbumMenuHandler()
+        this.options.menuHandler.nextMenuHandler = new AlbumMenuHandler(this.options.session)
    
     }
 })
 
-function AlbumMenuHandler() {
+function AlbumMenuHandler(session) {
+    this.session = session
 }
 
 AlbumMenuHandler.prototype.menuclick = function(menuid, target) {
     switch(menuid) {
     case 'Clear':
+        $(target).closest('.albumView').albumView('clear', target, null)
+        return false
+    case 'Paste':
+        if(this.session.clipboard == null) {
+            return
+        }
+        let albumView = $(target).closest('.albumView')
+        console.log(albumView)
+        let album = albumView.albumView('option', 'album')
+        console.log(album)
+        let biomorphs = album.biomorphs
+
+        let newBiomorph = _speciesFactorySingleton.getSpecies(
+                this.session.species, this.session, null);
+        this.session.clipboard.copyBiomorph(newBiomorph)
+        if(biomorphs.length < 60) {
+            biomorphs.push(newBiomorph)
+            albumView.find('.albumBoxes').albumPageView('developAll')
+        } else {
+            var audio = new Audio('sounds/newbip.mp3');
+            audio.play();
+        }
+        
         $(event.target).closest('.albumView').albumView('clear', event, null)
         return false
     case 'SaveAlbum': 
@@ -2086,8 +2118,8 @@ $.widget( "dawk.albumPageView", {
 
     },
     canvasclicked: function (target) {
-        $(this.element).find('canvas').removeClass('midBox')
-        $(target).addClass('midBox')
+        $(this.element).find('.highlighted').removeClass('highlighted')
+        $(target).closest('div').addClass('highlighted')
     },
     gotoindex: function() {
         this.options.isIndexView = true
@@ -2114,15 +2146,21 @@ $.widget( "dawk.albumPageView", {
         if(startIndex < biomorphs.length) {
             for(let i = startIndex; i <  endIndex && i < biomorphs.length; i++) {
                 let biomorph = biomorphs[i]
+                let div = $('<div>')
+                div.appendTo(this.element)
                 let canvas = $('<canvas class="albumCanvas">')
                 if(this.options.isIndexView) {
+                    $(div).attr('width', 100)
+                    $(div).attr('height', 100)
                     $(canvas).attr('width', 100)
                     $(canvas).attr('height', 100)
                 } else {
+                    $(div).attr('width', 200)
+                    $(div).attr('height', 200)
                     $(canvas).attr('width', 200)
                     $(canvas).attr('height', 200)
                 }
-                this.element.append(canvas)
+                div.append(canvas)
 
                 this._on(canvas, {
                     mouseover: function(event) {

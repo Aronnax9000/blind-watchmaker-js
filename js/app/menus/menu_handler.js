@@ -10,7 +10,12 @@ MenuHandler.prototype.getBiomorph = function(target) {
     } else {
         midCanvas = midCanvas.eq(0)
     }
-    return $(midCanvas).data('genotype')
+    let biomorph = $(midCanvas).data('genotype')
+    let newBiomorph = _speciesFactorySingleton.getSpecies(
+        this.session.species, this.session, null);
+    biomorph.copyBiomorph(newBiomorph)
+
+    return newBiomorph
 }
 
 MenuHandler.prototype.menuclick = function(event) {
