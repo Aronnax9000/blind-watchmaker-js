@@ -811,6 +811,7 @@ Monochrome.initializeMut = function(session) {
     mut.push(false) // Mutation Size
     mut.push(false) // Mutation Rate
     mut.push(true)  // Tapering Twigs (Gene9 Gradient)
+    mut.push(true)  // Allow Gene9 to be 0
     session.options.mut = mut
 }
 
@@ -979,8 +980,9 @@ Monochrome.prototype.mutate = function() {
             this.gene[j] += this.direction(this);
     if(Monochrome.randInt(100) < this.mutProbGene) 
         this.gene[8] += this.direction9();
-    if(this.gene[8] < 1) 
-        this.gene[8] = 1;
+    let gene8Limit = mut[8] ? 0 : 1
+    if(this.gene[8] < gene8Limit) 
+        this.gene[8] = gene8Limit;
     var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
     if(sizeWorry > WORRYMAX) {
         this.gene[8]--; 
@@ -1098,6 +1100,9 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.gene[8]--;
+            let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+            if(this.gene[8] < gene8Limit) 
+                this.gene[8] = gene8Limit;
             break;
         case HorizPos.RightThird: 
             // The Pascal original incremented gene 9 unconditionally,
@@ -1106,8 +1111,9 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             // This version does the test first, then increments gene 9 only
             // if it is safe to do so.
             var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8] + 1);
-            if(sizeWorry <= WORRYMAX)
+            if(sizeWorry <= WORRYMAX) {
                 this.gene[8]++;
+            }
             break;
         case HorizPos.MidThird:
             if(this.session.options.genes[1]) {
@@ -1233,9 +1239,11 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             break;
         }
     }
-    if(this.gene[8] < 1) {
-        this.gene[8] = 1;
+    let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+    if(this.gene[8] < gene8Limit) {
+        this.gene[8] = gene8Limit;
     }
+
 
     if(this.segNoGene < 1) {
         this.segNoGene = 1;
@@ -1294,6 +1302,7 @@ $.widget('dawk.monochrome_mutationsmenu', $.dawk.sub_menu, {
         this.appendcheckboxmenuitem('Mutation Size', 'MutationSize')
         this.appendcheckboxmenuitem('Mutation Rate', 'MutationRate')
         this.appendcheckboxmenuitem('Tapering twigs', 'TaperingTwigs')
+        this.appendcheckboxmenuitem('Gene 9 can be Zero', 'Gene9CanBeZero')
     }
 })
 Monochrome.buildMenus = function(menu) {
@@ -1476,6 +1485,9 @@ Monochrome.menuclick = function(event) {
         return false 
     case 'TaperingTwigs':
         Monochrome.toggleMut(mut, 7, target)
+        return false 
+    case 'Gene9CanBeZero':
+        Monochrome.toggleMut(mut, 8, target)
         return false 
     }
     return true // Event not processed

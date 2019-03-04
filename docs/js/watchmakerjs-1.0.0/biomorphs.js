@@ -1,25 +1,3 @@
-
-var HorizPos = {
-        LeftThird: 1,
-        MidThird: 2,
-        RightThird: 3,
-        properties: {
-            1: {name: "LeftThird"},
-            2: {name: "MidThird"},
-            3: {name: "RightThird"}
-        }
-};
-
-var VertPos = {
-        TopRung: 1,
-        MidRung: 2,
-        BottomRung: 3,
-        properties: {
-            1: {name: "TopRung"},
-            2: {name: "MidRung"},
-            3: {name: "BottomRung"}
-        }
-};
 $.widget("dawk.biomorph_genebox", {
     options : {
         hasMid: false,
@@ -182,6 +160,28 @@ $.widget("dawk.biomorph_genebox", {
 
 });
 
+
+var HorizPos = {
+        LeftThird: 1,
+        MidThird: 2,
+        RightThird: 3,
+        properties: {
+            1: {name: "LeftThird"},
+            2: {name: "MidThird"},
+            3: {name: "RightThird"}
+        }
+};
+
+var VertPos = {
+        TopRung: 1,
+        MidRung: 2,
+        BottomRung: 3,
+        properties: {
+            1: {name: "TopRung"},
+            2: {name: "MidRung"},
+            3: {name: "BottomRung"}
+        }
+};
 
 $.widget('dawk.geneboxes', {
     options : {
@@ -508,8 +508,9 @@ Biomorphs.prototype.develop = function(scale) {
         var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
         if(sizeWorry > WORRYMAX)
             this.gene[8] = this.gene[8] - 1;
-        if(this.gene[8] < 1) {
-            this.gene[8] = 1;
+        let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+        if(this.gene[8] < gene8Limit) {
+            this.gene[8] = gene8Limit;
         }
         this.tree(here.h, here.v, order, 2, dx, dy, thick, oddOne, order);
     }

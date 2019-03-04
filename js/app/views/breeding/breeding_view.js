@@ -6,8 +6,8 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         watchmakerSessionTab: null,
         biomorph: null,
         generationsPreviousSecond: 0,
-        newRandomStart: false
-
+        newRandomStart: false,
+        highlighting: false
     },
     viewGainedFocus: function(event, ui) {
         let session  = $(this).breedingView("option", "session")
@@ -21,7 +21,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     },
 
     _create: function (options) {
-        this._super("_create")
+        this._super() // "_create"
         var species = this.options.session.species
         $(this.element).addClass('breedingView')
         var geneboxes_options = {
@@ -120,7 +120,16 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this.options.generationsPreviousSecond = newGenerationValue;
         if(this.options.autoRunning)
             this._delay(this.measureGenerationRate, 1000);
-    }
+    },
+    updateMenus: function(session, view) {
+        this._super(session, view)
+        let menuitem = $(view).find('.menuitemHighlightBiomorph')[0]
+        if(this.options.highlighting) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
+    },    
 })
 
 

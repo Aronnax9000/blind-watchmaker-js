@@ -11,7 +11,16 @@ BreedingMenuHandler.prototype.menuclick = function(menuid, target) {
         $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
         return false    
     case 'HighlightBiomorph':
-        $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        let highlighting = ! $(this.breedingView.element).breedingView('option', 'highlighting')
+        $(this.breedingView.element).breedingView('option', 'highlighting', highlighting)
+        let li = $(target).closest('li')
+        if(highlighting) {
+            $(li).addClass('checked')
+            $(li).find('img').css('display', 'inline-block')
+        } else {
+            $(li).removeClass('checked')
+            $(li).find('img').css('display', 'none')
+        }
         return false    
     }
     return true
