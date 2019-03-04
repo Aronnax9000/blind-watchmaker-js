@@ -3,7 +3,13 @@ function MenuHandler(session) {
     this.nextMenuHandler = null
 }
 MenuHandler.prototype.getBiomorph = function(target) {
-    let midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+    let midCanvas = $(target).closest('.watchmakerView').find('.highlighted canvas')
+    
+    if(midCanvas.length == 0) {
+        midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+    } else {
+        midCanvas = midCanvas.eq(0)
+    }
     return $(midCanvas).data('genotype')
 }
 

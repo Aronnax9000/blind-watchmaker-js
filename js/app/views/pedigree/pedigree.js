@@ -78,7 +78,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         rootGod: null,
         phyloging: null,
         theGod: null,
-        godCounter: 0
+        godCounter: 0,
+        type: 'Pedigree'
     },
     viewGainedFocus: function(event) {
         let session = $(this).pedigreeView("option", "session")
@@ -127,23 +128,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     buildMenus: function(menu) {
         this._super('buildMenus')
-        // Reverse default hidden state to show Pedigree mode.
-        $(this.element).find('.menuitemDrawOutOffspring').css('display', 'block')
-        $(this.element).find('.menuitemMove').css('display', 'block')
-        $(this.element).find('.menuitemDetach').css('display', 'block')
-        $(this.element).find('.menuitemKill').css('display', 'block')
-        $(this.element).find('.menuitemNoMirrors').css('display', 'block')
-        $(this.element).find('.menuitemSingleMirror').css('display', 'block')
-        $(this.element).find('.menuitemDoubleMirror').css('display', 'block')       
-        $(this.element).find('.menuitemPedigreeSep').css('display', 'block')       
-        // Default checked state for new Pedigree views
-        $(this.element).find('.menuitemDrawOutOffspring img').css('display', 'inline-block')
-        $(this.element).find('.menuitemMove img').css('display', 'none')
-        $(this.element).find('.menuitemDetach img').css('display', 'none')
-        $(this.element).find('.menuitemKill img').css('display', 'none')
-        $(this.element).find('.menuitemNoMirrors img').css('display', 'inline-block')
-        $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
-        $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
+        this.updatePedigreeModeCheckboxes('DrawOutOffspring')
+        this.updateMirrorCheckboxes('NoMirrors')
     },
     markIf: function(thisFull) {
         // Remove midBox class from every canvas

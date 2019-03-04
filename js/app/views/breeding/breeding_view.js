@@ -3,6 +3,7 @@
 $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     options: { 
         species: null,
+        type: 'Breeding',
         watchmakerSessionTab: null,
         biomorph: null,
         generationsPreviousSecond: 0,

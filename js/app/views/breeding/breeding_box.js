@@ -41,17 +41,21 @@ $.widget('dawk.breedingBox', {
         
         let target = event.target
         let view = $(target).closest('.watchmakerView')
-        
-        if(view.find('.highlighting').length != 0) {
+        if(view.find('.activeBreeding').length != 0) {
+            return
+        }
+        let highlighting = $(view).breedingView('option','highlighting')
+        if(highlighting) {
             this._doCanvasClickedHighlighting(view, target)
         } else {
             this._doCanvasClickedBreed(view, target)
         }
     },
+    _doCanvasClickedHighlighting: function(view, target) {
+        view.find('.highlighted').removeClass('highlighted')
+        $(target).closest('div').addClass('highlighted')
+    },
     _doCanvasClickedBreed: function(view, target) {
-        if(view.find('.activeBreeding').length != 0) {
-            return
-        }
         view.find('.box').addClass('activeBreeding')
         var canvas = this.options.canvas;
         var position = this.element.position();

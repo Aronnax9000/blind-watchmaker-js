@@ -1359,25 +1359,21 @@ $.widget('dawk.blindWatchmaker', {
 
 $.widget('dawk.dropdownmenu', {
     options: {
-        session: null
+        session: null,
+        type: null
     },
     _create: function() {
         let menu = $('<ul>').addClass('sm sm-watchmaker')
         menu.appendTo(this.element)
-        $("<li>").filemenu({session: this.options.session}).appendTo(menu)
-        $("<li>").editmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").operationmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").animalmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").viewmenu({session: this.options.session}).appendTo(menu)
-        $("<li>").pedigreemenu({session: this.options.session}).appendTo(menu)
-        $("<li>").helpmenu({session: this.options.session}).appendTo(menu)
+        $("<li>").filemenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").editmenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").operationmenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").animalmenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").viewmenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").pedigreemenu({session: this.options.session, type: this.options.type}).appendTo(menu)
+        $("<li>").helpmenu({session: this.options.session, type: this.options.type}).appendTo(menu)
         this.options.session.buildMenus(menu)
         menu.smartmenus()
-    },
-    appendsubmenu: function(title) {
-        let sub_menu = $('<li>').sub_menu({title: title})
-        $(this.element).find('> ul').append(sub_menu)
-        return sub_menu
     },
     menuclick: function(event) {
         this.options.menuHandler.menuclick(event)
@@ -1430,7 +1426,13 @@ function MenuHandler(session) {
     this.nextMenuHandler = null
 }
 MenuHandler.prototype.getBiomorph = function(target) {
-    let midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+    let midCanvas = $(target).closest('.watchmakerView').find('.highlighted canvas')
+    
+    if(midCanvas.length == 0) {
+        midCanvas = $(target).closest('.watchmakerView').find('.midBox').eq(0)
+    } else {
+        midCanvas = midCanvas.eq(0)
+    }
     return $(midCanvas).data('genotype')
 }
 
@@ -1609,7 +1611,9 @@ $.widget('dawk.editmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Paste (V)', 'Paste')
         this.appendmenuitem('Clear', 'Clear')
         this.appendmenuitem('----')
-        this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)
+        if(this.options.type == 'Breeding') {
+            this.appendcheckboxmenuitem('Highlight Biomorph', 'HighlightBiomorph', false)
+        }
         this.appendmenuitem('Add Biomorph to Album (A)', 'AddBiomorphToAlbum')
         this.appendmenuitem('Show Album', 'ShowAlbum')
     }
@@ -1674,15 +1678,17 @@ $.widget('dawk.pedigreemenu', $.dawk.sub_menu, {
         this._super();
         $(this).addClass('pedigreeMenu')
         this.appendmenuitem('Display pedigree (1)','DisplayPedigree')
-        this.appendmenuitem('----', 'PedigreeSep', true)
-        this.appendcheckboxmenuitem('Draw Out Offspring (2)','DrawOutOffspring', true)
-        this.appendcheckboxmenuitem('No Mirrors (3)','NoMirrors', true)
-        this.appendcheckboxmenuitem('Single Mirror (4)','SingleMirror', true)
-        this.appendcheckboxmenuitem('Double Mirror (5)','DoubleMirror', true)
-        this.appendmenuitem('----', 'PedigreeSep', true)
-        this.appendcheckboxmenuitem('Move (6)','Move', true)
-        this.appendcheckboxmenuitem('Detach (7)','Detach', true)
-        this.appendcheckboxmenuitem('Kill (8)','Kill', true)
+        if(this.options.type == 'Pedigree') {
+            this.appendmenuitem('----', 'PedigreeSep')
+            this.appendcheckboxmenuitem('Draw Out Offspring (2)','DrawOutOffspring')
+            this.appendcheckboxmenuitem('No Mirrors (3)','NoMirrors')
+            this.appendcheckboxmenuitem('Single Mirror (4)','SingleMirror')
+            this.appendcheckboxmenuitem('Double Mirror (5)','DoubleMirror')
+            this.appendmenuitem('----', 'PedigreeSep')
+            this.appendcheckboxmenuitem('Move (6)','Move')
+            this.appendcheckboxmenuitem('Detach (7)','Detach')
+            this.appendcheckboxmenuitem('Kill (8)','Kill')
+        }
     }
 })
 $.widget('dawk.viewmenu', $.dawk.sub_menu, {
@@ -1776,6 +1782,7 @@ var KeyCodes = {
 $.widget('dawk.watchmakerView', {
     options: {
         session: null,
+        type: null
     },
     _create: function() {
         $(this.element).addClass('watchmakerView')
@@ -1877,7 +1884,7 @@ $.widget('dawk.watchmakerView', {
         this.options.menuHandler = menuHandler
 
         $(menubar).dropdownmenu({menuHandler: menuHandler,
-            session: this.options.session});
+            session: this.options.session, type: this.options.type});
 
         $(menubar).find("ul.dropdown li").hover(function(){
 
@@ -1904,6 +1911,12 @@ $.widget('dawk.watchmakerView', {
             $(menuitem).find('img').css('display', 'none')
         }
         menuitem = $(view).find('.menuitemRecordingFossils')[0]
+        if(session.fossilizing) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
+        menuitem = $(view).find('.menuitemHighlightBiomorph')[0]
         if(session.fossilizing) {
             $(menuitem).find('img').css('display', 'inline-block')
         } else {
@@ -2377,11 +2390,12 @@ $.widget('dawk.saveDialog', $.ui.dialog, {
 $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     options: { 
         species: null,
+        type: 'Breeding',
         watchmakerSessionTab: null,
         biomorph: null,
         generationsPreviousSecond: 0,
-        newRandomStart: false
-
+        newRandomStart: false,
+        highlighting: false
     },
     viewGainedFocus: function(event, ui) {
         let session  = $(this).breedingView("option", "session")
@@ -2395,7 +2409,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
     },
 
     _create: function (options) {
-        this._super("_create")
+        this._super() // "_create"
         var species = this.options.session.species
         $(this.element).addClass('breedingView')
         var geneboxes_options = {
@@ -2494,7 +2508,16 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         this.options.generationsPreviousSecond = newGenerationValue;
         if(this.options.autoRunning)
             this._delay(this.measureGenerationRate, 1000);
-    }
+    },
+    updateMenus: function(session, view) {
+        this._super(session, view)
+        let menuitem = $(view).find('.menuitemHighlightBiomorph')[0]
+        if(this.options.highlighting) {
+            $(menuitem).find('img').css('display', 'inline-block')
+        } else {
+            $(menuitem).find('img').css('display', 'none')
+        }
+    },    
 })
 
 
@@ -2503,15 +2526,30 @@ function BreedingMenuHandler(breedingView) {
 }
 
 BreedingMenuHandler.prototype.menuclick = function(menuid, target) {
+    let highlighting = $(this.breedingView.element).breedingView('option', 'highlighting')
     switch(menuid) {
     case 'Timing':
         this.breedingView.options.timingDialog.dialog('open') 
-        return false    
+        return false
     case 'HelpWithCurrentOperation':
-        $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        if(highlighting) {
+            $("<div>").helpDialog({helpkey: 'HIGHLIGHTING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        } else {
+            $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        }
         return false    
     case 'HighlightBiomorph':
-        $("<div>").helpDialog({helpkey: 'BREEDING_HELP', appendTo: $(target).closest('.watchmakerView')})
+        highlighting = ! highlighting
+        $(this.breedingView.element).breedingView('option', 'highlighting', highlighting)
+        let li = $(target).closest('li')
+        if(highlighting) {
+            $(li).addClass('checked')
+            $(li).find('img').css('display', 'inline-block')
+        } else {
+            $(this.breedingView.element).find('.highlighted').removeClass('highlighted')
+            $(li).removeClass('checked')
+            $(li).find('img').css('display', 'none')
+        }
         return false    
     }
     return true
@@ -2764,17 +2802,21 @@ $.widget('dawk.breedingBox', {
         
         let target = event.target
         let view = $(target).closest('.watchmakerView')
-        
-        if(view.find('.highlighting').length != 0) {
+        if(view.find('.activeBreeding').length != 0) {
+            return
+        }
+        let highlighting = $(view).breedingView('option','highlighting')
+        if(highlighting) {
             this._doCanvasClickedHighlighting(view, target)
         } else {
             this._doCanvasClickedBreed(view, target)
         }
     },
+    _doCanvasClickedHighlighting: function(view, target) {
+        view.find('.highlighted').removeClass('highlighted')
+        $(target).closest('div').addClass('highlighted')
+    },
     _doCanvasClickedBreed: function(view, target) {
-        if(view.find('.activeBreeding').length != 0) {
-            return
-        }
         view.find('.box').addClass('activeBreeding')
         var canvas = this.options.canvas;
         var position = this.element.position();
@@ -3374,7 +3416,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
         rootGod: null,
         phyloging: null,
         theGod: null,
-        godCounter: 0
+        godCounter: 0,
+        type: 'Pedigree'
     },
     viewGainedFocus: function(event) {
         let session = $(this).pedigreeView("option", "session")
@@ -3423,23 +3466,8 @@ $.widget( "dawk.pedigreeView", $.dawk.watchmakerView, {
     },
     buildMenus: function(menu) {
         this._super('buildMenus')
-        // Reverse default hidden state to show Pedigree mode.
-        $(this.element).find('.menuitemDrawOutOffspring').css('display', 'block')
-        $(this.element).find('.menuitemMove').css('display', 'block')
-        $(this.element).find('.menuitemDetach').css('display', 'block')
-        $(this.element).find('.menuitemKill').css('display', 'block')
-        $(this.element).find('.menuitemNoMirrors').css('display', 'block')
-        $(this.element).find('.menuitemSingleMirror').css('display', 'block')
-        $(this.element).find('.menuitemDoubleMirror').css('display', 'block')       
-        $(this.element).find('.menuitemPedigreeSep').css('display', 'block')       
-        // Default checked state for new Pedigree views
-        $(this.element).find('.menuitemDrawOutOffspring img').css('display', 'inline-block')
-        $(this.element).find('.menuitemMove img').css('display', 'none')
-        $(this.element).find('.menuitemDetach img').css('display', 'none')
-        $(this.element).find('.menuitemKill img').css('display', 'none')
-        $(this.element).find('.menuitemNoMirrors img').css('display', 'inline-block')
-        $(this.element).find('.menuitemSingleMirror img').css('display', 'none')
-        $(this.element).find('.menuitemDoubleMirror img').css('display', 'none')       
+        this.updatePedigreeModeCheckboxes('DrawOutOffspring')
+        this.updateMirrorCheckboxes('NoMirrors')
     },
     markIf: function(thisFull) {
         // Remove midBox class from every canvas

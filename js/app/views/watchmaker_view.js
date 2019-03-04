@@ -68,6 +68,7 @@ var KeyCodes = {
 $.widget('dawk.watchmakerView', {
     options: {
         session: null,
+        type: null
     },
     _create: function() {
         $(this.element).addClass('watchmakerView')
@@ -169,7 +170,7 @@ $.widget('dawk.watchmakerView', {
         this.options.menuHandler = menuHandler
 
         $(menubar).dropdownmenu({menuHandler: menuHandler,
-            session: this.options.session});
+            session: this.options.session, type: this.options.type});
 
         $(menubar).find("ul.dropdown li").hover(function(){
 
