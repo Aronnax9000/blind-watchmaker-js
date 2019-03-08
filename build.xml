@@ -101,7 +101,23 @@
             <fileset file="js/species/arthromorph/arthromorph_atom_print.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/colour_biomorph.js">
+            <fileset file="js/species/colour_biomorph/colour_biomorph_types.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_palette.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_doperson.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_dosaltation.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_buildmenus.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_updatemenus.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_menuclick.js" />
+        	
+            <fileset file="js/species/colour_biomorph/colour_biomorph_session.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_manipulation.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_mutate.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_colour_geneboxes.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_limb_geneboxes.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_geneboxes.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_genes_menu.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_mutations_menu.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph_serialization.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">

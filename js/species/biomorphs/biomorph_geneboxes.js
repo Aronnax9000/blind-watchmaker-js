@@ -153,6 +153,20 @@ $.widget( "dawk.trickleGenebox", $.dawk.biomorph_genebox, {
     },
 });
 
+$.widget( "dawk.thicknessGenebox", $.dawk.biomorph_genebox, {
+    options: {
+        showSign: true
+    },
+    refresh: function() {
+        var str = this.options.value;
+        this.element.find('.geneValue').text(str);
+    },
+    _create: function() {
+        this.element.addClass('thicknessGenebox')
+        return this._super()
+    },
+});
+
 $.widget( "dawk.mutSizeGenebox", $.dawk.biomorph_genebox, {
     options: {
         showSign: true

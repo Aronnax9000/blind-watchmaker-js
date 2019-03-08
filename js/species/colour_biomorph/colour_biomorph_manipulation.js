@@ -1,9 +1,9 @@
-
-Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
+ColourBiomorph.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     var str = "Manipulation geneBoxIndex:" + geneboxIndex;
     let options = this.session.options
     let mut = options.mut
     let genes = options.genes
+
     var leftRightPosProperties = HorizPos.properties[leftRightPos];
     if(leftRightPosProperties != null) {
         str += ',' + leftRightPosProperties.name;
@@ -24,10 +24,14 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     case 8:
         switch(leftRightPos) {
         case HorizPos.LeftThird:
-            this.gene[geneboxIndex - 1] -= this.mutSizeGene;
+            if(mut[12]) {
+                this.gene[geneboxIndex - 1] -= this.mutSizeGene;
+            }
             break;
         case HorizPos.RightThird: 
-            this.gene[geneboxIndex - 1] += this.mutSizeGene;
+            if(mut[12]) {
+                this.gene[geneboxIndex - 1] += this.mutSizeGene;
+            }
             break;
         case HorizPos.MidThird: 
             if(genes[1]) {
@@ -47,39 +51,40 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 9:
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.gene[8]--;
-            let gene8Limit = mut[8] ? 0 : 1;
-            if(this.gene[8] < gene8Limit) 
-                this.gene[8] = gene8Limit;
-            break;
-        case HorizPos.RightThird: 
-            // The Pascal original incremented gene 9 unconditionally,
-            // then backed off the change if the 2^gene9 times the segment
-            // number gene value exceeded 4095.
-            // This version does the test first, then increments gene 9 only
-            // if it is safe to do so.
-            var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8] + 1);
-            if(sizeWorry <= WORRYMAX) {
-                this.gene[8]++;
-            }
-            break;
-        case HorizPos.MidThird:
-            if(genes[1] && mut[1]) {
-                switch(rung) {
-                case VertPos.TopRung: 
-                    this.dGene[8] = SwellType.Swell;
-                    break;
-                case VertPos.MidRung: 
-                    this.dGene[8] = SwellType.Same;
-                    break;
-                case VertPos.BottomRung: 
-                    this.dGene[8] = SwellType.Shrink;
-                    break;
+        if(mut[13]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.gene[8]--;
+                let gene8Limit = mut[14] ? 0 : 1;
+                if(this.gene[8] < gene8Limit) 
+                    this.gene[8] = gene8Limit;
+                break;
+            case HorizPos.RightThird: 
+                // The Pascal original incremented gene 9 unconditionally,
+                // then backed off the change if the 2^gene9 times the segment
+                // number gene value exceeded 4095.
+                // This version does the test first, then increments gene 9 only
+                // if it is safe to do so.
+                var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8] + 1);
+                if(sizeWorry <= WORRYMAX)
+                    this.gene[8]++;
+                break;
+            case HorizPos.MidThird:
+                if(genes[1]) {
+                    switch(rung) {
+                    case VertPos.TopRung: 
+                        this.dGene[8] = SwellType.Swell;
+                        break;
+                    case VertPos.MidRung: 
+                        this.dGene[8] = SwellType.Same;
+                        break;
+                    case VertPos.BottomRung: 
+                        this.dGene[8] = SwellType.Shrink;
+                        break;
+                    }
                 }
+                break;
             }
-            break;
         }
         break;
     case 10: 
@@ -122,7 +127,6 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
                 }
                 break;
             case HorizPos.RightThird: 
-
                 this.segDistGene += this.trickleGene;
                 break;
             }
@@ -143,8 +147,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 13: 
-        if(mut[3]) {
-
+        if(mut[2]) {
             switch(leftRightPos) {
             case HorizPos.LeftThird:
                 this.spokesGene = SpokesType.NorthOnly;
@@ -159,20 +162,23 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 14: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.trickleGene > 1)
-                this.trickleGene--;
-            break;
-        case HorizPos.RightThird: 
-            this.trickleGene++;
-            break;
-        case HorizPos.MidThird: 
-            break;// {No action}
+        if(mut[4]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                if(this.trickleGene > 1)
+                    this.trickleGene--;
+                break;
+            case HorizPos.RightThird: 
+                this.trickleGene++;
+                break;
+            case HorizPos.MidThird: 
+                break;// {No action}
+            }
         }
         break;
     case 15: 
         if(mut[5]) {
+
             switch(leftRightPos) {
             case HorizPos.LeftThird:
                 if(this.mutSizeGene > 1)
@@ -188,6 +194,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         break;
     case 16: 
         if(mut[6]) {
+
             switch(leftRightPos) {
             case HorizPos.LeftThird:
                 if(this.mutProbGene > 1) {
@@ -200,18 +207,110 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
                 break;
             case HorizPos.MidThird: 
                 break; // {No action}
+            }
+        }
+
+        break
+    case 17:
+        if(mut[11]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                if(this.thicknessGene > 1) {
+                    this.thicknessGene--;
+                }
+                break;
+            case HorizPos.RightThird: 
+                if(this.thicknessGene < 100)
+                    this.thicknessGene++;
+                break;
+            case HorizPos.MidThird: 
+                break; // {No action}
+            }
+        }
+        break
+    case 18:
+        if(mut[7]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.limbShapeGene = LimbType.Stick;
+                break;
+            case HorizPos.RightThird: 
+                this.limbShapeGene = LimbType.Rectangle;
+                break;
+            case HorizPos.MidThird: 
+                this.limbShapeGene = LimbType.Oval;
+                break; // {No action}
+            }
+        }
+        break
+    case 19: // limbFillGene
+        if(mut[8]) {
+
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.limbFillGene = LimbFillType.Open
+                break;
+            case HorizPos.RightThird: 
+                this.limbFillGene = LimbFillType.Filled
                 break;
             }
         }
+        break;
+    case 20: // backColorGene
+        if(mut[10]) {
+            this.backColorGene = leftRightPos
+        }
+        break;
+    case 21: 
+        if(mut[9]) {
+            this.colorGene[0] = leftRightPos
+        }
+        break;
+    case 22: 
+        if(mut[9]) {
+            this.colorGene[1] = leftRightPos
+        }
+        break;
+    case 23: 
+        if(mut[9]) {
+            this.colorGene[2] = leftRightPos
+        }
+        break;
+    case 24: 
+        if(mut[9]) {
+            this.colorGene[3] = leftRightPos
+        }
+        break;
+    case 25: 
+        if(mut[9]) {
+            this.colorGene[4] = leftRightPos
+        }
+        break;
+    case 26: 
+        if(mut[9]) {
+            this.colorGene[5] = leftRightPos
+        }
+        break;
+    case 27: 
+        if(mut[9]) {
+            this.colorGene[6] = leftRightPos
+        }
+        break;
+    case 28: 
+        if(mut[9]) {
+            this.colorGene[7] = leftRightPos
+        }
+        break;
     }
-    let gene8Limit = mut[8] ? 0 : 1;
+
+
+    let gene8Limit = mut[14] ? 0 : 1;
     if(this.gene[8] < gene8Limit) {
         this.gene[8] = gene8Limit;
     }
 
-
     if(this.segNoGene < 1) {
         this.segNoGene = 1;
     }
+//  Alert subscribers that the genome has changed here.
 }
-
