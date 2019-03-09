@@ -275,143 +275,141 @@ var Mode = {
 /* 
  * QuickDraw style point, with h (horizontal) and v (vertical) 
  */
-function Point(x,y) {
-    this.h = x;
-    this.v = y;
+class Point {
+    constructor(x,y) {
+        this.h = x;
+        this.v = y;
+    }
+    toString() {
+        return "(" + this.h + "," + this.v + ")";
+    }
+    copy() {
+        var child = new Point(this.h, this.v);
+        return child;
+    }
 }
 
-Point.prototype.toString = function() {
-    return "(" + this.h + "," + this.v + ")";
-}
+class Rect {
 
-Point.prototype.copy = function() {
-    var child = new Point(this.h, this.v);
-    return child;
-}
 
-function Rect() {
-    this.left = 0
-    this.right = 0
-    this.top = 0
-    this.bottom = 0
-}
+    /*
+     * QuickDraw style Rect, with left, right, top and bottom
+     */
+    constructor(left, top, right, bottom) {
 
-/*
- * QuickDraw style Rect, with left, right, top and bottom
- */
-function Rect(left, top, right, bottom) {
-    
-    if(left) {
+
+        if(left) {
+            this.left = left;
+        } else {
+            this.left = 0;
+        }
+        if(right) {
+            this.right = right;
+        } else {
+            this.right = 0;
+        }
+        if(top) {
+            this.top = top;
+        } else {
+            this.top = 0;
+        }
+        if(bottom) {
+            this.bottom = bottom;
+        } else {
+            this.bottom = 0;
+        }
+    }
+
+
+
+    toString() {
+        return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
+    }
+
+    setRect(left, top, right, bottom) {
         this.left = left;
-    } else {
-        this.left = 0;
-    }
-    if(right) {
         this.right = right;
-    } else {
-        this.right = 0;
-    }
-    if(top) {
         this.top = top;
-    } else {
-        this.top = 0;
-    }
-    if(bottom) {
         this.bottom = bottom;
-    } else {
-        this.bottom = 0;
     }
-}
 
-
-
-Rect.prototype.toString = function() {
-    return "Rect (" + this.left + "," + this.top + "),(" + this.right + "," + this.bottom + ")";
-}
-
-Rect.prototype.setRect = function(left, top, right, bottom) {
-    this.left = left;
-    this.right = right;
-    this.top = top;
-    this.bottom = bottom;
-}
-
-Rect.prototype.ptInRect = function(pt) {
-    return (pt.h >= this.left 
-            && pt.h <= this.right 
-            && pt.v >= this.top
-            && pt.v <= this.bottom)
-}
-
-//FUNCTION SectRect (srcl,src2: Rect; VAR dstRect: Rect) : BOOLEAN;
-//SectRect calculates the rectangle that's the intersection of the two given rectangles, and returns
-//TRUE if they indeed intersect or FALSE if they don't. Rectangles that "touch" at a line or a point
-//are not considered intersecting, because their intersection rectangle (actually, in this case, an
-//intersection line or point) doesn't enclose any bits in the bit image.
-//If the rectangles don't intersect, the destination rectangle is set to (0,0)(0,0). SectRect works
-//correctly even if one of the source rectangles is also the destination
-Rect.prototype.sectRect = function(otherRect, destRect) {
-    let x5 = max(this.left, otherRect.left);
-    let y5 = max(this.top, otherRect.top);
-    let x6 = min(this.right, otherRect.right);
-    let y6 = min(this.bottom, otherRect.bottom);
-    if(x5 >= x6 || y5 >= y6) {
-        destRect.left = 0
-        destRect.top = 0
-        destRect.right = 0
-        destRect.bottom = 0
-        return false
-    } else {
-        destRect.left = x5
-        destRect.top = y5
-        destRect.right = x6
-        destRect.bottom = y6
-        return true
+    ptInRect(pt) {
+        return (pt.h >= this.left 
+                && pt.h <= this.right 
+                && pt.v >= this.top
+                && pt.v <= this.bottom)
     }
-}
 
-//PROCEDURE InsetRect (VAR r: Rect; dh,dv: INTEGER);
-//InsetRect shrinks or expands the given rectangle. The left and right sides are moved in by the
-//amount specified by dh; the top and bottom are moved toward the center by the amount specified
-//by dv. If dh or dv is negative, the appropriate pair of sides is moved outward instead of inward.
-//The effect is to alter the size by 2*dh horizontally and 2*dv vertically, with the rectangle
-//remaining centered in the same place on the coordinate plane.
-//If the resulting width or height becomes less than 1, the rectangle is set to the empty rectangle
-//(0,0)(0,0). 
-Rect.prototype.insetRect = function(dh, dv) {
-    this.left += dh
-    this.right -= dh
-    this.top += dv
-    this.bottom -= dv
-    if(this.left >= this.right || this.top >= this.bottom) {
-        this.left = 0
-        this.top = 0
-        this.right = 0
-        this.bottom = 0
+//  FUNCTION SectRect (srcl,src2: Rect; VAR dstRect: Rect) : BOOLEAN;
+//  SectRect calculates the rectangle that's the intersection of the two given rectangles, and returns
+//  TRUE if they indeed intersect or FALSE if they don't. Rectangles that "touch" at a line or a point
+//  are not considered intersecting, because their intersection rectangle (actually, in this case, an
+//  intersection line or point) doesn't enclose any bits in the bit image.
+//  If the rectangles don't intersect, the destination rectangle is set to (0,0)(0,0). SectRect works
+//  correctly even if one of the source rectangles is also the destination
+    sectRect(otherRect, destRect) {
+        let x5 = max(this.left, otherRect.left);
+        let y5 = max(this.top, otherRect.top);
+        let x6 = min(this.right, otherRect.right);
+        let y6 = min(this.bottom, otherRect.bottom);
+        if(x5 >= x6 || y5 >= y6) {
+            destRect.left = 0
+            destRect.top = 0
+            destRect.right = 0
+            destRect.bottom = 0
+            return false
+        } else {
+            destRect.left = x5
+            destRect.top = y5
+            destRect.right = x6
+            destRect.bottom = y6
+            return true
+        }
     }
-}
 
-Rect.prototype.equalRect = function(otherRect) {
-    return (this.left == otherRect.left &&
-        this.right == otherRect.right &&
-        this.top == otherRect.top &&
-        this.bottom == otherRect.bottom)
-}
-Rect.prototype.isDegenerate = function() {
-    return (this.left == 0 &&
-        this.right == 0 &&
-        this.top == 0 &&
-        this.bottom == 0 || 
-        this.left >= this.right ||
-        this.top >= this.bottom)
-}
+//  PROCEDURE InsetRect (VAR r: Rect; dh,dv: INTEGER);
+//  InsetRect shrinks or expands the given rectangle. The left and right sides are moved in by the
+//  amount specified by dh; the top and bottom are moved toward the center by the amount specified
+//  by dv. If dh or dv is negative, the appropriate pair of sides is moved outward instead of inward.
+//  The effect is to alter the size by 2*dh horizontally and 2*dv vertically, with the rectangle
+//  remaining centered in the same place on the coordinate plane.
+//  If the resulting width or height becomes less than 1, the rectangle is set to the empty rectangle
+//  (0,0)(0,0). 
+    insetRect(dh, dv) {
+        this.left += dh
+        this.right -= dh
+        this.top += dv
+        this.bottom -= dv
+        if(this.left >= this.right || this.top >= this.bottom) {
+            this.left = 0
+            this.top = 0
+            this.right = 0
+            this.bottom = 0
+        }
+    }
 
-Rect.prototype.getWidth = function() {
-    return this.right - this.left
-}
+    equalRect(otherRect) {
+        return (this.left == otherRect.left &&
+                this.right == otherRect.right &&
+                this.top == otherRect.top &&
+                this.bottom == otherRect.bottom)
+    }
+    isDegenerate() {
+        return (this.left == 0 &&
+                this.right == 0 &&
+                this.top == 0 &&
+                this.bottom == 0 || 
+                this.left >= this.right ||
+                this.top >= this.bottom)
+    }
 
-Rect.prototype.getHeight = function() {
-    return this.bottom - this.top
+    getWidth() {
+        return this.right - this.left
+    }
+
+    getHeight() {
+        return this.bottom - this.top
+    }
 }
 function drawerFactory_registerDrawerType(drawerType, constructorFunction) {
     this.properties[drawerType] = constructorFunction;
@@ -2731,10 +2729,8 @@ $.widget( "dawk.breedingBoxes", {
         $(boxes).addClass('boxes')
         if(this.options.newRandomStart) {
             $(boxes).addClass('newRandomStart')
+            this._on(this.element, {click: "newRandomStart"})
         }
-        this._on(boxes, {'click': function(event) {
-            this.newRandomStart(event)
-        }})
         this.element.append(boxes)
         var numBoxes = this.options.numBoxes
         var midBox = Math.trunc(numBoxes / 2)
@@ -2750,19 +2746,19 @@ $.widget( "dawk.breedingBoxes", {
             if(isMidBox) {
                 this.options.midCanvasDiv = canvasDiv
                 var canvas = $(canvasDiv).find('canvas').get(0)
-                
-                    // Create a biomorph and render it on the middle canvas.
+
+                // Create a biomorph and render it on the middle canvas.
                 var biomorph = _speciesFactorySingleton.getSpecies(
                         species, session, canvas)
-                if(this.options.newRandomStart) {
-                    biomorph.doPerson(session.options.hopefulMonsterBasicType)
-                } else {
-                    if(this.options.biomorph) {
-                        this.options.biomorph.copyBiomorph(biomorph)
-                    } else {
-                        biomorph.doPerson(session.options.defaultBasicType)
-                    }
-                }
+                        if(this.options.newRandomStart) {
+                            biomorph.doPerson(session.options.hopefulMonsterBasicType)
+                        } else {
+                            if(this.options.biomorph) {
+                                this.options.biomorph.copyBiomorph(biomorph)
+                            } else {
+                                biomorph.doPerson(session.options.defaultBasicType)
+                            }
+                        }
 
                 $(canvas).data('genotype', biomorph)        
                 biomorph.develop()
@@ -2772,27 +2768,27 @@ $.widget( "dawk.breedingBoxes", {
         this._refresh()
     },
 
-    // Called when created, and later when changing options
+//  Called when created, and later when changing options
     _refresh: function() {
     },
 
-    // A public method to change the color to a random value
-    // can be called directly via .colorize( "random" )
+//  A public method to change the color to a random value
+//  can be called directly via .colorize( "random" )
     random: function( event ) {
     },
 
     _destroy: function() {
     },
 
-    // _setOptions is called with a hash of all options that are changing
-    // always refresh when changing options
+//  _setOptions is called with a hash of all options that are changing
+//  always refresh when changing options
     _setOptions: function() {
         // _super and _superApply handle keeping the right this-context
         this._superApply( arguments )
         this._refresh()
     },
 
-    // _setOption is called for each individual option that is changing
+//  _setOption is called for each individual option that is changing
     _setOption: function( key, value ) {
         this._super( key, value );
     }
@@ -2836,14 +2832,20 @@ $.widget('dawk.breedingBox', {
         }
     },
     _doCanvasClicked: function(event) {
-        event.stopPropagation()
-        
+        console.log('canvas clicked')
         let target = event.target
         let view = $(target).closest('.watchmakerView')
         if(view.find('.activeBreeding').length != 0) {
             return
         }
+        
         let highlighting = $(view).breedingView('option','highlighting')
+        let genotype = $(target).data('genotype')
+        if(genotype == null) {
+            return
+        }
+        event.stopPropagation()
+        
         if(highlighting) {
             this._doCanvasClickedHighlighting(view, target)
         } else {
@@ -2855,7 +2857,6 @@ $.widget('dawk.breedingBox', {
         $(target).closest('div').addClass('highlighted')
     },
     _doCanvasClickedBreed: function(view, target) {
-        view.find('.box').addClass('activeBreeding')
         var canvas = this.options.canvas;
         var position = this.element.position();
         var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;
@@ -2870,12 +2871,12 @@ $.widget('dawk.breedingBox', {
         var breedingBoxes = this.options.breedingBoxes;
         var clickedBoxIndex =  this.options.boxIndex;
         if (biomorph != null) {
-//            event.stopPropagation()
             if(this.options.parentOptions.newRandomStart) {
                 var watchmakerSessionTab = $(event.target).closest('.watchmakerSessionTab').eq(0)
                 $(watchmakerSessionTab).watchmakerSessionTab(
                         "newBreedingView", biomorph, false);
             } else {
+                view.find('.box').addClass('activeBreeding')
                 // erase the other canvases
                 var breedingViewCanvases = $(canvas).parents('.boxes').find('canvas');
                 $(breedingViewCanvases).each(function(index) {

@@ -62,7 +62,6 @@ $.widget('dawk.breedingBox', {
         $(target).closest('div').addClass('highlighted')
     },
     _doCanvasClickedBreed: function(view, target) {
-        console.log('canvas clicked breed')
         var canvas = this.options.canvas;
         var position = this.element.position();
         var midCanvasDiv = this.options.breedingBoxes.options.midCanvasDiv;

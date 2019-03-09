@@ -121,7 +121,6 @@ $.widget( "dawk.breedingBoxes", {
         }
     },
     newRandomStart: function(event) {
-        console.log('newRandomStart')
         if(this.options.newRandomStart) {
             let canvas = $(this.options.midCanvasDiv).find('canvas').get(0)
             let biomorph = $(canvas).data('genotype')

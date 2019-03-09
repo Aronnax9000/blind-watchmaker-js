@@ -1,5 +1,5 @@
-.breedingView  {
-          cursor: url(cursor/breed.png), auto;
+.breedingView, .newRandomStart .midBox  {
+          cursor: url(cursor/birdFlippingFingerHand.png), auto;
 }
 
 
