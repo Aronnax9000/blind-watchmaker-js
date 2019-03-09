@@ -1,8 +1,7 @@
 
 
 Monochrome.prototype.doSaltation = function() {
-    this.mutSizeGene = Math.trunc(TRICKLE/2); // Trickle div 2;
-    this.mutProbGene = 10;
+
 
     var mut = this.session.options.mut
     var genes = this.session.options.genes

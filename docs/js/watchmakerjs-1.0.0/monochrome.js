@@ -691,6 +691,8 @@ Monochrome.prototype.doPerson = function(biomorphType) {
 
 
 Monochrome.prototype.doSaltation = function() {
+
+
     var mut = this.session.options.mut
     var genes = this.session.options.genes
     if(mut[0] && genes[0]) {
@@ -728,6 +730,7 @@ Monochrome.prototype.doSaltation = function() {
     for(let j = 0; j < 8; j++) {
         var maxGene;
         do {
+            console.log('mutSizeGene ' + this.mutSizeGene)
             this.gene[j] = Math.trunc(this.mutSizeGene * (Monochrome.randInt(19) - 10));
             if(mut[1] && genes[1]) {
                 this.dGene[j] = Monochrome.randSwell(this.dGene[j]);

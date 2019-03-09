@@ -37,7 +37,6 @@ $.widget('dawk.breedingBox', {
         }
     },
     _doCanvasClicked: function(event) {
-        console.log('canvas clicked')
         let target = event.target
         let view = $(target).closest('.watchmakerView')
         if(view.find('.activeBreeding').length != 0) {
