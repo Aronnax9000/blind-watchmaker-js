@@ -1053,7 +1053,9 @@ Monochrome.prototype.mutate = function() {
 
 Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     var str = "Manipulation geneBoxIndex:" + geneboxIndex;
-
+    let options = this.session.options
+    let mut = options.mut
+    let genes = options.genes
     var leftRightPosProperties = HorizPos.properties[leftRightPos];
     if(leftRightPosProperties != null) {
         str += ',' + leftRightPosProperties.name;
@@ -1080,7 +1082,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             this.gene[geneboxIndex - 1] += this.mutSizeGene;
             break;
         case HorizPos.MidThird: 
-            if(this.session.options.genes[1]) {
+            if(genes[1]) {
                 switch(rung) {
                 case VertPos.TopRung: 
                     this.dGene[geneboxIndex - 1] = SwellType.Swell;
@@ -1100,7 +1102,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         switch(leftRightPos) {
         case HorizPos.LeftThird:
             this.gene[8]--;
-            let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+            let gene8Limit = mut[8] ? 0 : 1;
             if(this.gene[8] < gene8Limit) 
                 this.gene[8] = gene8Limit;
             break;
@@ -1116,7 +1118,7 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
             }
             break;
         case HorizPos.MidThird:
-            if(this.session.options.genes[1]) {
+            if(genes[1] && mut[1]) {
                 switch(rung) {
                 case VertPos.TopRung: 
                     this.dGene[8] = SwellType.Swell;
@@ -1133,68 +1135,79 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 10: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.segNoGene--;
-            break;
-        case HorizPos.MidThird: 
-            break; //{No Action}
-        case HorizPos.RightThird: 
-            var sizeWorry = (this.segNoGene + 1) * Monochrome.twoToThe(this.gene[8]);
-            if(sizeWorry <= WORRYMAX) {
-                this.segNoGene++;
+        if(genes[0] && mut[0]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.segNoGene--;
+                break;
+            case HorizPos.MidThird: 
+                break; //{No Action}
+            case HorizPos.RightThird: 
+                var sizeWorry = (this.segNoGene + 1) * Monochrome.twoToThe(this.gene[8]);
+                if(sizeWorry <= WORRYMAX) {
+                    this.segNoGene++;
+                }
+                break;
             }
-            break;
         }
         break;
     case 11: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.segDistGene -= this.trickleGene;
-            break;
-        case HorizPos.MidThird:
-            if(this.session.options.genes[7]) {
-                switch(rung) {
-                case VertPos.TopRung: 
-                    this.dGene[9] = SwellType.Swell;
-                    break;
-                case VertPos.MidRung: 
-                    this.dGene[9] = SwellType.Same;
-                    break;
-                case VertPos.BottomRung: 
-                    this.dGene[9] = SwellType.Shrink;
-                    break;
+        if(genes[0] && mut[0]) {
+
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.segDistGene -= this.trickleGene;
+                break;
+            case HorizPos.MidThird:
+                if(genes[1] && mut[1]) {
+                    switch(rung) {
+                    case VertPos.TopRung: 
+                        this.dGene[9] = SwellType.Swell;
+                        break;
+                    case VertPos.MidRung: 
+                        this.dGene[9] = SwellType.Same;
+                        break;
+                    case VertPos.BottomRung: 
+                        this.dGene[9] = SwellType.Shrink;
+                        break;
+                    }
                 }
+                break;
+            case HorizPos.RightThird: 
+
+                this.segDistGene += this.trickleGene;
+                break;
             }
-            break;
-        case HorizPos.RightThird: 
-            this.segDistGene += this.trickleGene;
-            break;
         }
         break;
     case 12: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.completenessGene = CompletenessType.Single;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No Action}
-        case HorizPos.RightThird: 
-            this.completenessGene = CompletenessType.Double;
-            break;
+        if(mut[2]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.completenessGene = CompletenessType.Single;
+                break;
+            case HorizPos.MidThird: 
+                break; // {No Action}
+            case HorizPos.RightThird: 
+                this.completenessGene = CompletenessType.Double;
+                break;
+            }
         }
         break;
     case 13: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            this.spokesGene = SpokesType.NorthOnly;
-            break;
-        case HorizPos.MidThird: 
-            this.spokesGene = SpokesType.NSouth;
-            break;
-        case HorizPos.RightThird: 
-            this.spokesGene = SpokesType.Radial;
-            break;
+        if(mut[3]) {
+
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                this.spokesGene = SpokesType.NorthOnly;
+                break;
+            case HorizPos.MidThird: 
+                this.spokesGene = SpokesType.NSouth;
+                break;
+            case HorizPos.RightThird: 
+                this.spokesGene = SpokesType.Radial;
+                break;
+            }
         }
         break;
     case 14: 
@@ -1211,35 +1224,39 @@ Monochrome.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
         }
         break;
     case 15: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.mutSizeGene > 1)
-                this.mutSizeGene--;
-            break;
-        case HorizPos.RightThird: 
-            this.mutSizeGene++;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No action}
+        if(mut[5]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                if(this.mutSizeGene > 1)
+                    this.mutSizeGene--;
+                break;
+            case HorizPos.RightThird: 
+                this.mutSizeGene++;
+                break;
+            case HorizPos.MidThird: 
+                break; // {No action}
+            }
         }
         break;
     case 16: 
-        switch(leftRightPos) {
-        case HorizPos.LeftThird:
-            if(this.mutProbGene > 1) {
-                this.mutProbGene--;
+        if(mut[6]) {
+            switch(leftRightPos) {
+            case HorizPos.LeftThird:
+                if(this.mutProbGene > 1) {
+                    this.mutProbGene--;
+                }
+                break;
+            case HorizPos.RightThird: 
+                if(this.mutProbGene < 100)
+                    this.mutProbGene++;
+                break;
+            case HorizPos.MidThird: 
+                break; // {No action}
+                break;
             }
-            break;
-        case HorizPos.RightThird: 
-            if(this.mutProbGene < 100)
-                this.mutProbGene++;
-            break;
-        case HorizPos.MidThird: 
-            break; // {No action}
-            break;
         }
     }
-    let gene8Limit = this.session.options.mut[8] ? 0 : 1;
+    let gene8Limit = mut[8] ? 0 : 1;
     if(this.gene[8] < gene8Limit) {
         this.gene[8] = gene8Limit;
     }

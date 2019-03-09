@@ -69,6 +69,8 @@
             <fileset file="js/species/species_factory.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/biomorphs.js">
+            <fileset file="js/species/biomorphs/biomorphs_swelltype.js" />
+            <fileset file="js/species/biomorphs/biomorphs_spokestype.js" />
             <fileset file="js/species/biomorphs/biomorph_genebox.js" />
             <fileset file="js/species/biomorphs/biomorph_geneboxes.js" />
             <fileset file="js/species/biomorphs/biomorphs.js" />

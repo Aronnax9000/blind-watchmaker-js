@@ -121,6 +121,7 @@ $.widget( "dawk.breedingBoxes", {
         }
     },
     newRandomStart: function(event) {
+        console.log('newRandomStart')
         if(this.options.newRandomStart) {
             let canvas = $(this.options.midCanvasDiv).find('canvas').get(0)
             let biomorph = $(canvas).data('genotype')
@@ -137,10 +138,8 @@ $.widget( "dawk.breedingBoxes", {
         $(boxes).addClass('boxes')
         if(this.options.newRandomStart) {
             $(boxes).addClass('newRandomStart')
+            this._on(this.element, {click: "newRandomStart"})
         }
-        this._on(boxes, {'click': function(event) {
-            this.newRandomStart(event)
-        }})
         this.element.append(boxes)
         var numBoxes = this.options.numBoxes
         var midBox = Math.trunc(numBoxes / 2)
@@ -156,19 +155,19 @@ $.widget( "dawk.breedingBoxes", {
             if(isMidBox) {
                 this.options.midCanvasDiv = canvasDiv
                 var canvas = $(canvasDiv).find('canvas').get(0)
-                
-                    // Create a biomorph and render it on the middle canvas.
+
+                // Create a biomorph and render it on the middle canvas.
                 var biomorph = _speciesFactorySingleton.getSpecies(
                         species, session, canvas)
-                if(this.options.newRandomStart) {
-                    biomorph.doPerson(session.options.hopefulMonsterBasicType)
-                } else {
-                    if(this.options.biomorph) {
-                        this.options.biomorph.copyBiomorph(biomorph)
-                    } else {
-                        biomorph.doPerson(session.options.defaultBasicType)
-                    }
-                }
+                        if(this.options.newRandomStart) {
+                            biomorph.doPerson(session.options.hopefulMonsterBasicType)
+                        } else {
+                            if(this.options.biomorph) {
+                                this.options.biomorph.copyBiomorph(biomorph)
+                            } else {
+                                biomorph.doPerson(session.options.defaultBasicType)
+                            }
+                        }
 
                 $(canvas).data('genotype', biomorph)        
                 biomorph.develop()
@@ -178,27 +177,27 @@ $.widget( "dawk.breedingBoxes", {
         this._refresh()
     },
 
-    // Called when created, and later when changing options
+//  Called when created, and later when changing options
     _refresh: function() {
     },
 
-    // A public method to change the color to a random value
-    // can be called directly via .colorize( "random" )
+//  A public method to change the color to a random value
+//  can be called directly via .colorize( "random" )
     random: function( event ) {
     },
 
     _destroy: function() {
     },
 
-    // _setOptions is called with a hash of all options that are changing
-    // always refresh when changing options
+//  _setOptions is called with a hash of all options that are changing
+//  always refresh when changing options
     _setOptions: function() {
         // _super and _superApply handle keeping the right this-context
         this._superApply( arguments )
         this._refresh()
     },
 
-    // _setOption is called for each individual option that is changing
+//  _setOption is called for each individual option that is changing
     _setOption: function( key, value ) {
         this._super( key, value );
     }

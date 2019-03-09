@@ -4,26 +4,6 @@ function Biomorphs() {
 }
 
 
-var SwellType = {
-    Swell: 1,
-    Shrink: 2,
-    Same: 3,
-    properties: {
-        1: {name: "Swell"},
-        2: {name: "Shrink"},
-        3: {name: "Same"}
-    },
-    swellType: function(index) {
-        switch(index) {
-        case 1:
-            return SwellType.Swell;
-        case 2:
-            return SwellType.Shrink;
-        case 3:
-            return SwellType.Same;
-        }
-    }
-}
 var CompletenessType = {
         Single: 1,
         Double: 2,
@@ -33,16 +13,7 @@ var CompletenessType = {
         }
 };
 
-var SpokesType = {
-        NorthOnly: 1,
-        NSouth: 2,
-        Radial: 3,
-        properties: {
-            1: {name: "NorthOnly", geneboxName: "Single"},
-            2: {name: "NSouth", geneboxName: "UpDn"},
-            3: {name: "Radial", geneboxName: "Radial"}
-        }
-};
+
 /*
  * Monochrome biomorph bounding box calculations.
  * Monochrome biomorphs store this as a Rect
