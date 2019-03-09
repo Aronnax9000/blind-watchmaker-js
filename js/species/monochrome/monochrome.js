@@ -28,8 +28,8 @@ function Monochrome(session, drawer) {
     this.completenessGene = CompletenessType.Single
     this.spokesGene = SpokesType.NorthOnly
     this.trickleGene = TRICKLE
-    this.mutSizeGene = 0
-    this.mutProbGene = 0
+    this.mutSizeGene = Math.trunc(TRICKLE/2); // Trickle div 2;
+    this.mutProbGene = 10;
     this.pic = new Pic(this)
 
 }

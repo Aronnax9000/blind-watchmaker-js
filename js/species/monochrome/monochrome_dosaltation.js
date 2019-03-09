@@ -2,7 +2,6 @@
 
 Monochrome.prototype.doSaltation = function() {
 
-
     var mut = this.session.options.mut
     var genes = this.session.options.genes
     if(mut[0] && genes[0]) {
