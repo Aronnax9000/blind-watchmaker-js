@@ -1,14 +1,14 @@
 Monochrome.initializeGenes = function(session) {
     var genes = []
 
-    genes.push(false)  // Segmentation // {** changed 1.1 **}
-    genes.push(false)  // Gradient {** changed 1.1 **}
-    genes.push(false)  // Asymmetry {** changed 1.1 **}
-    genes.push(false)  // Radial Sym {** changed 1.1 **}
-    genes.push(false)  // Scaling Factor {** changed 1.1 **}
-    genes.push(false) // Mutation Size
-    genes.push(false) // Mutation Rate
-    genes.push(false)  // Tapering Twigs (Gene9 Gradient)
+    genes.push(true)  // Segmentation // {** changed 1.1 **}
+    genes.push(true)  // Gradient {** changed 1.1 **}
+    genes.push(true)  // Asymmetry {** changed 1.1 **}
+    genes.push(true)  // Radial Sym {** changed 1.1 **}
+    genes.push(true)  // Scaling Factor {** changed 1.1 **}
+    genes.push(true) // Mutation Size
+    genes.push(true) // Mutation Rate
+    genes.push(true)  // Tapering Twigs (Gene9 Gradient)
     session.options.genes = genes
 }
 
