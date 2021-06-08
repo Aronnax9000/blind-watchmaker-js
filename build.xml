@@ -14,10 +14,24 @@
     <!-- ================================= 
           target: default              
          ================================= -->
-    <target name="default" depends="app_plus_species_modules,baked,zip" description="description">
+    <target name="default" depends="buildIt" description="description">
        
     </target>
-
+    <target name="buildIt" depends="app_plus_species_modules,baked,zip" description="description">
+       
+    </target>
+    <target name="deploy" depends="buildIt" description="Deploy server defined in ${deploy.*} environment variables, configurable in Eclipse Ant Properties Preferences.">
+    	<ftp server="${deploy.server}"
+    	     remotedir="${deploy.remotedir}"
+    	     userid="${deploy.userid}"
+   	     	 password="${deploy.password}"
+    	     passive="yes"
+    	     depends="yes"
+    	     binary="no">
+    	    <fileset dir="docs">
+    	    </fileset>
+    	</ftp>
+    </target>
     <!-- - - - - - - - - - - - - - - - - - 
           target: depends                      
          - - - - - - - - - - - - - - - - - -->
