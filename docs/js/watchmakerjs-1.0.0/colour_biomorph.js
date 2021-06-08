@@ -1160,18 +1160,18 @@ ColourBiomorph.initializeMut = function(session) {
 ColourBiomorph.initializeGenes = function(session) {
     var genes = []
 
-    genes.push(false) // Segmentation // {** changed 1.1 **}
-    genes.push(false) // Gradient {** changed 1.1 **}
-    genes.push(false) // Asymmetry {** changed 1.1 **}
-    genes.push(false) // Radial Sym {** changed 1.1 **}
-    genes.push(false) // Scaling Factor {** changed 1.1 **}
-    genes.push(false) // Mutation Size
-    genes.push(false) // Mutation Rate
-    genes.push(false) // Limb Shape
-    genes.push(false) // Limb Fill
-    genes.push(false) // Colour
-    genes.push(false) // Background Colour
-    genes.push(false) // Thickness
+    genes.push(true) // Segmentation // {** changed 1.1 **}
+    genes.push(true) // Gradient {** changed 1.1 **}
+    genes.push(true) // Asymmetry {** changed 1.1 **}
+    genes.push(true) // Radial Sym {** changed 1.1 **}
+    genes.push(true) // Scaling Factor {** changed 1.1 **}
+    genes.push(true) // Mutation Size
+    genes.push(true) // Mutation Rate
+    genes.push(true) // Limb Shape
+    genes.push(true) // Limb Fill
+    genes.push(true) // Colour
+    genes.push(true) // Background Colour
+    genes.push(true) // Thickness
     
     session.options.genes = genes
 }
