@@ -174,24 +174,35 @@ ColourBiomorph.menuclick = function(event) {
         return false 
     case 'ShowColour':
         Monochrome.toggleMut(genes, 9, target)
-        if(! genes[9]) {
+		let backgroundMenuItem = $(target)
+			.closest('.watchmakerSessionTab')
+			.find('.menuitemShowBackgroundColour')
+			.children('a')
+        if(! genes[9]) { // if turning off, assign black to all colour genes
             let biomorphs = [] 
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')
                 if(biomorph != null) {
                     biomorph.colorGene = [0,0,0,0,0,0,0,0]
-                    biomorph.develop()
+					if( genes[10]) { // turn off background color if it's on
+						setTimeout(function(){ // wait a jiffy
+							backgroundMenuItem.click()
+							backgroundMenuItem.hide()
+					    },17)
+					}                    
+					biomorph.develop()
                 }
             })
             $(target).closest('.watchmakerSessionTab').find('.colourGenebox').addClass('geneboxHidden')
         } else {
+			backgroundMenuItem.show()
             $(target).closest('.watchmakerSessionTab').find('.colourGenebox').removeClass('geneboxHidden')
         }
         ColourBiomorph.updateAllGeneboxes(event)
         return false 
     case 'ShowBackgroundColour':
         Monochrome.toggleMut(genes, 10, target)
-        if(! genes[10]) {
+        if(! genes[10]) { // If turning off, assign white to background colour
             let biomorphs = [] 
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')

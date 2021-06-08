@@ -43,7 +43,7 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         let colors = biomorph.session.options.palette.colors
 
         genebox = geneboxes.eq(19);
-        genebox.backgroundColourGenebox("updateValue", colors[biomorph.backColorGene]);
+        genebox.colourGenebox("updateValue", colors[biomorph.backColorGene]);
         genebox = geneboxes.eq(20);
         genebox.colourGenebox("updateValue", colors[biomorph.colorGene[0]]);
         genebox = geneboxes.eq(21);
@@ -174,11 +174,12 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
 
         let colors = this.options.session.options.palette.colors
 
-        genebox = $(template).backgroundColourGenebox({
+        genebox = $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
             colors: colors,
-            title: 'Background Colour'});
+            title: 'Background Colour',
+			extraClass: 'backgroundColourGenebox'});
         if(! genes[10]) {
             genebox.addClass('geneboxHidden')
         }

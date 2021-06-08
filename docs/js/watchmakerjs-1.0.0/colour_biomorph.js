@@ -1053,24 +1053,35 @@ ColourBiomorph.menuclick = function(event) {
         return false 
     case 'ShowColour':
         Monochrome.toggleMut(genes, 9, target)
-        if(! genes[9]) {
+		let backgroundMenuItem = $(target)
+			.closest('.watchmakerSessionTab')
+			.find('.menuitemShowBackgroundColour')
+			.children('a')
+        if(! genes[9]) { // if turning off, assign black to all colour genes
             let biomorphs = [] 
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')
                 if(biomorph != null) {
                     biomorph.colorGene = [0,0,0,0,0,0,0,0]
-                    biomorph.develop()
+					if( genes[10]) { // turn off background color if it's on
+						setTimeout(function(){ // wait a jiffy
+							backgroundMenuItem.click()
+							backgroundMenuItem.hide()
+					    },17)
+					}                    
+					biomorph.develop()
                 }
             })
             $(target).closest('.watchmakerSessionTab').find('.colourGenebox').addClass('geneboxHidden')
         } else {
+			backgroundMenuItem.show()
             $(target).closest('.watchmakerSessionTab').find('.colourGenebox').removeClass('geneboxHidden')
         }
         ColourBiomorph.updateAllGeneboxes(event)
         return false 
     case 'ShowBackgroundColour':
         Monochrome.toggleMut(genes, 10, target)
-        if(! genes[10]) {
+        if(! genes[10]) { // If turning off, assign white to background colour
             let biomorphs = [] 
             $(target).closest('.watchmakerSessionTab').find('canvas').each(function() {
                 let biomorph = $(this).data('genotype')
@@ -1627,41 +1638,11 @@ ColourBiomorph.prototype.mutate = function() {
             this.mutSizeGene = 1
     }
 }
-$.widget( "dawk.backgroundColourGenebox", $.dawk.biomorph_genebox, {
-    options: {
-        hasLeftRight: false,
-        hasColor: true
-    },
-    _launchPicker: function() {
-        $(this.element).tooltip('disable')
-        $('<div class="backgroundColourGenebox"></div>').colourPicker({
-            colourGenebox: this.element,
-            colors: this.options.colors,
-            title: this.options.title,
-            value: this.options.value,
-            appendTo: this.element
-        })
-
-    },
-    manipulate: function(event) {
-        let value = $(event.target).data("value")
-        $(this.element).parents('.colourGeneboxes').eq(0).colour_geneboxes(
-                "manipulate",
-                this.options.geneboxIndex, 
-                value, 0)
-                return false;
-
-    },  
-    _create: function() {
-        this.element.addClass('backgroundColourGenebox')
-        return this._super()
-    },    
-} );
-
 $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
     options: {
         hasLeftRight: false,
-        hasColor: true
+        hasColor: true,
+		extraClass: null
     },
     _launchPicker: function() {
         $(this.element).tooltip('disable')
@@ -1685,10 +1666,12 @@ $.widget( "dawk.colourGenebox", $.dawk.biomorph_genebox, {
     },  
     _create: function() {
         this.element.addClass('colourGenebox')
+		if (this.options.extraClass != null) {
+			this.element.addClass(this.options.extraClass)
+		}
         return this._super()
     },    
 } );
-
 $.widget('dawk.colourPicker', {
     options: {
         colourGenebox: null,
@@ -1764,6 +1747,7 @@ $.widget('dawk.colourPicker', {
     },
     _colorSwatchClicked: function(event) {
         $(this.options.colourGenebox).colourGenebox("manipulate", event)
+
     }
 });
 
@@ -1848,7 +1832,7 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
         let colors = biomorph.session.options.palette.colors
 
         genebox = geneboxes.eq(19);
-        genebox.backgroundColourGenebox("updateValue", colors[biomorph.backColorGene]);
+        genebox.colourGenebox("updateValue", colors[biomorph.backColorGene]);
         genebox = geneboxes.eq(20);
         genebox.colourGenebox("updateValue", colors[biomorph.colorGene[0]]);
         genebox = geneboxes.eq(21);
@@ -1979,11 +1963,12 @@ $.widget('dawk.colour_geneboxes', $.dawk.geneboxes, {
 
         let colors = this.options.session.options.palette.colors
 
-        genebox = $(template).backgroundColourGenebox({
+        genebox = $(template).colourGenebox({
             geneboxCollection: this,
             geneboxIndex: 20,
             colors: colors,
-            title: 'Background Colour'});
+            title: 'Background Colour',
+			extraClass: 'backgroundColourGenebox'});
         if(! genes[10]) {
             genebox.addClass('geneboxHidden')
         }
