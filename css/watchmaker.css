@@ -1,12 +1,12 @@
 
 @font-face {
   font-family: chicagoflf;
-  src: url(font/chicagoflf.ttf) format('ttf');
+  src: url(font/chicagoflf.ttf) format('truetype');
   font-display: block;
 }
 @font-face {
   font-family: virtue;
-  src: url(font/virtue.ttf) format('ttf');
+  src: url(font/virtue.ttf) format('truetype');
   font-display: block;
 }
 
