@@ -26,8 +26,8 @@
     	     userid="${deploy.userid}"
    	     	 password="${deploy.password}"
     	     passive="yes"
-    	     depends="yes"
-    	     binary="no">
+    	     depends="no"
+    	     binary="yes">
     	    <fileset dir="docs">
     	    </fileset>
     	</ftp>

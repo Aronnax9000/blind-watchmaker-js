@@ -1,10 +1,13 @@
+
 @font-face {
   font-family: chicagoflf;
-  src: url(font/chicagoflf.ttf);
+  src: url(font/chicagoflf.ttf) format('ttf');
+  font-display: block;
 }
 @font-face {
   font-family: virtue;
-  src: url(font/virtue.ttf);
+  src: url(font/virtue.ttf) format('ttf');
+  font-display: block;
 }
 
 body, .ui-widget, .ui-widget button {
