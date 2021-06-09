@@ -143,10 +143,11 @@
             <fileset file="js/species/triay_shell/triay_shell_shells_manipulation.js" />
             <fileset file="js/species/triay_shell/triay_shell_geneboxes.js" />
         </concat>
-        <concat destfile="docs/js/watchmakerjs-1.0.0/triay_biomorph.js">
+
+    	<concat destfile="docs/js/watchmakerjs-1.0.0/triay_biomorph.js">
             <fileset file="js/species/triay_biomorph/triay_biomorph.js" />
         </concat>
-        <concat destfile="docs/css/watchmaker.css">
+      <concat destfile="docs/css/watchmaker.css">
             <concat destfile="docs/css/watchmaker.css">
                 <fileset file="css/about.css" />
             	
@@ -165,7 +166,7 @@
             <fileset file="docs/js/watchmaker.js" />
             <fileset file="docs/js/biomorphs.js" />
             <fileset file="docs/js/monochrome.js" />
-            <fileset file="docs/js/triay_biomorph.js.js" />
+<!--            <fileset file="docs/js/triay_biomorph.js" /> -->
             <fileset file="docs/js/colour_biomorph.js" />
             <fileset file="docs/js/triay_shell.js" />
             <fileset file="docs/js/arthromorph.js" />

@@ -51,7 +51,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         overlay.append(overlayCanvas);
         this.element.append(container);
 
-        $("<div>").breedingOffspringCounter().appendTo(this.element)
+        //$("<div>").breedingOffspringCounter().appendTo(this.element)
 
         this.options.menuHandler.nextMenuHandler = new BreedingMenuHandler(this)
         
@@ -117,7 +117,7 @@ $.widget( "dawk.breedingView", $.dawk.watchmakerView, {
         generationCounter.value = newGenerationValue;
         var generationRate = $(this.element).find('.generationRate').get(0);
 
-        generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
+        //generationRate.value = newGenerationValue - this.options.generationsPreviousSecond;
         this.options.generationsPreviousSecond = newGenerationValue;
         if(this.options.autoRunning)
             this._delay(this.measureGenerationRate, 1000);

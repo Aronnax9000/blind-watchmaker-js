@@ -40,7 +40,7 @@ $.widget( "dawk.breedingBoxes", {
     doReproduce: function (sourceCanvas, targetCanvas) {
         var breedingView = $(sourceCanvas).closest('.breedingView')
         var generations = $(breedingView).find('.generations').get(0)
-        generations.value = Number(generations.value) + 1;
+        //generations.value = Number(generations.value) + 1;
 
         var genotype = jQuery.data(sourceCanvas, "genotype");
         if(genotype != null) {
