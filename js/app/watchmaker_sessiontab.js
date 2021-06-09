@@ -113,7 +113,7 @@ $.widget('dawk.watchmakerSessionTab', {
     
         var species = this.options.species
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
+        var viewIcon = 'img/IconAlbum_ALAN_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + album.name
@@ -152,7 +152,7 @@ $.widget('dawk.watchmakerSessionTab', {
     newBreedingView: function(biomorph, newRandomStart) {
         var species = this.options.species
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconFlipBirdToBreedingGrid_ICON_00261_32x32.png'
+        var viewIcon = 'img/IconFlipBirdToBreedingGrid_ICON_00261_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + (newRandomStart ? 'New Random Start' : 'Breeding')
@@ -190,7 +190,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newEngineeringView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
+        var viewIcon = 'img/Hypodermic_PICT_03937_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -223,7 +223,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newPlayBackFossils: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconFossilRecord_ALAN_32x32.png';
+        var viewIcon = 'img/IconFossilRecord_ALAN_16x16.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
         + 'Fossils'
@@ -256,7 +256,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newDriftView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconDrift_ALAN_32x32.png';
+        var viewIcon = 'img/IconDrift_ALAN_16x16.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
         + (this.options.session.options.driftsweep ? 'Drift Sweep': 'Drift')
@@ -296,7 +296,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newPedigreeView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/Pedigree_32x32.png'
+        var viewIcon = 'img/Pedigree_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" class="tabicon" src="' + viewIcon + '">' 
             + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -329,7 +329,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },    
     newTriangleView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
+        var viewIcon = 'img/IconTriangle_ALAN_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Triangle</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';

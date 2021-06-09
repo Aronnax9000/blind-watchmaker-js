@@ -197,7 +197,7 @@ TriayBiomorphs.prototype.copyBiomorph = function(child) {
 }
 
 TriayBiomorphs.initializeSession = function(session) {
-    session.options.sessionIcon = 'img/BWSpiderLogoMono_ICNO_23096_32x32.png'
+    session.options.sessionIcon = 'img/BWSpiderLogoMono_ICNO_23096_16x16.png'
         session.options.basicTypes = ['Hopeful Monster',
             'BasicTree',
             'Chess',

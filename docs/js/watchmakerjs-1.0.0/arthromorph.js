@@ -346,7 +346,7 @@ Arthromorph.initializeSession = function(session) {
     session.options.focusOfAttention = Concentration.AnySegment;
     session.options.sideways = false;
     session.options.wantColor = true
-    session.options.sessionIcon = 'img/arthromorphs32x32.png';
+    session.options.sessionIcon = 'img/arthromorphs16x16.png';
     session.options.basicTypes = ["Minimal", "Complex"]
     session.options.defaultBasicType = "Minimal"
 

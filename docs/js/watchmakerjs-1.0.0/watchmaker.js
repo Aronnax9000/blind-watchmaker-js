@@ -995,7 +995,7 @@ $.widget('dawk.watchmakerSessionTab', {
     
         var species = this.options.species
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconAlbum_ALAN_32x32.png'
+        var viewIcon = 'img/IconAlbum_ALAN_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + album.name
@@ -1034,7 +1034,7 @@ $.widget('dawk.watchmakerSessionTab', {
     newBreedingView: function(biomorph, newRandomStart) {
         var species = this.options.species
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconFlipBirdToBreedingGrid_ICON_00261_32x32.png'
+        var viewIcon = 'img/IconFlipBirdToBreedingGrid_ICON_00261_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + (newRandomStart ? 'New Random Start' : 'Breeding')
@@ -1072,7 +1072,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newEngineeringView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/Hypodermic_PICT_03937_32x32.png'
+        var viewIcon = 'img/Hypodermic_PICT_03937_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Engineering</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -1105,7 +1105,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newPlayBackFossils: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconFossilRecord_ALAN_32x32.png';
+        var viewIcon = 'img/IconFossilRecord_ALAN_16x16.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
         + 'Fossils'
@@ -1138,7 +1138,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newDriftView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconDrift_ALAN_32x32.png';
+        var viewIcon = 'img/IconDrift_ALAN_16x16.png';
         var string = '<li><a href="#' + uuid + '">'
         + '<img class="tabicon" src="' + viewIcon + '">' 
         + (this.options.session.options.driftsweep ? 'Drift Sweep': 'Drift')
@@ -1178,7 +1178,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },
     newPedigreeView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/Pedigree_32x32.png'
+        var viewIcon = 'img/Pedigree_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" class="tabicon" src="' + viewIcon + '">' 
             + 'Pedigree</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -1211,7 +1211,7 @@ $.widget('dawk.watchmakerSessionTab', {
     },    
     newTriangleView: function(biomorph) {
         var uuid = this.uuidv4();
-        var viewIcon = 'img/IconTriangle_ALAN_32x32.png'
+        var viewIcon = 'img/IconTriangle_ALAN_16x16.png'
             var string = '<li><a href="#' + uuid + '">'
             + '<img class="tabicon" src="' + viewIcon + '">' 
             + 'Triangle</a><span class="ui-icon ui-icon-circle-close ui-closable-tab"></li>';
@@ -1630,17 +1630,17 @@ $.widget('dawk.operationmenu', $.dawk.sub_menu, {
     },
     _create: function() {
         this._super();
-        this.appendmenuitem('Breed (B)', 'Breed', false, 'img/IconFlipBirdToBreedingGrid_ICON_00261_32x32.png')
-        this.appendmenuitem('Drift (D)', 'Drift', false, 'img/IconDrift_ALAN_32x32.png')
-        this.appendmenuitem('Engineering (E)', 'Engineering', false, 'img/Hypodermic_PICT_03937_32x32.png')
-        this.appendmenuitem('New Random Start (N)', 'NewRandomStart', false, 'img/SixSidedDieShowsFiveIcon_ICON_00257_32x32.png')
+        this.appendmenuitem('Breed (B)', 'Breed', false, 'img/IconFlipBirdToBreedingGrid_ICON_00261_16x16.png')
+        this.appendmenuitem('Drift (D)', 'Drift', false, 'img/IconDrift_ALAN_16x16.png')
+        this.appendmenuitem('Engineering (E)', 'Engineering', false, 'img/Hypodermic_PICT_03937_16x16.png')
+        this.appendmenuitem('New Random Start (N)', 'NewRandomStart', false, 'img/SixSidedDieShowsFiveIcon_ICON_00257_16x16.png')
 
         this.appendmenuitem('Hopeful Monster (M)', 'HopefulMonster')
         this.appendmenuitem('Initialize Fossil Record (I)', 'InitializeFossilRecord')
-        this.appendmenuitem('Play Back Fossils', 'PlayBackFossils', false, 'img/IconFossilRecord_ALAN_32x32.png')
+        this.appendmenuitem('Play Back Fossils', 'PlayBackFossils', false, 'img/IconFossilRecord_ALAN_16x16.png')
         this.appendcheckboxmenuitem('Recording Fossils (R)', 'RecordingFossils')
         if(this.options.session.trianglable) {
-            this.appendmenuitem('Triangle (T)', 'Triangle', false, 'img/IconTriangle_ALAN_32x32.png')
+            this.appendmenuitem('Triangle (T)', 'Triangle', false, 'img/IconTriangle_ALAN_16x16.png')
         }
         if(this.options.session.arrayable) {
             this.appendmenuitem('Array', 'Array')
@@ -1710,9 +1710,9 @@ $.widget('dawk.viewmenu', $.dawk.sub_menu, {
         this.appendmenuitem('Thinner Pen','ThinnerPen')
         this.appendcheckboxmenuitem('Drift Sweep','DriftSweep')
         if(this.options.session.trianglable) {
-            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle', false, 'img/IconTriangleTop_ALAN_32x32.png')
-            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle', false, 'img/IconTriangleLeft_ALAN_32x32.png')
-            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle', false, 'img/IconTriangleRight_ALAN_32x32.png')
+            this.appendmenuitem('Make top of triangle','MakeTopOfTriangle', false, 'img/IconTriangleTop_ALAN_16x16.png')
+            this.appendmenuitem('Make left of triangle','MakeLeftOfTriangle', false, 'img/IconTriangleLeft_ALAN_16x16.png')
+            this.appendmenuitem('Make right of triangle','MakeRightOfTriangle', false, 'img/IconTriangleRight_ALAN_16x16.png')
         }
     }
 })
@@ -3212,7 +3212,7 @@ $.widget('dawk.engineeringBox', {
     },
     _doCanvasClicked: function(event) {
         // raise hypo dialog here.
-        var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
+        var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_16x16.png'></span>\
                 <span style='float:none; display: inline' >\
                 The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
         <br>to get a usable cursor. If in doubt hover<br>over a gene for instructions.</span></div>")

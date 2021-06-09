@@ -35,7 +35,7 @@ $.widget('dawk.engineeringBox', {
     },
     _doCanvasClicked: function(event) {
         // raise hypo dialog here.
-        var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_32x32.png'></span>\
+        var hypo = $("<div><span><img  src='img/Hypodermic_PICT_03937_16x16.png'></span>\
                 <span style='float:none; display: inline' >\
                 The hypodermic is just for show!<br>Move the mouse up into the 'chromosome'\
         <br>to get a usable cursor. If in doubt hover<br>over a gene for instructions.</span></div>")

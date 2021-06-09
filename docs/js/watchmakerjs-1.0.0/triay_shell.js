@@ -773,7 +773,7 @@ function Shells(session, drawer) {
 }
 
 Shells.initializeSession = function(session) {
-    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_32x32.png'
+    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_16x16.png'
     session.options.basicTypes = [
         "Snail",
         "Turitella",

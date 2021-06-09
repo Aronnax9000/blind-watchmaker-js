@@ -29,7 +29,7 @@ ColourBiomorph.initializeGenes = function(session) {
 ColourBiomorph.initializeSession = function(session) {
     ColourBiomorph.initializeMut(session)
     ColourBiomorph.initializeGenes(session)
-    session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_32x32.png';
+    session.options.sessionIcon = 'img/BWTreeLogoBlueThin_icl4_17669_16x16.png';
     session.options.trickle = 10
     session.options.palette = new Palette()
     session.options.basicTypes = ["BasicTree", "Chess", "Insect", "Hopeful Monster"]

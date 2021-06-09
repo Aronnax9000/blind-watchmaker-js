@@ -821,7 +821,7 @@ Monochrome.initializeMut = function(session) {
 Monochrome.initializeSession = function(session) {
     Monochrome.initializeMut(session)
     Monochrome.initializeGenes(session)
-    session.options.sessionIcon = 'img/BWTreeLogoMonoThin_ICNO_17669_32x32.png';
+    session.options.sessionIcon = 'img/BWTreeLogoMonoThin_ICNO_17669_16x16.png';
     session.options.basicTypes = ["BasicTree", "Chess", "Insect", "Hopeful Monster"]
     session.options.defaultBasicType = "BasicTree";
     session.options.hopefulMonsterBasicType = "Hopeful Monster";
