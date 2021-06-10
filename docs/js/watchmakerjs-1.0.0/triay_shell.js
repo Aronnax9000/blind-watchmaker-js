@@ -963,7 +963,9 @@ Shells.prototype.manipulation = function(geneboxIndex, leftRightPos, rung) {
     case 8:
         switch(leftRightPos) {
         case HorizPos.LeftThird: 
-            shell.coarsegraininess--
+			if(shell.coarsegraininess > 1) {
+            	shell.coarsegraininess--
+			}
             break;
         case HorizPos.RightThird: 
             shell.coarsegraininess++
