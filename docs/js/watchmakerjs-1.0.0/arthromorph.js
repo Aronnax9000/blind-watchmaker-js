@@ -356,8 +356,6 @@ Arthromorph.initializeSession = function(session) {
 Arthromorph.prototype.doSaltation = function() {
 }
 
-Arthromorph.prototype.copyBiomorph = function() {
-}
 
 //{travel over the Animal, counting Atoms and return the Nth}
 Arthromorph.prototype.findNth = function(which, pick) {
@@ -1158,6 +1156,7 @@ Arthromorph.prototype.getWidth = function() {
     let margin = new Rect()
     return margin.right - margin.left
 }
+
 Arthromorph.prototype.getHeight = function() {
     if(this.pic.margin == null) {
         dummydraw()
@@ -1165,6 +1164,7 @@ Arthromorph.prototype.getHeight = function() {
     let margin = new Rect()
     return margin.bottom - margin.top
 }
+
 Arthromorph.prototype.getRect = function() {
     if(this.pic.margin == null) {
         dummydraw()
@@ -1172,4 +1172,6 @@ Arthromorph.prototype.getRect = function() {
     let margin = new Rect()
     return new Rect(0,0, margin.right - margin.left,
             margin.bottom - margin.top)
+}
+Arthromorph.prototype.copyBiomorph = function() {
 }

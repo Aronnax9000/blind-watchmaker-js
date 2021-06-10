@@ -524,6 +524,10 @@ Shell.prototype.breed = function (element) {
     return this.children[this.children.length - 1]
 
 }
+Shells.prototype.copyBiomorph = function(child) {
+    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
+}
+
 function ShellHardcodedAnimals() {
 
     return {
@@ -852,10 +856,6 @@ Shells.prototype.develop = function() {
     this.shell.generate()
     this.shell.ctx = this.drawer.getContext('2d')
     this.shell.draw()
-}
-
-Shells.prototype.copyBiomorph = function(child) {
-    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
 }
 
 Shells.margarine = function (w, direction) {

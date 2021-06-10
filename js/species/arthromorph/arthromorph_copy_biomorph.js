@@ -1,0 +1,2 @@
+Arthromorph.prototype.copyBiomorph = function() {
+}

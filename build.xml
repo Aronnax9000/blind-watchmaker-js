@@ -92,6 +92,7 @@
         </concat>
     	<concat destfile="docs/js/watchmakerjs-1.0.0/monochrome.js">
             <fileset file="js/species/monochrome/monochrome.js" />
+            <fileset file="js/species/monochrome/monochrome_copy_biomorph.js" />
             <fileset file="js/species/monochrome/monochrome_doperson.js" />
             <fileset file="js/species/monochrome/monochrome_dosaltation.js" />
             <fileset file="js/species/monochrome/monochrome_session.js" />
@@ -114,12 +115,13 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/arthromorph.js">
             <fileset file="js/species/arthromorph/arthromorph.js" />
-            <fileset file="js/species/arthromorph/arthromorph_atom_print.js" />
+            <fileset file="js/species/arthromorph/arthromorph_copy_biomorph.js" />
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/colour_biomorph.js">
             <fileset file="js/species/colour_biomorph/colour_biomorph_types.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph_palette.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph.js" />
+            <fileset file="js/species/colour_biomorph/colour_biomorph_copy_biomorph.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph_doperson.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph_dosaltation.js" />
             <fileset file="js/species/colour_biomorph/colour_biomorph_buildmenus.js" />
@@ -138,6 +140,7 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">
             <fileset file="js/species/triay_shell/triay_shell.js" />
+            <fileset file="js/species/triay_shell/triay_shell_copy_biomorph.js" />
             <fileset file="js/species/triay_shell/triay_shell_hardcodedanimals.js" />
             <fileset file="js/species/triay_shell/triay_shell_shells.js" />
             <fileset file="js/species/triay_shell/triay_shell_shells_manipulation.js" />

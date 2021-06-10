@@ -104,10 +104,6 @@ Shells.prototype.develop = function() {
     this.shell.draw()
 }
 
-Shells.prototype.copyBiomorph = function(child) {
-    child.shell = new Shell (child.drawer.getContext('2d'), child.drawer.width, child.drawer.height, this.shell)
-}
-
 Shells.margarine = function (w, direction) {
     // {we want to change by large amounts when low, small amounts when large}
     var wMutSize = 0.1
