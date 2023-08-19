@@ -1,6 +1,3 @@
-<html>
-<head>
-<title>Blind Watchmaker Suite by Richard Dawkins -- JavaScript Edition by Alan Canon</title>
 <link rel="icon" href="favicon.ico?v=1.1"> 
 <link rel="stylesheet" href="css/jquery/jquery-ui.css">
 <link href='css/sm-core-css.css' rel='stylesheet' type='text/css' />
@@ -43,10 +40,4 @@ $(document).ready(
         });
 </script>
 
-</head>
-
-<body>
-	<!--  class="ui-state-disabled" on li you don't want enabled -->
-	<div class="blindWatchmaker"></div>
-</body>
-</html>
+<div class="blindWatchmaker"></div>
