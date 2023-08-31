@@ -6,7 +6,7 @@ $.widget('dawk.breedingBox', {
         boxIndex: null,
         isMidBox: false,
         breedingBoxes: null,
-        width: 200,
+        width: 333,
         height: 200,
         parentOptions: null,
     },
