@@ -24,7 +24,7 @@ body {
 	position: relative;
 	width: 1000px;
 	height: 600px;
-	grid-template-columns: 20% 20% 20% 20% 20%;
+	grid-template-columns: 33% 33% 33% ;
 	display: grid;
 	grid-gap: 0px;
 	color: #000;
