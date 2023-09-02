@@ -287,7 +287,7 @@
 
 .pedigreeFamilialLineCanvas {
     width: 1000px;
-    height: 600px;
+    height: 1200px;
     position: absolute;
     left: 0;
     top: 0;
@@ -296,7 +296,7 @@
 
 .pedigreeDrawOutLineDiv {
     width: 1000px;
-    height: 600px;
+    height: 1200px;
     position: absolute;
     left: 0;
     top: 0;
@@ -305,7 +305,7 @@
 
 .pedigreeDrawOutMousingDiv {
     width: 1000px;
-    height: 600px;
+    height: 1200px;
     position: absolute;
     left: 0;
     top: 0;
