@@ -1244,7 +1244,7 @@ $.widget('dawk.watchmakerSessionTab', {
 });
 
 /*
- * Blind Watchmaker, the entry point for the application.
+ * Blind Watchmaker, the entry point for the application. ABC
  */
 $.widget('dawk.blindWatchmaker', {
     options: {
