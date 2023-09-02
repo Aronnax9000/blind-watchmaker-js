@@ -1,6 +1,3 @@
 # blind-watchmaker-js
 
-Robert Penner: Easing Equations
-Uses jQuery
-uses Slick
-uses Smartmenus
+Port of Richard Dawkins' Blind Watchmaker software to HTML5 (HTML + JavaScript + CSS) by Alan Canon
