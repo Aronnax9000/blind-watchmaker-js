@@ -49,7 +49,7 @@ $.widget('dawk.blindWatchmaker', {
         
     },
     _create: function () {
-        let query = document.search
+        //let query = document.search 
         var ul = $('<ul class="watchmakerTabs"></ul>');
         this.element.append(ul);
         this.element.tabs({activate: this.on_activate});
