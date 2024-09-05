@@ -23,24 +23,23 @@
 <script type="text/javascript">
 
  
-$(document).ready(
-        function() {
-            $('.blindWatchmaker').blindWatchmaker();
-            $(".ui-closable-tab").click(
+window.addEventListener('DOMContentLoaded',function () {
+        $('.blindWatchmaker').blindWatchmaker();
+            document.querySelector(".ui-closable-tab").addEventListener('click',
                     function() {
-                        var tabContainerDiv = $(this).closest(".ui-tabs")
+                        var tabContainerDiv = this.closest(".ui-tabs")
                                 .attr("id");
-                        var panelId = $(this).closest("li").remove().attr(
+                        var panelId = this.closest("li").remove().attr(
                                 "aria-controls");
-                        $("#" + panelId).remove();
+                        document.getElementById(panelId).remove();
                         $("#" + tabContainerDiv).tabs("refresh");
-                        var tabCount = $("#" + tabContainerDiv).find(
+                        var tabCount = document.getElementById$(tabContainerDiv).closest(
                                 ".ui-closable-tab").length;
                         if (tabCount < 1) {
-                            $("#" + tabContainerDiv).hide();
+                                document.getElementById(tabContainerDiv).style.display = 'none';
                         }
                     });
-        });
+});
 </script>
 
 </head>
