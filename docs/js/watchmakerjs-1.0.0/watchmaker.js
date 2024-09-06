@@ -2601,7 +2601,7 @@ $.widget( "dawk.breedingBoxes", {
     // default options
     options: {
         cols: 3,
-        numBoxes: 15,
+        numBoxes: 9,
         speciesFactory: null,
         newRandomStart: false
     },

@@ -143,6 +143,8 @@ Shell.patterns = {
 //Width and height are optional and useful if the canvas has changed size
 Shell.prototype.generate = function (canvas) {
 	this.ctx = canvas.getContext("2d");
+	this.canvasWidth =  canvas.width
+	this.canvasHeight =  canvas.height
 	this.centre = { x: Math.round(canvas.width/2), y: Math.round(canvas.height/2) }
 	this.origin = { x: this.centre.x, y: this.centre.y }
 	
