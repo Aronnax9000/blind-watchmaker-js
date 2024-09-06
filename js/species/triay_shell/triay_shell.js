@@ -214,7 +214,8 @@ Shell.prototype.generate = function (canvas) {
     this.setBoundingBox() // Calculate top/bottom
 
     this.translate(this.horizontalOffset(), this.verticalOffset()) // recentre shell
-
+	this.setBoundingBox() // Calculate top/bottom again
+    this.rect = new Rect(this.box.left, this.box.top, this.box.right, this.box.bottom)
     this.scaleToBox(0.8) // Make sure the shell fits in the box
 }
 
@@ -410,15 +411,15 @@ Shell.prototype.drawPattern = function (segment, index) {
     }
 }
 
-Shell.prototype.draw = function (lofi) {
+Shell.prototype.draw = function () {
 
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
 
-    var step = lofi ? 2 : 1
+ 
 
             this.ctx.beginPath()
 
-            for (var i = 0; i < this.nbSegments; i = i+step) {
+            for (var i = 0; i < this.nbSegments; i++) {
 
                 this.drawPattern(this.segments[i], i)
             }

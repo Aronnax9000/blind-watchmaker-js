@@ -115,3 +115,18 @@ Shells.margarine = function (w, direction) {
     }
     return m
 }
+
+
+Shells.prototype.dummydraw = Biomorphs.prototype.dummydraw 
+Shells.prototype.getWidth = function() {
+	this.dummydraw()
+	return this.shell.rect.right - this.shell.rect.left
+}
+Shells.prototype.getHeight = function() {
+	this.dummydraw()
+	return this.shell.rect.bottom - this.shell.rect.top
+}
+Shells.prototype.getRect = function() {
+	this.dummydraw()
+	return this.shell.rect
+}
