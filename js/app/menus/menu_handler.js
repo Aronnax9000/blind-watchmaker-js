@@ -11,11 +11,12 @@ MenuHandler.prototype.getBiomorph = function(target) {
         midCanvas = midCanvas.eq(0)
     }
     let biomorph = $(midCanvas).data('genotype')
-    let newBiomorph = _speciesFactorySingleton.getSpecies(
+	return biomorph
+    /*let newBiomorph = _speciesFactorySingleton.getSpecies(
         this.session.species, this.session, null);
     biomorph.copyBiomorph(newBiomorph)
 
-    return newBiomorph
+    return newBiomorph*/
 }
 
 MenuHandler.prototype.menuclick = function(event) {

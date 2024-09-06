@@ -17,13 +17,8 @@
 //Additionally, we pass in an HTML5 canvas context, and width and height of the canvas
 //The genes are optional (you'll get a random shell). 
 
-function Shell (ctx, width, height, genes) {
-    this.children = []
-    this.canvasWidth = width
-    this.canvasHeight = height
-
-    this.centre = { x: Math.round(this.canvasWidth/2), y: Math.round(this.canvasHeight/2) }
-    this.origin = { x: this.centre.x, y: this.centre.y }
+function Shell (genes) {
+	this.children = []
 
 
     this.mutProbGene = 50
@@ -36,7 +31,6 @@ function Shell (ctx, width, height, genes) {
 
     this.segments = []
     this.nbSegments = 0
-    this.ctx = ctx
 
     this.type = 'shell';
 
@@ -59,7 +53,6 @@ function Shell (ctx, width, height, genes) {
             }
         }
         this.mutProbGene = genes.mutProbGene
-        this.generate()
     }
     else {
         this.randomize()
@@ -78,7 +71,6 @@ Shell.prototype.randomize = function () {
     this.handedness = genes.handedness
     this.mutProbGene = 50
     this.translationGradient = genes.translationGradient
-    this.generate()
 }
 
 Shell.prototype.resetCentre = function () {
@@ -149,17 +141,11 @@ Shell.patterns = {
 //To draw the shell, we first have to generate all the bounding boxes along
 //the spiral. The pattern is then scaled to fit these boxes and drawn
 //Width and height are optional and useful if the canvas has changed size
-Shell.prototype.generate = function (width, height) {
-
-    if (width && height) {
-
-        this.canvasWidth = width
-        this.canvasHeight = height
-
-        this.origin.x = Math.round(width/2)
-        this.origin.y = Math.round(height/2)
-    }
-
+Shell.prototype.generate = function (canvas) {
+	this.ctx = canvas.getContext("2d");
+	this.centre = { x: Math.round(canvas.width/2), y: Math.round(canvas.height/2) }
+	this.origin = { x: this.centre.x, y: this.centre.y }
+	
     this.resetCentre()
 
     this.segments = []
@@ -211,7 +197,7 @@ Shell.prototype.generate = function (width, height) {
         // TODO: ensuite the surface is worth drawing at all!
         if (lastH !== h || lastG !== g || lastF !== f || lastK !== k) {
             this.segments.push({ startX: g, startY: f, endX: k, endY: h })
-
+			    
             lastH = h
             lastG = g
             lastF = f
@@ -489,7 +475,7 @@ Shell.rand100 = function() {
 //the gene will mutate by a factor of the mutSize
 //The original program's mutations were pretty limited, so to accentuate them
 //we've added more parameters and a higher size mutation
-Shell.prototype.breed = function (element) {
+Shell.prototype.breed = function () {
     var child = this.getGenes()
     if (Shell.rand100() < child.mutProbGene) {
         child.opening = Shell.mutateOpening(child.opening)
@@ -513,13 +499,8 @@ Shell.prototype.breed = function (element) {
         var patternKeys = Object.keys(Shell.patterns);
         child.pattern = patternKeys[Math.trunc(Math.random() * patternKeys.length)]
     }
-    var newShell
-    if(element) 
-        newShell = new Shell(element.getContext('2d'), element.width, element.height, child)
-    else
-        newShell = new Shell(this.ctx, this.canvasWidth, this.canvasHeight, child)
 
-    this.children.push(newShell)
+    this.children.push(new Shell(child))
 
     return this.children[this.children.length - 1]
 

@@ -1285,7 +1285,7 @@ $.widget('dawk.blindWatchmaker', {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
             var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
-        })
+        }) 
     },
     handlekeypress: function(event) {
         let activeTabIdx = $(this.element).tabs('option','active');
@@ -1432,11 +1432,12 @@ MenuHandler.prototype.getBiomorph = function(target) {
         midCanvas = midCanvas.eq(0)
     }
     let biomorph = $(midCanvas).data('genotype')
-    let newBiomorph = _speciesFactorySingleton.getSpecies(
+	return biomorph
+    /*let newBiomorph = _speciesFactorySingleton.getSpecies(
         this.session.species, this.session, null);
     biomorph.copyBiomorph(newBiomorph)
 
-    return newBiomorph
+    return newBiomorph*/
 }
 
 MenuHandler.prototype.menuclick = function(event) {

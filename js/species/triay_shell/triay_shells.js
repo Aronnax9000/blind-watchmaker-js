@@ -75,10 +75,7 @@ Shells.prototype.doPerson = function(morphType) {
         genes = (new ShellHardcodedAnimals())[morphType]
     }
     var drawer = this.drawer
-    this.shell = new Shell(drawer.getContext('2d'), 
-            drawer.width,
-            drawer.height,
-            genes)
+    this.shell = new Shell(genes)
     // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
 //  this.shell.mutProbGene = 100
 
@@ -93,14 +90,13 @@ Shells.prototype.mutate = function() {
 //creates and returns a new, mutated copy of the biomorph.
 Shells.prototype.reproduce = function(element) {
     var child = new Shells(this.session, element)
-    child.shell = this.shell.breed(element)
+    child.shell = this.shell.breed()
     return child
 }
 //called when it is time for the biomorph to draw itself. 
 Shells.prototype.develop = function() {
 //    alert('Shells.develop')
-    this.shell.generate()
-    this.shell.ctx = this.drawer.getContext('2d')
+    this.shell.generate(this.drawer)
     this.shell.draw()
 }
 
@@ -119,12 +115,3 @@ Shells.margarine = function (w, direction) {
     }
     return m
 }
-
-//Register the species with the SpeciesFactory.
-_speciesFactorySingleton.registerSpeciesType("Snails", 
-        (function(session, drawer) { return new Shells(session, drawer)}),
-        (function(session) { Shells.initializeSession(session)}),
-        (function(geneboxes, geneboxes_options) { 
-            $.fn.shells_geneboxes.call(geneboxes, geneboxes_options) }),
-            (function(geneboxes, canvas) { 
-                $(geneboxes).shells_geneboxes('updateFromCanvas', canvas)}));
