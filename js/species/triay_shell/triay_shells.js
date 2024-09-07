@@ -47,9 +47,6 @@ Shells.initializeSession = function(session) {
     session.options.defaultBasicType = "Snail"
     session.options.hopefulMonsterBasicType = "Hopeful Monster"
     session.options.mut = [true, true, true, true, true, false, false]
-//    Topan := snail;
-//    Leftan := Turritella;
-//    Rightan := bivalve;
     session.options.wDetails = {
             start: 1.2,
             by: 1.5,
@@ -67,15 +64,17 @@ Shells.initializeSession = function(session) {
     }    
     session.options.threshold = 20
 	session.trianglable = true
+	//    Topan := snail;
+	//    Leftan := Turritella;
+	//    Rightan := bivalve;
 	session.options.topOfTriangle = new Shells(session, null).doPerson('Snail')
-	session.options.leftOfTriangle = new Shells(session, null).doPerson('Turitella')
-	session.options.rightOfTriangle = new Shells(session, null).doPerson('Bivalve')
+	session.options.leftOfTriangle = new Shells(session, null).doPerson('Eloise')
+	session.options.rightOfTriangle = new Shells(session, null).doPerson('Gallaghers')
 
 }
 
 //initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
-	console.log(morphType)
     var genes = null
     if(morphType) {
         genes = (new ShellHardcodedAnimals())[morphType]
@@ -134,7 +133,6 @@ Shells.prototype.getHeight = function() {
 	return this.shell.rect.bottom - this.shell.rect.top
 }
 Shells.prototype.getRect = function() {
-	console.log("getRect")
 	this.dummydraw()
 	return this.shell.rect
 }

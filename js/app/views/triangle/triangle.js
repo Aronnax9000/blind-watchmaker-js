@@ -29,6 +29,8 @@ Triangle.triangle = function(screenwidth, screenheight, b, m) {
     var r1 = y / k;
     var r3 = (x - y / 2) / k;
     var r2 = (k - x - y / 2) / k;
-    
+	//let sum = r1 + r2 + r3;
+	//console.log("Triangle.triangle: \n" + r1 + "\n" + r2 + "\n" + r3 + "\n" + sum)
+
     return [r1, r2, r3];
 }

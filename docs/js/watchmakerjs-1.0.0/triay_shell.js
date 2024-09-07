@@ -138,8 +138,6 @@ Shell.patterns = {
         sundial: {points:[[131,0],[134,0],[135,1],[141,1],[142,2],[145,2],[146,3],[146,5],[147,6],[147,7],[154,7],[155,6],[161,6],[162,7],[165,7],[166,8],[170,8],[171,9],[174,9],[175,10],[177,10],[178,11],[180,11],[181,12],[183,12],[184,13],[185,13],[186,14],[188,14],[189,15],[191,15],[192,16],[193,16],[194,17],[195,17],[196,18],[197,18],[199,20],[200,20],[201,21],[202,21],[203,22],[204,22],[205,23],[206,23],[212,29],[213,29],[218,34],[219,34],[223,38],[223,39],[227,43],[227,44],[231,48],[231,49],[232,50],[232,51],[233,52],[233,53],[234,54],[234,55],[235,56],[235,57],[239,61],[239,62],[240,63],[240,64],[241,65],[241,66],[242,67],[242,69],[243,70],[243,71],[244,72],[244,74],[245,75],[245,76],[246,77],[246,79],[247,80],[247,82],[248,83],[248,84],[249,85],[249,87],[250,88],[250,89],[251,90],[251,92],[252,93],[252,96],[250,98],[250,103],[249,104],[249,110],[248,111],[248,114],[250,116],[250,117],[252,119],[252,120],[253,121],[253,122],[255,124],[255,125],[256,126],[256,127],[258,129],[258,130],[257,130],[256,131],[252,131],[251,130],[248,130],[247,129],[243,129],[242,128],[238,128],[237,127],[234,127],[233,128],[231,128],[230,129],[228,129],[227,130],[225,130],[220,135],[220,136],[217,139],[217,140],[216,140],[215,139],[213,139],[212,138],[211,138],[210,137],[209,137],[208,138],[204,138],[203,139],[201,139],[198,142],[197,142],[195,144],[194,144],[191,147],[190,147],[188,149],[187,149],[186,150],[185,150],[184,151],[183,151],[182,152],[181,152],[180,153],[179,153],[178,154],[177,154],[176,155],[175,155],[174,156],[173,156],[172,157],[171,157],[170,158],[169,158],[168,159],[166,159],[165,160],[164,160],[163,161],[162,161],[161,162],[159,162],[158,163],[157,163],[156,164],[154,164],[153,165],[151,165],[150,166],[146,166],[145,167],[137,167],[136,168],[129,168],[128,169],[123,169],[122,170],[116,170],[115,169],[109,169],[108,168],[98,168],[97,167],[89,167],[87,165],[86,165],[83,162],[82,162],[80,160],[79,160],[78,159],[77,159],[75,157],[74,157],[73,156],[72,156],[71,155],[70,155],[68,153],[67,153],[66,152],[65,152],[64,151],[63,151],[62,150],[60,150],[59,149],[58,149],[57,148],[56,148],[54,146],[53,146],[51,144],[50,144],[48,142],[47,142],[45,140],[44,140],[41,137],[40,138],[39,138],[38,139],[37,139],[36,140],[35,140],[33,142],[32,142],[31,143],[29,143],[28,142],[27,142],[25,140],[25,139],[23,137],[23,136],[21,134],[21,133],[22,132],[22,131],[17,131],[16,132],[13,132],[11,130],[11,129],[14,126],[14,124],[13,123],[13,121],[12,120],[12,118],[4,110],[4,108],[3,107],[3,105],[2,104],[2,101],[1,100],[1,60],[2,60],[2,59],[4,57],[4,56],[3,55],[3,53],[2,52],[2,51],[3,50],[3,49],[4,48],[4,47],[5,46],[5,44],[6,43],[6,42],[7,41],[7,40],[8,39],[8,38],[9,37],[9,36],[10,35],[10,33],[11,32],[11,31],[12,30],[12,29],[21,20],[22,20],[28,14],[31,14],[32,13],[37,13],[38,12],[43,12],[44,11],[49,11],[50,10],[55,10],[56,9],[61,9],[62,8],[68,8],[69,7],[74,7],[75,6],[80,6],[81,5],[86,5],[87,4],[92,4],[93,3],[98,3],[99,2],[103,2],[104,3],[110,3],[111,4],[116,4],[117,3],[121,3],[122,2],[125,2],[126,1],[130,1],[131,0],[131,0]],w:259,h:171},
 }
 
-var names = Object.getOwnPropertyNames(Shell.patterns)
-console.log(names)
 
 //To draw the shell, we first have to generate all the bounding boxes along
 //the spiral. The pattern is then scaled to fit these boxes and drawn
@@ -787,74 +785,41 @@ Shells.prototype.concoct = function(r, a, b, c) {
     let r2 = r[1]
     let r3 = r[2]
 	
-	
-	this.shell.opening = r1 * a.shell.opening + r2 * b.shell.opening + r3 * c.shell.opening
-	this.shell.displacement = r1 * a.shell.displacement + r2 * b.shell.displacement + r3 * c.shell.displacement
-    this.shell.shape = r1 * a.shell.shape + r2 * b.shell.shape + r3 * c.shell.shape
-	this.shell.translation = r1 * a.shell.translation + r2 * b.shell.translation + r3 * c.shell.translation
-	this.shell.coarsegraininess = Math.round(r1 * a.shell.coarsegraininess + r2 * b.shell.coarsegraininess + r3 * c.shell.coarsegraininess)
-    this.shell.reach = Math.round(r1 * a.shell.reach + r2 * b.shell.reach + r3 * c.shell.reach)
+	let ashell = a.shell;
+	let bshell = b.shell;
+	let cshell = c.shell;
+	let genes = new Object();
+	genes.opening = r1 * ashell.opening + r2 * bshell.opening + r3 * cshell.opening
+	genes.displacement = r1 * ashell.displacement + r2 * bshell.displacement + r3 * cshell.displacement
+    genes.shape = r1 * ashell.shape + r2 * bshell.shape + r3 * cshell.shape
+	genes.translation = r1 * ashell.translation + r2 * bshell.translation + r3 * cshell.translation
+	genes.coarsegraininess = Math.round(r1 * ashell.coarsegraininess + r2 * bshell.coarsegraininess + r3 * cshell.coarsegraininess)
+    genes.reach = Math.round(r1 * ashell.reach + r2 * bshell.reach + r3 * cshell.reach)
     if(r1 > r2)
 		if(r1 > r3) 
-			this.shell.pattern = a.shell.pattern
+			genes.pattern = ashell.pattern
 		else
-		    this.shell.pattern = c.shell.pattern
+		    genes.pattern = cshell.pattern
 	else
 	    if(r2 > r3)
-			this.shell.pattern = b.shell.pattern
+			genes.pattern = bshell.pattern
 		else
-		    this.shell.pattern = c.shell.pattern
+		    genes.pattern = cshell.pattern
 	
-    this.shell.handedness = (r1 * a.shell.handedness 
-		+ r2 * b.shell.handedness 
-		+ r3 * c.shell.handedness) < 0 ? -1 : 1
-    this.shell.translationGradient = r1 * a.shell.translationGradient + r2 * b.shell.translationGradient + r3 * c.shell.translationGradient
+    genes.handedness = (r1 * ashell.handedness 
+		+ r2 * bshell.handedness 
+		+ r3 * cshell.handedness) < 0 ? -1 : 1
+    genes.translationGradient = r1 * ashell.translationGradient + r2 * bshell.translationGradient + r3 * cshell.translationGradient
     if(genes.mutSize) {
-        this.shell.mutSize = {
-                displacement: r1 * a.shell.mutSize.displacement + r2 * b.shell.mutSize.displacement + r3 * c.shell.mutSize.displacement,
-                translation: r1 * a.shell.mutSize.translation + r2 * b.shell.mutSize.translation + r3 * c.shell.mutSize.translation,
-                shape: r1 * a.shell.mutSize.shape + r2 * b.shell.mutSize.shape + r3 * c.shell.mutSize.shape,
-                reach: Math.round(r1 * a.shell.mutSize.reach + r2 * b.shell.mutSize.reach + r3 * c.shell.mutSize.reach)
+        genes.mutSize = {
+                displacement: r1 * ashell.mutSize.displacement + r2 * bshell.mutSize.displacement + r3 * cshell.mutSize.displacement,
+                translation: r1 * ashell.mutSize.translation + r2 * bshell.mutSize.translation + r3 * cshell.mutSize.translation,
+                shape: r1 * ashell.mutSize.shape + r2 * bshell.mutSize.shape + r3 * cshell.mutSize.shape,
+                reach: Math.round(r1 * ashell.mutSize.reach + r2 * bshell.mutSize.reach + r3 * cshell.mutSize.reach)
         }
     }
-    this.shell.mutProbGene = r1 * a.shell.mutProbGene + r2 * b.shell.mutProbGene + r3 * c.shell.mutProbGene
-	/*
-    this.segNoGene = Math.round(r1 * a.segNoGene + r2 * b.segNoGene + r3 * c.segNoGene)
-
-    if(this.segNoGene < 1) {
-        this.segNoGene = 1
-    }
-
-    this.segDistGene = Math.round(r1 * a.segDistGene + r2 * b.segDistGene + r3 * c.segDistGene);
-    this.completenessGene = Monochrome.force2(r1 * a.completenessGene + r2 * b.completenessGene + r3 * c.completenessGene);
-    this.spokesGene = Monochrome.force3(r1 * a.spokesGene + r2 * b.spokesGene + r3 * c.spokesGene);
-    for(let j = 0; j < 9; j++) {
-        this.gene[j] = Math.round(r1 * a.gene[j] + r2 * b.gene[j] + r3 * c.gene[j]);
-    }
-    var sizeWorry = this.segNoGene * Monochrome.twoToThe(this.gene[8]);
-    if(sizeWorry > WORRYMAX) {
-        this.gene[8]--
-    }
-    if(this.gene[8] < 1) {
-        this.gene[8] = 1;
-    }
-
-    this.trickleGene = Math.round(r1 * a.trickleGene + r2 * b.trickleGene + r3 * c.trickleGene);
-    this.mutSizeGene = Math.round(r1 * a.mutSizeGene + r2 * b.mutSizeGene + r3 * c.mutSizeGene);
-    this.mutProbGene = Math.round(r1 * a.mutProbGene + r2 * b.mutProbGene + r3 * c.mutProbGene);
-
-    if(this.mutProbGene < 1) {
-        this.mutProbGene = 1
-    }
-    if(this.mutProbGene > 100) {
-        this.mutProbGene = 100
-    }
-    for(let j = 0; j < 10; j++) {
-        this.dGene[j] = Monochrome.force3(r1 * a.dGene[j] 
-        + r2 * b.dGene[j] 
-        + r3 * c.dGene[j]);
-    }
-*/
+    genes.mutProbGene = r1 * ashell.mutProbGene + r2 * bshell.mutProbGene + r3 * cshell.mutProbGene
+	this.shell = new Shell(genes)
 }
 
 
@@ -906,9 +871,6 @@ Shells.initializeSession = function(session) {
     session.options.defaultBasicType = "Snail"
     session.options.hopefulMonsterBasicType = "Hopeful Monster"
     session.options.mut = [true, true, true, true, true, false, false]
-//    Topan := snail;
-//    Leftan := Turritella;
-//    Rightan := bivalve;
     session.options.wDetails = {
             start: 1.2,
             by: 1.5,
@@ -926,15 +888,17 @@ Shells.initializeSession = function(session) {
     }    
     session.options.threshold = 20
 	session.trianglable = true
+	//    Topan := snail;
+	//    Leftan := Turritella;
+	//    Rightan := bivalve;
 	session.options.topOfTriangle = new Shells(session, null).doPerson('Snail')
-	session.options.leftOfTriangle = new Shells(session, null).doPerson('Turitella')
-	session.options.rightOfTriangle = new Shells(session, null).doPerson('Bivalve')
+	session.options.leftOfTriangle = new Shells(session, null).doPerson('Eloise')
+	session.options.rightOfTriangle = new Shells(session, null).doPerson('Gallaghers')
 
 }
 
 //initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
-	console.log(morphType)
     var genes = null
     if(morphType) {
         genes = (new ShellHardcodedAnimals())[morphType]
@@ -993,7 +957,6 @@ Shells.prototype.getHeight = function() {
 	return this.shell.rect.bottom - this.shell.rect.top
 }
 Shells.prototype.getRect = function() {
-	console.log("getRect")
 	this.dummydraw()
 	return this.shell.rect
 }
