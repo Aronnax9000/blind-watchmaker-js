@@ -1,7 +1,43 @@
 {
   "autoTargets": [
     {
-      "filePattern": "js/**/*.{js,html}",
+      "filePattern": "js/**/*.{js}",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/*.{html,md}",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/savedanimals/**/*",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/img/**/*",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/sounds/**/*",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/favicon.ico",
+      "buildFile": "build.xml",
+      "runTargets": "default",
+      "initialDelayMs": 1000
+    },
+    {
+      "filePattern": "docs/.htaccess",
       "buildFile": "build.xml",
       "runTargets": "default",
       "initialDelayMs": 1000
