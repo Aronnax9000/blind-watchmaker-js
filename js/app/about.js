@@ -1,4 +1,4 @@
-
+// About
 $.widget('dawk.about', {
     options: {
         slides: [
