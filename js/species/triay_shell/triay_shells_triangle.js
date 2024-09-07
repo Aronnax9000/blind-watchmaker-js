@@ -1,4 +1,4 @@
-Monochrome.force3 = function(r) {
+Shells.force3 = function(r) {
     var i = Math.round(r)
     if(i > 3) { 
         i = 3
@@ -9,7 +9,7 @@ Monochrome.force3 = function(r) {
     return i
 }
 
-Monochrome.force2 = function(r) {
+Shells.force2 = function(r) {
     var i = Math.round(r)
     if(i > 2) { 
         i = 2
@@ -40,10 +40,43 @@ Monochrome.force2 = function(r) {
 //let c = new Point(Math.round(333 * screenWidth / 512), Math.round(250 * screenHeight / 342));
 
 
-Monochrome.prototype.concoct = function(r, a, b, c) {
+Shells.prototype.concoct = function(r, a, b, c) {
     let r1 = r[0]
     let r2 = r[1]
     let r3 = r[2]
+	
+	
+	this.shell.opening = r1 * a.shell.opening + r2 * b.shell.opening + r3 * c.shell.opening
+	this.shell.displacement = r1 * a.shell.displacement + r2 * b.shell.displacement + r3 * c.shell.displacement
+    this.shell.shape = r1 * a.shell.shape + r2 * b.shell.shape + r3 * c.shell.shape
+	this.shell.translation = r1 * a.shell.translation + r2 * b.shell.translation + r3 * c.shell.translation
+	this.shell.coarsegraininess = Math.round(r1 * a.shell.coarsegraininess + r2 * b.shell.coarsegraininess + r3 * c.shell.coarsegraininess)
+    this.shell.reach = Math.round(r1 * a.shell.reach + r2 * b.shell.reach + r3 * c.shell.reach)
+    if(r1 > r2)
+		if(r1 > r3) 
+			this.shell.pattern = a.shell.pattern
+		else
+		    this.shell.pattern = c.shell.pattern
+	else
+	    if(r2 > r3)
+			this.shell.pattern = b.shell.pattern
+		else
+		    this.shell.pattern = c.shell.pattern
+	
+    this.shell.handedness = (r1 * a.shell.handedness 
+		+ r2 * b.shell.handedness 
+		+ r3 * c.shell.handedness) < 0 ? -1 : 1
+    this.shell.translationGradient = r1 * a.shell.translationGradient + r2 * b.shell.translationGradient + r3 * c.shell.translationGradient
+    if(genes.mutSize) {
+        this.shell.mutSize = {
+                displacement: r1 * a.shell.mutSize.displacement + r2 * b.shell.mutSize.displacement + r3 * c.shell.mutSize.displacement,
+                translation: r1 * a.shell.mutSize.translation + r2 * b.shell.mutSize.translation + r3 * c.shell.mutSize.translation,
+                shape: r1 * a.shell.mutSize.shape + r2 * b.shell.mutSize.shape + r3 * c.shell.mutSize.shape,
+                reach: Math.round(r1 * a.shell.mutSize.reach + r2 * b.shell.mutSize.reach + r3 * c.shell.mutSize.reach)
+        }
+    }
+    this.shell.mutProbGene = r1 * a.shell.mutProbGene + r2 * b.shell.mutProbGene + r3 * c.shell.mutProbGene
+	/*
     this.segNoGene = Math.round(r1 * a.segNoGene + r2 * b.segNoGene + r3 * c.segNoGene)
 
     if(this.segNoGene < 1) {
@@ -79,6 +112,6 @@ Monochrome.prototype.concoct = function(r, a, b, c) {
         + r2 * b.dGene[j] 
         + r3 * c.dGene[j]);
     }
-
+*/
 }
 

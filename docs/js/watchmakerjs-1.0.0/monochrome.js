@@ -828,8 +828,8 @@ Monochrome.initializeSession = function(session) {
     session.updateMenus = Monochrome.updateMenus
     session.buildMenus = Monochrome.buildMenus
     session.menuclick = Monochrome.menuclick
+	session.arrayable = true
     session.trianglable = true
-    session.arrayable = true
     session.options.topOfTriangle = new Monochrome(session, null).doPerson('BasicTree')
     session.options.leftOfTriangle = new Monochrome(session, null).doPerson('Insect')
     session.options.rightOfTriangle = new Monochrome(session, null).doPerson('Chess')
@@ -1575,7 +1575,6 @@ Monochrome.force2 = function(r) {
 
 
 Monochrome.prototype.concoct = function(r, a, b, c) {
-    var weight
     let r1 = r[0]
     let r2 = r[1]
     let r3 = r[2]

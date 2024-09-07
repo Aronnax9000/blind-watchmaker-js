@@ -23,7 +23,7 @@ var CompletenessType = {
 Biomorphs.prototype.dummydraw = function() {
     var tempDrawer = this.drawer
     this.drawer = document.createElement('canvas')
-	console.log('canvas ' + this.drawer.width + "," + this.drawer.height)
+//	console.log('canvas ' + this.drawer.width + "," + this.drawer.height)
     this.develop()
     this.drawer = tempDrawer
 }

@@ -66,18 +66,25 @@ Shells.initializeSession = function(session) {
             till: 8
     }    
     session.options.threshold = 20
+	session.trianglable = true
+	session.options.topOfTriangle = new Shells(session, null).doPerson('Snail')
+	session.options.leftOfTriangle = new Shells(session, null).doPerson('Turitella')
+	session.options.rightOfTriangle = new Shells(session, null).doPerson('Bivalve')
+
 }
 
 //initializes the biomorph's genotype as one of a named set of types.
 Shells.prototype.doPerson = function(morphType) {
+	console.log(morphType)
     var genes = null
     if(morphType) {
         genes = (new ShellHardcodedAnimals())[morphType]
     }
-    var drawer = this.drawer
+//    var drawer = this.drawer
     this.shell = new Shell(genes)
     // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
 //  this.shell.mutProbGene = 100
+    return this
 
 } 
 Shells.prototype.doSaltation = function() {
@@ -127,6 +134,7 @@ Shells.prototype.getHeight = function() {
 	return this.shell.rect.bottom - this.shell.rect.top
 }
 Shells.prototype.getRect = function() {
+	console.log("getRect")
 	this.dummydraw()
 	return this.shell.rect
 }
