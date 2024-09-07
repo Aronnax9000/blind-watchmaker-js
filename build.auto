@@ -1,7 +1,7 @@
 {
   "autoTargets": [
     {
-      "filePattern": "js/**/*.{js}",
+      "filePattern": "js/**/*.js",
       "buildFile": "build.xml",
       "runTargets": "default",
       "initialDelayMs": 1000

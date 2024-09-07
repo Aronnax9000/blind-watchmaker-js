@@ -23,7 +23,7 @@ class Shell {
 	//There are also w and h which are the original height and width of the shape (to allow scaling)
 	//These patterns can be used instead of circles to draw the shells.
 	static patterns
-    static  { patterns = {
+    static  { Shell.patterns = {
 	        whelk: {points:[[0.22100000000000364,793.123],[79.92,-101.91],[103.64,-230.23],[61.47,-328.6],[91.36,-484.13],[132.64,-522.82],[132.64,-530.73],[169.55,-565.84],[175.71,-565.84],[264.44,-655.47],[361.13,-708.19],[415.59,-793.44],[492.93,-774.98],[499.94,-718.73],[558.82,-637.91],[624.73,-571.11],[637.91,-565.84],[673.02,-445.48],[649.29,-302.24],[594.84,-224.05],[552.66,-180.99],[545.65,-180.15],[504.31,-138.81],[235.44,3.53],[216.99,52.72],[181.88,-8.8],[97.53,-31.63]],w:673.02,h:846.16},
 	        wonder: {points:[[318.977,-0.3160000000000025],[-59.25,58.5],[-119.25,123.75],[-185.25,245.25],[-209.25,287.25],[-244.5,390],[-269.25,576],[-276,739.5],[-288,779.25],[-318.75,845.25],[-194.25,836.25],[-142.5,821.25],[-120.75,804],[-98.25,776.25],[-53.25,704.25],[15,615.75],[75,537.75],[135,440.25],[195.75,333.75],[249.75,243.75],[284.25,177],[307.5,144],[307.5,134.25],[294,121.5]],w:626.25,h:845.25},
 	        rapa: {points:[[215.622,22.551000000000002],[30.43,12.48],[83.49,60.09],[83.49,91.3],[72.57,120.95],[29.65,185.72],[-35.89,262.97],[-71.79,355.82],[-88.95,378.45],[-88.95,480.67],[-83.49,493.15],[-88.95,535.29],[-131.87,618],[-144.36,636.73],[-161.52,666.38],[-186.5,726.46],[-209.9,797.48],[-216.93,810.74],[-184.93,822.38],[-120.17,815.42],[-95.98,781.09],[-88.96,741.29],[-66.71,720.23],[-35.12,640.63],[-17.94,624.25],[-17.94,593.03],[-30.43,575.87],[7.02,564.16],[32.77,545.44],[52.28,554.01],[62.42,527.49],[97.54,515.78],[125.63,536.07],[125.63,505.64],[159.96,490.81],[191.95,504.08],[187.14,476.38],[221.61,460.38],[252.04,475.21],[247.36,447.12],[277.79,419.81],[301.98,426.83],[288.71,411.19],[319.14,380.79],[344.11,378.45],[330.44,366.56],[354.26,335.53],[372.99,343.34],[361.28,326.17],[372.99,269.99],[398.74,271.55],[378.45,240.34],[379.23,228.63],[404.2,230.97],[381.57,205.22],[379.23,188.05],[404.2,185.72],[373.77,170.89],[368.3,151.38],[386.25,142.8],[362.06,135.77],[348.02,120.95],[360.5,99.1],[340.21,110.8],[323.05,95.98],[330.85,71.01],[308.22,81.94],[296.52,49.94],[263.74,53.06],[246.58,47.6],[244.24,30.44],[217.7,36.68],[198.98,25.75],[197.42,4.69],[181.81,12.49],[161.52,11.71],[131.09,0],[115.49,-22.87],[100.66,-11.7]],w:621.12,h:845.25},
@@ -524,11 +524,151 @@ Shell.prototype.breed = function () {
     return this.children[this.children.length - 1]
 
 }
-Shells.prototype.copyBiomorph = function(child) {
-	console.log(child)
-    child.shell = new Shell(this.shell)	
+class Shells extends Biomorphs {
+    /*
+    * Constructor for the Triay Shell biomorph species.
+    * 
+    * A biomorph is associated with a watchmaker session, and a drawing object.
+    * 
+    * From the watchmaker session, the biomorph may draw global rules such as
+    * the settings for allowed mutations, and what sort of drawing context should
+    * be used to render images. The biomorph may also report changes
+    * in its state to the session. The supplied session object must include a property of
+    * 'species', a string containing the name of the registered species.
+    * 
+    * The drawing object is the document element representing the drawing surface
+    * for the biomorph's body. In the original implementation, this is an HTML canvas
+    * element, but support is contemplated for other drawing contexts, such as a SVG 
+    * Scalable Vector Graphic. 
+    * 
+    */
+
+    constructor(session, drawer) {
+        super()
+        this.session = session
+        this.drawer = drawer
+    }
+
+    copyBiomorph(child) {
+        child.shell = new Shell(this.shell)	
+    }
+    
+    
+}
+Shells.initializeSession = function(session) {
+    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_16x16.png'
+    session.options.basicTypes = [
+        "Snail",
+        "Turitella",
+        "Bivalve",
+        "Ammonite",
+        "Nautilus",
+        "Brachiopod",
+        "Cone",
+        "Whelk",
+        "Scallop",
+        "Eloise",
+        "Gallaghers",
+        "Rapa",
+        "Lightning",
+        "Sundial",
+        "Fig",
+        "Tun",
+        "RazorShell",
+        "JapaneseWonder"]
+    session.options.defaultView = 'Engineering'
+    session.options.defaultBasicType = "Snail"
+    session.options.hopefulMonsterBasicType = "Hopeful Monster"
+    session.options.mut = [true, true, true, true, true, false, false]
+    session.options.wDetails = {
+            start: 1.2,
+            by: 1.5,
+            till: 10
+    }
+    session.options.dDetails = {
+            start: 0,
+            by: 0.2,
+            till: 0.6
+}
+    session.options.tDetails = {
+            start: 0,
+            by: 2,
+            till: 8
+    }    
+    session.options.threshold = 20
+	session.trianglable = true
+	//    Topan := snail;
+	//    Leftan := Turritella;
+	//    Rightan := bivalve;
+	session.options.topOfTriangle = new Shells(session, null).doPerson('Snail')
+	session.options.leftOfTriangle = new Shells(session, null).doPerson('Eloise')
+	session.options.rightOfTriangle = new Shells(session, null).doPerson('Gallaghers')
+
 }
 
+//initializes the biomorph's genotype as one of a named set of types.
+Shells.prototype.doPerson = function(morphType) {
+    var genes = null
+    if(morphType) {
+        genes = (new ShellHardcodedAnimals())[morphType]
+    }
+//    var drawer = this.drawer
+    this.shell = new Shell(genes)
+    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
+//  this.shell.mutProbGene = 100
+    return this
+
+} 
+Shells.prototype.doSaltation = function() {
+    this.shell.randomize()
+}
+//initializes the biomorph's genotype to a random set of values
+//causes the biomorph's genotype to undergo a random mutation
+Shells.prototype.mutate = function() {
+}
+//creates and returns a new, mutated copy of the biomorph.
+Shells.prototype.reproduce = function(element) {
+    var child = new Shells(this.session, element)
+    child.shell = this.shell.breed()
+    return child
+}
+//called when it is time for the biomorph to draw itself. 
+Shells.prototype.develop = function() {
+//    alert('Shells.develop')
+    this.shell.generate(this.drawer)
+    this.shell.draw()
+}
+
+Shells.margarine = function (w, direction) {
+    // {we want to change by large amounts when low, small amounts when large}
+    var wMutSize = 0.1
+    var logged = Math.log(w)
+    var logchanged = logged + wMutSize * direction
+    if(logchanged > 20) {
+        logchanged = 20
+    }
+    var m = Math.exp(logchanged)
+
+    if(m < 1) {
+        m = 1
+    }
+    return m
+}
+
+
+Shells.prototype.dummydraw = Biomorphs.prototype.dummydraw 
+Shells.prototype.getWidth = function() {
+	this.dummydraw()
+	return this.shell.rect.right - this.shell.rect.left
+}
+Shells.prototype.getHeight = function() {
+	this.dummydraw()
+	return this.shell.rect.bottom - this.shell.rect.top
+}
+Shells.prototype.getRect = function() {
+	this.dummydraw()
+	return this.shell.rect
+}
 function ShellHardcodedAnimals() {
 
     return {
@@ -753,31 +893,6 @@ function ShellHardcodedAnimals() {
     }
 }
 
-Shells.force3 = function(r) {
-    var i = Math.round(r)
-    if(i > 3) { 
-        i = 3
-    }
-    if(i < 1) {
-        i = 1
-    }
-    return i
-}
-
-Shells.force2 = function(r) {
-    var i = Math.round(r)
-    if(i > 2) { 
-        i = 2
-    }
-    if(i < 1) {
-        i = 1
-    }
-    if(i == 1) 
-        return CompletenessType.Single
-    else 
-        return CompletenessType.Double
-}
-
 
 // b.h := round(134 * ScreenWidth / 512);
 // b.v := round(250 * ScreenHeight / 342);
@@ -837,144 +952,6 @@ Shells.prototype.concoct = function(r, a, b, c) {
 	this.shell = new Shell(genes)
 }
 
-
-/*
- * Constructor for the Triay Shell biomorph species.
- * 
- * A biomorph is associated with a watchmaker session, and a drawing object.
- * 
- * From the watchmaker session, the biomorph may draw global rules such as
- * the settings for allowed mutations, and what sort of drawing context should
- * be used to render images. The biomorph may also report changes
- * in its state to the session. The supplied session object must include a property of
- * 'species', a string containing the name of the registered species.
- * 
- * The drawing object is the document element representing the drawing surface
- * for the biomorph's body. In the original implementation, this is an HTML canvas
- * element, but support is contemplated for other drawing contexts, such as a SVG 
- * Scalable Vector Graphic. 
- * 
- */
-
-function Shells(session, drawer) {
-    this.session = session
-    this.drawer = drawer
-}
-
-Shells.initializeSession = function(session) {
-    session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_16x16.png'
-    session.options.basicTypes = [
-        "Snail",
-        "Turitella",
-        "Bivalve",
-        "Ammonite",
-        "Nautilus",
-        "Brachiopod",
-        "Cone",
-        "Whelk",
-        "Scallop",
-        "Eloise",
-        "Gallaghers",
-        "Rapa",
-        "Lightning",
-        "Sundial",
-        "Fig",
-        "Tun",
-        "RazorShell",
-        "JapaneseWonder"]
-    session.options.defaultView = 'Engineering'
-    session.options.defaultBasicType = "Snail"
-    session.options.hopefulMonsterBasicType = "Hopeful Monster"
-    session.options.mut = [true, true, true, true, true, false, false]
-    session.options.wDetails = {
-            start: 1.2,
-            by: 1.5,
-            till: 10
-    }
-    session.options.dDetails = {
-            start: 0,
-            by: 0.2,
-            till: 0.6
-}
-    session.options.tDetails = {
-            start: 0,
-            by: 2,
-            till: 8
-    }    
-    session.options.threshold = 20
-	session.trianglable = true
-	//    Topan := snail;
-	//    Leftan := Turritella;
-	//    Rightan := bivalve;
-	session.options.topOfTriangle = new Shells(session, null).doPerson('Snail')
-	session.options.leftOfTriangle = new Shells(session, null).doPerson('Eloise')
-	session.options.rightOfTriangle = new Shells(session, null).doPerson('Gallaghers')
-
-}
-
-//initializes the biomorph's genotype as one of a named set of types.
-Shells.prototype.doPerson = function(morphType) {
-    var genes = null
-    if(morphType) {
-        genes = (new ShellHardcodedAnimals())[morphType]
-    }
-//    var drawer = this.drawer
-    this.shell = new Shell(genes)
-    // Artificially jacked up for demonstration purposes. Normal value is 10. -- ABC
-//  this.shell.mutProbGene = 100
-    return this
-
-} 
-Shells.prototype.doSaltation = function() {
-    this.shell.randomize()
-}
-//initializes the biomorph's genotype to a random set of values
-//causes the biomorph's genotype to undergo a random mutation
-Shells.prototype.mutate = function() {
-}
-//creates and returns a new, mutated copy of the biomorph.
-Shells.prototype.reproduce = function(element) {
-    var child = new Shells(this.session, element)
-    child.shell = this.shell.breed()
-    return child
-}
-//called when it is time for the biomorph to draw itself. 
-Shells.prototype.develop = function() {
-//    alert('Shells.develop')
-    this.shell.generate(this.drawer)
-    this.shell.draw()
-}
-
-Shells.margarine = function (w, direction) {
-    // {we want to change by large amounts when low, small amounts when large}
-    var wMutSize = 0.1
-    var logged = Math.log(w)
-    var logchanged = logged + wMutSize * direction
-    if(logchanged > 20) {
-        logchanged = 20
-    }
-    var m = Math.exp(logchanged)
-
-    if(m < 1) {
-        m = 1
-    }
-    return m
-}
-
-
-Shells.prototype.dummydraw = Biomorphs.prototype.dummydraw 
-Shells.prototype.getWidth = function() {
-	this.dummydraw()
-	return this.shell.rect.right - this.shell.rect.left
-}
-Shells.prototype.getHeight = function() {
-	this.dummydraw()
-	return this.shell.rect.bottom - this.shell.rect.top
-}
-Shells.prototype.getRect = function() {
-	this.dummydraw()
-	return this.shell.rect
-}
 
 //Register the species with the SpeciesFactory.
 _speciesFactorySingleton.registerSpeciesType("Snails", 

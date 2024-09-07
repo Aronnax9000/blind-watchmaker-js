@@ -140,10 +140,10 @@
         </concat>
         <concat destfile="docs/js/watchmakerjs-1.0.0/triay_shell.js">
             <fileset file="js/species/triay_shell/triay_shell.js" />
+            <fileset file="js/species/triay_shell/triay_shells.js" />
             <fileset file="js/species/triay_shell/triay_shells_copy_biomorph.js" />
             <fileset file="js/species/triay_shell/triay_shell_hardcodedanimals.js" />
             <fileset file="js/species/triay_shell/triay_shells_triangle.js" />
-            <fileset file="js/species/triay_shell/triay_shells.js" />
             <fileset file="js/species/triay_shell/triay_shells_register_species.js" />
             <fileset file="js/species/triay_shell/triay_shells_manipulation.js" />
             <fileset file="js/species/triay_shell/triay_shell_geneboxes.js" />

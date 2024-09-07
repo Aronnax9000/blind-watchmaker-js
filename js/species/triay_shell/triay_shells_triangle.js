@@ -1,28 +1,3 @@
-Shells.force3 = function(r) {
-    var i = Math.round(r)
-    if(i > 3) { 
-        i = 3
-    }
-    if(i < 1) {
-        i = 1
-    }
-    return i
-}
-
-Shells.force2 = function(r) {
-    var i = Math.round(r)
-    if(i > 2) { 
-        i = 2
-    }
-    if(i < 1) {
-        i = 1
-    }
-    if(i == 1) 
-        return CompletenessType.Single
-    else 
-        return CompletenessType.Double
-}
-
 
 // b.h := round(134 * ScreenWidth / 512);
 // b.v := round(250 * ScreenHeight / 342);

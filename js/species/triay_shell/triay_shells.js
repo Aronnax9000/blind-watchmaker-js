@@ -1,27 +1,34 @@
+class Shells extends Biomorphs {
+    /*
+    * Constructor for the Triay Shell biomorph species.
+    * 
+    * A biomorph is associated with a watchmaker session, and a drawing object.
+    * 
+    * From the watchmaker session, the biomorph may draw global rules such as
+    * the settings for allowed mutations, and what sort of drawing context should
+    * be used to render images. The biomorph may also report changes
+    * in its state to the session. The supplied session object must include a property of
+    * 'species', a string containing the name of the registered species.
+    * 
+    * The drawing object is the document element representing the drawing surface
+    * for the biomorph's body. In the original implementation, this is an HTML canvas
+    * element, but support is contemplated for other drawing contexts, such as a SVG 
+    * Scalable Vector Graphic. 
+    * 
+    */
 
-/*
- * Constructor for the Triay Shell biomorph species.
- * 
- * A biomorph is associated with a watchmaker session, and a drawing object.
- * 
- * From the watchmaker session, the biomorph may draw global rules such as
- * the settings for allowed mutations, and what sort of drawing context should
- * be used to render images. The biomorph may also report changes
- * in its state to the session. The supplied session object must include a property of
- * 'species', a string containing the name of the registered species.
- * 
- * The drawing object is the document element representing the drawing surface
- * for the biomorph's body. In the original implementation, this is an HTML canvas
- * element, but support is contemplated for other drawing contexts, such as a SVG 
- * Scalable Vector Graphic. 
- * 
- */
+    constructor(session, drawer) {
+        super()
+        this.session = session
+        this.drawer = drawer
+    }
 
-function Shells(session, drawer) {
-    this.session = session
-    this.drawer = drawer
+    copyBiomorph(child) {
+        child.shell = new Shell(this.shell)	
+    }
+    
+    
 }
-
 Shells.initializeSession = function(session) {
     session.options['sessionIcon'] = 'img/SnailLogoBlackBackground_icl4_17669_16x16.png'
     session.options.basicTypes = [
