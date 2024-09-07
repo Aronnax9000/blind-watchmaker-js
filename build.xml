@@ -17,7 +17,7 @@
     <target name="default" depends="buildIt" description="description">
        
     </target>
-    <target name="buildIt" depends="app_plus_species_modules,baked,zip" description="description">
+    <target name="buildIt" depends="app_plus_species_modules,baked" description="description">
        
     </target>
     <target name="deploy" depends="buildIt" description="Deploy server defined in ${deploy.*} environment variables, configurable in Eclipse Ant Properties Preferences.">
