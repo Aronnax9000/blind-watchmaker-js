@@ -19,7 +19,6 @@
 
 class Shell {
 	
-
 	//This is a hash of patterns. Each shape is a set of 2D coordinates relative to the first point.
 	//There are also w and h which are the original height and width of the shape (to allow scaling)
 	//These patterns can be used instead of circles to draw the shells.
